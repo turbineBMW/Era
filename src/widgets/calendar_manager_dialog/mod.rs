@@ -9,11 +9,11 @@ mod calendar_row;
 mod collection_row;
 mod collections_list;
 
+use crate::CalendarManagerApplication;
+
 use self::{calendar_details_page::CalendarDetailsPage, collections_list::CollectionsList};
 
 mod imp {
-    use crate::application::CalendarManagerApplication;
-
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]

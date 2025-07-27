@@ -1,27 +1,18 @@
 using Gtk 4.0;
 
-template $YearViewMonthCell: Button {
-  child: Box {
-    orientation: vertical;
-    vexpand: true;
+template $YearViewMonthCell: Widget {
+  Label month_label {
+    label: bind $get_month_name(template.month) as <string>;
+    ellipsize: end;
+    xalign: 0.0;
+  }
 
-    Label {
-      label: bind $get_month_name(template.month) as <string>;
-      xalign: 0.0;
-
-      styles [
-        "year-view-month-cell-month-label",
-      ]
-    }
-
-    Grid days_grid {
-      row-homogeneous: true;
-      column-homogeneous: true;
-      vexpand: true;
-    }
-  };
+  Grid days_grid {
+    row-homogeneous: true;
+    column-homogeneous: true;
+  }
 
   styles [
-    "flat",
+    "year-view-month-cell",
   ]
 }

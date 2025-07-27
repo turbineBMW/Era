@@ -1,6 +1,7 @@
-use adw::prelude::*;
-use adw::subclass::prelude::*;
-use ccm::Manager;
+use std::cell::Cell;
+
+use adw::{prelude::*, subclass::prelude::*};
+use ccm::{Manager, jiff};
 use gettextrs::gettext;
 use gtk::{gio, glib};
 
@@ -10,8 +11,16 @@ use crate::widgets::CalendarManagerWindow;
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default)]
+    #[derive(Debug, Default, glib::Properties)]
+    #[properties(wrapper_type = super::CalendarManagerApplication)]
     pub struct CalendarManagerApplication {
+        // TODO: Monitor the system to update those
+        #[property(get, set)]
+        current_year: Cell<i32>,
+        #[property(get, set)]
+        current_month: Cell<i32>,
+        #[property(get, set)]
+        current_day: Cell<i32>,
         pub manager: Manager,
     }
 
@@ -22,6 +31,7 @@ mod imp {
         type ParentType = adw::Application;
     }
 
+    #[glib::derived_properties]
     impl ObjectImpl for CalendarManagerApplication {
         fn constructed(&self) {
             self.parent_constructed();
@@ -32,10 +42,6 @@ mod imp {
     }
 
     impl ApplicationImpl for CalendarManagerApplication {
-        // We connect to the activate callback to create a window when the application
-        // has been launched. Additionally, this callback notifies us when the user
-        // tries to launch a "second instance" of the application. When they try
-        // to do that, we'll just present any existing window.
         fn activate(&self) {
             let application = self.obj();
             // Get the current window or create one if necessary
@@ -44,7 +50,6 @@ mod imp {
                 window.upcast()
             });
 
-            // Ask the window manager/compositor to present the window
             window.present();
         }
     }
@@ -61,6 +66,11 @@ glib::wrapper! {
 
 impl CalendarManagerApplication {
     pub fn new(application_id: &str, flags: &gio::ApplicationFlags) -> Self {
+        let now = jiff::Zoned::now();
+        let current_year = now.year();
+        let current_month = now.month();
+        let current_day = now.day();
+
         glib::Object::builder()
             .property("application-id", application_id)
             .property("flags", flags)
@@ -68,6 +78,9 @@ impl CalendarManagerApplication {
                 "resource-base-path",
                 "/io/gitlab/TitouanReal/CalendarManager",
             )
+            .property("current-year", current_year as i32)
+            .property("current-month", current_month as i32)
+            .property("current-day", current_day as i32)
             .build()
     }
 

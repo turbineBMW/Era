@@ -12,8 +12,9 @@ template $CalendarManagerWindow: Adw.ApplicationWindow {
     Adw.Layout {
       name: "wide";
 
-      content: Adw.OverlaySplitView {
+      content: Adw.OverlaySplitView overlay_split_view {
         show-sidebar: bind sidebar_toggle.active bidirectional;
+        collapsed: true;
 
         sidebar: Adw.ToolbarView {
           [top]
@@ -397,9 +398,30 @@ template $CalendarManagerWindow: Adw.ApplicationWindow {
     }
 
     [year_view]
-    $YearView year_view {
-      grid-layout: rows4columns3;
-      month_clicked => $open_month_view(template);
+    Adw.BreakpointBin {
+      width-request: 100;
+      height-request: 100;
+
+      child: $YearView year_view {
+        styling: medium;
+        month_clicked => $open_month_view(template);
+      };
+
+      Adw.Breakpoint {
+        condition ("max-width: 720sp")
+
+        setters {
+          year_view.styling: narrow;
+        }
+      }
+
+      Adw.Breakpoint {
+        condition ("min-width: 1100sp")
+
+        setters {
+          year_view.styling: wide;
+        }
+      }
     }
 
     [month_view]
@@ -409,7 +431,7 @@ template $CalendarManagerWindow: Adw.ApplicationWindow {
   };
 
   Adw.Breakpoint {
-    condition ("max-width: 700sp")
+    condition ("max-width: 720sp")
 
     setters {
       main_view.layout-name: "narrow";
@@ -422,6 +444,14 @@ template $CalendarManagerWindow: Adw.ApplicationWindow {
 
     setters {
       wide_view_switcher.display-mode: both;
+    }
+  }
+
+  Adw.Breakpoint {
+    condition ("min-width: 1100sp")
+
+    setters {
+      overlay_split_view.collapsed: false;
     }
   }
 }

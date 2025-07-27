@@ -10,7 +10,7 @@ mod calendar_combo_row_header;
 mod calendar_combo_row_item;
 mod calendar_combo_row_list_item;
 
-use crate::application::CalendarManagerApplication;
+use crate::CalendarManagerApplication;
 
 use self::{
     calendar_combo_row_header::CalendarComboRowHeader,

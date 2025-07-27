@@ -11,16 +11,28 @@
     background-color: var(--theme-base-bg);
 }
 
-.year-view-year-label {
-    font-size: 36px;
-    font-weight: bold;
-    color: var(--accent-bg-color);
+.year-view-flow-box > flowboxchild {
+    padding: 0;
 }
 
-.year-view-month-cell-month-label {
-    /* font-size: 10px; */
+.year-view-month-cell {
+    padding: 6px;
+    outline-color: var(--focus-ring-color);
+    outline-width: 1px;
+    outline-offset: -1px;
 }
 
-.year-view-month-cell-day-label {
-    font-size: 8px;
+.year-view-days-grid-day-label-narrow {
+    font-weight: 400;
+    font-size: 57%;
+}
+
+.year-view-days-grid-day-label-medium {
+    font-weight: 400;
+    font-size: 100%;
+}
+
+.year-view-days-grid-day-label-wide {
+    font-weight: 400;
+    font-size: 130%;
 }

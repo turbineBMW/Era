@@ -4,7 +4,6 @@ use std::{
 };
 
 use adw::{prelude::*, subclass::prelude::*};
-use ccm::jiff;
 use gtk::{
     Allocation,
     glib::{self, clone, subclass::Signal},
@@ -13,7 +12,23 @@ use gtk::{
 mod year_view_month_cell;
 mod year_view_year_row;
 
+use crate::CalendarManagerApplication;
+
 use self::{year_view_month_cell::*, year_view_year_row::*};
+
+const SPACING: i32 = 12;
+
+#[derive(Debug, Default, Hash, Eq, PartialEq, Clone, Copy, glib::Enum)]
+#[enum_type(name = "YearViewStyling")]
+pub enum YearViewStyling {
+    #[enum_value(name = "Narrow", nick = "narrow")]
+    Narrow,
+    #[default]
+    #[enum_value(name = "Medium", nick = "medium")]
+    Medium,
+    #[enum_value(name = "Wide", nick = "wide")]
+    Wide,
+}
 
 pub(crate) mod imp {
     use super::*;
@@ -24,9 +39,9 @@ pub(crate) mod imp {
     pub struct YearView {
         #[property(get, set)]
         year: Cell<i32>,
-        #[property(get, set, builder(GridLayout::default()))]
-        grid_layout: Cell<GridLayout>,
-        // TODO: I should remove the OnceCell?
+        #[property(get, set, builder(YearViewStyling::default()))]
+        styling: Cell<YearViewStyling>,
+        // TODO: I should remove the OnceCell? Should I use Cell instead of Mutex?
         year_rows: OnceCell<Mutex<Vec<YearViewYearRow>>>,
         scroll_offset: Cell<f64>,
     }
@@ -57,11 +72,13 @@ pub(crate) mod imp {
 
             let obj = self.obj();
 
-            let current_year = jiff::Zoned::now().year() as i32;
+            let application = CalendarManagerApplication::default();
+            let current_year = application.current_year();
             obj.set_year(current_year);
 
-            let first_row = YearViewYearRow::new(current_year - 1, GridLayout::Rows4Columns3);
-            obj.bind_property("grid-layout", &first_row, "grid-layout")
+            let first_row = YearViewYearRow::new(current_year - 1);
+            obj.bind_property("styling", &first_row, "styling")
+                .sync_create()
                 .build();
             first_row.connect_month_clicked(clone!(
                 #[weak(rename_to = imp)]
@@ -73,15 +90,16 @@ pub(crate) mod imp {
             ));
             first_row.insert_before(&*self.obj(), None::<&gtk::Widget>);
 
-            let (row_height, ..) = first_row.measure(gtk::Orientation::Vertical, 400);
+            let (row_height, ..) = first_row.measure(gtk::Orientation::Vertical, 800);
             let offset = row_height as f64;
             self.scroll_offset.set(offset);
             let nb_rows = self.obj().height() / row_height + 1;
 
             let mut year_rows = vec![first_row];
             for year in current_year..current_year + nb_rows + 1 {
-                let row = YearViewYearRow::new(year, GridLayout::Rows4Columns3);
-                obj.bind_property("grid-layout", &row, "grid-layout")
+                let row = YearViewYearRow::new(year);
+                obj.bind_property("styling", &row, "styling")
+                    .sync_create()
                     .build();
                 row.insert_before(&*self.obj(), None::<&gtk::Widget>);
                 row.connect_month_clicked(clone!(
@@ -112,44 +130,21 @@ pub(crate) mod imp {
     }
 
     impl WidgetImpl for YearView {
-        fn size_allocate(&self, width: i32, height: i32, baseline: i32) {
+        // TODO: check if i have been allocated enough space
+        fn size_allocate(&self, width: i32, _height: i32, baseline: i32) {
             let year_rows = self.year_rows.get().unwrap().lock().unwrap();
             let last_row = year_rows
                 .last()
                 .expect("There should be at least one year row")
                 .to_owned();
-            let (row_height, ..) = last_row.measure(gtk::Orientation::Vertical, width);
-
-            // If there is not enough rows anymore, add some
-            let desired_nb_rows = height / row_height + 3;
-            let nb_of_new_rows = desired_nb_rows - year_rows.len() as i32;
-            let last_year = last_row.year();
-            for year in last_year + 1..last_year + nb_of_new_rows + 1 {
-                glib::source::idle_add_local_once(clone!(
-                    #[weak(rename_to = imp)]
-                    self,
-                    move || {
-                        let row = YearViewYearRow::new(year, GridLayout::Rows4Columns3);
-                        row.insert_before(&*imp.obj(), None::<&gtk::Widget>);
-                        row.connect_month_clicked(clone!(
-                            #[weak]
-                            imp,
-                            move |_row, year, month| {
-                                imp.obj()
-                                    .emit_by_name::<()>("month-clicked", &[&year, &month]);
-                            }
-                        ));
-                        imp.year_rows.get().unwrap().lock().unwrap().push(row);
-                    }
-                ));
-            }
+            let (minimum_row_height, ..) = last_row.measure(gtk::Orientation::Vertical, width);
 
             for (i, row) in year_rows.iter().enumerate() {
                 let allocation = Allocation::new(
                     0,
-                    -self.scroll_offset.get() as i32 + i as i32 * row_height,
+                    -self.scroll_offset.get() as i32 + (i as i32 * (minimum_row_height + SPACING)),
                     width,
-                    row_height,
+                    minimum_row_height,
                 );
                 row.size_allocate(&allocation, baseline);
             }
@@ -184,6 +179,14 @@ pub(crate) mod imp {
             let top_offset = self.scroll_offset.get() + dy;
             // The y offset of the bottom of the last row
             let bottom_offset = top_offset + height as f64;
+
+            let first_row = year_rows
+                .first()
+                .expect("There should be at least one year row")
+                .to_owned();
+            let first_year = first_row.year();
+            self.obj()
+                .set_year(first_year + top_offset as i32 / row_height);
 
             let top_threshold = row_height as f64 / 2.;
             let bottom_threshold = (year_rows.len() as f64 - 0.5) * row_height as f64;

@@ -4,7 +4,7 @@ use gtk::glib;
 
 mod event_row;
 
-use crate::application::CalendarManagerApplication;
+use crate::CalendarManagerApplication;
 
 use self::event_row::EventRow;
 

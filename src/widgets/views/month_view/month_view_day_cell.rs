@@ -82,7 +82,6 @@ pub(crate) mod imp {
 
             for cell in cells.by_ref().take(weekday_of_first_day) {
                 let label = gtk::Label::new(None);
-                label.add_css_class("year-view-month-cell-month-label");
                 self.days_grid.attach(&label, cell % 7, cell / 7, 1, 1);
             }
 

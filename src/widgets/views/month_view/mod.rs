@@ -67,8 +67,6 @@ pub(crate) mod imp {
             } else {
                 MonthViewWeekRow::new(current_year, current_week)
             };
-            // obj.bind_property("grid-layout", &first_row, "grid-layout")
-            //     .build();
             // first_row.connect_month_clicked(clone!(
             //     #[weak(rename_to = imp)]
             //     self,
@@ -100,8 +98,6 @@ pub(crate) mod imp {
                     first_day_of_new_week.year() as i32,
                     first_day_of_new_week.iso_week_date().week(),
                 );
-                // obj.bind_property("grid-layout", &row, "grid-layout")
-                //     .build();
                 row.insert_before(&*self.obj(), None::<&gtk::Widget>);
                 // row.connect_month_clicked(clone!(
                 //     #[weak(rename_to = imp)]
