@@ -91,6 +91,12 @@ pub(crate) mod imp {
             ));
         }
 
+        fn dispose(&self) {
+            self.year_label.unparent();
+            self.separator.unparent();
+            self.month_flow_box.unparent();
+        }
+
         fn signals() -> &'static [Signal] {
             static SIGNALS: LazyLock<Vec<Signal>> = LazyLock::new(|| {
                 vec![

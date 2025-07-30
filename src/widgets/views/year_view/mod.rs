@@ -115,6 +115,12 @@ pub(crate) mod imp {
             self.year_rows.get_or_init(|| Mutex::new(year_rows));
         }
 
+        fn dispose(&self) {
+            for row in self.year_rows.get().unwrap().lock().unwrap().iter() {
+                row.unparent();
+            }
+        }
+
         fn signals() -> &'static [Signal] {
             static SIGNALS: LazyLock<Vec<Signal>> = LazyLock::new(|| {
                 vec![

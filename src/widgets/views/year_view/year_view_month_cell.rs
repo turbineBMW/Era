@@ -146,6 +146,11 @@ pub(crate) mod imp {
                 }
             ));
         }
+
+        fn dispose(&self) {
+            self.month_label.unparent();
+            self.days_grid.unparent();
+        }
     }
 
     impl WidgetImpl for YearViewMonthCell {
