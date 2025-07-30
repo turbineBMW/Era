@@ -85,7 +85,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct CollectionRow(ObjectSubclass<imp::CollectionRow>)
-        @extends gtk::Widget, gtk::ListBoxRow;
+        @extends gtk::Widget, gtk::ListBoxRow,
+        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
 
 impl CollectionRow {

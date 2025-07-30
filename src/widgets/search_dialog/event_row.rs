@@ -82,7 +82,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct EventRow(ObjectSubclass<imp::EventRow>)
-    @extends gtk::Widget, gtk::Box;
+    @extends gtk::Widget, gtk::Box,
+    @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
 }
 
 impl EventRow {

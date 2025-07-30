@@ -80,7 +80,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct CalendarRow(ObjectSubclass<imp::CalendarRow>)
-    @extends gtk::Widget, gtk::ListBoxRow, adw::PreferencesRow, adw::ActionRow;
+    @extends gtk::Widget, gtk::ListBoxRow, adw::PreferencesRow, adw::ActionRow,
+    @implements gtk::Accessible, gtk::Actionable, gtk::Buildable, gtk::ConstraintTarget;
 }
 
 impl CalendarRow {

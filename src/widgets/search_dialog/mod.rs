@@ -80,7 +80,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct SearchDialog(ObjectSubclass<imp::SearchDialog>)
-        @extends gtk::Widget, adw::Dialog;
+        @extends gtk::Widget, adw::Dialog,
+        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::ShortcutManager;
 }
 
 impl SearchDialog {

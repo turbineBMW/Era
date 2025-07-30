@@ -40,7 +40,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct CollectionsList(ObjectSubclass<imp::CollectionsList>)
-        @extends gtk::Widget, gtk::Box;
+        @extends gtk::Widget, gtk::Box,
+        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
 }
 
 impl CollectionsList {

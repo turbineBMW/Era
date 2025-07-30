@@ -59,7 +59,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct CreateEventDialog(ObjectSubclass<imp::CreateEventDialog>)
-        @extends gtk::Widget, adw::Dialog;
+        @extends gtk::Widget, adw::Dialog,
+        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::ShortcutManager;
 }
 
 impl CreateEventDialog {

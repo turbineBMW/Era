@@ -169,7 +169,6 @@ pub(crate) mod imp {
 
 glib::wrapper! {
     pub struct MonthView(ObjectSubclass<imp::MonthView>)
-        @extends gtk::Widget;
+        @extends gtk::Widget,
+        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
-
-impl MonthView {}

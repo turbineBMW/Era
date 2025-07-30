@@ -5,8 +5,7 @@ use ccm::{Manager, jiff};
 use gettextrs::gettext;
 use gtk::{gio, glib};
 
-use crate::config::VERSION;
-use crate::widgets::CalendarManagerWindow;
+use crate::{config::VERSION, widgets::CalendarManagerWindow};
 
 mod imp {
     use super::*;
@@ -44,7 +43,6 @@ mod imp {
     impl ApplicationImpl for CalendarManagerApplication {
         fn activate(&self) {
             let application = self.obj();
-            // Get the current window or create one if necessary
             let window = application.active_window().unwrap_or_else(|| {
                 let window = CalendarManagerWindow::new(&*application);
                 window.upcast()

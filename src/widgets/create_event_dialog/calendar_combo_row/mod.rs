@@ -132,7 +132,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct CalendarComboRow(ObjectSubclass<imp::CalendarComboRow>)
-    @extends gtk::Widget, gtk::ListBoxRow, adw::PreferencesRow, adw::ActionRow, adw::ComboRow;
+    @extends gtk::Widget, gtk::ListBoxRow, adw::PreferencesRow, adw::ActionRow, adw::ComboRow,
+    @implements gtk::Accessible, gtk::Actionable, gtk::Buildable, gtk::ConstraintTarget;
 }
 
 impl CalendarComboRow {

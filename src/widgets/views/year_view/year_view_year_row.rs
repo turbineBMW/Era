@@ -246,7 +246,8 @@ pub(crate) mod imp {
 
 glib::wrapper! {
     pub struct YearViewYearRow(ObjectSubclass<imp::YearViewYearRow>)
-        @extends gtk::Widget;
+        @extends gtk::Widget,
+        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
 
 impl YearViewYearRow {

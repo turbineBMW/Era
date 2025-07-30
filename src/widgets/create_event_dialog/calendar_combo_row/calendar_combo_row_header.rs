@@ -43,7 +43,7 @@ mod imp {
 glib::wrapper! {
     pub struct CalendarComboRowHeader(ObjectSubclass<imp::CalendarComboRowHeader>)
     @extends gtk::Widget, gtk::Box,
-    @implements gtk::Orientable;
+    @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
 }
 
 impl CalendarComboRowHeader {

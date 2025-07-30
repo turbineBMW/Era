@@ -82,6 +82,7 @@ mod imp {
                 .set_model(manager.collections_model().into());
         }
     }
+
     impl WidgetImpl for CalendarManagerDialog {}
     impl AdwDialogImpl for CalendarManagerDialog {}
 
@@ -90,7 +91,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct CalendarManagerDialog(ObjectSubclass<imp::CalendarManagerDialog>)
-        @extends gtk::Widget, adw::Dialog;
+        @extends gtk::Widget, adw::Dialog,
+        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::ShortcutManager;
 }
 
 impl CalendarManagerDialog {

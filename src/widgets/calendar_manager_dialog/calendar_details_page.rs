@@ -97,7 +97,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct CalendarDetailsPage(ObjectSubclass<imp::CalendarDetailsPage>)
-    @extends gtk::Widget, adw::NavigationPage;
+    @extends gtk::Widget, adw::NavigationPage,
+    @implements gtk::Accessible, gtk::Actionable, gtk::Buildable, gtk::ConstraintTarget, gtk::Editable;
 }
 
 impl CalendarDetailsPage {
