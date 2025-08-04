@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use ccm::{Event, Timeframe};
+use clepsydre::{Event, Timeframe};
 use gtk::{
     gdk::{Paintable, RGBA},
     glib,
@@ -13,7 +13,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/event_row.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/event_row.ui")]
     #[properties(wrapper_type = super::EventRow)]
     pub struct EventRow {
         #[property(get, set)]

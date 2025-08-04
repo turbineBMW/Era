@@ -1,5 +1,5 @@
 use adw::prelude::*;
-use ccm::Collection;
+use clepsydre::Collection;
 use gtk::{gio::ListModel, glib, subclass::prelude::*};
 
 use super::collection_row::CollectionRow;
@@ -8,7 +8,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/collections_list.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/collections_list.ui")]
     pub struct CollectionsList {
         #[template_child]
         pub collections_list: TemplateChild<gtk::ListBox>,

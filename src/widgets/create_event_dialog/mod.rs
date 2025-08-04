@@ -1,5 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use ccm::Calendar;
+use clepsydre::Calendar;
 use gtk::glib;
 
 mod calendar_combo_row;
@@ -10,7 +10,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/create_event_dialog.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/create_event_dialog.ui")]
     pub struct CreateEventDialog {
         #[template_child]
         name: TemplateChild<adw::EntryRow>,

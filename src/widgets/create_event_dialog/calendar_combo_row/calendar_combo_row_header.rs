@@ -1,14 +1,14 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use ccm::Collection;
+use clepsydre::Collection;
 use gtk::glib;
 
 mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/calendar_combo_row_header.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_combo_row_header.ui")]
     #[properties(wrapper_type = super::CalendarComboRowHeader)]
     pub struct CalendarComboRowHeader {
         #[property(get, set, construct_only)]

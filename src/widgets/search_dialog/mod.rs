@@ -1,10 +1,10 @@
 use adw::{prelude::*, subclass::prelude::*};
-use ccm::Event;
+use clepsydre::Event;
 use gtk::glib;
 
 mod event_row;
 
-use crate::CalendarManagerApplication;
+use crate::Application;
 
 use self::event_row::EventRow;
 
@@ -12,7 +12,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/search_dialog.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/search_dialog.ui")]
     pub struct SearchDialog {
         #[template_child]
         pub search_entry: TemplateChild<gtk::SearchEntry>,
@@ -45,7 +45,7 @@ mod imp {
     impl SearchDialog {
         #[template_callback]
         fn search_events(&self) {
-            let manager = CalendarManagerApplication::default().manager();
+            let manager = Application::default().manager();
             let text = self.search_entry.text();
             let results = manager.search_events(&text);
             self.results_view

@@ -3,7 +3,7 @@ use std::{cell::Cell, cmp, sync::LazyLock};
 use adw::{prelude::*, subclass::prelude::*};
 use gtk::glib::{self, clone, closure_local, subclass::Signal};
 
-use crate::CalendarManagerApplication;
+use crate::Application;
 
 use super::{YearViewMonthCell, YearViewStyling};
 
@@ -14,7 +14,7 @@ pub(crate) mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/year_view_year_row.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/year_view_year_row.ui")]
     #[properties(wrapper_type = super::YearViewYearRow)]
     pub struct YearViewYearRow {
         #[property(get, set)]
@@ -68,7 +68,7 @@ pub(crate) mod imp {
                 obj.imp().update_styling();
             });
 
-            let application = CalendarManagerApplication::default();
+            let application = Application::default();
             let current_year = application.current_year();
             self.update_year_label_color(current_year);
 

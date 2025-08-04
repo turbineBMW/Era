@@ -1,22 +1,47 @@
 project(
-  'calendar-manager',
+  'kalendasom',
   'rust',
   version: '0.1.0',
-  meson_version: '>= 1.0.0',
+  meson_version: '>= 1.8.3',
   default_options: [
     'warning_level=2',
     'werror=false',
   ],
 )
 
+i18n = import('i18n')
+gnome = import('gnome')
+
 dependency('gtk4', version: '>= 4.18')
 dependency('libadwaita-1', version: '>= 1.7')
 dependency('tinysparql-3.0', version: '>= 3.9')
 
-i18n = import('i18n')
-gnome = import('gnome')
+appstreamcli = find_program('appstreamcli', required: true)
+compile_schemas = find_program('glib-compile-schemas', required: true)
+desktop_file_validate = find_program('desktop-file-validate', required: true)
 
-pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
+application_name = 'Kalendasom'
+base_resource_path = '/io/gitlab/TitouanReal/' + application_name
+base_id = 'io.gitlab.TitouanReal.' + application_name
+application_id = base_id
+version = meson.project_version()
+
+prefix = get_option('prefix')
+bindir = prefix / get_option('bindir')
+localedir = prefix / get_option('localedir')
+
+datadir = prefix / get_option('datadir')
+pkgdatadir = datadir / meson.project_name()
+iconsdir = datadir / 'icons'
+podir = meson.project_source_root() / 'po'
+gettext_package = meson.project_name()
+
+if get_option('buildtype') == 'release'
+  profile = 'Stable'
+else
+  profile = 'Devel'
+  application_id += '.Devel'
+endif
 
 subdir('data')
 subdir('src')

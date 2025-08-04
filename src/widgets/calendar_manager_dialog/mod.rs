@@ -1,5 +1,5 @@
 use adw::subclass::prelude::*;
-use ccm::Resource;
+use clepsydre::Resource;
 use gtk::{glib, prelude::*};
 use tracing::error;
 
@@ -9,7 +9,7 @@ mod calendar_row;
 mod collection_row;
 mod collections_list;
 
-use crate::CalendarManagerApplication;
+use crate::Application;
 
 use self::{calendar_details_page::CalendarDetailsPage, collections_list::CollectionsList};
 
@@ -17,7 +17,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/calendar_manager_dialog.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_manager_dialog.ui")]
     pub struct CalendarManagerDialog {
         #[template_child]
         navigation_view: TemplateChild<adw::NavigationView>,
@@ -42,7 +42,7 @@ mod imp {
                         match param
                             .and_then(glib::Variant::get::<String>)
                             .and_then(|uri| {
-                                let manager = CalendarManagerApplication::default().manager();
+                                let manager = Application::default().manager();
                                 manager.find_resource(&uri)
                             }) {
                             Some(resource) => resource,
@@ -77,7 +77,7 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
-            let manager = CalendarManagerApplication::default().manager();
+            let manager = Application::default().manager();
             self.collections_list
                 .set_model(manager.collections_model().into());
         }

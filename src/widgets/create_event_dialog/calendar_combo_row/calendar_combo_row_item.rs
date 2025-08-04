@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use ccm::Calendar;
+use clepsydre::Calendar;
 use gtk::{
     gdk::{Paintable, RGBA},
     glib,
@@ -13,7 +13,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/calendar_combo_row_item.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_combo_row_item.ui")]
     #[properties(wrapper_type = super::CalendarComboRowItem)]
     pub struct CalendarComboRowItem {
         #[property(get, set)]

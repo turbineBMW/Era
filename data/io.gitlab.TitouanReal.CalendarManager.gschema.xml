@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<schemalist gettext-domain="calendar-manager">
-	<schema id="io.gitlab.TitouanReal.CalendarManager" path="/io/gitlab/TitouanReal/CalendarManager/">
-	</schema>
-</schemalist>

@@ -1,11 +1,11 @@
 use std::{cell::Cell, cmp};
 
 use adw::{prelude::*, subclass::prelude::*};
-use ccm::jiff;
+use clepsydre::jiff;
 use gettextrs::gettext;
 use gtk::glib::{self, clone};
 
-use crate::CalendarManagerApplication;
+use crate::Application;
 
 use super::YearViewStyling;
 
@@ -13,7 +13,7 @@ pub(crate) mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/year_view_month_cell.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/year_view_month_cell.ui")]
     #[properties(wrapper_type = super::YearViewMonthCell)]
     pub struct YearViewMonthCell {
         #[property(get, set)]
@@ -77,7 +77,7 @@ pub(crate) mod imp {
                 self.days_grid.attach(&label, cell % 7, cell / 7, 1, 1);
             }
 
-            let application = CalendarManagerApplication::default();
+            let application = Application::default();
             let current_year = application.current_year();
             let current_month = application.current_month();
             self.update_month_label_color(current_year, current_month);

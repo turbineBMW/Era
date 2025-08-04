@@ -1,7 +1,9 @@
 [package]
-name = "calendar-manager"
+name = "kalendasom"
 version = "0.1.0"
+authors = ["Titouan Real <titouan.real@gmail.com>"]
 edition = "2024"
+rust-version = "1.88"
 
 [profile.release]
 lto = true
@@ -9,7 +11,7 @@ codegen-units = 1
 
 [dependencies]
 adw = { package = "libadwaita", version = "0.7", features = ["v1_7"] }
-ccm = { git = "https://github.com/TitouanReal/ccm" }
+clepsydre = { git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git" }
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
 gtk = { version = "0.9", package = "gtk4", features = ["gnome_47"] }
 tracing = "0.1"

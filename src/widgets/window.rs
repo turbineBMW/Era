@@ -1,5 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use ccm::jiff;
+use clepsydre::jiff;
 use gettextrs::gettext;
 use gtk::{gdk, gio, glib};
 
@@ -12,8 +12,8 @@ pub(crate) mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/window.ui")]
-    pub struct CalendarManagerWindow {
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/window.ui")]
+    pub struct Window {
         #[template_child]
         main_view: TemplateChild<adw::MultiLayoutView>,
         #[template_child]
@@ -25,9 +25,9 @@ pub(crate) mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for CalendarManagerWindow {
+    impl ObjectSubclass for Window {
         const NAME: &'static str = "CalendarManagerWindow";
-        type Type = super::CalendarManagerWindow;
+        type Type = super::Window;
         type ParentType = adw::ApplicationWindow;
 
         fn class_init(klass: &mut Self::Class) {
@@ -72,14 +72,14 @@ pub(crate) mod imp {
         }
     }
 
-    impl ObjectImpl for CalendarManagerWindow {}
-    impl WidgetImpl for CalendarManagerWindow {}
-    impl WindowImpl for CalendarManagerWindow {}
-    impl ApplicationWindowImpl for CalendarManagerWindow {}
-    impl AdwApplicationWindowImpl for CalendarManagerWindow {}
+    impl ObjectImpl for Window {}
+    impl WidgetImpl for Window {}
+    impl WindowImpl for Window {}
+    impl ApplicationWindowImpl for Window {}
+    impl AdwApplicationWindowImpl for Window {}
 
     #[gtk::template_callbacks]
-    impl CalendarManagerWindow {
+    impl Window {
         #[template_callback]
         fn search_events(&self) {
             let dialog = SearchDialog::new();
@@ -171,13 +171,13 @@ pub(crate) mod imp {
 }
 
 glib::wrapper! {
-    pub struct CalendarManagerWindow(ObjectSubclass<imp::CalendarManagerWindow>)
+    pub struct Window(ObjectSubclass<imp::Window>)
         @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow,
         @implements gio::ActionGroup, gio::ActionMap, gtk::Accessible, gtk::Buildable,
             gtk::ConstraintTarget, gtk::Native, gtk::Root, gtk::ShortcutManager;
 }
 
-impl CalendarManagerWindow {
+impl Window {
     pub fn new<P: IsA<gtk::Application>>(application: &P) -> Self {
         glib::Object::builder()
             .property("application", application)

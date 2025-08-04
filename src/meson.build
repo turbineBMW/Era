@@ -1,8 +1,12 @@
 conf = configuration_data()
-conf.set_quoted('VERSION', meson.project_version())
-conf.set_quoted('GETTEXT_PACKAGE', 'calendar-manager')
-conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
+conf.set_quoted('APP_ID', application_id)
+conf.set_quoted('APP_NAME', application_name)
+conf.set_quoted('BASE_RESOURCE_PATH', base_resource_path)
+conf.set_quoted('GETTEXT_PACKAGE', gettext_package)
+conf.set_quoted('LOCALEDIR', prefix / get_option('localedir'))
 conf.set_quoted('PKGDATADIR', pkgdatadir)
+conf.set_quoted('PROJECT_NAME', meson.project_name())
+conf.set_quoted('VERSION', version)
 
 configure_file(input: 'config.rs.in', output: 'config.rs', configuration: conf)
 
@@ -14,16 +18,16 @@ run_command(
   check: true,
 )
 
-cargo_bin = find_program('cargo')
-cargo_opt = ['--manifest-path', meson.project_source_root() / 'Cargo.toml']
-cargo_opt += ['--target-dir', meson.project_build_root() / 'src']
+cargo = find_program('cargo')
+cargo_options = ['--manifest-path', meson.project_source_root() / 'Cargo.toml']
+cargo_options += ['--target-dir', meson.project_build_root() / 'src']
 cargo_env = ['CARGO_HOME=' + meson.project_build_root() / 'cargo-home']
 
-if get_option('buildtype') == 'release'
-  cargo_opt += ['--release']
-  rust_target = 'release'
-else
+if profile == 'Devel'
   rust_target = 'debug'
+else
+  cargo_options += ['--release']
+  rust_target = 'release'
 endif
 
 custom_target(
@@ -33,13 +37,13 @@ custom_target(
   output: meson.project_name(),
   console: true,
   install: true,
-  install_dir: get_option('bindir'),
+  install_dir: bindir,
   command: [
     'env',
     cargo_env,
-    cargo_bin,
+    cargo,
     'build',
-    cargo_opt,
+    cargo_options,
     '&&',
     'cp',
     'src' / rust_target / meson.project_name(),

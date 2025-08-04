@@ -1,3 +1,3 @@
-# calendar-manager
+# Kalendasom
 
-A description of this project.
+Kalendasom is a beautiful and performant calendar application.

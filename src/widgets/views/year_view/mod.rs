@@ -12,7 +12,7 @@ use gtk::{
 mod year_view_month_cell;
 mod year_view_year_row;
 
-use crate::CalendarManagerApplication;
+use crate::Application;
 
 use self::{year_view_month_cell::*, year_view_year_row::*};
 
@@ -34,7 +34,7 @@ pub(crate) mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/year_view.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/year_view.ui")]
     #[properties(wrapper_type = super::YearView)]
     pub struct YearView {
         #[property(get, set)]
@@ -72,7 +72,7 @@ pub(crate) mod imp {
 
             let obj = self.obj();
 
-            let application = CalendarManagerApplication::default();
+            let application = Application::default();
             let current_year = application.current_year();
             obj.set_year(current_year);
 

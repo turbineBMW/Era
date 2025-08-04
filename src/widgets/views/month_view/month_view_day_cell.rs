@@ -1,7 +1,7 @@
 use std::cell::Cell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use ccm::jiff;
+use clepsydre::jiff;
 use gettextrs::gettext;
 use gtk::glib::{self, clone};
 
@@ -9,7 +9,7 @@ pub(crate) mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/year_view_month_cell.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/year_view_month_cell.ui")]
     #[properties(wrapper_type = super::MonthViewDayCell)]
     pub struct MonthViewDayCell {
         #[property(get, set)]

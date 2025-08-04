@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::prelude::*;
-use ccm::Collection;
+use clepsydre::Collection;
 use gtk::{glib, subclass::prelude::*};
 
 use super::{calendar_creation_dialog::CalendarCreationDialog, calendar_row::CalendarRow};
@@ -10,7 +10,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/collection_row.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/collection_row.ui")]
     #[properties(wrapper_type = super::CollectionRow)]
     pub struct CollectionRow {
         #[property(get, set, construct_only)]

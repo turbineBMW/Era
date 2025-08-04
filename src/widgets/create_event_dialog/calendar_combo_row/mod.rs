@@ -10,7 +10,7 @@ mod calendar_combo_row_header;
 mod calendar_combo_row_item;
 mod calendar_combo_row_list_item;
 
-use crate::CalendarManagerApplication;
+use crate::Application;
 
 use self::{
     calendar_combo_row_header::CalendarComboRowHeader,
@@ -22,7 +22,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/calendar_combo_row.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_combo_row.ui")]
     pub struct CalendarComboRow {
         flattened_collections_model: OnceCell<FlattenListModel>,
     }
@@ -47,7 +47,7 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
-            let manager = CalendarManagerApplication::default().manager();
+            let manager = Application::default().manager();
 
             // TODO: The flattened model is updated but it is not reflected in the UI as long as the
             // combo row exists

@@ -1,14 +1,14 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use ccm::Calendar;
+use clepsydre::Calendar;
 use gtk::glib::{self, clone};
 
 mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/calendar_details_page.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_details_page.ui")]
     #[properties(wrapper_type = super::CalendarDetailsPage)]
     pub struct CalendarDetailsPage {
         #[property(get, set, construct_only)]

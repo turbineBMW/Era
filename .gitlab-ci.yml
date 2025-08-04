@@ -1,0 +1,62 @@
+include:
+  - project: "GNOME/citemplates"
+    file: "templates/default-rules.yml"
+  - project: "GNOME/citemplates"
+    file: "flatpak/flatpak_ci_initiative.yml"
+  - project: "GNOME/citemplates"
+    file: "templates/basic-release.yml"
+
+variables:
+  MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Kalendasom.Devel.json"
+  FLATPAK_MODULE: "kalendasom"
+  APP_ID: "io.gitlab.TitouanReal.Kalendasom.Devel"
+  RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
+  BUNDLE: "kalendasom-nightly.flatpak"
+
+stages:
+  - check
+  - build
+  - deploy
+
+.flatpak-command: &flatpak-command
+  image: "${RUNTIME_IMAGE}"
+  tags:
+    - flatpak
+  script:
+    - flatpak-builder --user --disable-rofiles-fuse --keep-build-dirs --stop-at=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
+    - flatpak build-finish --share=network flatpak_app
+    - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
+
+cargo-fmt:
+  stage: "check"
+  image: "rust:slim"
+  script:
+    - rustup component add rustfmt
+    - rustc -Vv && cargo -Vv
+    - cargo fmt --version
+    - cargo fmt --check
+
+cargo-clippy:
+  <<: *flatpak-command
+  stage: check
+  variables:
+    COMMAND: "cargo clippy -- -D warnings"
+
+blueprint-format:
+  stage: check
+  image: fedora:latest
+  before_script:
+    - dnf install -y blueprint-compiler
+    - shopt -s globstar
+  script:
+    - blueprint-compiler format **/*.blp
+
+build@x86_64:
+  extends: ".flatpak@x86_64"
+  stage: build
+
+build@aarch64:
+  extends: ".flatpak@aarch64"
+  stage: build
+# TODO: Also build for stable
+# TODO: Build and host docs

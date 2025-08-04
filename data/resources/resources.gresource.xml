@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <gresources>
-  <gresource prefix="/io/gitlab/TitouanReal/CalendarManager">
+  <gresource prefix="/io/gitlab/TitouanReal/Kalendasom">
     <file compressed="true" alias="style.css">style.css</file>
 
     <!-- Calendar Manager Dialog -->
@@ -32,7 +32,7 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="window.ui">ui/window.ui</file>
   </gresource>
 
-  <gresource prefix="/io/gitlab/TitouanReal/CalendarManager/icons">
+  <gresource prefix="/io/gitlab/TitouanReal/Kalendasom/icons">
     <file preprocess="xml-stripblanks" alias="info-outline-symbolic.svg">icons/info-outline-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="year-symbolic.svg">icons/year-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="month-symbolic.svg">icons/month-symbolic.svg</file>

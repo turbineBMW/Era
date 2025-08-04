@@ -1,10 +1,10 @@
 {
-  "id": "io.gitlab.TitouanReal.CalendarManager",
+  "id": "io.gitlab.TitouanReal.Kalendasom.Devel",
   "runtime": "org.gnome.Platform",
   "runtime-version": "master",
   "sdk": "org.gnome.Sdk",
   "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
-  "command": "calendar-manager",
+  "command": "kalendasom",
   "finish-args": [
     "--share=network",
     "--share=ipc",
@@ -13,6 +13,7 @@
     "--socket=wayland",
     "--talk-name=io.gitlab.TitouanReal.CcmRead",
     "--talk-name=io.gitlab.TitouanReal.CcmWrite",
+    "--talk-name=org.gnome.evolution.dataserver.Sources5",
     "--add-policy=Tracker3.dbus:io.gitlab.TitouanReal.CcmRead=ccm:Calendar"
   ],
   "build-options": {
@@ -20,7 +21,7 @@
     "build-args": ["--share=network"],
     "env": {
       "RUST_BACKTRACE": "1",
-      "RUST_LOG": "calendar-manager=debug"
+      "RUST_LOG": "kalendasom=debug"
     }
   },
   "cleanup": [
@@ -36,39 +37,15 @@
   ],
   "modules": [
     {
-      "name": "sassc",
-      "buildsystem": "meson",
-      "sources": [
-        {
-          "type": "git",
-          "url": "https://github.com/lazka/sassc.git",
-          "branch": "meson"
-        }
-      ]
-    },
-    {
-      "name": "libadwaita",
-      "buildsystem": "meson",
-      "config-opts": ["-Dtests=false", "-Dexamples=false"],
-      "sources": [
-        {
-          "type": "git",
-          "url": "https://gitlab.gnome.org/GNOME/libadwaita.git",
-          "branch": "wip/alice/flowbox-style"
-        }
-      ]
-    },
-    {
-      "name": "calendar-manager",
+      "name": "kalendasom",
       "builddir": true,
       "buildsystem": "meson",
       "sources": [
         {
-          "type": "git",
-          "url": "file:///home/titouan/Projects/Calendars-Contacts/calendars-contacts-next"
+          "type": "dir",
+          "path": "../"
         }
-      ],
-      "config-opts": ["--libdir=lib"]
+      ]
     }
   ]
 }

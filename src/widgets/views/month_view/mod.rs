@@ -4,7 +4,7 @@ use std::{
 };
 
 use adw::{prelude::*, subclass::prelude::*};
-use ccm::jiff;
+use clepsydre::jiff;
 use gtk::{
     Allocation,
     glib::{self, subclass::Signal},
@@ -13,20 +13,21 @@ use gtk::{
 mod month_view_day_cell;
 mod month_view_week_row;
 
-use self::{month_view_day_cell::*, month_view_week_row::*};
+// use self::month_view_day_cell::*,
+use self::month_view_week_row::*;
 
 pub(crate) mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/CalendarManager/month_view.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/month_view.ui")]
     #[properties(wrapper_type = super::MonthView)]
     pub struct MonthView {
         #[property(get, set)]
         year: Cell<i32>,
         // month will not change by itself. Create setters for year and week, and emit notifies
         #[property(get = Self::get_month)]
-        month: Cell<i32>,
+        _month: Cell<i32>,
         #[property(get, set)]
         week: Cell<i8>,
         week_rows: OnceCell<Mutex<Vec<MonthViewWeekRow>>>,
