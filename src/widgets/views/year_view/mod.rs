@@ -1,5 +1,5 @@
 use std::{
-    cell::{Cell, OnceCell},
+    cell::{Cell, OnceCell, RefCell},
     sync::{LazyLock, Mutex},
 };
 
@@ -16,7 +16,16 @@ use crate::Application;
 
 use self::{year_view_month_cell::*, year_view_year_row::*};
 
+const MINIMUM_NB_ROWS_ABOVE: f64 = 0.5;
+const MINIMUM_NB_ROWS_BELOW: f64 = 3.;
+const NB_ROWS: i32 = 7;
 const SPACING: i32 = 12;
+const VELOCITY_THRESHOLD_TO_RETURN: f64 = 300.;
+const VELOCITY_THRESHOLD_TO_SNAP: f64 = 400.;
+const VELOCITY_THRESHOLD_TO_SKIP: f64 = 10.;
+const FIRST_STAGE_DIVISOR: f64 = 1.5;
+const FIRST_TO_SECOND_STAGE_THRESHOLD: f64 = 300.;
+const SECOND_STAGE_DIVISOR: f64 = 2.5;
 
 #[derive(Debug, Default, Hash, Eq, PartialEq, Clone, Copy, glib::Enum)]
 #[enum_type(name = "YearViewStyling")]
@@ -37,13 +46,15 @@ pub(crate) mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/year_view.ui")]
     #[properties(wrapper_type = super::YearView)]
     pub struct YearView {
-        #[property(get, set)]
+        #[property(get)]
         year: Cell<i32>,
         #[property(get, set, builder(YearViewStyling::default()))]
         styling: Cell<YearViewStyling>,
         // TODO: I should remove the OnceCell? Should I use Cell instead of Mutex?
         year_rows: OnceCell<Mutex<Vec<YearViewYearRow>>>,
         scroll_offset: Cell<f64>,
+        scroll_animation: RefCell<Option<adw::TimedAnimation>>,
+        last_velocity: Cell<f64>,
     }
 
     #[glib::object_subclass]
@@ -74,7 +85,8 @@ pub(crate) mod imp {
 
             let application = Application::default();
             let current_year = application.current_year();
-            obj.set_year(current_year);
+            self.year.set(current_year);
+            obj.notify_year();
 
             let first_row = YearViewYearRow::new(current_year - 1);
             obj.bind_property("styling", &first_row, "styling")
@@ -90,24 +102,23 @@ pub(crate) mod imp {
             ));
             first_row.insert_before(&*self.obj(), None::<&gtk::Widget>);
 
+            // TODO: Make sure 800 is the same as the default width of the window
             let (row_height, ..) = first_row.measure(gtk::Orientation::Vertical, 800);
             let offset = row_height as f64;
             self.scroll_offset.set(offset);
-            let nb_rows = self.obj().height() / row_height + 1;
 
             let mut year_rows = vec![first_row];
-            for year in current_year..current_year + nb_rows + 1 {
+            for year in current_year..current_year + NB_ROWS {
                 let row = YearViewYearRow::new(year);
                 obj.bind_property("styling", &row, "styling")
                     .sync_create()
                     .build();
                 row.insert_before(&*self.obj(), None::<&gtk::Widget>);
                 row.connect_month_clicked(clone!(
-                    #[weak(rename_to = imp)]
-                    self,
+                    #[weak]
+                    obj,
                     move |_row, year, month| {
-                        imp.obj()
-                            .emit_by_name::<()>("month-clicked", &[&year, &month]);
+                        obj.emit_by_name::<()>("month-clicked", &[&year, &month]);
                     }
                 ));
                 year_rows.push(row);
@@ -136,7 +147,7 @@ pub(crate) mod imp {
     }
 
     impl WidgetImpl for YearView {
-        // TODO: check if i have been allocated enough space
+        // TODO: Check if i have been allocated enough space
         fn size_allocate(&self, width: i32, _height: i32, baseline: i32) {
             let year_rows = self.year_rows.get().unwrap().lock().unwrap();
             let last_row = year_rows
@@ -159,27 +170,16 @@ pub(crate) mod imp {
 
     #[gtk::template_callbacks]
     impl YearView {
-        #[template_callback]
-        fn get_year_label_narrow(&self) -> String {
-            self.obj().year().to_string()
-        }
+        fn change_scroll_offset(&self, dy: f64) {
+            let obj = self.obj();
 
-        #[template_callback]
-        fn month_cell_clicked(&self, year: i32, month: i32) {
-            self.obj()
-                .emit_by_name::<()>("month-clicked", &[&year, &month]);
-        }
-
-        #[template_callback]
-        fn scroll(&self, _dx: f64, dy: f64) -> bool {
             let mut year_rows = self.year_rows.get().unwrap().lock().unwrap();
-            let width = self.obj().width();
-            let height = self.obj().height();
-            let last_row = year_rows
-                .last()
+            let height = obj.height();
+            let row_height = (year_rows
+                .first()
                 .expect("There should be at least one year row")
-                .to_owned();
-            let (row_height, ..) = last_row.measure(gtk::Orientation::Vertical, width);
+                .height()
+                + SPACING) as f64;
 
             // The y offset of the top of the first row
             let top_offset = self.scroll_offset.get() + dy;
@@ -191,14 +191,15 @@ pub(crate) mod imp {
                 .expect("There should be at least one year row")
                 .to_owned();
             let first_year = first_row.year();
-            self.obj()
-                .set_year(first_year + top_offset as i32 / row_height);
+            self.year
+                .set(first_year + top_offset as i32 / row_height as i32);
+            obj.notify_year();
 
-            let top_threshold = row_height as f64 / 2.;
-            let bottom_threshold = (year_rows.len() as f64 - 0.5) * row_height as f64;
+            let top_threshold = row_height * MINIMUM_NB_ROWS_ABOVE;
+            let bottom_threshold = (year_rows.len() as f64 - MINIMUM_NB_ROWS_BELOW) * row_height;
 
             if top_offset < top_threshold {
-                self.scroll_offset.set(top_offset + row_height as f64);
+                self.scroll_offset.set(top_offset + row_height);
 
                 let first_row = year_rows
                     .first()
@@ -209,7 +210,7 @@ pub(crate) mod imp {
 
                 year_rows.insert(0, last_row);
             } else if bottom_offset > bottom_threshold {
-                self.scroll_offset.set(top_offset - row_height as f64);
+                self.scroll_offset.set(top_offset - row_height);
 
                 let first_row = year_rows.remove(0);
                 let last_row = year_rows
@@ -223,14 +224,112 @@ pub(crate) mod imp {
                 self.scroll_offset.set(top_offset);
             }
 
-            self.obj().queue_allocate();
-            true
+            obj.queue_allocate();
         }
 
         #[template_callback]
-        fn decelerate(&self, _velocity_x: f64, _velocity_y: f64) {
-            // let duration =
-            // self.scroll_offset.decelerate(template);
+        fn get_year_label_narrow(&self) -> String {
+            self.obj().year().to_string()
+        }
+
+        #[template_callback]
+        fn month_cell_clicked(&self, year: i32, month: i32) {
+            self.obj()
+                .emit_by_name::<()>("month-clicked", &[&year, &month]);
+        }
+
+        #[template_callback]
+        fn kinetic_scroll_begin(&self) {
+            if let Some(kinetic_scroll_animation) = self.scroll_animation.borrow().as_ref() {
+                kinetic_scroll_animation.pause();
+            }
+            self.scroll_animation.replace(None);
+        }
+
+        #[template_callback]
+        fn kinetic_scroll(&self, _dx: f64, dy: f64) -> bool {
+            if let Some(kinetic_scroll_animation) = self.scroll_animation.borrow().as_ref() {
+                kinetic_scroll_animation.pause();
+            }
+            self.scroll_animation.replace(None);
+
+            self.change_scroll_offset(dy);
+            true
+        }
+
+        // TODO: Rename velocity to something more accurate
+        #[template_callback]
+        fn kinetic_decelerate(&self, _velocity_x: f64, mut velocity_y: f64) {
+            let obj = self.obj();
+
+            if velocity_y.abs() < VELOCITY_THRESHOLD_TO_RETURN {
+                return;
+            }
+
+            velocity_y = if velocity_y > FIRST_TO_SECOND_STAGE_THRESHOLD {
+                FIRST_TO_SECOND_STAGE_THRESHOLD / FIRST_STAGE_DIVISOR
+                    + (velocity_y - FIRST_TO_SECOND_STAGE_THRESHOLD) / SECOND_STAGE_DIVISOR
+            } else if velocity_y < -FIRST_TO_SECOND_STAGE_THRESHOLD {
+                -FIRST_TO_SECOND_STAGE_THRESHOLD / FIRST_STAGE_DIVISOR
+                    + (velocity_y + FIRST_TO_SECOND_STAGE_THRESHOLD) / SECOND_STAGE_DIVISOR
+            } else {
+                velocity_y / FIRST_STAGE_DIVISOR
+            };
+
+            let row_height = (self
+                .year_rows
+                .get()
+                .unwrap()
+                .lock()
+                .unwrap()
+                .first()
+                .unwrap()
+                .height()
+                + SPACING) as f64;
+            let offset_from_a_row = self.scroll_offset.get() % row_height;
+
+            // Adjust velocity to snap to the start of a year row
+            if velocity_y > VELOCITY_THRESHOLD_TO_SNAP {
+                velocity_y =
+                    (velocity_y / row_height).floor() * row_height + row_height - offset_from_a_row;
+            } else if velocity_y < -VELOCITY_THRESHOLD_TO_SNAP {
+                velocity_y = (velocity_y / row_height).ceil() * row_height
+                    - offset_from_a_row
+                    - SPACING as f64;
+            };
+
+            self.last_velocity.set(velocity_y);
+
+            let duration_ms = velocity_y.abs() / obj.height() as f64 * 1000.;
+            let animation_target = adw::CallbackAnimationTarget::new(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |new_velocity| {
+                    if new_velocity.abs() < VELOCITY_THRESHOLD_TO_SKIP
+                        && let Some(animation) = imp.scroll_animation.borrow().as_ref()
+                    {
+                        animation.skip();
+                        return;
+                    }
+
+                    let dy = imp.last_velocity.get() - new_velocity;
+                    imp.last_velocity.set(new_velocity);
+                    imp.change_scroll_offset(dy);
+                }
+            ));
+            let kinetic_scroll_animation = adw::TimedAnimation::new(
+                &*obj,
+                velocity_y,
+                0.,
+                duration_ms as u32,
+                animation_target,
+            );
+            kinetic_scroll_animation.set_easing(adw::Easing::EaseOutExpo);
+            kinetic_scroll_animation.set_follow_enable_animations_setting(false);
+
+            self.scroll_animation
+                .replace(Some(kinetic_scroll_animation.clone()));
+            kinetic_scroll_animation.play();
         }
     }
 }

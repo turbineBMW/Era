@@ -5,8 +5,9 @@ template $YearView: Widget {
 
   EventControllerScroll {
     flags: vertical | kinetic;
-    scroll => $scroll(template);
-    decelerate => $decelerate(template);
+    scroll-begin => $kinetic_scroll_begin(template);
+    scroll => $kinetic_scroll(template);
+    decelerate => $kinetic_decelerate(template);
   }
 
   styles [
