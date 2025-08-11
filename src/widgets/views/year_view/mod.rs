@@ -227,6 +227,79 @@ pub(crate) mod imp {
             obj.queue_allocate();
         }
 
+        fn inertia_scrolling(&self, mut velocity: f64) {
+            let obj = self.obj();
+
+            if let Some(kinetic_scroll_animation) = self.scroll_animation.borrow().as_ref() {
+                kinetic_scroll_animation.pause();
+            }
+            self.scroll_animation.replace(None);
+
+            if velocity.abs() < VELOCITY_THRESHOLD_TO_RETURN {
+                return;
+            }
+
+            velocity = if velocity > FIRST_TO_SECOND_STAGE_THRESHOLD {
+                FIRST_TO_SECOND_STAGE_THRESHOLD / FIRST_STAGE_DIVISOR
+                    + (velocity - FIRST_TO_SECOND_STAGE_THRESHOLD) / SECOND_STAGE_DIVISOR
+            } else if velocity < -FIRST_TO_SECOND_STAGE_THRESHOLD {
+                -FIRST_TO_SECOND_STAGE_THRESHOLD / FIRST_STAGE_DIVISOR
+                    + (velocity + FIRST_TO_SECOND_STAGE_THRESHOLD) / SECOND_STAGE_DIVISOR
+            } else {
+                velocity / FIRST_STAGE_DIVISOR
+            };
+
+            let row_height = (self
+                .year_rows
+                .get()
+                .unwrap()
+                .lock()
+                .unwrap()
+                .first()
+                .unwrap()
+                .height()
+                + SPACING) as f64;
+            let offset_from_a_row = self.scroll_offset.get() % row_height;
+
+            // Adjust velocity to snap to the start of a year row
+            if velocity > VELOCITY_THRESHOLD_TO_SNAP {
+                velocity =
+                    (velocity / row_height).floor() * row_height + row_height - offset_from_a_row;
+            } else if velocity < -VELOCITY_THRESHOLD_TO_SNAP {
+                velocity = (velocity / row_height).ceil() * row_height
+                    - offset_from_a_row
+                    - SPACING as f64;
+            };
+
+            self.last_velocity.set(velocity);
+
+            let duration_ms = velocity.abs() / obj.height() as f64 * 1000.;
+            let animation_target = adw::CallbackAnimationTarget::new(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |new_velocity| {
+                    if new_velocity.abs() < VELOCITY_THRESHOLD_TO_SKIP
+                        && let Some(animation) = imp.scroll_animation.borrow().as_ref()
+                    {
+                        animation.skip();
+                        return;
+                    }
+
+                    let dy = imp.last_velocity.get() - new_velocity;
+                    imp.last_velocity.set(new_velocity);
+                    imp.change_scroll_offset(dy);
+                }
+            ));
+            let kinetic_scroll_animation =
+                adw::TimedAnimation::new(&*obj, velocity, 0., duration_ms as u32, animation_target);
+            kinetic_scroll_animation.set_easing(adw::Easing::EaseOutExpo);
+            kinetic_scroll_animation.set_follow_enable_animations_setting(false);
+
+            self.scroll_animation
+                .replace(Some(kinetic_scroll_animation.clone()));
+            kinetic_scroll_animation.play();
+        }
+
         #[template_callback]
         fn get_year_label_narrow(&self) -> String {
             self.obj().year().to_string()
@@ -259,77 +332,13 @@ pub(crate) mod imp {
 
         // TODO: Rename velocity to something more accurate
         #[template_callback]
-        fn kinetic_decelerate(&self, _velocity_x: f64, mut velocity_y: f64) {
-            let obj = self.obj();
+        fn kinetic_decelerate(&self, _velocity_x: f64, velocity_y: f64) {
+            self.inertia_scrolling(velocity_y);
+        }
 
-            if velocity_y.abs() < VELOCITY_THRESHOLD_TO_RETURN {
-                return;
-            }
-
-            velocity_y = if velocity_y > FIRST_TO_SECOND_STAGE_THRESHOLD {
-                FIRST_TO_SECOND_STAGE_THRESHOLD / FIRST_STAGE_DIVISOR
-                    + (velocity_y - FIRST_TO_SECOND_STAGE_THRESHOLD) / SECOND_STAGE_DIVISOR
-            } else if velocity_y < -FIRST_TO_SECOND_STAGE_THRESHOLD {
-                -FIRST_TO_SECOND_STAGE_THRESHOLD / FIRST_STAGE_DIVISOR
-                    + (velocity_y + FIRST_TO_SECOND_STAGE_THRESHOLD) / SECOND_STAGE_DIVISOR
-            } else {
-                velocity_y / FIRST_STAGE_DIVISOR
-            };
-
-            let row_height = (self
-                .year_rows
-                .get()
-                .unwrap()
-                .lock()
-                .unwrap()
-                .first()
-                .unwrap()
-                .height()
-                + SPACING) as f64;
-            let offset_from_a_row = self.scroll_offset.get() % row_height;
-
-            // Adjust velocity to snap to the start of a year row
-            if velocity_y > VELOCITY_THRESHOLD_TO_SNAP {
-                velocity_y =
-                    (velocity_y / row_height).floor() * row_height + row_height - offset_from_a_row;
-            } else if velocity_y < -VELOCITY_THRESHOLD_TO_SNAP {
-                velocity_y = (velocity_y / row_height).ceil() * row_height
-                    - offset_from_a_row
-                    - SPACING as f64;
-            };
-
-            self.last_velocity.set(velocity_y);
-
-            let duration_ms = velocity_y.abs() / obj.height() as f64 * 1000.;
-            let animation_target = adw::CallbackAnimationTarget::new(clone!(
-                #[weak(rename_to = imp)]
-                self,
-                move |new_velocity| {
-                    if new_velocity.abs() < VELOCITY_THRESHOLD_TO_SKIP
-                        && let Some(animation) = imp.scroll_animation.borrow().as_ref()
-                    {
-                        animation.skip();
-                        return;
-                    }
-
-                    let dy = imp.last_velocity.get() - new_velocity;
-                    imp.last_velocity.set(new_velocity);
-                    imp.change_scroll_offset(dy);
-                }
-            ));
-            let kinetic_scroll_animation = adw::TimedAnimation::new(
-                &*obj,
-                velocity_y,
-                0.,
-                duration_ms as u32,
-                animation_target,
-            );
-            kinetic_scroll_animation.set_easing(adw::Easing::EaseOutExpo);
-            kinetic_scroll_animation.set_follow_enable_animations_setting(false);
-
-            self.scroll_animation
-                .replace(Some(kinetic_scroll_animation.clone()));
-            kinetic_scroll_animation.play();
+        #[template_callback]
+        fn swipe(&self, _velocity_x: f64, velocity_y: f64) {
+            self.inertia_scrolling(-velocity_y);
         }
     }
 }

@@ -10,6 +10,11 @@ template $YearView: Widget {
     decelerate => $kinetic_decelerate(template);
   }
 
+  GestureSwipe swipe_gesture {
+    touch-only: true;
+    swipe => $swipe(template);
+  }
+
   styles [
     "year-view",
   ]
