@@ -17,12 +17,13 @@ mod imp {
     #[properties(wrapper_type = super::Application)]
     pub struct Application {
         // TODO: Monitor the system to update those
+        // TODO: Use i16 for year ; this requires support from gtk-rs
         #[property(get, set)]
         current_year: Cell<i32>,
         #[property(get, set)]
-        current_month: Cell<i32>,
+        current_month: Cell<i8>,
         #[property(get, set)]
-        current_day: Cell<i32>,
+        current_day: Cell<i8>,
         pub manager: Manager,
     }
 
@@ -77,8 +78,8 @@ impl Application {
             .property("flags", flags)
             .property("resource-base-path", BASE_RESOURCE_PATH)
             .property("current-year", current_year as i32)
-            .property("current-month", current_month as i32)
-            .property("current-day", current_day as i32)
+            .property("current-month", current_month)
+            .property("current-day", current_day)
             .build()
     }
 

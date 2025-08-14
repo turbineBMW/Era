@@ -14,7 +14,7 @@ mod year_view_year_row;
 
 use crate::Application;
 
-use self::{year_view_month_cell::*, year_view_year_row::*};
+use self::{year_view_month_cell::YearViewMonthCell, year_view_year_row::YearViewYearRow};
 
 const MINIMUM_NB_ROWS_ABOVE: f64 = 0.5;
 const MINIMUM_NB_ROWS_BELOW: f64 = 8.;
@@ -51,7 +51,6 @@ pub(crate) mod imp {
         year: Cell<i32>,
         #[property(get, set, builder(YearViewStyling::default()))]
         styling: Cell<YearViewStyling>,
-        // TODO: I should remove the OnceCell? Should I use Cell instead of Mutex?
         year_rows: OnceCell<Mutex<Vec<YearViewYearRow>>>,
         year_row_height: Cell<i32>,
         scroll_offset: Cell<f64>,
@@ -66,9 +65,6 @@ pub(crate) mod imp {
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
-            YearViewMonthCell::ensure_type();
-            YearViewYearRow::ensure_type();
-
             klass.bind_template();
             klass.bind_template_callbacks();
         }
@@ -139,8 +135,7 @@ pub(crate) mod imp {
                 vec![
                     Signal::builder("month-clicked")
                         // Year, Month
-                        // TODO: Should these be something else than i32?
-                        .param_types([i32::static_type(), i32::static_type()])
+                        .param_types([i32::static_type(), i8::static_type()])
                         .build(),
                 ]
             });
@@ -229,7 +224,6 @@ pub(crate) mod imp {
             obj.queue_allocate();
         }
 
-        // TODO: Add duration as a parameter
         /// Start a scroll animation.
         ///
         /// The animation will move the view by the given amount of pixels over a certain amount of

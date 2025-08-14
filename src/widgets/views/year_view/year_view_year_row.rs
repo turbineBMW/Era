@@ -102,8 +102,7 @@ pub(crate) mod imp {
                 vec![
                     Signal::builder("month-clicked")
                         // Year, Month
-                        // TODO: Should these be something else than i32?
-                        .param_types([i32::static_type(), i32::static_type()])
+                        .param_types([i32::static_type(), i8::static_type()])
                         .build(),
                 ]
             });
@@ -168,7 +167,6 @@ pub(crate) mod imp {
             }
         }
 
-        // TODO: check if i have been allocated enough space
         fn size_allocate(&self, width: i32, _height: i32, baseline: i32) {
             let width = width - SIDE_MARGIN * 2;
 
@@ -239,13 +237,14 @@ pub(crate) mod imp {
         }
 
         #[template_callback]
-        fn month_cell_clicked(&self, _cell: gtk::FlowBoxChild) {
-            // let cell = cell
-            //     .upcast::<gtk::Widget>()
-            //     .downcast::<YearViewMonthCell>()
-            //     .unwrap();
-            // self.obj()
-            //     .emit_by_name::<()>("month-clicked", &[&cell.year(), &cell.month()]);
+        fn month_cell_clicked(&self, child: gtk::FlowBoxChild) {
+            let cell = child
+                .first_child()
+                .expect("Flow box child should have a child")
+                .downcast::<YearViewMonthCell>()
+                .expect("The child of flow box child should be a month cell");
+            self.obj()
+                .emit_by_name::<()>("month-clicked", &[&cell.year(), &cell.month()]);
         }
     }
 }
@@ -261,14 +260,14 @@ impl YearViewYearRow {
         glib::Object::builder().property("year", year).build()
     }
 
-    pub fn connect_month_clicked<F: Fn(&Self, i32, i32) + 'static>(
+    pub fn connect_month_clicked<F: Fn(&Self, i32, i8) + 'static>(
         &self,
         f: F,
     ) -> glib::SignalHandlerId {
         self.connect_closure(
             "month-clicked",
             true,
-            closure_local!(move |obj: Self, year: i32, month: i32| {
+            closure_local!(move |obj: Self, year: i32, month: i8| {
                 f(&obj, year, month);
             }),
         )

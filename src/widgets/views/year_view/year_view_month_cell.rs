@@ -2,7 +2,6 @@ use std::{cell::Cell, cmp};
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::jiff;
-use gettextrs::gettext;
 use gtk::glib::{self, clone};
 
 use crate::Application;
@@ -10,6 +9,8 @@ use crate::Application;
 use super::YearViewStyling;
 
 pub(crate) mod imp {
+    use crate::utils;
+
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
@@ -18,8 +19,8 @@ pub(crate) mod imp {
     pub struct YearViewMonthCell {
         #[property(get, set)]
         year: Cell<i32>,
-        #[property(get, set)]
-        month: Cell<i32>,
+        #[property(get, construct_only)]
+        month: Cell<i8>,
         #[property(get, set, builder(YearViewStyling::default()))]
         styling: Cell<YearViewStyling>,
         #[template_child]
@@ -196,7 +197,6 @@ pub(crate) mod imp {
             }
         }
 
-        // TODO: check if i have been allocated enough space
         fn size_allocate(&self, width: i32, _height: i32, baseline: i32) {
             let spacing = self.spacing.get();
 
@@ -236,7 +236,7 @@ pub(crate) mod imp {
         fn set_days_grid(&self) {
             let year = self.year.get();
             let month = self.month.get();
-            let first_day = jiff::civil::date(year as i16, month as i8, 1);
+            let first_day = jiff::civil::date(year as i16, month, 1);
             let days_in_month = first_day.days_in_month() as usize;
             let weekday_of_first_day = first_day.weekday() as usize - 1;
 
@@ -321,7 +321,7 @@ pub(crate) mod imp {
             }
         }
 
-        fn update_month_label_color(&self, current_year: i32, current_month: i32) {
+        fn update_month_label_color(&self, current_year: i32, current_month: i8) {
             if self.year.get() == current_year && self.month.get() == current_month {
                 self.month_label.add_css_class("accent");
             } else {
@@ -329,7 +329,7 @@ pub(crate) mod imp {
             }
         }
 
-        fn update_day_label_color(&self, current_year: i32, current_month: i32, current_day: i32) {
+        fn update_day_label_color(&self, current_year: i32, current_month: i8, current_day: i8) {
             let year = self.year.get();
             let month = self.month.get();
 
@@ -342,9 +342,9 @@ pub(crate) mod imp {
             }
 
             if year == current_year && month == current_month {
-                let first_day = jiff::civil::date(year as i16, month as i8, 1);
+                let first_day = jiff::civil::date(year as i16, month, 1);
                 let weekday_of_first_day = first_day.weekday() as usize - 1;
-                let current_day_cell_number = weekday_of_first_day as i32 + current_day - 1;
+                let current_day_cell_number = weekday_of_first_day as i32 + current_day as i32 - 1;
                 let current_day_label = self
                     .days_grid
                     .child_at(current_day_cell_number % 7, current_day_cell_number / 7)
@@ -356,21 +356,7 @@ pub(crate) mod imp {
         #[template_callback]
         fn get_month_name(&self) -> String {
             let month = self.obj().month();
-            match month {
-                1 => gettext("January"),
-                2 => gettext("February"),
-                3 => gettext("March"),
-                4 => gettext("April"),
-                5 => gettext("May"),
-                6 => gettext("June"),
-                7 => gettext("July"),
-                8 => gettext("August"),
-                9 => gettext("September"),
-                10 => gettext("October"),
-                11 => gettext("November"),
-                12 => gettext("December"),
-                _ => "".to_string(),
-            }
+            utils::get_month_name(month)
         }
     }
 }
@@ -382,7 +368,7 @@ glib::wrapper! {
 }
 
 impl YearViewMonthCell {
-    pub fn new(year: i32, month: i32) -> Self {
+    pub fn new(year: i32, month: i8) -> Self {
         glib::Object::builder()
             .property("year", year)
             .property("month", month)

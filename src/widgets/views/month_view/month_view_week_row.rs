@@ -1,7 +1,7 @@
-use std::{cell::Cell, sync::LazyLock};
+use std::cell::Cell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use gtk::glib::{self, closure_local, subclass::Signal};
+use gtk::glib;
 
 // use super::MonthViewDayCell;
 
@@ -35,20 +35,7 @@ pub(crate) mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for MonthViewWeekRow {
-        fn signals() -> &'static [Signal] {
-            static SIGNALS: LazyLock<Vec<Signal>> = LazyLock::new(|| {
-                vec![
-                    Signal::builder("month-clicked")
-                        // Year, Month
-                        // TODO: Should these be something else than i32?
-                        .param_types([i32::static_type(), i32::static_type()])
-                        .build(),
-                ]
-            });
-            SIGNALS.as_ref()
-        }
-    }
+    impl ObjectImpl for MonthViewWeekRow {}
 
     impl WidgetImpl for MonthViewWeekRow {}
     impl BoxImpl for MonthViewWeekRow {}
@@ -69,18 +56,5 @@ impl MonthViewWeekRow {
             .property("year", year)
             .property("week", week)
             .build()
-    }
-
-    pub fn connect_month_clicked<F: Fn(&Self, i32, i32) + 'static>(
-        &self,
-        f: F,
-    ) -> glib::SignalHandlerId {
-        self.connect_closure(
-            "month-clicked",
-            true,
-            closure_local!(move |obj: Self, year: i32, month: i32| {
-                f(&obj, year, month);
-            }),
-        )
     }
 }
