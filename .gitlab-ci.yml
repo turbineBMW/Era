@@ -16,10 +16,12 @@ variables:
 stages:
   - check
   - build
+  - test
   - deploy
 
 .flatpak-command: &flatpak-command
   image: "${RUNTIME_IMAGE}"
+  interruptible: true
   tags:
     - flatpak
   script:
@@ -30,6 +32,7 @@ stages:
 cargo-fmt:
   stage: "check"
   image: "rust:slim"
+  interruptible: true
   script:
     - rustup component add rustfmt
     - rustc -Vv && cargo -Vv
@@ -41,10 +44,12 @@ cargo-clippy:
   stage: check
   variables:
     COMMAND: "cargo clippy -- -D warnings"
+  interruptible: true
 
 blueprint-format:
   stage: check
   image: fedora:latest
+  interruptible: true
   before_script:
     - dnf install -y blueprint-compiler
     - shopt -s globstar
@@ -54,9 +59,35 @@ blueprint-format:
 build@x86_64:
   extends: ".flatpak@x86_64"
   stage: build
+  after_script:
+    # Copy the metainfo file to the current directory.
+    - cp flatpak_app/files/share/metainfo/*.metainfo.xml .
+  artifacts:
+    paths:
+      - $BUNDLE
+      - 'repo.tar'
+      - '.flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-logs/'
+      # Add the metainfo file for the corresponding test.
+      - '${APP_ID}.metainfo.xml'
 
 build@aarch64:
   extends: ".flatpak@aarch64"
   stage: build
+
+# Validate the metainfo with Flathub's tool.
+lint-metainfo:
+  stage: test
+  image:
+    name: "ghcr.io/flathub/flatpak-builder-lint:latest"
+    entrypoint: [""]
+  variables:
+    METAINFO: "${APP_ID}.metainfo.xml"
+  interruptible: true
+  script:
+    # This tool has extra tests on top of appstreamcli and is required to pass for Flathub.
+    - flatpak-builder-lint appstream ${METAINFO}
+    # Test also with the pedantic and strict flags.
+    - appstreamcli validate --pedantic --explain --strict ${METAINFO}
+  needs: ["build@x86_64"]
 # TODO: Also build for stable
 # TODO: Build and host docs
