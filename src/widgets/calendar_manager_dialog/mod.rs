@@ -1,5 +1,6 @@
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Resource, prelude::*};
+use glib::clone;
 use tracing::error;
 
 mod calendar_creation_dialog;
@@ -18,6 +19,8 @@ mod imp {
     #[derive(Debug, Default, gtk::CompositeTemplate)]
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_manager_dialog.ui")]
     pub struct CalendarManagerDialog {
+        #[template_child]
+        stack: TemplateChild<gtk::Stack>,
         #[template_child]
         navigation_view: TemplateChild<adw::NavigationView>,
         #[template_child]
@@ -61,10 +64,6 @@ mod imp {
                         .push(&CalendarDetailsPage::new(&calendar));
                 },
             );
-
-            klass.install_action("calendar-manager.close-subpage", None, |obj, _, _| {
-                obj.imp().navigation_view.pop();
-            });
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -77,8 +76,26 @@ mod imp {
             self.parent_constructed();
 
             let manager = Application::default().manager();
-            self.collections_list
-                .set_model(manager.collections_model().into());
+            let collections_model = manager.collections_model();
+            self.collections_list.set_model(&collections_model);
+
+            if collections_model.n_items() == 0 {
+                self.stack.set_visible_child_name("empty");
+            } else {
+                self.stack.set_visible_child_name("collections");
+            }
+
+            collections_model.connect_items_changed(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |collections_model, _, _, _| {
+                    if collections_model.n_items() == 0 {
+                        imp.stack.set_visible_child_name("empty");
+                    } else {
+                        imp.stack.set_visible_child_name("collections");
+                    }
+                }
+            ));
         }
     }
 
@@ -96,7 +113,7 @@ glib::wrapper! {
 
 impl CalendarManagerDialog {
     pub fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 }
 

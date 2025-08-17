@@ -60,9 +60,7 @@ mod imp {
                 #[weak(rename_to = imp)]
                 self,
                 move |_| {
-                    let _ = imp
-                        .obj()
-                        .activate_action("calendar-manager.close-subpage", None);
+                    let _ = imp.obj().activate_action("navigation.pop", None);
                 }
             ));
         }
@@ -98,7 +96,8 @@ mod imp {
 glib::wrapper! {
     pub struct CalendarDetailsPage(ObjectSubclass<imp::CalendarDetailsPage>)
     @extends gtk::Widget, adw::NavigationPage,
-    @implements gtk::Accessible, gtk::Actionable, gtk::Buildable, gtk::ConstraintTarget, gtk::Editable;
+    @implements gtk::Accessible, gtk::Actionable, gtk::Buildable, gtk::ConstraintTarget,
+        gtk::Editable;
 }
 
 impl CalendarDetailsPage {

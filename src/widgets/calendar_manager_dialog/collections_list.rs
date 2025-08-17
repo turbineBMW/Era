@@ -1,6 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::Collection;
-use gio::ListModel;
+use clepsydre::{Collection, CollectionsModel};
 
 use super::collection_row::CollectionRow;
 
@@ -11,7 +10,7 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/collections_list.ui")]
     pub struct CollectionsList {
         #[template_child]
-        pub collections_list: TemplateChild<gtk::ListBox>,
+        collections_list: TemplateChild<gtk::ListBox>,
     }
 
     #[glib::object_subclass]
@@ -29,13 +28,20 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for CollectionsList {
-        fn constructed(&self) {
-            self.parent_constructed();
-        }
-    }
+    impl ObjectImpl for CollectionsList {}
     impl WidgetImpl for CollectionsList {}
     impl BoxImpl for CollectionsList {}
+
+    impl CollectionsList {
+        pub(super) fn set_model(&self, model: &CollectionsModel) {
+            self.collections_list.bind_model(Some(model), move |obj| {
+                let collection = obj
+                    .downcast_ref::<Collection>()
+                    .expect("Model should contain only Collection objects");
+                CollectionRow::new(collection).upcast()
+            });
+        }
+    }
 }
 
 glib::wrapper! {
@@ -45,14 +51,7 @@ glib::wrapper! {
 }
 
 impl CollectionsList {
-    pub fn set_model(&self, model: ListModel) {
-        let imp = self.imp();
-
-        imp.collections_list.bind_model(Some(&model), move |obj| {
-            let collection = obj
-                .downcast_ref::<Collection>()
-                .expect("Model should contain only Collection objects");
-            CollectionRow::new(collection).upcast()
-        });
+    pub fn set_model(&self, model: &CollectionsModel) {
+        self.imp().set_model(model);
     }
 }

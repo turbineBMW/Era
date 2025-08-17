@@ -236,7 +236,7 @@ checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
 [[package]]
 name = "clepsydre"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#d63b3101e95421e603c9d9badff3f6cac98768fd"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#0173a04c0f180a6a7327d74d4e1eee681f012a75"
 dependencies = [
  "gdk4",
  "gettext-rs",
