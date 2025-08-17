@@ -35,6 +35,8 @@ template $CalendarDetailsPage: Adw.NavigationPage {
       }
 
       Adw.PreferencesGroup {
+        visible: bind $collection_is_writable(template.calendar as <$Calendar>.collection as <$Collection>.read_only) as <bool>;
+
         Adw.ButtonRow {
           title: _("Delete Calendar");
           activated => $delete_calendar(template);

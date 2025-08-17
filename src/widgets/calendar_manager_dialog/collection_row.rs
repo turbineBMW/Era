@@ -60,6 +60,11 @@ mod imp {
     #[gtk::template_callbacks]
     impl CollectionRow {
         #[template_callback]
+        fn is_writable(&self, read_only: bool) -> bool {
+            !read_only
+        }
+
+        #[template_callback]
         fn open_calendar_creation_dialog(&self) {
             let dialog = CalendarCreationDialog::new(
                 &self

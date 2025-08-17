@@ -86,6 +86,11 @@ mod imp {
         }
 
         #[template_callback]
+        fn collection_is_writable(&self, read_only: bool) -> bool {
+            !read_only
+        }
+
+        #[template_callback]
         fn delete_calendar(&self) {
             let calendar = self.obj().calendar().unwrap();
             calendar.delete();
