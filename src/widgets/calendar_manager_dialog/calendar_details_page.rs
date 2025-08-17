@@ -2,7 +2,7 @@ use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Calendar;
-use gtk::glib::{self, clone};
+use glib::clone;
 
 mod imp {
     use super::*;

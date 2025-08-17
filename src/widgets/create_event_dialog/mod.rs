@@ -1,6 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Calendar;
-use gtk::glib;
 
 mod calendar_combo_row;
 

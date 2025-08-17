@@ -2,7 +2,7 @@ use std::{cell::Cell, cmp};
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::jiff;
-use gtk::glib::{self, clone};
+use glib::clone;
 
 use crate::Application;
 

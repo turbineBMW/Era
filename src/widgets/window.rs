@@ -1,6 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::jiff;
-use gtk::{gdk, gio, glib};
 
 use crate::{
     utils,

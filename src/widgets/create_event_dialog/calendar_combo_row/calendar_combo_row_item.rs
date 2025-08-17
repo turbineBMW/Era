@@ -2,10 +2,7 @@ use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Calendar;
-use gtk::{
-    gdk::{Paintable, RGBA},
-    glib,
-};
+use gdk::{Paintable, RGBA};
 
 use crate::utils::get_circle_paintable_from_color;
 

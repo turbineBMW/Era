@@ -1,6 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::Event;
-use gtk::glib;
+use clepsydre::{Event, prelude::*};
 
 mod event_row;
 

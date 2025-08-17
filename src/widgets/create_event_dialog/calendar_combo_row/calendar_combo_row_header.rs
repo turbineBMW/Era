@@ -2,7 +2,6 @@ use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Collection;
-use gtk::glib;
 
 mod imp {
     use super::*;

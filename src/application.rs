@@ -1,9 +1,8 @@
-use std::cell::Cell;
+use std::cell::{Cell, OnceCell};
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Manager, jiff};
+use clepsydre::{EdsManager, Manager, jiff};
 use gettextrs::gettext;
-use gtk::{gio, glib};
 
 use crate::{
     config::{APP_ID, APP_NAME, BASE_RESOURCE_PATH, VERSION},
@@ -24,7 +23,7 @@ mod imp {
         current_month: Cell<i8>,
         #[property(get, set)]
         current_day: Cell<i8>,
-        pub manager: Manager,
+        manager: OnceCell<Manager>,
     }
 
     #[glib::object_subclass]
@@ -38,9 +37,13 @@ mod imp {
     impl ObjectImpl for Application {
         fn constructed(&self) {
             self.parent_constructed();
+
             let obj = self.obj();
+
             obj.setup_gactions();
             obj.set_accels_for_action("app.quit", &["<primary>q"]);
+
+            self.manager.set(EdsManager::new().upcast()).unwrap();
         }
     }
 
@@ -58,6 +61,15 @@ mod imp {
 
     impl GtkApplicationImpl for Application {}
     impl AdwApplicationImpl for Application {}
+
+    impl Application {
+        pub(super) fn manager(&self) -> Manager {
+            self.manager
+                .get()
+                .expect("Manager should be initialized")
+                .clone()
+        }
+    }
 }
 
 glib::wrapper! {
@@ -84,7 +96,7 @@ impl Application {
     }
 
     pub fn manager(&self) -> Manager {
-        self.imp().manager.clone()
+        self.imp().manager()
     }
 
     fn setup_gactions(&self) {

@@ -1,6 +1,5 @@
-use adw::subclass::prelude::*;
-use clepsydre::Resource;
-use gtk::{glib, prelude::*};
+use adw::{prelude::*, subclass::prelude::*};
+use clepsydre::{Resource, prelude::*};
 use tracing::error;
 
 mod calendar_creation_dialog;

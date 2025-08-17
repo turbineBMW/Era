@@ -1,5 +1,5 @@
 use gettextrs::{bind_textdomain_codeset, bindtextdomain, textdomain};
-use gtk::{gio, glib, prelude::*};
+use gtk::prelude::*;
 use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
 mod application;
@@ -13,6 +13,9 @@ use self::{
 };
 
 fn main() -> glib::ExitCode {
+    // unsafe {
+    //     std::env::set_var("GDK_DEBUG", "events");
+    // }
     let env_filter = EnvFilter::try_from_default_env()
         .unwrap_or_else(|_| EnvFilter::new(format!("{PROJECT_NAME}=debug,clepsydre=debug,warn")));
 

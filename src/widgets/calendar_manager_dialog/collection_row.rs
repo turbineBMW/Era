@@ -1,8 +1,7 @@
 use std::cell::RefCell;
 
-use adw::prelude::*;
+use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Collection;
-use gtk::{glib, subclass::prelude::*};
 
 use super::{calendar_creation_dialog::CalendarCreationDialog, calendar_row::CalendarRow};
 

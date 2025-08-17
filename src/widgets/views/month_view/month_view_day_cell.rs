@@ -1,7 +1,6 @@
 use std::cell::Cell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use gtk::glib;
 
 pub(crate) mod imp {
     use super::*;

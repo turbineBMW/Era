@@ -1,10 +1,9 @@
 use std::cell::OnceCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use gtk::{
-    FlattenListModel,
-    glib::{self, clone},
-};
+use clepsydre::prelude::*;
+use glib::clone;
+use gtk::FlattenListModel;
 
 mod calendar_combo_row_header;
 mod calendar_combo_row_item;

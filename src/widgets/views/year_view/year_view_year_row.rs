@@ -1,7 +1,7 @@
 use std::{cell::Cell, cmp, sync::LazyLock};
 
 use adw::{prelude::*, subclass::prelude::*};
-use gtk::glib::{self, clone, closure_local, subclass::Signal};
+use glib::{clone, closure_local, subclass::Signal};
 
 use crate::Application;
 

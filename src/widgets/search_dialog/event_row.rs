@@ -2,10 +2,7 @@ use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Event, Timeframe};
-use gtk::{
-    gdk::{Paintable, RGBA},
-    glib,
-};
+use gdk::{Paintable, RGBA};
 
 use crate::utils::get_horizontal_bar_paintable_from_color;
 

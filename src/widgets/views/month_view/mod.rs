@@ -5,10 +5,8 @@ use std::{
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::jiff;
-use gtk::{
-    Allocation,
-    glib::{self, subclass::Signal},
-};
+use glib::subclass::Signal;
+use gtk::Allocation;
 
 mod month_view_day_cell;
 mod month_view_week_row;

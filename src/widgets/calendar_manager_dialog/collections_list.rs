@@ -1,6 +1,6 @@
-use adw::prelude::*;
+use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Collection;
-use gtk::{gio::ListModel, glib, subclass::prelude::*};
+use gio::ListModel;
 
 use super::collection_row::CollectionRow;
 

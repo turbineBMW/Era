@@ -4,10 +4,8 @@ use std::{
 };
 
 use adw::{prelude::*, subclass::prelude::*};
-use gtk::{
-    Allocation, gdk,
-    glib::{self, clone, subclass::Signal},
-};
+use glib::{clone, subclass::Signal};
+use gtk::Allocation;
 
 mod year_view_month_cell;
 mod year_view_year_row;

@@ -1,7 +1,6 @@
 use std::cell::Cell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use gtk::glib;
 
 // use super::MonthViewDayCell;
 
