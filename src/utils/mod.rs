@@ -2,8 +2,10 @@ use gettextrs::gettext;
 
 mod macros;
 mod paintables;
+mod template_callbacks;
 
 pub use paintables::*;
+pub use template_callbacks::*;
 
 pub fn get_month_name(month: i8) -> String {
     match month {

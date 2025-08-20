@@ -12,16 +12,30 @@ template $CalendarDetailsPage: Adw.NavigationPage {
       Adw.PreferencesGroup {
         Adw.EntryRow name_entry {
           title: _("Name");
+          visible: bind template.calendar as <$Calendar>.name_editable as <bool>;
           show-apply-button: true;
           apply => $update_calendar_name(template);
         }
 
         Adw.ActionRow {
+          title: _("Name");
+          subtitle: bind template.calendar as <$Calendar>.name;
+          use-markup: false;
+          visible: bind $invert_boolean(template.calendar as <$Calendar>.name_editable) as <bool>;
+
+          styles [
+            "property",
+          ]
+        }
+
+        Adw.ActionRow {
           title: _("Color");
+          activatable: bind template.calendar as <$Calendar>.color_editable as <bool>;
           activatable-widget: calendar_color_button;
 
           ColorDialogButton calendar_color_button {
             valign: center;
+            sensitive: bind template.calendar as <$Calendar>.color_editable as <bool>;
             // TODO: Find a way to skip the color update on page creation
             rgba: bind template.calendar as <$Calendar>.color;
             notify::rgba => $update_calendar_color(template);
@@ -35,7 +49,7 @@ template $CalendarDetailsPage: Adw.NavigationPage {
       }
 
       Adw.PreferencesGroup {
-        visible: bind $collection_is_writable(template.calendar as <$Calendar>.collection as <$Collection>.read_only) as <bool>;
+        visible: bind template.calendar as <$Calendar>.deletable as <bool>;
 
         Adw.ButtonRow {
           title: _("Delete Calendar");

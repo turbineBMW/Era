@@ -14,8 +14,6 @@ mod imp {
     pub struct CollectionRow {
         #[property(get, set, construct_only)]
         pub collection: RefCell<Option<Collection>>,
-        // #[template_child]
-        // pub preferences_group: TemplateChild<adw::PreferencesGroup>,
         #[template_child]
         pub name_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -59,11 +57,6 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl CollectionRow {
-        #[template_callback]
-        fn is_writable(&self, read_only: bool) -> bool {
-            !read_only
-        }
-
         #[template_callback]
         fn open_calendar_creation_dialog(&self) {
             let dialog = CalendarCreationDialog::new(

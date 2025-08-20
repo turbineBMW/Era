@@ -28,7 +28,7 @@ template $CollectionRow: ListBoxRow {
 
       Button {
         icon-name: "list-add-symbolic";
-        visible: bind $is_writable(template.collection as <$Collection>.read-only) as <bool>;
+        visible: bind template.collection as <$Collection>.calendar-creation-enabled as <bool>;
         halign: end;
         hexpand: true;
         clicked => $open_calendar_creation_dialog(template);

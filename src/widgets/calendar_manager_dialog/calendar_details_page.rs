@@ -4,6 +4,8 @@ use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Calendar;
 use glib::clone;
 
+use crate::utils::TemplateCallbacks;
+
 mod imp {
     use super::*;
 
@@ -28,6 +30,7 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+            TemplateCallbacks::bind_template_callbacks(klass);
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -83,11 +86,6 @@ mod imp {
             let calendar = self.obj().calendar().unwrap();
             let color = self.calendar_color_button.rgba();
             calendar.update(None, Some(color));
-        }
-
-        #[template_callback]
-        fn collection_is_writable(&self, read_only: bool) -> bool {
-            !read_only
         }
 
         #[template_callback]

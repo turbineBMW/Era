@@ -15,6 +15,7 @@ use self::{
 fn main() -> glib::ExitCode {
     // unsafe {
     //     std::env::set_var("GDK_DEBUG", "events");
+    //     std::env::set_var("RUST_BACKTRACE", "1");
     // }
     let env_filter = EnvFilter::try_from_default_env()
         .unwrap_or_else(|_| EnvFilter::new(format!("{PROJECT_NAME}=debug,clepsydre=debug,warn")));
