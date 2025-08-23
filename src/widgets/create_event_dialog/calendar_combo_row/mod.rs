@@ -1,9 +1,9 @@
 use std::cell::OnceCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::prelude::*;
+use clepsydre::{Calendar, Collection, prelude::*};
+use gio::ListModel;
 use glib::clone;
-use gtk::FlattenListModel;
 
 mod calendar_combo_row_header;
 mod calendar_combo_row_item;
@@ -23,7 +23,7 @@ mod imp {
     #[derive(Default, gtk::CompositeTemplate)]
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_combo_row.ui")]
     pub struct CalendarComboRow {
-        flattened_collections_model: OnceCell<FlattenListModel>,
+        model: OnceCell<ListModel>,
     }
 
     #[glib::object_subclass]
@@ -48,15 +48,39 @@ mod imp {
 
             let manager = Application::default().manager();
 
-            // TODO: The flattened model is updated but it is not reflected in the UI as long as the
-            // combo row exists
-            self.flattened_collections_model.get_or_init(|| {
-                let model = manager.collections_model();
-                FlattenListModel::new(Some(model))
+            let collections_model = manager.collections_model();
+            // Sort collections by name
+            let sorted_collections_model = gtk::SortListModel::new(
+                Some(collections_model),
+                Some(gtk::StringSorter::new(Some(Collection::this_expression(
+                    "name",
+                )))),
+            );
+            // Collections are unsorted models of calendars. Sort the calendars within each
+            // collection by name.
+            let map_model = gtk::MapListModel::new(Some(sorted_collections_model), |object| {
+                let collection = object
+                    .downcast_ref::<Collection>()
+                    .expect("Collections model should only contain Collections");
+                gtk::SortListModel::new(
+                    Some(collection.calendars()),
+                    Some(gtk::StringSorter::new(Some(Calendar::this_expression(
+                        "name",
+                    )))),
+                )
+                .upcast()
             });
+            let flattened_model = gtk::FlattenListModel::new(Some(map_model));
+            // Filter out read-only calendars
+            let filtered_model = gtk::FilterListModel::new(
+                Some(flattened_model),
+                Some(gtk::BoolFilter::new(Some(Calendar::this_expression(
+                    "event-creation-enabled",
+                )))),
+            );
+            self.model.get_or_init(|| filtered_model.upcast());
 
-            self.obj()
-                .set_model(Some(self.flattened_collections_model()));
+            self.obj().set_model(Some(self.model()));
         }
     }
 
@@ -68,8 +92,8 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl CalendarComboRow {
-        fn flattened_collections_model(&self) -> &FlattenListModel {
-            self.flattened_collections_model
+        fn model(&self) -> &ListModel {
+            self.model
                 .get()
                 .expect("flattened_collections_model should be initialized")
         }
@@ -92,12 +116,13 @@ mod imp {
             _factory: gtk::SignalListItemFactory,
         ) {
             let start = header.start();
-            let flatten_model = self.flattened_collections_model();
-            let collection = flatten_model
-                .model_for_item(start)
+            let model = self.model();
+            let collection = model
+                .item(start)
                 .expect("item should exist at this position")
-                .downcast()
-                .expect("item should be a Collection");
+                .downcast::<Calendar>()
+                .expect("item should be a Calendar")
+                .collection();
             let calendar_combo_row_header = CalendarComboRowHeader::new(&collection);
             header.set_child(Some(&calendar_combo_row_header));
         }
@@ -137,7 +162,7 @@ glib::wrapper! {
 
 impl CalendarComboRow {
     pub fn new() -> Self {
-        glib::Object::builder().build()
+        glib::Object::new()
     }
 }
 
