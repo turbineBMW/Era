@@ -59,7 +59,7 @@ mod imp {
                 }
             ));
 
-            calendar.connect_deleted(clone!(
+            calendar.connect_removed(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 move |_| {
@@ -89,9 +89,9 @@ mod imp {
         }
 
         #[template_callback]
-        fn delete_calendar(&self) {
+        fn remove_calendar(&self) {
             let calendar = self.obj().calendar().unwrap();
-            calendar.delete();
+            calendar.remove().unwrap();
         }
     }
 }

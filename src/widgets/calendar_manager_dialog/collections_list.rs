@@ -1,5 +1,6 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Collection, CollectionsModel};
+use clepsydre::Collection;
+use gio::ListModel;
 
 use super::collection_row::CollectionRow;
 
@@ -33,7 +34,7 @@ mod imp {
     impl BoxImpl for CollectionsList {}
 
     impl CollectionsList {
-        pub(super) fn set_model(&self, model: &CollectionsModel) {
+        pub(super) fn bind_model(&self, model: &ListModel) {
             self.collections_list.bind_model(Some(model), move |obj| {
                 let collection = obj
                     .downcast_ref::<Collection>()
@@ -51,7 +52,7 @@ glib::wrapper! {
 }
 
 impl CollectionsList {
-    pub fn set_model(&self, model: &CollectionsModel) {
-        self.imp().set_model(model);
+    pub fn bind_model(&self, model: &ListModel) {
+        self.imp().bind_model(model);
     }
 }

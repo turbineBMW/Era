@@ -156,9 +156,9 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
 name = "bitflags"
-version = "2.9.2"
+version = "2.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a65b545ab31d687cff52899d4890855fec459eb6afe0da6417b8a18da87aa29"
+checksum = "34efbcccd345379ca2868b2b2c9d3782e9cc58ba87bc7d79d5b53d9c9ae6f25d"
 
 [[package]]
 name = "block"
@@ -204,9 +204,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.2.33"
+version = "1.2.34"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3ee0f8803222ba5a7e2777dd72ca451868909b1ac410621b676adf07280e9b5f"
+checksum = "42bc4aea80032b7bf409b0bc7ccad88853858911b7713a8062fdc0623867bedc"
 dependencies = [
  "shlex",
 ]
@@ -236,7 +236,7 @@ checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
 [[package]]
 name = "clepsydre"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#35023933cfc460bda7814660ba91ff566ba237bc"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#793e51cdc3139778f6073e3c28cf58c3c5ac2615"
 dependencies = [
  "futures-util",
  "gdk4",
@@ -247,6 +247,7 @@ dependencies = [
  "tracing",
  "tracker-rs",
  "zbus",
+ "zbus_xml",
 ]
 
 [[package]]
@@ -726,9 +727,9 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "indexmap"
-version = "2.10.0"
+version = "2.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe4cd85333e22411419a0bcae1297d25e58c9443848b11dc6a86fefe8c78a661"
+checksum = "f2481980430f9f78649238835720ddccc57e52df14ffce1c6f37391d61b563e9"
 dependencies = [
  "equivalent",
  "hashbrown",
@@ -1070,6 +1071,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "89ae43fd86e4158d6db51ad8e2b80f313af9cc74f5c0e03ccb87de09998732de"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "quick-xml"
+version = "0.36.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7649a7b4df05aed9ea7ec6f628c67c9953a43869b8bc50929569b2999d443fe"
+dependencies = [
+ "memchr",
+ "serde",
 ]
 
 [[package]]
@@ -1636,9 +1647,9 @@ checksum = "271414315aff87387382ec3d271b52d7ae78726f5d44ac98b4f4030c91880486"
 
 [[package]]
 name = "winnow"
-version = "0.7.12"
+version = "0.7.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3edebf492c8125044983378ecb5766203ad3b4c2f7a922bd7dd207f6d443e95"
+checksum = "21a0236b59786fed61e2a80582dd500fe61f18b5dca67a4a067d0bc9039339cf"
 dependencies = [
  "memchr",
 ]
@@ -1709,6 +1720,19 @@ dependencies = [
  "serde",
  "static_assertions",
  "winnow",
+ "zvariant",
+]
+
+[[package]]
+name = "zbus_xml"
+version = "5.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "589e9a02bfafb9754bb2340a9e3b38f389772684c63d9637e76b1870377bec29"
+dependencies = [
+ "quick-xml",
+ "serde",
+ "static_assertions",
+ "zbus_names",
  "zvariant",
 ]
 

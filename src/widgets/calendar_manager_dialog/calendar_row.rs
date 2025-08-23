@@ -34,11 +34,7 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for CalendarRow {
-        fn constructed(&self) {
-            self.parent_constructed();
-        }
-    }
+    impl ObjectImpl for CalendarRow {}
     impl WidgetImpl for CalendarRow {}
     impl ListBoxRowImpl for CalendarRow {}
     impl PreferencesRowImpl for CalendarRow {}

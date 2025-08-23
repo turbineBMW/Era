@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::Collection;
+use clepsydre::{Calendar, Collection};
 
 use super::{calendar_creation_dialog::CalendarCreationDialog, calendar_row::CalendarRow};
 
@@ -12,7 +12,7 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/collection_row.ui")]
     #[properties(wrapper_type = super::CollectionRow)]
     pub struct CollectionRow {
-        #[property(get, set, construct_only)]
+        #[property(get, construct_only)]
         pub collection: RefCell<Option<Collection>>,
         #[template_child]
         pub name_label: TemplateChild<gtk::Label>,
@@ -46,8 +46,15 @@ mod imp {
                 .collection()
                 .expect("collection should be initialized");
 
+            let calendars_model = collection.calendars();
+            let sorted_calendars_model = gtk::SortListModel::new(
+                Some(calendars_model),
+                Some(gtk::StringSorter::new(Some(Calendar::this_expression(
+                    "name",
+                )))),
+            );
             self.calendars_list
-                .bind_model(Some(&collection.calendars()), |calendar| {
+                .bind_model(Some(&sorted_calendars_model), |calendar| {
                     CalendarRow::new(calendar.downcast_ref().unwrap()).upcast()
                 });
         }

@@ -1,5 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Resource, prelude::*};
+use clepsydre::{Collection, prelude::*};
 use glib::clone;
 use tracing::error;
 
@@ -40,22 +40,15 @@ mod imp {
                 "calendar-manager.show-calendar-subpage",
                 Some(&String::static_variant_type()),
                 |obj, _, param| {
-                    let resource =
-                        match param
+                    let Some(calendar) =
+                        param
                             .and_then(glib::Variant::get::<String>)
                             .and_then(|uri| {
                                 let manager = Application::default().manager();
-                                manager.find_resource(&uri)
-                            }) {
-                            Some(resource) => resource,
-                            None => {
-                                error!("Invalid resource URI");
-                                return;
-                            }
-                        };
-
-                    let Resource::Calendar(calendar) = resource else {
-                        error!("Invalid resource type");
+                                manager.get_calendar(&uri)
+                            })
+                    else {
+                        error!("Invalid resource URI");
                         return;
                     };
 
@@ -76,16 +69,24 @@ mod imp {
             self.parent_constructed();
 
             let manager = Application::default().manager();
-            let collections_model = manager.collections_model();
-            self.collections_list.set_model(&collections_model);
 
-            if collections_model.n_items() == 0 {
+            let collections_model = manager.collections_model();
+            let sorted_collections_model = gtk::SortListModel::new(
+                Some(collections_model),
+                Some(gtk::StringSorter::new(Some(Collection::this_expression(
+                    "name",
+                )))),
+            );
+            self.collections_list
+                .bind_model(sorted_collections_model.upcast_ref());
+
+            if sorted_collections_model.n_items() == 0 {
                 self.stack.set_visible_child_name("empty");
             } else {
                 self.stack.set_visible_child_name("collections");
             }
 
-            collections_model.connect_items_changed(clone!(
+            sorted_collections_model.connect_items_changed(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 move |collections_model, _, _, _| {
