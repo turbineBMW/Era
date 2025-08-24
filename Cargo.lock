@@ -236,7 +236,7 @@ checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
 [[package]]
 name = "clepsydre"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#793e51cdc3139778f6073e3c28cf58c3c5ac2615"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#275c470306b9f39b88cdea322886b8b886d24d85"
 dependencies = [
  "futures-util",
  "gdk4",

@@ -1,10 +1,10 @@
 use gettextrs::gettext;
 
 mod macros;
-mod paintables;
+mod paintable_callbacks;
 mod template_callbacks;
 
-pub use paintables::*;
+pub use paintable_callbacks::*;
 pub use template_callbacks::*;
 
 pub fn get_month_name(month: i8) -> String {

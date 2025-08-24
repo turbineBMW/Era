@@ -5,8 +5,16 @@ using Adw 1;
 template $CalendarRow: Adw.ActionRow {
   [prefix]
   Image {
+    visible: bind $invert_boolean(template.calendar as <$Calendar>.visible as <bool>) as <bool>;
     pixel-size: 24;
-    paintable: bind $get_color_image(template.calendar as <$Calendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+    paintable: bind $get_circle_paintable_empty(template.calendar as <$Calendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+  }
+
+  [prefix]
+  Image {
+    visible: bind template.calendar as <$Calendar>.visible as <bool>;
+    pixel-size: 24;
+    paintable: bind $get_circle_paintable(template.calendar as <$Calendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
   }
 
   title: bind template.calendar as <$Calendar>.name;

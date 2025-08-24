@@ -2,9 +2,8 @@ use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Calendar;
-use gdk::{Paintable, RGBA};
 
-use crate::utils::get_circle_paintable_from_color;
+use crate::utils::PaintableCallbacks;
 
 mod imp {
     use super::*;
@@ -26,6 +25,7 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+            PaintableCallbacks::bind_template_callbacks(klass);
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -39,12 +39,7 @@ mod imp {
     impl BoxImpl for CalendarComboRowItem {}
 
     #[gtk::template_callbacks]
-    impl CalendarComboRowItem {
-        #[template_callback]
-        fn get_color_image(&self, color: RGBA) -> Paintable {
-            get_circle_paintable_from_color(&color, 16.)
-        }
-    }
+    impl CalendarComboRowItem {}
 }
 
 glib::wrapper! {

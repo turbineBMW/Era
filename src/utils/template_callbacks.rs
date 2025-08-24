@@ -1,6 +1,6 @@
-//! Collection of GTK template callbacks.
+//! Collection of template callbacks.
 
-/// Struct used as a collection of GTK template callbacks.
+/// Struct used as a collection of template callbacks.
 pub struct TemplateCallbacks {}
 
 #[gtk::template_callbacks(functions)]
