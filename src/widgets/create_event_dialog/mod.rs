@@ -50,7 +50,7 @@ mod imp {
                 .expect("There should be a selected item")
                 .downcast()
                 .expect("Selected item should be a Calendar");
-            calendar.create_event(&self.name.text(), &self.description.text());
+            calendar.try_create_event(&self.name.text(), &self.description.text());
             self.obj().close();
         }
     }

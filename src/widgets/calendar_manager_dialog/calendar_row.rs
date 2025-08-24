@@ -62,7 +62,13 @@ mod imp {
         /// Toggle the visibility of the calendar.
         #[template_callback]
         fn toggle_calendar_visible(&self) {
-            dbg!("todo");
+            let calendar = self
+                .calendar
+                .borrow()
+                .as_ref()
+                .expect("Calendar should be initialized")
+                .clone();
+            calendar.try_set_visible(!calendar.visible());
         }
     }
 }

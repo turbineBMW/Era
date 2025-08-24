@@ -24,8 +24,7 @@ template $CalendarDetailsPage: Adw.NavigationPage {
             valign: center;
             // TODO: Find a way to skip the color update on page creation
             rgba: bind template.calendar as <$Calendar>.color;
-            notify::rgba => $update_calendar_color(template);
-
+            // notify::rgba => $update_calendar_color(template);
             dialog: ColorDialog {
               modal: true;
               with-alpha: false;

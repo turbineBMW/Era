@@ -76,22 +76,24 @@ mod imp {
     impl CalendarDetailsPage {
         #[template_callback]
         fn update_calendar_name(&self) {
-            let calendar = self.obj().calendar().unwrap();
-            let name = self.name_entry.text();
-            calendar.update(Some(&name), None);
+            // let calendar = self.obj().calendar().unwrap();
+            // let name = self.name_entry.text();
+            // calendar.update(Some(&name), None);
+            dbg!("todo");
         }
 
-        #[template_callback]
-        fn update_calendar_color(&self) {
-            let calendar = self.obj().calendar().unwrap();
-            let color = self.calendar_color_button.rgba();
-            calendar.update(None, Some(color));
-        }
+        // #[template_callback]
+        // fn update_calendar_color(&self) {
+        //     let calendar = self.obj().calendar().unwrap();
+        //     let color = self.calendar_color_button.rgba();
+        //     calendar.update(None, Some(color));
+        //     dbg!("todo");
+        // }
 
         #[template_callback]
         fn remove_calendar(&self) {
             let calendar = self.obj().calendar().unwrap();
-            calendar.remove().unwrap();
+            calendar.try_remove();
         }
     }
 }

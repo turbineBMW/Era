@@ -46,7 +46,7 @@ mod imp {
             self.obj()
                 .collection()
                 .expect("collection should be initialized")
-                .create_calendar(&self.name.text(), self.color.rgba());
+                .try_create_calendar(&self.name.text(), self.color.rgba());
             self.obj().close();
         }
     }
