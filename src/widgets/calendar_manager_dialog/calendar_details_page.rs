@@ -13,7 +13,7 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_details_page.ui")]
     #[properties(wrapper_type = super::CalendarDetailsPage)]
     pub struct CalendarDetailsPage {
-        #[property(get, set, construct_only)]
+        #[property(get, construct_only)]
         pub calendar: RefCell<Option<Calendar>>,
         #[template_child]
         pub name_entry: TemplateChild<adw::EntryRow>,
@@ -76,10 +76,9 @@ mod imp {
     impl CalendarDetailsPage {
         #[template_callback]
         fn update_calendar_name(&self) {
-            // let calendar = self.obj().calendar().unwrap();
-            // let name = self.name_entry.text();
-            // calendar.update(Some(&name), None);
-            dbg!("todo");
+            let calendar = self.obj().calendar().unwrap();
+            let name = self.name_entry.text();
+            calendar.try_set_name(&name);
         }
 
         // #[template_callback]
