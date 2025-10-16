@@ -4,7 +4,7 @@ use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Calendar;
 use glib::clone;
 
-use crate::utils::TemplateCallbacks;
+use crate::utils::{PaintableCallbacks, TemplateCallbacks};
 
 mod imp {
     use super::*;
@@ -17,8 +17,6 @@ mod imp {
         pub calendar: RefCell<Option<Calendar>>,
         #[template_child]
         pub name_entry: TemplateChild<adw::EntryRow>,
-        #[template_child]
-        pub calendar_color_button: TemplateChild<gtk::ColorDialogButton>,
     }
 
     #[glib::object_subclass]
@@ -30,6 +28,7 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+            PaintableCallbacks::bind_template_callbacks(klass);
             TemplateCallbacks::bind_template_callbacks(klass);
         }
 

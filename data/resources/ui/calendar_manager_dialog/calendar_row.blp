@@ -24,6 +24,12 @@ template $CalendarRow: Adw.ActionRow {
   activated => $toggle_calendar_visible(template);
 
   [suffix]
+  Image {
+    icon-name: "read-only-symbolic";
+    visible: bind $invert_boolean(template.calendar as <$Calendar>.event_creation_enabled as <bool>) as <bool>;
+  }
+
+  [suffix]
   Button {
     icon-name: "info-outline-symbolic";
     tooltip-text: _("Calendar details");

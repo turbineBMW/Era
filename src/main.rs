@@ -13,12 +13,13 @@ use self::{
 };
 
 fn main() -> glib::ExitCode {
+    // TODO: Debug - scrollwheel after scrolling down with pad is bugged
     // unsafe {
     //     std::env::set_var("GDK_DEBUG", "events");
     //     std::env::set_var("RUST_BACKTRACE", "1");
     // }
     let env_filter = EnvFilter::try_from_default_env()
-        .unwrap_or_else(|_| EnvFilter::new(format!("{PROJECT_NAME}=debug,clepsydre=debug,warn")));
+        .unwrap_or_else(|_| EnvFilter::new(format!("{PROJECT_NAME}=debug,clepsydre=debug,trace")));
 
     tracing_subscriber::registry()
         .with(fmt::layer().with_filter(env_filter))

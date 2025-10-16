@@ -2,6 +2,7 @@ use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Collection;
+use tracing::{debug, warn};
 
 mod imp {
     use super::*;
@@ -13,9 +14,15 @@ mod imp {
         #[property(get, set, construct_only)]
         pub collection: RefCell<Option<Collection>>,
         #[template_child]
+        pub cancel: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub create: TemplateChild<gtk::Button>,
+        #[template_child]
         pub name: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub color: TemplateChild<gtk::ColorDialogButton>,
+        #[template_child]
+        pub spinner: TemplateChild<adw::Spinner>,
     }
 
     #[glib::object_subclass]
@@ -42,11 +49,29 @@ mod imp {
     #[gtk::template_callbacks]
     impl CalendarCreationDialog {
         #[template_callback]
-        fn create_calendar(&self) {
-            self.obj()
+        async fn create_calendar(&self) {
+            self.spinner.set_visible(true);
+            self.cancel.set_sensitive(false);
+            self.create.set_sensitive(false);
+            match self
+                .obj()
                 .collection()
                 .expect("collection should be initialized")
-                .try_create_calendar(&self.name.text(), self.color.rgba());
+                .try_create_calendar_future(&self.name.text(), self.color.rgba())
+                .await
+            {
+                Ok(calendar) => {
+                    debug!("Calendar created: {:?}", calendar);
+                }
+                Err(e) => {
+                    self.spinner.set_visible(false);
+                    self.cancel.set_sensitive(true);
+                    self.create.set_sensitive(true);
+                    warn!("Failed to create calendar: {e:?}");
+                    // TODO: Show toast
+                }
+            }
+
             self.obj().close();
         }
     }

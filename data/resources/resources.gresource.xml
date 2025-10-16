@@ -40,5 +40,6 @@
     <file preprocess="xml-stripblanks" alias="days-symbolic.svg">icons/days-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="day-symbolic.svg">icons/day-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="today-symbolic.svg">icons/today-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="read-only-symbolic.svg">icons/read-only-symbolic.svg</file>
   </gresource>
 </gresources>

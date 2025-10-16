@@ -11,11 +11,10 @@
     "--socket=fallback-x11",
     "--device=dri",
     "--socket=wayland",
-    "--talk-name=io.gitlab.TitouanReal.CcmRead",
-    "--talk-name=io.gitlab.TitouanReal.CcmWrite",
     "--talk-name=org.gnome.evolution.dataserver.Sources5",
     "--talk-name=org.gnome.evolution.dataserver.Calendar8",
-    "--add-policy=Tracker3.dbus:io.gitlab.TitouanReal.CcmRead=ccm:Calendar"
+    "--talk-name=io.gitlab.TitouanReal.CcmWrite",
+    "--add-policy=Tracker3.dbus:io.gitlab.TitouanReal.CcmRead=default"
   ],
   "build-options": {
     "append-path": "/usr/lib/sdk/rust-stable/bin",

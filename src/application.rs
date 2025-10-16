@@ -1,7 +1,7 @@
 use std::cell::{Cell, OnceCell};
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{EdsManager, Manager, jiff};
+use clepsydre::{Manager, TsparqlManager, jiff};
 use gettextrs::gettext;
 
 use crate::{
@@ -43,7 +43,7 @@ mod imp {
             obj.setup_gactions();
             obj.set_accels_for_action("app.quit", &["<primary>q"]);
 
-            self.manager.set(EdsManager::new().upcast()).unwrap();
+            self.manager.set(TsparqlManager::new().upcast()).unwrap();
         }
     }
 

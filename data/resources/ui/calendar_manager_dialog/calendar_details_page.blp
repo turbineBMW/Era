@@ -1,4 +1,5 @@
 using Gtk 4.0;
+using Gdk 4.0;
 using Adw 1;
 
 template $CalendarDetailsPage: Adw.NavigationPage {
@@ -18,17 +19,12 @@ template $CalendarDetailsPage: Adw.NavigationPage {
 
         Adw.ActionRow {
           title: _("Color");
-          activatable-widget: calendar_color_button;
+          subtitle: _("No good way to change color in the UI yet");
 
-          ColorDialogButton calendar_color_button {
-            valign: center;
-            // TODO: Find a way to skip the color update on page creation
-            rgba: bind template.calendar as <$Calendar>.color;
-            // notify::rgba => $update_calendar_color(template);
-            dialog: ColorDialog {
-              modal: true;
-              with-alpha: false;
-            };
+          Image {
+            visible: bind template.calendar as <$Calendar>.visible as <bool>;
+            pixel-size: 24;
+            paintable: bind $get_circle_paintable(template.calendar as <$Calendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
           }
         }
       }
