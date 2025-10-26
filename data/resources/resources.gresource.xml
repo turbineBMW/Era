@@ -7,9 +7,15 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="calendar_row.ui">ui/calendar_manager_dialog/calendar_row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="collection_row.ui">ui/calendar_manager_dialog/collection_row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="collections_list.ui">ui/calendar_manager_dialog/collections_list.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="collections_list_page.ui">ui/calendar_manager_dialog/collections_list_page.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="calendar_creation_dialog.ui">ui/calendar_manager_dialog/calendar_creation_dialog.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="calendar_manager_dialog.ui">ui/calendar_manager_dialog/calendar_manager_dialog.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="calendar_details_page.ui">ui/calendar_manager_dialog/calendar_details_page.ui</file>
+    
+    <!-- Components -->
+    <file compressed="true" preprocess="xml-stripblanks" alias="error_dialog.ui">ui/components/error_dialog.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="loading_bin.ui">ui/components/loading_bin.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="loading_button_row.ui">ui/components/loading_button_row.ui</file>
 
     <!-- Create Event Dialog -->
     <file compressed="true" preprocess="xml-stripblanks" alias="create_event_dialog.ui">ui/create_event_dialog/create_event_dialog.ui</file>

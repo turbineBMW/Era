@@ -12,11 +12,3 @@ macro_rules! spawn {
         glib::MainContext::default().spawn_local_with_priority($priority, $future)
     };
 }
-
-/// Spawn a future on the tokio runtime.
-#[macro_export]
-macro_rules! spawn_tokio {
-    ($future:expr) => {
-        $crate::RUNTIME.spawn($future)
-    };
-}

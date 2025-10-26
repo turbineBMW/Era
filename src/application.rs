@@ -23,6 +23,7 @@ mod imp {
         current_month: Cell<i8>,
         #[property(get, set)]
         current_day: Cell<i8>,
+        #[property(get, set)]
         manager: OnceCell<Manager>,
     }
 
@@ -61,15 +62,6 @@ mod imp {
 
     impl GtkApplicationImpl for Application {}
     impl AdwApplicationImpl for Application {}
-
-    impl Application {
-        pub(super) fn manager(&self) -> Manager {
-            self.manager
-                .get()
-                .expect("Manager should be initialized")
-                .clone()
-        }
-    }
 }
 
 glib::wrapper! {
@@ -93,10 +85,6 @@ impl Application {
             .property("current-month", current_month)
             .property("current-day", current_day)
             .build()
-    }
-
-    pub fn manager(&self) -> Manager {
-        self.imp().manager()
     }
 
     fn setup_gactions(&self) {

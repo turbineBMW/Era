@@ -1,11 +1,11 @@
 use gettextrs::gettext;
 
+mod child_property_ext;
 mod macros;
 mod paintable_callbacks;
 mod template_callbacks;
 
-pub use paintable_callbacks::*;
-pub use template_callbacks::*;
+pub use self::{child_property_ext::*, paintable_callbacks::*, template_callbacks::*};
 
 pub fn get_month_name(month: i8) -> String {
     match month {

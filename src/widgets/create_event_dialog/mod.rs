@@ -1,7 +1,10 @@
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Calendar;
+use tracing::{debug, warn};
 
 mod calendar_combo_row;
+
+use crate::widgets::components::{ErrorDialog, LoadingButton};
 
 use self::calendar_combo_row::CalendarComboRow;
 
@@ -12,11 +15,17 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/create_event_dialog.ui")]
     pub struct CreateEventDialog {
         #[template_child]
-        name: TemplateChild<adw::EntryRow>,
+        pub toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
-        calendar_choice: TemplateChild<CalendarComboRow>,
+        pub cancel: TemplateChild<gtk::Button>,
         #[template_child]
-        description: TemplateChild<adw::EntryRow>,
+        pub create: TemplateChild<LoadingButton>,
+        #[template_child]
+        pub name: TemplateChild<adw::EntryRow>,
+        #[template_child]
+        pub calendar_choice: TemplateChild<CalendarComboRow>,
+        #[template_child]
+        pub description: TemplateChild<adw::EntryRow>,
     }
 
     #[glib::object_subclass]
@@ -28,6 +37,18 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+
+            klass.install_action(
+                "create-event-dialog.show-error",
+                Some(&String::static_variant_type()),
+                |obj, _, param| {
+                    let error_message = &param
+                        .and_then(glib::Variant::get::<String>)
+                        .expect("The parameter should be a string");
+                    let dialog = ErrorDialog::new(error_message);
+                    dialog.present(Some(obj));
+                },
+            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -43,21 +64,50 @@ mod imp {
     #[gtk::template_callbacks]
     impl CreateEventDialog {
         #[template_callback]
-        fn create_event(&self) {
+        async fn create_event(&self) {
+            self.cancel.set_sensitive(false);
+            self.create.set_is_loading(true);
+            self.name.set_sensitive(false);
+            self.calendar_choice.set_sensitive(false);
+            self.description.set_sensitive(false);
+
             let calendar: Calendar = self
                 .calendar_choice
                 .selected_item()
                 .expect("There should be a selected item")
                 .downcast()
                 .expect("Selected item should be a Calendar");
-            calendar.try_create_event(
-                &self.name.text(),
-                &self.description.text(),
-                true,
-                "2025-09-29",
-                "2025-10-01",
-            );
-            self.obj().close();
+
+            match calendar
+                .try_create_event_future(
+                    &self.name.text(),
+                    &self.description.text(),
+                    true,
+                    "2025-09-29",
+                    "2025-10-01",
+                )
+                .await
+            {
+                Ok(event) => {
+                    debug!("Event created: {}", event.uri());
+                    self.obj().close();
+                }
+                Err(error) => {
+                    self.cancel.set_sensitive(true);
+                    self.create.set_is_loading(false);
+                    self.description.set_sensitive(true);
+                    self.calendar_choice.set_sensitive(true);
+                    self.name.set_sensitive(true);
+
+                    warn!("Failed to create calendar: {error}");
+                    self.toast_overlay.dismiss_all();
+                    let toast = adw::Toast::new("An error occurred");
+                    toast.set_button_label(Some("Details"));
+                    toast.set_action_name(Some("create-event-dialog.show-error"));
+                    toast.set_action_target(Some(&error.message()));
+                    self.toast_overlay.add_toast(toast);
+                }
+            }
         }
     }
 }

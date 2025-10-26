@@ -25,16 +25,7 @@ template $CalendarManagerDialog: Adw.Dialog {
       name: "collections";
 
       child: Adw.NavigationView navigation_view {
-        Adw.NavigationPage {
-          title: _("Calendars");
-
-          child: Adw.ToolbarView {
-            [top]
-            Adw.HeaderBar {}
-
-            content: $CollectionsList collections_list {};
-          };
-        }
+        $CollectionsListPage collections_list_page {}
       };
     }
   }

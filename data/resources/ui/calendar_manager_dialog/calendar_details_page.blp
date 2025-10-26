@@ -5,42 +5,44 @@ using Adw 1;
 template $CalendarDetailsPage: Adw.NavigationPage {
   title: bind template.calendar as <$Calendar>.name;
 
-  child: Adw.ToolbarView {
-    [top]
-    Adw.HeaderBar {}
+  child: Adw.ToastOverlay toast_overlay {
+    Adw.ToolbarView {
+      [top]
+      Adw.HeaderBar {}
 
-    content: Adw.PreferencesPage {
-      Adw.PreferencesGroup {
-        Adw.EntryRow name_entry {
-          title: _("Name");
-          show-apply-button: true;
-          apply => $update_calendar_name(template);
-        }
+      content: Adw.PreferencesPage {
+        Adw.PreferencesGroup {
+          Adw.EntryRow name {
+            title: _("Name");
+            show-apply-button: true;
+            apply => $update_calendar_name(template);
+          }
 
-        Adw.ActionRow {
-          title: _("Color");
-          subtitle: _("No good way to change color in the UI yet");
+          Adw.ActionRow {
+            title: _("Color");
+            subtitle: _("No good way to change color in the UI yet");
 
-          Image {
-            visible: bind template.calendar as <$Calendar>.visible as <bool>;
-            pixel-size: 24;
-            paintable: bind $get_circle_paintable(template.calendar as <$Calendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+            Image {
+              visible: bind template.calendar as <$Calendar>.visible as <bool>;
+              pixel-size: 24;
+              paintable: bind $get_circle_paintable(template.calendar as <$Calendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+            }
           }
         }
-      }
 
-      Adw.PreferencesGroup {
-        visible: bind template.calendar as <$Calendar>.removable as <bool>;
+        Adw.PreferencesGroup {
+          visible: bind template.calendar as <$Calendar>.removable as <bool>;
 
-        Adw.ButtonRow {
-          title: _("Remove Calendar");
-          activated => $remove_calendar(template);
+          $LoadingButtonRow remove {
+            title: _("Remove Calendar");
+            activated => $remove_calendar(template);
 
-          styles [
-            "destructive-action",
-          ]
+            styles [
+              "destructive-action",
+            ]
+          }
         }
-      }
-    };
+      };
+    }
   };
 }

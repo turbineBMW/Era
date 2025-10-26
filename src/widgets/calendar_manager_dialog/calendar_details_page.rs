@@ -3,8 +3,12 @@ use std::cell::RefCell;
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Calendar;
 use glib::clone;
+use tracing::{debug, warn};
 
-use crate::utils::{PaintableCallbacks, TemplateCallbacks};
+use crate::{
+    utils::{PaintableCallbacks, TemplateCallbacks},
+    widgets::components::{ErrorDialog, LoadingButtonRow},
+};
 
 mod imp {
     use super::*;
@@ -16,7 +20,11 @@ mod imp {
         #[property(get, construct_only)]
         pub calendar: RefCell<Option<Calendar>>,
         #[template_child]
-        pub name_entry: TemplateChild<adw::EntryRow>,
+        pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[template_child]
+        pub name: TemplateChild<adw::EntryRow>,
+        #[template_child]
+        pub remove: TemplateChild<LoadingButtonRow>,
     }
 
     #[glib::object_subclass]
@@ -30,6 +38,18 @@ mod imp {
             klass.bind_template_callbacks();
             PaintableCallbacks::bind_template_callbacks(klass);
             TemplateCallbacks::bind_template_callbacks(klass);
+
+            klass.install_action(
+                "calendar-details-page.show-error",
+                Some(&String::static_variant_type()),
+                |obj, _, param| {
+                    let error_message = &param
+                        .and_then(glib::Variant::get::<String>)
+                        .expect("The parameter should be a string");
+                    let dialog = ErrorDialog::new(error_message);
+                    dialog.present(Some(obj));
+                },
+            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -44,16 +64,16 @@ mod imp {
 
             let calendar = self.obj().calendar().unwrap();
 
-            self.name_entry.set_text(&calendar.name());
+            self.name.set_text(&calendar.name());
 
             calendar.connect_name_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 move |calendar| {
                     let name = calendar.name();
-                    let old_name = imp.name_entry.text();
+                    let old_name = imp.name.text();
                     if name != old_name {
-                        imp.name_entry.set_text(&name);
+                        imp.name.set_text(&name);
                     }
                 }
             ));
@@ -74,24 +94,52 @@ mod imp {
     #[gtk::template_callbacks]
     impl CalendarDetailsPage {
         #[template_callback]
-        fn update_calendar_name(&self) {
-            let calendar = self.obj().calendar().unwrap();
-            let name = self.name_entry.text();
-            calendar.try_set_name(&name);
+        async fn update_calendar_name(&self) {
+            let calendar = self
+                .obj()
+                .calendar()
+                .expect("calendar should be initialized");
+            let name = self.name.text();
+
+            match calendar.try_set_name_future(&name).await {
+                Ok(()) => {
+                    debug!("Calendar name updated: {}", calendar.uri());
+                }
+                Err(error) => {
+                    warn!("Failed to update calendar name: {}", error);
+                    let toast = adw::Toast::new("An error occurred");
+                    toast.set_button_label(Some("Details"));
+                    toast.set_action_name(Some("calendar-details-page.show-error"));
+                    toast.set_action_target(Some(&error.message()));
+                    self.toast_overlay.add_toast(toast);
+                }
+            }
         }
 
-        // #[template_callback]
-        // fn update_calendar_color(&self) {
-        //     let calendar = self.obj().calendar().unwrap();
-        //     let color = self.calendar_color_button.rgba();
-        //     calendar.update(None, Some(color));
-        //     dbg!("todo");
-        // }
-
         #[template_callback]
-        fn remove_calendar(&self) {
-            let calendar = self.obj().calendar().unwrap();
-            calendar.try_remove();
+        async fn remove_calendar(&self) {
+            self.remove.set_is_loading(true);
+            self.name.set_sensitive(false);
+            let calendar = self
+                .obj()
+                .calendar()
+                .expect("calendar should be initialized");
+            match calendar.try_remove_future().await {
+                Ok(()) => {
+                    debug!("Calendar removed: {}", calendar.uri());
+                }
+                Err(error) => {
+                    warn!("Failed to remove calendar: {}", error);
+                    self.toast_overlay.dismiss_all();
+                    let toast = adw::Toast::new("An error occurred");
+                    toast.set_button_label(Some("Details"));
+                    toast.set_action_name(Some("calendar-details-page.show-error"));
+                    toast.set_action_target(Some(&error.message()));
+                    self.toast_overlay.add_toast(toast);
+                }
+            }
+            self.remove.set_is_loading(false);
+            self.name.set_sensitive(true);
         }
     }
 }

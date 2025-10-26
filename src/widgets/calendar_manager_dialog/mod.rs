@@ -1,5 +1,4 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Collection, prelude::*};
 use glib::clone;
 use tracing::error;
 
@@ -8,10 +7,13 @@ mod calendar_details_page;
 mod calendar_row;
 mod collection_row;
 mod collections_list;
+mod collections_list_page;
 
 use crate::Application;
 
-use self::{calendar_details_page::CalendarDetailsPage, collections_list::CollectionsList};
+use self::{
+    calendar_details_page::CalendarDetailsPage, collections_list_page::CollectionsListPage,
+};
 
 mod imp {
     use super::*;
@@ -24,7 +26,7 @@ mod imp {
         #[template_child]
         navigation_view: TemplateChild<adw::NavigationView>,
         #[template_child]
-        collections_list: TemplateChild<CollectionsList>,
+        collections_list_page: TemplateChild<CollectionsListPage>,
     }
 
     #[glib::object_subclass]
@@ -45,7 +47,7 @@ mod imp {
                             .and_then(glib::Variant::get::<String>)
                             .and_then(|uri| {
                                 let manager = Application::default().manager();
-                                manager.get_calendar(&uri)
+                                manager.calendars_model().get(&uri)
                             })
                     else {
                         error!("Invalid resource URI");
@@ -71,22 +73,14 @@ mod imp {
             let manager = Application::default().manager();
 
             let collections_model = manager.collections_model();
-            let sorted_collections_model = gtk::SortListModel::new(
-                Some(collections_model),
-                Some(gtk::StringSorter::new(Some(Collection::this_expression(
-                    "name",
-                )))),
-            );
-            self.collections_list
-                .bind_model(sorted_collections_model.upcast_ref());
 
-            if sorted_collections_model.n_items() == 0 {
+            if collections_model.n_items() == 0 {
                 self.stack.set_visible_child_name("empty");
             } else {
                 self.stack.set_visible_child_name("collections");
             }
 
-            sorted_collections_model.connect_items_changed(clone!(
+            collections_model.connect_items_changed(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 move |collections_model, _, _, _| {

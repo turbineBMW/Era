@@ -2,6 +2,7 @@ use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Calendar;
+use tracing::{debug, warn};
 
 use crate::utils::{PaintableCallbacks, TemplateCallbacks};
 
@@ -61,14 +62,35 @@ mod imp {
 
         /// Toggle the visibility of the calendar.
         #[template_callback]
-        fn toggle_calendar_visible(&self) {
+        async fn toggle_calendar_visible(&self) {
             let calendar = self
                 .calendar
                 .borrow()
                 .as_ref()
                 .expect("Calendar should be initialized")
                 .clone();
-            calendar.try_set_visible(!calendar.visible());
+            let visible = !calendar.visible();
+
+            match calendar.try_set_visible_future(visible).await {
+                Ok(()) => {
+                    debug!("Calendar name updated: {}", calendar.uri());
+                }
+                Err(error) => {
+                    warn!("Failed to update calendar name: {}", error);
+                    let toast = adw::Toast::new("An error occurred");
+                    toast.set_button_label(Some("Details"));
+                    toast.set_action_name(Some("collections-list-page.show-error"));
+                    toast.set_action_target(Some(&error.message()));
+
+                    let toast_overlay = self
+                        .obj()
+                        .ancestor(adw::ToastOverlay::static_type())
+                        .expect("Toast overlay should be present")
+                        .downcast::<adw::ToastOverlay>()
+                        .expect("Ancestor should be a ToastOverlay");
+                    toast_overlay.add_toast(toast);
+                }
+            }
         }
     }
 }

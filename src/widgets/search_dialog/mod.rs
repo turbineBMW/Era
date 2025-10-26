@@ -46,7 +46,9 @@ mod imp {
         fn search_events(&self) {
             let manager = Application::default().manager();
             let text = self.search_entry.text();
-            let results = manager.search_events(&text);
+            let results = manager
+                .search_events(&text)
+                .expect("Search should be successful");
             self.results_view
                 .set_model(Some(&gtk::NoSelection::new(Some(results))));
         }

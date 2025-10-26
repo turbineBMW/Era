@@ -6,46 +6,48 @@ template $CreateEventDialog: Adw.Dialog {
   content-height: 500;
   content-width: 500;
 
-  Adw.ToolbarView {
-    [top]
-    Adw.HeaderBar {
-      show-start-title-buttons: false;
-      show-end-title-buttons: false;
+  Adw.ToastOverlay toast_overlay {
+    Adw.ToolbarView {
+      [top]
+      Adw.HeaderBar {
+        show-start-title-buttons: false;
+        show-end-title-buttons: false;
 
-      Button cancel {
-        use-underline: true;
-        label: _("_Cancel");
-        action-name: "window.close";
+        Button cancel {
+          use-underline: true;
+          label: _("_Cancel");
+          action-name: "window.close";
+        }
+
+        [end]
+        $LoadingButton create {
+          use-underline: true;
+          content-label: _("_Create");
+          clicked => $create_event(template);
+
+          styles [
+            "suggested-action",
+          ]
+        }
       }
 
-      [end]
-      Button create {
-        use-underline: true;
-        label: _("_Create");
-        clicked => $create_event(template);
+      content: Adw.PreferencesPage {
+        Adw.PreferencesGroup {
+          Adw.EntryRow name {
+            title: _("Name");
+          }
+        }
 
-        styles [
-          "suggested-action",
-        ]
-      }
+        Adw.PreferencesGroup {
+          $CalendarComboRow calendar_choice {}
+        }
+
+        Adw.PreferencesGroup {
+          Adw.EntryRow description {
+            title: _("Description");
+          }
+        }
+      };
     }
-
-    content: Adw.PreferencesPage {
-      Adw.PreferencesGroup {
-        Adw.EntryRow name {
-          title: _("Name");
-        }
-      }
-
-      Adw.PreferencesGroup {
-        $CalendarComboRow calendar_choice {}
-      }
-
-      Adw.PreferencesGroup {
-        Adw.EntryRow description {
-          title: _("Description");
-        }
-      }
-    };
   }
 }

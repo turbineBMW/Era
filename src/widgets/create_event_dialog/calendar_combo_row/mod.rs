@@ -1,7 +1,7 @@
 use std::cell::OnceCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, Collection, prelude::*};
+use clepsydre::{Calendar, Collection};
 use gio::ListModel;
 use glib::clone;
 

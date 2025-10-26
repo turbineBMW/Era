@@ -4,6 +4,8 @@ use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Collection;
 use tracing::{debug, warn};
 
+use crate::widgets::components::{ErrorDialog, LoadingButton};
+
 mod imp {
     use super::*;
 
@@ -14,15 +16,15 @@ mod imp {
         #[property(get, set, construct_only)]
         pub collection: RefCell<Option<Collection>>,
         #[template_child]
+        pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[template_child]
         pub cancel: TemplateChild<gtk::Button>,
         #[template_child]
-        pub create: TemplateChild<gtk::Button>,
+        pub create: TemplateChild<LoadingButton>,
         #[template_child]
         pub name: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub color: TemplateChild<gtk::ColorDialogButton>,
-        #[template_child]
-        pub spinner: TemplateChild<adw::Spinner>,
     }
 
     #[glib::object_subclass]
@@ -34,6 +36,18 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+
+            klass.install_action(
+                "calendar-creation-dialog.show-error",
+                Some(&String::static_variant_type()),
+                |obj, _, param| {
+                    let error_message = &param
+                        .and_then(glib::Variant::get::<String>)
+                        .expect("The parameter should be a string");
+                    let dialog = ErrorDialog::new(error_message);
+                    dialog.present(Some(obj));
+                },
+            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -50,29 +64,35 @@ mod imp {
     impl CalendarCreationDialog {
         #[template_callback]
         async fn create_calendar(&self) {
-            self.spinner.set_visible(true);
             self.cancel.set_sensitive(false);
-            self.create.set_sensitive(false);
-            match self
+            self.create.set_is_loading(true);
+
+            let collection = self
                 .obj()
                 .collection()
-                .expect("collection should be initialized")
+                .expect("collection should be initialized");
+
+            match collection
                 .try_create_calendar_future(&self.name.text(), self.color.rgba())
                 .await
             {
                 Ok(calendar) => {
-                    debug!("Calendar created: {:?}", calendar);
+                    debug!("Calendar created: {}", calendar.uri());
+                    self.obj().close();
                 }
-                Err(e) => {
-                    self.spinner.set_visible(false);
+                Err(error) => {
                     self.cancel.set_sensitive(true);
-                    self.create.set_sensitive(true);
-                    warn!("Failed to create calendar: {e:?}");
-                    // TODO: Show toast
+                    self.create.set_is_loading(false);
+
+                    warn!("Failed to create calendar: {error}");
+                    self.toast_overlay.dismiss_all();
+                    let toast = adw::Toast::new("An error occurred");
+                    toast.set_button_label(Some("Details"));
+                    toast.set_action_name(Some("calendar-creation-dialog.show-error"));
+                    toast.set_action_target(Some(&error.message()));
+                    self.toast_overlay.add_toast(toast);
                 }
             }
-
-            self.obj().close();
         }
     }
 }

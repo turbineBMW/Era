@@ -1,4 +1,5 @@
 mod calendar_manager_dialog;
+mod components;
 mod create_event_dialog;
 mod search_dialog;
 mod views;
