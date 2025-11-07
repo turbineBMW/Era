@@ -1,8 +1,8 @@
+use std::cell::RefCell;
+
 use adw::{prelude::*, subclass::prelude::*};
 
 mod imp {
-    use std::cell::RefCell;
-
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]

@@ -20,7 +20,7 @@ template $EventRow: Box {
     }
 
     Label {
-      label: "location";
+      label: bind template.event as <$Event>.location as <string>;
       xalign: 0.0;
 
       styles [

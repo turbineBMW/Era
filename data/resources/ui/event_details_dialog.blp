@@ -1,0 +1,218 @@
+using Gtk 4.0;
+using Gdk 4.0;
+using Adw 1;
+
+template $EventDetailsDialog: Adw.Dialog {
+  title: _("Event");
+  content-height: 500;
+  content-width: 500;
+
+  Adw.NavigationView navigation_view {
+    Adw.NavigationPage {
+      tag: "details";
+      title: _("Event");
+
+      Adw.ToastOverlay details_toast_overlay {
+        Adw.ToolbarView {
+          [top]
+          Adw.HeaderBar {
+            [start]
+            Button {
+              icon-name: "share-symbolic";
+              clicked => $share(template);
+            }
+
+            [start]
+            Button {
+              icon-name: "qr-code-symbolic";
+              clicked => $show_qr_code(template);
+            }
+          }
+
+          content: Adw.PreferencesPage {
+            Adw.PreferencesGroup {
+              Label name_label {
+                label: bind template.event as <$Event>.name;
+                xalign: 0;
+
+                styles [
+                  "title-4",
+                ]
+              }
+
+              Label timeframe_label {
+                label: bind $timeframe_label(template.event as <$Event>) as <string>;
+                xalign: 0;
+                wrap: true;
+              }
+            }
+
+            Adw.PreferencesGroup {
+              visible: bind $location_or_video_conference(template.event as <$Event>) as <bool>;
+
+              Adw.ActionRow {
+                title: _("Location");
+                subtitle: bind template.event as <$Event>.location as <string>;
+                visible: bind $string_not_empty(template.event as <$Event>.location) as <bool>;
+
+                styles [
+                  "property",
+                ]
+
+                [suffix]
+                Button {
+                  icon-name: "map-symbolic";
+                  valign: center;
+                  sensitive: false;
+
+                  styles [
+                    "flat",
+                  ]
+                }
+              }
+
+              Adw.ActionRow {
+                title: _("Video Conference");
+                subtitle: bind template.event as <$Event>.video_conference as <string>;
+                visible: bind $string_not_empty(template.event as <$Event>.video_conference) as <bool>;
+
+                styles [
+                  "property",
+                ]
+
+                [suffix]
+                Button {
+                  label: _("Join");
+                  valign: center;
+                  sensitive: bind $video_conference_is_a_uri(template.event as <$Event>.video_conference) as <bool>;
+                  clicked => $join(template);
+                }
+              }
+            }
+
+            Adw.PreferencesGroup {
+              Adw.ActionRow {
+                title: _("Calendar");
+
+                [suffix]
+                Box {
+                  spacing: 6;
+
+                  Image {
+                    pixel-size: 16;
+                    paintable: bind $get_circle_paintable(template.event as <$Event>.calendar as <$Calendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+                  }
+
+                  Label {
+                    ellipsize: end;
+                    xalign: 0.0;
+                    label: bind template.event as <$Event>.calendar as <$Calendar>.name;
+                  }
+                }
+              }
+            }
+
+            Adw.PreferencesGroup {
+              visible: bind $string_not_empty(template.event as <$Event>.description) as <bool>;
+
+              Adw.ActionRow {
+                title: _("Notes");
+                subtitle: bind template.event as <$Event>.description;
+
+                styles [
+                  "property",
+                ]
+              }
+            }
+          };
+
+          [bottom]
+          ActionBar {
+            // TODO: Use read-only property of event
+            // visible: bind template.event as <$Event>.read_only;
+
+            [center]
+            Button {
+              use-underline: true;
+              label: "Edit";
+              clicked => $edit(template);
+
+              styles [
+                "pill",
+                "suggested-action",
+              ]
+            }
+          }
+        }
+      }
+    }
+
+    Adw.NavigationPage {
+      tag: "editor";
+      title: _("Event");
+
+      Adw.ToastOverlay editor_toast_overlay {
+        Adw.ToolbarView {
+          [top]
+          Adw.HeaderBar {
+            show-start-title-buttons: false;
+            show-end-title-buttons: false;
+            show-back-button: false;
+
+            [start]
+            Button {
+              use-underline: true;
+              label: "Cancel";
+              action-name: "navigation.pop";
+            }
+
+            [end]
+            $LoadingButton save {
+              use-underline: true;
+              content-label: "Save";
+              sensitive: false;
+              clicked => $save(template);
+
+              styles [
+                "suggested-action",
+              ]
+            }
+          }
+
+          content: Adw.PreferencesPage {
+            Adw.PreferencesGroup {
+              Adw.EntryRow name_entry {
+                title: _("Title");
+              }
+
+              Adw.EntryRow location_entry {
+                title: _("Location");
+              }
+
+              Adw.EntryRow video_conference_entry {
+                title: _("Video Conference");
+              }
+            }
+
+            Adw.PreferencesGroup {
+              Adw.ActionRow {
+                title: _("Calendar");
+
+                [suffix]
+                Label {
+                  label: "TODO";
+                }
+              }
+            }
+
+            Adw.PreferencesGroup {
+              Adw.EntryRow description_entry {
+                title: _("Description");
+              }
+            }
+          };
+        }
+      }
+    }
+  }
+}

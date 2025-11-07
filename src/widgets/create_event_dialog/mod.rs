@@ -1,5 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::Calendar;
+use clepsydre::{Calendar, EventCreationArgs, Timeframe, jiff};
 use tracing::{debug, warn};
 
 mod calendar_combo_row;
@@ -22,6 +22,10 @@ mod imp {
         pub create: TemplateChild<LoadingButton>,
         #[template_child]
         pub name: TemplateChild<adw::EntryRow>,
+        #[template_child]
+        pub location: TemplateChild<adw::EntryRow>,
+        #[template_child]
+        pub video_conference: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub calendar_choice: TemplateChild<CalendarComboRow>,
         #[template_child]
@@ -78,16 +82,19 @@ mod imp {
                 .downcast()
                 .expect("Selected item should be a Calendar");
 
-            match calendar
-                .try_create_event_future(
-                    &self.name.text(),
-                    &self.description.text(),
+            let args = EventCreationArgs {
+                name: &self.name.text(),
+                description: &self.description.text(),
+                location: &self.location.text(),
+                video_conference: &self.video_conference.text(),
+                timeframe: &Timeframe::new(
                     true,
-                    "2025-09-29",
-                    "2025-10-01",
-                )
-                .await
-            {
+                    "2025-09-29".parse::<jiff::civil::Date>().unwrap().into(),
+                    "2025-10-01".parse::<jiff::civil::Date>().unwrap().into(),
+                ),
+            };
+
+            match calendar.try_create_event_future(&args).await {
                 Ok(event) => {
                     debug!("Event created: {}", event.uri());
                     self.obj().close();

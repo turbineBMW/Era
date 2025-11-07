@@ -10,4 +10,10 @@ impl TemplateCallbacks {
     pub fn invert_boolean(boolean: bool) -> bool {
         !boolean
     }
+
+    /// Returns `true` when the given string is not empty.
+    #[template_callback]
+    pub fn string_not_empty(string: &str) -> bool {
+        !string.is_empty()
+    }
 }

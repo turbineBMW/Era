@@ -1,9 +1,11 @@
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Event, prelude::*};
+use tracing::warn;
 
 mod event_row;
 
 use crate::Application;
+use crate::widgets::event_details_dialog::EventDetailsDialog;
 
 use self::event_row::EventRow;
 
@@ -43,14 +45,19 @@ mod imp {
     #[gtk::template_callbacks]
     impl SearchDialog {
         #[template_callback]
-        fn search_events(&self) {
+        async fn search_events(&self) {
             let manager = Application::default().manager();
             let text = self.search_entry.text();
-            let results = manager
-                .search_events(&text)
-                .expect("Search should be successful");
-            self.results_view
-                .set_model(Some(&gtk::NoSelection::new(Some(results))));
+            // TODO: Show load and error
+            match manager.search_events_future(&text).await {
+                Ok(results) => {
+                    self.results_view
+                        .set_model(Some(&gtk::NoSelection::new(Some(results))));
+                }
+                Err(e) => {
+                    warn!("Error searching events: {e}");
+                }
+            }
         }
 
         #[template_callback]
@@ -66,6 +73,7 @@ mod imp {
 
         #[template_callback]
         fn open_event_details(&self, item: u32) {
+            let obj = self.obj();
             let event = self
                 .results_view
                 .model()
@@ -74,7 +82,8 @@ mod imp {
                 .unwrap()
                 .downcast::<Event>()
                 .unwrap();
-            dbg!("todo: show event details for {}", event.name());
+            let dialog = EventDetailsDialog::new(&event);
+            dialog.present(Some(&*obj));
         }
     }
 }
