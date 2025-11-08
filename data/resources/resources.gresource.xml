@@ -26,7 +26,10 @@
     
     <!-- Event Details Dialog -->
     <file compressed="true" preprocess="xml-stripblanks" alias="event_details_dialog.ui">ui/event_details_dialog.ui</file>
-
+    
+    <!-- Qr Code Dialog -->
+    <file compressed="true" preprocess="xml-stripblanks" alias="qr_code_dialog.ui">ui/qr_code_dialog.ui</file>
+        
     <!-- Search Dialog -->
     <file compressed="true" preprocess="xml-stripblanks" alias="search_dialog.ui">ui/search_dialog/search_dialog.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="event_row.ui">ui/search_dialog/event_row.ui</file>

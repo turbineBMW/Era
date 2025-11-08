@@ -6,9 +6,6 @@ use ashpd::desktop::{
     open_uri::OpenFileRequest,
 };
 use clepsydre::Event;
-use gdk::gdk_pixbuf::{Colorspace, Pixbuf};
-use image::{ImageBuffer, Rgb};
-use qrcodegen::{QrCode, QrCodeEcc};
 use tracing::warn;
 
 use crate::{
@@ -17,6 +14,8 @@ use crate::{
 };
 
 mod imp {
+    use crate::widgets::QrCodeDialog;
+
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
@@ -43,6 +42,8 @@ mod imp {
         video_conference_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
         description_entry: TemplateChild<adw::EntryRow>,
+        #[template_child]
+        qr_code_dialog: TemplateChild<QrCodeDialog>,
     }
 
     #[glib::object_subclass]
@@ -144,62 +145,11 @@ mod imp {
 
         #[template_callback]
         fn show_qr_code(&self) {
-            pub fn to_qr_code_pixbuf(event: &Event) -> Pixbuf {
-                let module_size = 8;
-                let url = event.to_string_for_qr_code();
-
-                // Generate the raw QR code structure
-                let qr = QrCode::encode_text(&url, QrCodeEcc::Medium).unwrap();
-
-                let size = qr.size() as u32;
-                let img_size = size * module_size;
-
-                // Create an image buffer from the raw QR data
-                let mut img = ImageBuffer::new(img_size, img_size);
-
-                let white = Rgb([255u8, 255u8, 255u8]);
-                let black = Rgb([0u8, 0u8, 0u8]);
-
-                // Iterate through the raw QR code modules
-                for y in 0..size {
-                    for x in 0..size {
-                        let color = if qr.get_module(x as i32, y as i32) {
-                            black
-                        } else {
-                            white
-                        };
-
-                        // Scale the module to the desired pixel size (module_size x module_size)
-                        for i in 0..module_size {
-                            for j in 0..module_size {
-                                img.put_pixel(x * module_size + j, y * module_size + i, color);
-                            }
-                        }
-                    }
-                }
-
-                // Transform into a pixbuf
-                let data = glib::Bytes::from_owned(img.into_raw());
-                Pixbuf::from_bytes(
-                    &data,
-                    Colorspace::Rgb,
-                    false,
-                    8,
-                    img_size as i32,
-                    img_size as i32,
-                    img_size as i32 * 3,
-                )
-            }
-
             let event = self.obj().event().expect("event should be initialized");
-            let dialog = adw::Dialog::new();
-            let pixbuf = to_qr_code_pixbuf(&event);
-            // TODO: Remove deprecated function
-            #[allow(deprecated)]
-            let image = gtk::Image::from_pixbuf(Some(&pixbuf));
-            image.set_pixel_size(400);
-            dialog.set_child(Some(&image));
-            dialog.present(Some(&*self.obj()));
+            let url = event.to_string_for_qr_code();
+
+            self.qr_code_dialog.set_url(url);
+            self.qr_code_dialog.present(Some(&*self.obj()));
         }
 
         #[template_callback]

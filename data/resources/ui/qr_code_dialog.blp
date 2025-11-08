@@ -1,0 +1,31 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $QrCodeDialog: Adw.Dialog {
+  content-height: 500;
+  content-width: 500;
+
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    content: Adw.PreferencesPage {
+      Adw.PreferencesGroup {
+        Box {
+          orientation: vertical;
+          spacing: 12;
+
+          Picture qr_code {}
+
+          Label {
+            label: "Scan to Import";
+
+            styles [
+              "title-2",
+            ]
+          }
+        }
+      }
+    };
+  }
+}
