@@ -9,8 +9,12 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/error_dialog.ui")]
     #[properties(wrapper_type = super::ErrorDialog)]
     pub struct ErrorDialog {
-        #[property(get, set, construct_only)]
+        #[property(get, construct_only)]
         error_message: RefCell<String>,
+        #[template_child]
+        toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[template_child]
+        text_view: TemplateChild<gtk::TextView>,
     }
 
     #[glib::object_subclass]
@@ -21,6 +25,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
+            klass.bind_template_callbacks();
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -29,9 +34,32 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for ErrorDialog {}
+    impl ObjectImpl for ErrorDialog {
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            self.text_view
+                .buffer()
+                .set_text(&self.error_message.borrow());
+        }
+    }
+
     impl WidgetImpl for ErrorDialog {}
     impl AdwDialogImpl for ErrorDialog {}
+
+    #[gtk::template_callbacks]
+    impl ErrorDialog {
+        #[template_callback]
+        fn copy(&self) {
+            let clipboard = self.obj().clipboard();
+            let text = self.text_view.buffer().property::<String>("text");
+            clipboard.set_text(&text);
+
+            self.toast_overlay.dismiss_all();
+            let toast = adw::Toast::new("Error message copied to clipboard");
+            self.toast_overlay.add_toast(toast);
+        }
+    }
 }
 
 glib::wrapper! {

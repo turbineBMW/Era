@@ -43,3 +43,12 @@
     font-weight: 400;
     font-size: 130%;
 }
+
+.error-message box > textview {
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.error-message box > textview > text {
+    background: none;
+}

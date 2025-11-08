@@ -6,13 +6,45 @@ template $ErrorDialog: Adw.Dialog {
   content-width: 500;
   title: _("Error Details");
 
-  Adw.ToolbarView {
-    [top]
-    Adw.HeaderBar {}
+  Adw.ToastOverlay toast_overlay {
+    Adw.ToolbarView {
+      [top]
+      Adw.HeaderBar {}
 
-    content: Label {
-      label: bind template.error_message;
-      wrap: true;
-    };
+      content: Adw.PreferencesPage {
+        Adw.PreferencesGroup {
+          title: _("Message");
+
+          header-suffix: Button {
+            icon-name: "edit-copy-symbolic";
+            clicked => $copy(template);
+
+            styles [
+              "flat",
+            ]
+          };
+
+          Adw.PreferencesRow {
+            activatable: false;
+            focusable: false;
+
+            styles [
+              "error-message",
+            ]
+
+            Box {
+              TextView text_view {
+                hexpand: true;
+                top-margin: 6;
+                bottom-margin: 6;
+                left-margin: 6;
+                right-margin: 6;
+                wrap-mode: word_char;
+              }
+            }
+          }
+        }
+      };
+    }
   }
 }
