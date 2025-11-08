@@ -15,9 +15,9 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/collections_list_page.ui")]
     pub struct CollectionsListPage {
         #[template_child]
-        pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
-        pub collections_list: TemplateChild<CollectionsList>,
+        collections_list: TemplateChild<CollectionsList>,
     }
 
     #[glib::object_subclass]

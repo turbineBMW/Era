@@ -15,21 +15,21 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/create_event_dialog.ui")]
     pub struct CreateEventDialog {
         #[template_child]
-        pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
-        pub cancel: TemplateChild<gtk::Button>,
+        cancel: TemplateChild<gtk::Button>,
         #[template_child]
-        pub create: TemplateChild<LoadingButton>,
+        create: TemplateChild<LoadingButton>,
         #[template_child]
-        pub name: TemplateChild<adw::EntryRow>,
+        name: TemplateChild<adw::EntryRow>,
         #[template_child]
-        pub location: TemplateChild<adw::EntryRow>,
+        location: TemplateChild<adw::EntryRow>,
         #[template_child]
-        pub video_conference: TemplateChild<adw::EntryRow>,
+        video_conference: TemplateChild<adw::EntryRow>,
         #[template_child]
-        pub calendar_choice: TemplateChild<CalendarComboRow>,
+        calendar_choice: TemplateChild<CalendarComboRow>,
         #[template_child]
-        pub description: TemplateChild<adw::EntryRow>,
+        description: TemplateChild<adw::EntryRow>,
     }
 
     #[glib::object_subclass]

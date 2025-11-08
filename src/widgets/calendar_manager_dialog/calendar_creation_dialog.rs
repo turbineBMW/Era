@@ -14,17 +14,17 @@ mod imp {
     #[properties(wrapper_type = super::CalendarCreationDialog)]
     pub struct CalendarCreationDialog {
         #[property(get, set, construct_only)]
-        pub collection: RefCell<Option<Collection>>,
+        collection: RefCell<Option<Collection>>,
         #[template_child]
-        pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
-        pub cancel: TemplateChild<gtk::Button>,
+        cancel: TemplateChild<gtk::Button>,
         #[template_child]
-        pub create: TemplateChild<LoadingButton>,
+        create: TemplateChild<LoadingButton>,
         #[template_child]
-        pub name: TemplateChild<adw::EntryRow>,
+        name: TemplateChild<adw::EntryRow>,
         #[template_child]
-        pub color: TemplateChild<gtk::ColorDialogButton>,
+        color: TemplateChild<gtk::ColorDialogButton>,
     }
 
     #[glib::object_subclass]

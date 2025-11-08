@@ -11,7 +11,7 @@ mod imp {
     #[properties(wrapper_type = super::CalendarComboRowHeader)]
     pub struct CalendarComboRowHeader {
         #[property(get, set, construct_only)]
-        pub collection: RefCell<Option<Collection>>,
+        collection: RefCell<Option<Collection>>,
     }
 
     #[glib::object_subclass]

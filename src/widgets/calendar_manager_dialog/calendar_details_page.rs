@@ -18,13 +18,13 @@ mod imp {
     #[properties(wrapper_type = super::CalendarDetailsPage)]
     pub struct CalendarDetailsPage {
         #[property(get, construct_only)]
-        pub calendar: RefCell<Option<Calendar>>,
+        calendar: RefCell<Option<Calendar>>,
         #[template_child]
-        pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
-        pub name: TemplateChild<adw::EntryRow>,
+        name: TemplateChild<adw::EntryRow>,
         #[template_child]
-        pub remove: TemplateChild<LoadingButtonRow>,
+        remove: TemplateChild<LoadingButtonRow>,
     }
 
     #[glib::object_subclass]

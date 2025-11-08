@@ -12,11 +12,10 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_combo_row_list_item.ui")]
     #[properties(wrapper_type = super::CalendarComboRowListItem)]
     pub struct CalendarComboRowListItem {
-        // TODO: keep pub?
         #[property(get, set)]
-        pub calendar: RefCell<Option<Calendar>>,
+        calendar: RefCell<Option<Calendar>>,
         #[property(get, set)]
-        pub selected: Cell<bool>,
+        selected: Cell<bool>,
     }
 
     #[glib::object_subclass]

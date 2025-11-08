@@ -22,9 +22,9 @@ mod imp {
         #[template_child]
         stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub search_entry: TemplateChild<gtk::SearchEntry>,
+        search_entry: TemplateChild<gtk::SearchEntry>,
         #[template_child]
-        pub results_view: TemplateChild<gtk::ListView>,
+        results_view: TemplateChild<gtk::ListView>,
     }
 
     #[glib::object_subclass]

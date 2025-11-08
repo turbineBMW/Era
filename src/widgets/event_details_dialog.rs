@@ -23,7 +23,7 @@ mod imp {
     #[properties(wrapper_type = super::EventDetailsDialog)]
     pub struct EventDetailsDialog {
         #[property(get, construct_only)]
-        pub event: RefCell<Option<Event>>,
+        event: RefCell<Option<Event>>,
         #[template_child]
         navigation_view: TemplateChild<adw::NavigationView>,
         #[template_child]

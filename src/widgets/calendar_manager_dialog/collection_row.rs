@@ -13,11 +13,11 @@ mod imp {
     #[properties(wrapper_type = super::CollectionRow)]
     pub struct CollectionRow {
         #[property(get, construct_only)]
-        pub collection: RefCell<Option<Collection>>,
+        collection: RefCell<Option<Collection>>,
         #[template_child]
-        pub name_label: TemplateChild<gtk::Label>,
+        name_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub calendars_list: TemplateChild<gtk::ListBox>,
+        calendars_list: TemplateChild<gtk::ListBox>,
     }
 
     #[glib::object_subclass]

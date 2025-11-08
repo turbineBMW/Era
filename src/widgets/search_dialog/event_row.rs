@@ -14,7 +14,7 @@ mod imp {
     #[properties(wrapper_type = super::EventRow)]
     pub struct EventRow {
         #[property(get, set)]
-        pub event: RefCell<Option<Event>>,
+        event: RefCell<Option<Event>>,
     }
 
     #[glib::object_subclass]

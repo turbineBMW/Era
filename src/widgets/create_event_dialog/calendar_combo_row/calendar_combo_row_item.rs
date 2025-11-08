@@ -13,7 +13,7 @@ mod imp {
     #[properties(wrapper_type = super::CalendarComboRowItem)]
     pub struct CalendarComboRowItem {
         #[property(get, set)]
-        pub calendar: RefCell<Option<Calendar>>,
+        calendar: RefCell<Option<Calendar>>,
     }
 
     #[glib::object_subclass]
