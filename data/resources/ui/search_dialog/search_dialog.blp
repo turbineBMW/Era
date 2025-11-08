@@ -5,29 +5,43 @@ template $SearchDialog: Adw.Dialog {
   content-height: 500;
   content-width: 500;
 
-  Adw.ToolbarView {
-    [top]
-    Adw.HeaderBar {
-      title-widget: SearchEntry search_entry {
-        placeholder-text: _("Search");
-        search-changed => $search_events(template);
+  Adw.ToastOverlay toast_overlay {
+    Adw.ToolbarView {
+      [top]
+      Adw.HeaderBar {
+        title-widget: SearchEntry search_entry {
+          placeholder-text: _("Search");
+          search-changed => $search_events(template);
+        };
+      }
+
+      content: ScrolledWindow {
+        Adw.Clamp {
+          Stack stack {
+            StackPage {
+              name: "results";
+
+              child: ListView results_view {
+                factory: SignalListItemFactory {
+                  bind => $event_item_bind();
+                };
+
+                activate => $open_event_details(template);
+
+                styles [
+                  "events-list",
+                ]
+              };
+            }
+
+            StackPage {
+              name: "loading";
+
+              child: Adw.Spinner {};
+            }
+          }
+        }
       };
     }
-
-    content: ScrolledWindow {
-      Adw.Clamp {
-        ListView results_view {
-          factory: SignalListItemFactory {
-            bind => $event_item_bind();
-          };
-
-          activate => $open_event_details(template);
-
-          styles [
-            "events-list",
-          ]
-        }
-      }
-    };
   }
 }

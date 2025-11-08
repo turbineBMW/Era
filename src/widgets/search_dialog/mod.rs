@@ -4,8 +4,10 @@ use tracing::warn;
 
 mod event_row;
 
-use crate::Application;
-use crate::widgets::event_details_dialog::EventDetailsDialog;
+use crate::{
+    Application,
+    widgets::{components::ErrorDialog, event_details_dialog::EventDetailsDialog},
+};
 
 use self::event_row::EventRow;
 
@@ -15,6 +17,10 @@ mod imp {
     #[derive(Debug, Default, gtk::CompositeTemplate)]
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/search_dialog.ui")]
     pub struct SearchDialog {
+        #[template_child]
+        toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[template_child]
+        stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub search_entry: TemplateChild<gtk::SearchEntry>,
         #[template_child]
@@ -30,6 +36,18 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+
+            klass.install_action(
+                "search-dialog.show-error",
+                Some(&String::static_variant_type()),
+                |obj, _, param| {
+                    let error_message = &param
+                        .and_then(glib::Variant::get::<String>)
+                        .expect("The parameter should be a string");
+                    let dialog = ErrorDialog::new(error_message);
+                    dialog.present(Some(obj));
+                },
+            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -47,17 +65,26 @@ mod imp {
         #[template_callback]
         async fn search_events(&self) {
             let manager = Application::default().manager();
+
+            self.toast_overlay.dismiss_all();
+            self.stack.set_visible_child_name("loading");
+
             let text = self.search_entry.text();
-            // TODO: Show load and error
             match manager.search_events_future(&text).await {
                 Ok(results) => {
                     self.results_view
                         .set_model(Some(&gtk::NoSelection::new(Some(results))));
                 }
-                Err(e) => {
-                    warn!("Error searching events: {e}");
+                Err(error) => {
+                    warn!("Failed to search events: {error}");
+                    let toast = adw::Toast::new("An error occurred");
+                    toast.set_button_label(Some("Details"));
+                    toast.set_action_name(Some("search-dialog.show-error"));
+                    toast.set_action_target(Some(&error.message()));
+                    self.toast_overlay.add_toast(toast);
                 }
             }
+            self.stack.set_visible_child_name("results");
         }
 
         #[template_callback]
