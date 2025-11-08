@@ -82,10 +82,12 @@ mod imp {
                     toast.set_action_name(Some("collections-list-page.show-error"));
                     toast.set_action_target(Some(&error.message()));
 
-                    let toast_overlay = self
-                        .obj()
-                        .ancestor(adw::ToastOverlay::static_type())
-                        .expect("Toast overlay should be present")
+                    let Some(toast_overlay) = self.obj().ancestor(adw::ToastOverlay::static_type())
+                    else {
+                        // The dialog was closed by the user
+                        return;
+                    };
+                    let toast_overlay = toast_overlay
                         .downcast::<adw::ToastOverlay>()
                         .expect("Ancestor should be a ToastOverlay");
                     toast_overlay.add_toast(toast);

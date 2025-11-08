@@ -318,7 +318,7 @@ dependencies = [
 [[package]]
 name = "clepsydre"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#040371ca19ed853b16ff658fae2f1a8390ce7923"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#0e544bf8aeddf797d1057fe811d14a4e78c4f221"
 dependencies = [
  "clepsydre_core",
  "clepsydre_eds",
@@ -328,7 +328,7 @@ dependencies = [
 [[package]]
 name = "clepsydre_core"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#040371ca19ed853b16ff658fae2f1a8390ce7923"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#0e544bf8aeddf797d1057fe811d14a4e78c4f221"
 dependencies = [
  "chrono",
  "gdk4",
@@ -343,7 +343,7 @@ dependencies = [
 [[package]]
 name = "clepsydre_eds"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#040371ca19ed853b16ff658fae2f1a8390ce7923"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#0e544bf8aeddf797d1057fe811d14a4e78c4f221"
 dependencies = [
  "clepsydre_core",
  "futures-util",
@@ -358,7 +358,7 @@ dependencies = [
 [[package]]
 name = "clepsydre_tsparql"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#040371ca19ed853b16ff658fae2f1a8390ce7923"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#0e544bf8aeddf797d1057fe811d14a4e78c4f221"
 dependencies = [
  "clepsydre_core",
  "futures",
