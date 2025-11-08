@@ -32,6 +32,9 @@ blueprints = custom_target(
     'ui/search_dialog/event_row.blp',
     'ui/search_dialog/search_dialog.blp',
 
+    # Shortcuts Dialog
+    'ui/shortcuts_dialog.blp',
+
     # Views
     'ui/views/month_view/month_view.blp',
     'ui/views/month_view/month_view_week_row.blp',

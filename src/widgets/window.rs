@@ -41,7 +41,6 @@ pub(crate) mod imp {
             klass.install_action("win.search-events", None, |obj, _, _| {
                 obj.imp().search_events();
             });
-
             klass.add_binding_action(
                 gdk::Key::F,
                 gdk::ModifierType::CONTROL_MASK,
@@ -51,7 +50,11 @@ pub(crate) mod imp {
             klass.install_action("win.manage-calendars", None, |obj, _, _| {
                 obj.imp().manage_calendars();
             });
-
+            klass.add_binding_action(
+                gdk::Key::F8,
+                gdk::ModifierType::NO_MODIFIER_MASK,
+                "win.manage-calendars",
+            );
             klass.add_binding_action(
                 gdk::Key::M,
                 gdk::ModifierType::CONTROL_MASK | gdk::ModifierType::ALT_MASK,
@@ -61,7 +64,6 @@ pub(crate) mod imp {
             klass.install_action("win.create-event", None, |obj, _, _| {
                 obj.imp().create_event();
             });
-
             klass.add_binding_action(
                 gdk::Key::N,
                 gdk::ModifierType::CONTROL_MASK,

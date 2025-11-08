@@ -33,6 +33,9 @@
     <!-- Search Dialog -->
     <file compressed="true" preprocess="xml-stripblanks" alias="search_dialog.ui">ui/search_dialog/search_dialog.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="event_row.ui">ui/search_dialog/event_row.ui</file>
+    
+    <!-- Shortcuts Dialog -->
+    <file compressed="true" preprocess="xml-stripblanks" alias="shortcuts-dialog.ui">ui/shortcuts_dialog.ui</file>
 
     <!-- Views -->
     <file compressed="true" preprocess="xml-stripblanks" alias="month_view.ui">ui/views/month_view/month_view.ui</file>
