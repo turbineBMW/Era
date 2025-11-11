@@ -1,7 +1,9 @@
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::jiff;
+use glib::clone;
 
 use crate::{
+    application::Application,
     utils,
     widgets::{
         CalendarManagerDialog, CreateEventDialog, SearchDialog,
@@ -9,13 +11,14 @@ use crate::{
     },
 };
 
-pub(crate) mod imp {
-
+pub mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/window.ui")]
     pub struct Window {
+        #[template_child]
+        stack: TemplateChild<gtk::Stack>,
         #[template_child]
         main_view: TemplateChild<adw::MultiLayoutView>,
         #[template_child]
@@ -76,7 +79,30 @@ pub(crate) mod imp {
         }
     }
 
-    impl ObjectImpl for Window {}
+    impl ObjectImpl for Window {
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let manager = Application::default().manager();
+
+            manager.connect_backend_available_notify(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |manager| {
+                    if manager.backend_available() {
+                        imp.stack.set_visible_child_name("calendar_view");
+                    } else {
+                        imp.stack.set_visible_child_name("no_backend");
+                        let dialogs = imp.obj().dialogs().iter().collect::<Vec<_>>();
+                        for maybe_dialog in dialogs {
+                            let dialog: adw::Dialog = maybe_dialog.unwrap();
+                            dialog.force_close();
+                        }
+                    }
+                }
+            ));
+        }
+    }
     impl WidgetImpl for Window {}
     impl WindowImpl for Window {}
     impl ApplicationWindowImpl for Window {}
