@@ -9,15 +9,16 @@ lto = true
 codegen-units = 1
 
 [dependencies]
-adw = { package = "libadwaita", version = "0.8.0", features = ["v1_7"] }
+adw = { package = "libadwaita", version = "0.8.0", features = ["v1_8"] }
 ashpd = { version = "0.12.0", default-features = false, features = ["async-std"] }
-clepsydre = { git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git" }
-gettext-rs = { version = "0.7.2", features = ["gettext-system"] }
-gio = { version = "0.21.1", features = ["v2_84"] }
-glib = { version = "0.21.1", features = ["v2_84"] }
-gdk = { package = "gdk4", version = "0.10.0", features = ["v4_18"] }
-gtk = { package = "gtk4", version = "0.10.0", features = ["gnome_47"] }
-qrcode = "0.14"
+clepsydre = { git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git", features = ["consumer"] }
+clepsydre_eds = { package = "clepsydre_eds", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git" }
+gettext-rs = { version = "0.7.7", features = ["gettext-system"] }
+gio = { version = "0.21.4", features = ["v2_84"] }
+glib = { version = "0.21.4", features = ["v2_84"] }
+gdk = { package = "gdk4", version = "0.10.1", features = ["v4_20"] }
+gtk = { package = "gtk4", version = "0.10.2", features = ["gnome_48"] }
+qrcode = "0.14.1"
 tracing = "0.1.41"
-tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
-url = "2.5"
+tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
+url = "2.5.7"

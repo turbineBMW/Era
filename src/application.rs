@@ -1,7 +1,8 @@
 use std::cell::{Cell, OnceCell};
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{EdsManager, Manager, jiff};
+use clepsydre::{Manager, jiff};
+use clepsydre_eds::EdsManager;
 use gettextrs::gettext;
 
 use crate::{
@@ -17,6 +18,7 @@ mod imp {
     pub struct Application {
         // TODO: Monitor the system to update those
         // TODO: Use i16 for year ; this requires support from gtk-rs
+        // TODO: Probably use GDateTime?
         #[property(get, set)]
         current_year: Cell<i32>,
         #[property(get, set)]
@@ -44,6 +46,7 @@ mod imp {
             obj.setup_gactions();
             obj.set_accels_for_action("app.quit", &["<primary>q"]);
 
+            // self.manager.set(TsparqlManager::new().upcast()).unwrap();
             self.manager.set(EdsManager::new().upcast()).unwrap();
         }
     }

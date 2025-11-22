@@ -26,6 +26,8 @@ pub mod imp {
         #[template_child]
         narrow_stack: TemplateChild<gtk::Stack>,
         #[template_child]
+        year_view: TemplateChild<YearView>,
+        #[template_child]
         month_view: TemplateChild<MonthView>,
     }
 
@@ -36,8 +38,6 @@ pub mod imp {
         type ParentType = adw::ApplicationWindow;
 
         fn class_init(klass: &mut Self::Class) {
-            YearView::ensure_type();
-
             klass.bind_template();
             klass.bind_template_callbacks();
 
@@ -103,6 +103,7 @@ pub mod imp {
             ));
         }
     }
+
     impl WidgetImpl for Window {}
     impl WindowImpl for Window {}
     impl ApplicationWindowImpl for Window {}
