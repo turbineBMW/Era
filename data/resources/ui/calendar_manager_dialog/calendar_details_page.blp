@@ -3,7 +3,7 @@ using Gdk 4.0;
 using Adw 1;
 
 template $CalendarDetailsPage: Adw.NavigationPage {
-  title: bind template.calendar as <$Calendar>.name;
+  title: bind template.calendar as <$ClepsydreCalendar>.name;
 
   child: Adw.ToastOverlay toast_overlay {
     Adw.ToolbarView {
@@ -23,15 +23,14 @@ template $CalendarDetailsPage: Adw.NavigationPage {
             subtitle: _("No good way to change color in the UI yet");
 
             Image {
-              visible: bind template.calendar as <$Calendar>.visible as <bool>;
               pixel-size: 24;
-              paintable: bind $get_circle_paintable(template.calendar as <$Calendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+              paintable: bind $get_circle_paintable(template.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
             }
           }
         }
 
         Adw.PreferencesGroup {
-          visible: bind template.calendar as <$Calendar>.removable as <bool>;
+          visible: bind template.calendar as <$ClepsydreCalendar>.removable as <bool>;
 
           $LoadingButtonRow remove {
             title: _("Remove Calendar");

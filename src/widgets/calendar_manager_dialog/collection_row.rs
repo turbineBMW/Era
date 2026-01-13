@@ -46,7 +46,7 @@ mod imp {
                 .collection()
                 .expect("collection should be initialized");
 
-            let calendars_model = collection.calendars();
+            let calendars_model = collection.calendars().unwrap();
             let sorted_calendars_model = gtk::SortListModel::new(
                 Some(calendars_model),
                 Some(gtk::StringSorter::new(Some(Calendar::this_expression(

@@ -17,7 +17,7 @@ template $CollectionRow: ListBoxRow {
       margin-bottom: 6;
 
       Label name_label {
-        label: bind template.collection as <$Collection>.name;
+        label: bind template.collection as <$ClepsydreCollection>.name;
         halign: start;
         margin-bottom: 6;
 
@@ -28,7 +28,7 @@ template $CollectionRow: ListBoxRow {
 
       Button {
         icon-name: "list-add-symbolic";
-        visible: bind template.collection as <$Collection>.calendar-creation-enabled as <bool>;
+        visible: bind template.collection as <$ClepsydreCollection>.calendar-creation-enabled as <bool>;
         halign: end;
         hexpand: true;
         clicked => $open_calendar_creation_dialog(template);
@@ -40,7 +40,7 @@ template $CollectionRow: ListBoxRow {
     }
 
     ListBox {
-      visible: bind $list_is_empty(template.collection as <$Collection>.calendars as <Gio.ListStore>.n-items) as <bool>;
+      visible: bind $list_is_empty(template.collection as <$ClepsydreCollection>.calendars as <Gio.ListStore>.n-items) as <bool>;
       vexpand: true;
       selection-mode: none;
 
@@ -54,7 +54,7 @@ template $CollectionRow: ListBoxRow {
     }
 
     ListBox calendars_list {
-      visible: bind $list_is_not_empty(template.collection as <$Collection>.calendars as <Gio.ListStore>.n-items) as <bool>;
+      visible: bind $list_is_not_empty(template.collection as <$ClepsydreCollection>.calendars as <Gio.ListStore>.n-items) as <bool>;
       vexpand: true;
       selection-mode: none;
 

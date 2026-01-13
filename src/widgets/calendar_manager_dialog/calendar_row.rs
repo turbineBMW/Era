@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::Calendar;
+use clepsydre::{Calendar, prelude::*};
 use tracing::{debug, warn};
 
 use crate::utils::{PaintableCallbacks, TemplateCallbacks};
@@ -15,6 +15,8 @@ mod imp {
     pub struct CalendarRow {
         #[property(get, set, construct_only)]
         calendar: RefCell<Option<Calendar>>,
+        #[template_child]
+        circle_loading: TemplateChild<gtk::Stack>,
     }
 
     #[glib::object_subclass]
@@ -55,6 +57,7 @@ mod imp {
                     &obj.calendar()
                         .expect("Calendar should be initialized")
                         .uri()
+                        .unwrap()
                         .to_variant(),
                 ),
             );
@@ -69,14 +72,21 @@ mod imp {
                 .as_ref()
                 .expect("Calendar should be initialized")
                 .clone();
-            let visible = !calendar.visible();
+            let visible = !calendar.is_visible();
 
-            match calendar.try_set_visible_future(visible).await {
+            self.circle_loading.set_visible_child_name("loading");
+            self.obj().set_activatable(false);
+
+            let manager = calendar.manager().unwrap().clone();
+            match manager
+                .try_set_calendar_visible_future(&calendar, visible)
+                .await
+            {
                 Ok(()) => {
-                    debug!("Calendar name updated: {}", calendar.uri());
+                    debug!("Calendar visibility updated: {}", calendar.uri().unwrap());
                 }
                 Err(error) => {
-                    warn!("Failed to update calendar name: {}", error);
+                    warn!("Failed to update calendar visibility: {}", error);
                     let toast = adw::Toast::new("An error occurred");
                     toast.set_button_label(Some("Details"));
                     toast.set_action_name(Some("collections-list-page.show-error"));
@@ -93,6 +103,9 @@ mod imp {
                     toast_overlay.add_toast(toast);
                 }
             }
+
+            self.circle_loading.set_visible_child_name("circle");
+            self.obj().set_activatable(true);
         }
     }
 }

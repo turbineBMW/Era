@@ -1,5 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, EventCreationArgs, Timeframe, jiff};
+use clepsydre::{Calendar, Timeframe, prelude::*};
 use tracing::{debug, warn};
 
 mod calendar_combo_row;
@@ -9,6 +9,8 @@ use crate::widgets::components::{ErrorDialog, LoadingButton};
 use self::calendar_combo_row::CalendarComboRow;
 
 mod imp {
+    use glib::DateTime;
+
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
@@ -82,21 +84,33 @@ mod imp {
                 .downcast()
                 .expect("Selected item should be a Calendar");
 
-            let args = EventCreationArgs {
-                name: &self.name.text(),
-                description: &self.description.text(),
-                location: &self.location.text(),
-                video_conference: &self.video_conference.text(),
-                timeframe: &Timeframe::new(
-                    true,
-                    "2025-09-29".parse::<jiff::civil::Date>().unwrap().into(),
-                    "2025-10-01".parse::<jiff::civil::Date>().unwrap().into(),
-                ),
-            };
-
-            match calendar.try_create_event_future(&args).await {
+            let name = self.name.text();
+            let description = self.description.text();
+            let location = self.location.text();
+            let video_conference = self.video_conference.text();
+            let start = DateTime::from_iso8601("20250929T000000Z", None)
+                .expect("Failed to parse start date");
+            let end =
+                DateTime::from_iso8601("20251001T000000Z", None).expect("Failed to parse end date");
+            let timeframe = Timeframe::new(
+                true,
+                &start.format_iso8601().unwrap(),
+                &end.format_iso8601().unwrap(),
+            );
+            let manager = calendar.manager().unwrap();
+            match manager
+                .try_create_event_future(
+                    &calendar,
+                    &name,
+                    &description,
+                    &location,
+                    &video_conference,
+                    &timeframe,
+                )
+                .await
+            {
                 Ok(event) => {
-                    debug!("Event created: {}", event.uri());
+                    debug!("Event created: {}", event.unwrap().uri().unwrap());
                     self.obj().close();
                 }
                 Err(error) => {

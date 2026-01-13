@@ -1,7 +1,6 @@
 use std::{cell::Cell, cmp};
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::jiff;
 use glib::clone;
 
 use crate::Application;

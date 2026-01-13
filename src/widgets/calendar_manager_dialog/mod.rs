@@ -1,4 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
+use clepsydre::prelude::*;
 use glib::clone;
 use tracing::error;
 
@@ -47,7 +48,7 @@ mod imp {
                             .and_then(glib::Variant::get::<String>)
                             .and_then(|uri| {
                                 let manager = Application::default().manager();
-                                manager.calendars_model().get(&uri)
+                                manager.calendars_model().unwrap().get(&uri)
                             })
                     else {
                         error!("Invalid resource URI");
@@ -72,7 +73,7 @@ mod imp {
 
             let manager = Application::default().manager();
 
-            let collections_model = manager.collections_model();
+            let collections_model = manager.collections_model().unwrap();
 
             if collections_model.n_items() == 0 {
                 self.stack.set_visible_child_name("empty");

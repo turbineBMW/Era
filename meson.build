@@ -2,7 +2,7 @@ project(
   'kalendasom',
   'rust',
   version: '0.1.0',
-  meson_version: '>= 1.9.1',
+  meson_version: '>= 1.8.5',
   default_options: [
     'warning_level=2',
     'werror=false',
@@ -14,7 +14,8 @@ gnome = import('gnome')
 
 dependency('gtk4', version: '>= 4.20')
 dependency('libadwaita-1', version: '>= 1.8')
-dependency('tinysparql-3.0', version: '>= 3.10')
+dependency('clepsydre-0', version: '>= 0.1')
+dependency('clepsydre-eds-0', version: '>= 0.1')
 
 appstreamcli = find_program('appstreamcli', required: true)
 compile_schemas = find_program('glib-compile-schemas', required: true)

@@ -1,3 +1,6 @@
+# TODO: Deduplicate many jobs
+# TODO: Switch to GNOME OS
+
 include:
   - project: "GNOME/citemplates"
     file: "templates/default-rules.yml"
@@ -56,6 +59,17 @@ blueprint-format:
   script:
     - blueprint-compiler format **/*.blp
 
+blueprint-lint:
+  stage: check
+  image: fedora:latest
+  interruptible: true
+  before_script:
+    - dnf install -y blueprint-compiler
+    - shopt -s globstar
+  script:
+    - blueprint-compiler lint **/*.blp
+  allow_failure: true
+
 build@x86_64:
   extends: ".flatpak@x86_64"
   stage: build
@@ -65,10 +79,10 @@ build@x86_64:
   artifacts:
     paths:
       - $BUNDLE
-      - 'repo.tar'
-      - '.flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-logs/'
+      - "repo.tar"
+      - ".flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-logs/"
       # Add the metainfo file for the corresponding test.
-      - '${APP_ID}.metainfo.xml'
+      - "${APP_ID}.metainfo.xml"
 
 build@aarch64:
   extends: ".flatpak@aarch64"

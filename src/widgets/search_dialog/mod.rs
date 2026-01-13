@@ -73,7 +73,7 @@ mod imp {
             match manager.search_events_future(&text).await {
                 Ok(results) => {
                     self.results_view
-                        .set_model(Some(&gtk::NoSelection::new(Some(results))));
+                        .set_model(Some(&gtk::NoSelection::new(Some(results.unwrap()))));
                 }
                 Err(error) => {
                     warn!("Failed to search events: {error}");

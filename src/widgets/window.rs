@@ -1,5 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::jiff;
+use clepsydre::prelude::*;
 use glib::clone;
 
 use crate::{
@@ -85,11 +85,17 @@ pub mod imp {
 
             let manager = Application::default().manager();
 
+            if manager.is_backend_available() {
+                self.stack.set_visible_child_name("calendar_view");
+            } else {
+                self.stack.set_visible_child_name("no_backend");
+            }
+
             manager.connect_backend_available_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 move |manager| {
-                    if manager.backend_available() {
+                    if manager.is_backend_available() {
                         imp.stack.set_visible_child_name("calendar_view");
                     } else {
                         imp.stack.set_visible_child_name("no_backend");

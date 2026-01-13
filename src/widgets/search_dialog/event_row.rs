@@ -58,6 +58,9 @@ mod imp {
                     .timeframe()
                     .expect("Event should have a timeframe")
                     .start()
+                    .unwrap()
+                    .format_iso8601()
+                    .unwrap()
             )
         }
 
@@ -72,6 +75,9 @@ mod imp {
                     .timeframe()
                     .expect("Event should have a timeframe")
                     .end()
+                    .unwrap()
+                    .format_iso8601()
+                    .unwrap()
             )
         }
     }

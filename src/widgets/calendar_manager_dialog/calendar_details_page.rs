@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::Calendar;
+use clepsydre::{Calendar, prelude::*};
 use glib::clone;
 use tracing::{debug, warn};
 
@@ -64,13 +64,13 @@ mod imp {
 
             let calendar = self.obj().calendar().unwrap();
 
-            self.name.set_text(&calendar.name());
+            self.name.set_text(&calendar.name().unwrap());
 
             calendar.connect_name_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 move |calendar| {
-                    let name = calendar.name();
+                    let name = calendar.name().unwrap();
                     let old_name = imp.name.text();
                     if name != old_name {
                         imp.name.set_text(&name);
@@ -101,9 +101,10 @@ mod imp {
                 .expect("calendar should be initialized");
             let name = self.name.text();
 
-            match calendar.try_set_name_future(&name).await {
+            let manager = calendar.manager().unwrap().clone();
+            match manager.try_set_calendar_name_future(&calendar, &name).await {
                 Ok(()) => {
-                    debug!("Calendar name updated: {}", calendar.uri());
+                    debug!("Calendar name updated: {}", calendar.uri().unwrap());
                 }
                 Err(error) => {
                     warn!("Failed to update calendar name: {}", error);
@@ -124,9 +125,10 @@ mod imp {
                 .obj()
                 .calendar()
                 .expect("calendar should be initialized");
-            match calendar.try_remove_future().await {
+            let manager = calendar.manager().unwrap().clone();
+            match manager.try_remove_calendar_future(&calendar).await {
                 Ok(()) => {
-                    debug!("Calendar removed: {}", calendar.uri());
+                    debug!("Calendar removed: {}", calendar.uri().unwrap());
                 }
                 Err(error) => {
                     warn!("Failed to remove calendar: {}", error);

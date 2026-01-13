@@ -37,6 +37,65 @@
   ],
   "modules": [
     {
+      "name": "libical",
+      "cleanup": ["/lib/cmake"],
+      "buildsystem": "cmake-ninja",
+      "config-opts": [
+        "-DCMAKE_INSTALL_LIBDIR:PATH=/app/lib",
+        "-DBUILD_SHARED_LIBS=On",
+        "-DICAL_BUILD_DOCS=False",
+        "-DWITH_CXX_BINDINGS=False"
+      ],
+      "sources": [
+        {
+          "type": "archive",
+          "url": "https://github.com/libical/libical/releases/download/v3.0.20/libical-3.0.20.tar.gz",
+          "sha256": "e73de92f5a6ce84c1b00306446b290a2b08cdf0a80988eca0a2c9d5c3510b4c2"
+        }
+      ]
+    },
+    {
+      "name": "evolution-data-server",
+      "cleanup": ["/share/GConf"],
+      "buildsystem": "cmake-ninja",
+      "config-opts": [
+        "-DENABLE_CANBERRA=OFF",
+        "-DENABLE_GOA=OFF",
+        "-DENABLE_DOT_LOCKING=OFF",
+        "-DENABLE_FILE_LOCKING=fcntl",
+        "-DENABLE_GTK=OFF",
+        "-DENABLE_GTK4=ON",
+        "-DENABLE_GOOGLE=OFF",
+        "-DENABLE_VALA_BINDINGS=OFF",
+        "-DENABLE_WEATHER=OFF",
+        "-DWITH_OPENLDAP=OFF",
+        "-DWITH_LIBDB=OFF",
+        "-DENABLE_INTROSPECTION=OFF",
+        "-DENABLE_INSTALLED_TESTS=OFF",
+        "-DENABLE_GTK_DOC=OFF",
+        "-DENABLE_EXAMPLES=OFF",
+        "-DENABLE_OAUTH2_WEBKITGTK4=OFF"
+      ],
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://gitlab.gnome.org/GNOME/evolution-data-server.git"
+        }
+      ]
+    },
+    {
+      "name": "libclepsydre-eds",
+      "buildsystem": "meson",
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
+          "commit": "04470d3edda0358344b5b966eb20e17fc569ac01"
+        }
+      ],
+      "config-opts": ["-Dlibclepsydre=true", "-Dlibclepsydre-eds=true"]
+    },
+    {
       "name": "kalendasom",
       "builddir": true,
       "buildsystem": "meson",

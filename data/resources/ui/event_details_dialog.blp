@@ -32,7 +32,7 @@ template $EventDetailsDialog: Adw.Dialog {
           content: Adw.PreferencesPage {
             Adw.PreferencesGroup {
               Label name_label {
-                label: bind template.event as <$Event>.name;
+                label: bind template.event as <$ClepsydreEvent>.name;
                 xalign: 0;
 
                 styles [
@@ -41,19 +41,19 @@ template $EventDetailsDialog: Adw.Dialog {
               }
 
               Label timeframe_label {
-                label: bind $timeframe_label(template.event as <$Event>) as <string>;
+                label: bind $timeframe_label(template.event as <$ClepsydreEvent>) as <string>;
                 xalign: 0;
                 wrap: true;
               }
             }
 
             Adw.PreferencesGroup {
-              visible: bind $location_or_video_conference(template.event as <$Event>) as <bool>;
+              visible: bind $location_or_video_conference(template.event as <$ClepsydreEvent>) as <bool>;
 
               Adw.ActionRow {
                 title: _("Location");
-                subtitle: bind template.event as <$Event>.location as <string>;
-                visible: bind $string_not_empty(template.event as <$Event>.location) as <bool>;
+                subtitle: bind template.event as <$ClepsydreEvent>.location as <string>;
+                visible: bind $string_not_empty(template.event as <$ClepsydreEvent>.location) as <bool>;
 
                 styles [
                   "property",
@@ -73,8 +73,8 @@ template $EventDetailsDialog: Adw.Dialog {
 
               Adw.ActionRow {
                 title: _("Video Conference");
-                subtitle: bind template.event as <$Event>.video_conference as <string>;
-                visible: bind $string_not_empty(template.event as <$Event>.video_conference) as <bool>;
+                subtitle: bind template.event as <$ClepsydreEvent>.video_conference as <string>;
+                visible: bind $string_not_empty(template.event as <$ClepsydreEvent>.video_conference) as <bool>;
 
                 styles [
                   "property",
@@ -84,7 +84,7 @@ template $EventDetailsDialog: Adw.Dialog {
                 Button {
                   label: _("Join");
                   valign: center;
-                  sensitive: bind $video_conference_is_a_uri(template.event as <$Event>.video_conference) as <bool>;
+                  sensitive: bind $video_conference_is_a_uri(template.event as <$ClepsydreEvent>.video_conference) as <bool>;
                   clicked => $join(template);
                 }
               }
@@ -100,24 +100,24 @@ template $EventDetailsDialog: Adw.Dialog {
 
                   Image {
                     pixel-size: 16;
-                    paintable: bind $get_circle_paintable(template.event as <$Event>.calendar as <$Calendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+                    paintable: bind $get_circle_paintable(template.event as <$ClepsydreEvent>.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
                   }
 
                   Label {
                     ellipsize: end;
                     xalign: 0.0;
-                    label: bind template.event as <$Event>.calendar as <$Calendar>.name;
+                    label: bind template.event as <$ClepsydreEvent>.calendar as <$ClepsydreCalendar>.name;
                   }
                 }
               }
             }
 
             Adw.PreferencesGroup {
-              visible: bind $string_not_empty(template.event as <$Event>.description) as <bool>;
+              visible: bind $string_not_empty(template.event as <$ClepsydreEvent>.description) as <bool>;
 
               Adw.ActionRow {
                 title: _("Notes");
-                subtitle: bind template.event as <$Event>.description;
+                subtitle: bind template.event as <$ClepsydreEvent>.description;
 
                 styles [
                   "property",
@@ -129,7 +129,7 @@ template $EventDetailsDialog: Adw.Dialog {
           [bottom]
           ActionBar {
             // TODO: Use read-only property of event
-            // visible: bind template.event as <$Event>.read_only;
+            // visible: bind template.event as <$ClepsydreEvent>.read_only;
 
             [center]
             Button {

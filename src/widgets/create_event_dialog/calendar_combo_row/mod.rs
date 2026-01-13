@@ -1,7 +1,7 @@
 use std::cell::OnceCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, Collection};
+use clepsydre::{Calendar, Collection, prelude::*};
 use gio::ListModel;
 use glib::clone;
 
@@ -48,7 +48,9 @@ mod imp {
 
             let manager = Application::default().manager();
 
-            let collections_model = manager.collections_model();
+            let collections_model = manager
+                .collections_model()
+                .expect("collections model should be set");
             // Sort collections by name
             let sorted_collections_model = gtk::SortListModel::new(
                 Some(collections_model),
@@ -63,7 +65,7 @@ mod imp {
                     .downcast_ref::<Collection>()
                     .expect("Collections model should only contain Collections");
                 gtk::SortListModel::new(
-                    Some(collection.calendars()),
+                    Some(collection.calendars().unwrap()),
                     Some(gtk::StringSorter::new(Some(Calendar::this_expression(
                         "name",
                     )))),
@@ -122,7 +124,8 @@ mod imp {
                 .expect("item should exist at this position")
                 .downcast::<Calendar>()
                 .expect("item should be a Calendar")
-                .collection();
+                .collection()
+                .unwrap();
             let calendar_combo_row_header = CalendarComboRowHeader::new(&collection);
             header.set_child(Some(&calendar_combo_row_header));
         }

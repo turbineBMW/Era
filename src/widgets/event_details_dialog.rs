@@ -79,8 +79,20 @@ mod imp {
         #[template_callback]
         fn timeframe_label(&self) -> String {
             if let Some(event) = self.obj().event() {
-                let start = event.timeframe().unwrap().start().to_string();
-                let end = event.timeframe().unwrap().end().to_string();
+                let start = event
+                    .timeframe()
+                    .unwrap()
+                    .start()
+                    .unwrap()
+                    .format_iso8601()
+                    .unwrap();
+                let end = event
+                    .timeframe()
+                    .unwrap()
+                    .end()
+                    .unwrap()
+                    .format_iso8601()
+                    .unwrap();
                 format!("{} - {}", start, end)
             } else {
                 String::new()
@@ -89,31 +101,38 @@ mod imp {
 
         #[template_callback]
         fn location_or_video_conference(&self) -> bool {
-            if let Some(event) = self.obj().event() {
-                !event.location().is_empty() || !event.video_conference().is_empty()
-            } else {
-                false
-            }
+            let Some(event) = self.obj().event() else {
+                return false;
+            };
+            let Some(location) = event.location() else {
+                return false;
+            };
+            let Some(video_conference) = event.video_conference() else {
+                return false;
+            };
+            !location.is_empty() || !video_conference.is_empty()
         }
 
         #[template_callback]
         fn video_conference_is_a_uri(&self) -> bool {
-            if let Some(event) = self.obj().event() {
-                url::Url::parse(&event.video_conference()).is_ok()
-            } else {
-                false
-            }
+            let Some(event) = self.obj().event() else {
+                return false;
+            };
+            let Some(video_conference) = event.video_conference() else {
+                return false;
+            };
+            url::Url::parse(&video_conference).is_ok()
         }
 
         #[template_callback]
         async fn share(&self) {
             let event = self.obj().event().expect("event should be initialized");
-            let ics_content = event.to_string_for_ics();
+            let ics_content = event.to_string_for_ics().unwrap();
 
             let request = match SelectedFiles::save_file()
                 .title("Export Event")
                 .accept_label("Export")
-                .current_name(format!("{}.ics", event.name()).as_str())
+                .current_name(format!("{}.ics", event.name().unwrap_or_default()).as_str())
                 .modal(true)
                 .filter(FileFilter::new("iCalendar").glob("*.ics"))
                 .send()
@@ -146,7 +165,7 @@ mod imp {
         #[template_callback]
         fn show_qr_code(&self) {
             let event = self.obj().event().expect("event should be initialized");
-            let url = event.to_string_for_qr_code();
+            let url = event.to_string_for_qr_code().unwrap();
 
             self.qr_code_dialog.set_url(url);
             self.qr_code_dialog.present(Some(&*self.obj()));
@@ -155,8 +174,12 @@ mod imp {
         #[template_callback]
         async fn join(&self) {
             let event = self.obj().event().expect("event should be initialized");
-            let uri = url::Url::parse(&event.video_conference())
-                .expect("join should not be callable if video_conference is not a URI");
+            let uri = url::Url::parse(
+                &event
+                    .video_conference()
+                    .expect("join should not be callable if video_conference is not a URI"),
+            )
+            .expect("join should not be callable if video_conference is not a URI");
             match OpenFileRequest::default().send_uri(&uri).await {
                 Ok(_) => {}
                 Err(err) => {
@@ -174,11 +197,12 @@ mod imp {
 
             self.navigation_view.push_by_tag("editor");
 
-            self.name_entry.set_text(&event.name());
-            self.location_entry.set_text(&event.location());
+            self.name_entry.set_text(&event.name().unwrap());
+            self.location_entry.set_text(&event.location().unwrap());
             self.video_conference_entry
-                .set_text(&event.video_conference());
-            self.description_entry.set_text(&event.description());
+                .set_text(&event.video_conference().unwrap());
+            self.description_entry
+                .set_text(&event.description().unwrap());
         }
 
         #[template_callback]

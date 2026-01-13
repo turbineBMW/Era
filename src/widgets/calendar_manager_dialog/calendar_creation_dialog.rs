@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::Collection;
+use clepsydre::{Collection, prelude::*};
 use tracing::{debug, warn};
 
 use crate::widgets::components::{ErrorDialog, LoadingButton};
@@ -72,12 +72,13 @@ mod imp {
                 .collection()
                 .expect("collection should be initialized");
 
-            match collection
-                .try_create_calendar_future(&self.name.text(), self.color.rgba())
+            let manager = collection.manager().unwrap().clone();
+            match manager
+                .try_create_calendar_future(&collection, &self.name.text(), &self.color.rgba())
                 .await
             {
                 Ok(calendar) => {
-                    debug!("Calendar created: {}", calendar.uri());
+                    debug!("Calendar created: {}", calendar.unwrap().uri().unwrap());
                     self.obj().close();
                 }
                 Err(error) => {

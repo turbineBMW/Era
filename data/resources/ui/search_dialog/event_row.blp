@@ -7,20 +7,20 @@ template $EventRow: Box {
 
   Image {
     pixel-size: 24;
-    paintable: bind $get_color_image(template.event as <$Event>.calendar as <$Calendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+    paintable: bind $get_color_image(template.event as <$ClepsydreEvent>.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
   }
 
   Box {
     orientation: vertical;
 
     Label {
-      label: bind template.event as <$Event>.name;
+      label: bind template.event as <$ClepsydreEvent>.name;
       vexpand: true;
       valign: center;
     }
 
     Label {
-      label: bind template.event as <$Event>.location as <string>;
+      label: bind template.event as <$ClepsydreEvent>.location as <string>;
       xalign: 0.0;
 
       styles [
@@ -35,14 +35,14 @@ template $EventRow: Box {
     halign: end;
 
     Label {
-      label: bind $get_start_time(template.event as <$Event>.timeframe as <$Timeframe>.start as <$Instant>, template.event as <$Event>.timeframe as <$Timeframe>.all_day as <bool>) as <string>;
+      label: bind $get_start_time(template.event as <$ClepsydreEvent>.timeframe as <$Timeframe>.start as <$Instant>, template.event as <$ClepsydreEvent>.timeframe as <$Timeframe>.all_day as <bool>) as <string>;
       xalign: 1.0;
       vexpand: true;
       valign: center;
     }
 
     Label {
-      label: bind $get_end_time(template.event as <$Event>.timeframe as <$Timeframe>.end as <$Instant>, template.event as <$Event>.timeframe as <$Timeframe>.all_day as <bool>) as <string>;
+      label: bind $get_end_time(template.event as <$ClepsydreEvent>.timeframe as <$Timeframe>.end as <$Instant>, template.event as <$ClepsydreEvent>.timeframe as <$Timeframe>.all_day as <bool>) as <string>;
       xalign: 1.0;
 
       styles [

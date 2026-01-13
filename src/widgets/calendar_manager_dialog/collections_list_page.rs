@@ -1,5 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::Collection;
+use clepsydre::{Collection, prelude::*};
 
 use crate::{
     application::Application,
@@ -53,7 +53,7 @@ mod imp {
 
             let manager = Application::default().manager();
 
-            let collections_model = manager.collections_model();
+            let collections_model = manager.collections_model().unwrap();
             let sorted_collections_model = gtk::SortListModel::new(
                 Some(collections_model),
                 Some(gtk::StringSorter::new(Some(Collection::this_expression(

@@ -4,7 +4,6 @@ use std::{
 };
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::jiff;
 use glib::subclass::Signal;
 use gtk::Allocation;
 

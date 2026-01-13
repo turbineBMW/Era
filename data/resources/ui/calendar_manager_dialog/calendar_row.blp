@@ -4,20 +4,46 @@ using Adw 1;
 
 template $CalendarRow: Adw.ActionRow {
   [prefix]
-  Image {
-    visible: bind $invert_boolean(template.calendar as <$Calendar>.visible as <bool>) as <bool>;
-    pixel-size: 24;
-    paintable: bind $get_circle_paintable_empty(template.calendar as <$Calendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+  Stack circle_loading {
+    StackPage {
+      name: "circle";
+
+      child: Box {
+        Image {
+          visible: bind $invert_boolean(template.calendar as <$ClepsydreCalendar>.visible as <bool>) as <bool>;
+          pixel-size: 24;
+          paintable: bind $get_circle_paintable_empty(template.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+
+          accessibility {
+            label: _("hidden");
+          }
+        }
+
+        Image {
+          visible: bind template.calendar as <$ClepsydreCalendar>.visible as <bool>;
+          pixel-size: 24;
+          paintable: bind $get_circle_paintable(template.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+
+          accessibility {
+            label: _("visible");
+          }
+        }
+      };
+    }
+
+    StackPage {
+      name: "loading";
+
+      child: Adw.Spinner {
+        valign: center;
+        halign: center;
+        width-request: 24;
+        height-request: 24;
+      };
+    }
   }
 
-  [prefix]
-  Image {
-    visible: bind template.calendar as <$Calendar>.visible as <bool>;
-    pixel-size: 24;
-    paintable: bind $get_circle_paintable(template.calendar as <$Calendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
-  }
-
-  title: bind template.calendar as <$Calendar>.name;
+  title: bind template.calendar as <$ClepsydreCalendar>.name;
   activatable: true;
   selectable: false;
   // TODO: The binding is probably done before the deactivation of markup, leading to a GTK warning if the name contains '&'
@@ -27,7 +53,11 @@ template $CalendarRow: Adw.ActionRow {
   [suffix]
   Image {
     icon-name: "read-only-symbolic";
-    visible: bind $invert_boolean(template.calendar as <$Calendar>.event_creation_enabled as <bool>) as <bool>;
+    visible: bind $invert_boolean(template.calendar as <$ClepsydreCalendar>.event_creation_enabled as <bool>) as <bool>;
+
+    accessibility {
+      label: _("Read only");
+    }
   }
 
   [suffix]
