@@ -12,7 +12,9 @@ template $CalendarRow: Adw.ActionRow {
         Image {
           visible: bind $invert_boolean(template.calendar as <$ClepsydreCalendar>.visible as <bool>) as <bool>;
           pixel-size: 24;
-          paintable: bind $get_circle_paintable_empty(template.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+          paintable: bind $get_circle_paintable_empty(
+            template.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>
+            ) as <Gdk.Paintable>;
 
           accessibility {
             label: _("hidden");
@@ -22,7 +24,9 @@ template $CalendarRow: Adw.ActionRow {
         Image {
           visible: bind template.calendar as <$ClepsydreCalendar>.visible as <bool>;
           pixel-size: 24;
-          paintable: bind $get_circle_paintable(template.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+          paintable: bind $get_circle_paintable(
+            template.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>
+            ) as <Gdk.Paintable>;
 
           accessibility {
             label: _("visible");

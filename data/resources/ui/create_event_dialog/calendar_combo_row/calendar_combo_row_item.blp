@@ -6,7 +6,9 @@ template $CalendarComboRowItem: Box {
 
   Image {
     pixel-size: 16;
-    paintable: bind $get_circle_paintable(template.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+    paintable: bind $get_circle_paintable(
+      template.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>
+      ) as <Gdk.Paintable>;
   }
 
   Label {

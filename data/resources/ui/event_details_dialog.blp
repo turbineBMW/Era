@@ -20,12 +20,20 @@ template $EventDetailsDialog: Adw.Dialog {
             Button {
               icon-name: "share-symbolic";
               clicked => $share(template);
+
+              accessibility {
+                label: _("Export to file");
+              }
             }
 
             [start]
             Button {
               icon-name: "qr-code-symbolic";
               clicked => $show_qr_code(template);
+
+              accessibility {
+                label: _("Share as QR code");
+              }
             }
           }
 
@@ -65,6 +73,10 @@ template $EventDetailsDialog: Adw.Dialog {
                   valign: center;
                   sensitive: false;
 
+                  accessibility {
+                    label: _("Open map");
+                  }
+
                   styles [
                     "flat",
                   ]
@@ -84,7 +96,9 @@ template $EventDetailsDialog: Adw.Dialog {
                 Button {
                   label: _("Join");
                   valign: center;
-                  sensitive: bind $video_conference_is_a_uri(template.event as <$ClepsydreEvent>.video_conference) as <bool>;
+                  sensitive: bind $video_conference_is_a_uri(
+                    template.event as <$ClepsydreEvent>.video_conference
+                    ) as <bool>;
                   clicked => $join(template);
                 }
               }
@@ -100,7 +114,9 @@ template $EventDetailsDialog: Adw.Dialog {
 
                   Image {
                     pixel-size: 16;
-                    paintable: bind $get_circle_paintable(template.event as <$ClepsydreEvent>.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>) as <Gdk.Paintable>;
+                    paintable: bind $get_circle_paintable(
+                      template.event as <$ClepsydreEvent>.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>
+                      ) as <Gdk.Paintable>;
                   }
 
                   Label {
@@ -134,7 +150,7 @@ template $EventDetailsDialog: Adw.Dialog {
             [center]
             Button {
               use-underline: true;
-              label: "Edit";
+              label: _("Edit");
               clicked => $edit(template);
 
               styles [
@@ -162,14 +178,14 @@ template $EventDetailsDialog: Adw.Dialog {
             [start]
             Button {
               use-underline: true;
-              label: "Cancel";
+              label: _("Cancel");
               action-name: "navigation.pop";
             }
 
             [end]
             $LoadingButton save {
               use-underline: true;
-              content-label: "Save";
+              content-label: _("Save");
               sensitive: false;
               clicked => $save(template);
 

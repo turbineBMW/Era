@@ -40,7 +40,9 @@ template $CollectionRow: ListBoxRow {
     }
 
     ListBox {
-      visible: bind $list_is_empty(template.collection as <$ClepsydreCollection>.calendars as <Gio.ListStore>.n-items) as <bool>;
+      visible: bind $list_is_empty(
+        template.collection as <$ClepsydreCollection>.calendars as <Gio.ListStore>.n-items
+        ) as <bool>;
       vexpand: true;
       selection-mode: none;
 
@@ -54,7 +56,9 @@ template $CollectionRow: ListBoxRow {
     }
 
     ListBox calendars_list {
-      visible: bind $list_is_not_empty(template.collection as <$ClepsydreCollection>.calendars as <Gio.ListStore>.n-items) as <bool>;
+      visible: bind $list_is_not_empty(
+        template.collection as <$ClepsydreCollection>.calendars as <Gio.ListStore>.n-items
+        ) as <bool>;
       vexpand: true;
       selection-mode: none;
 
