@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, prelude::*};
+use clepsydre::Calendar;
 use glib::clone;
 use tracing::{debug, warn};
 
@@ -101,8 +101,7 @@ mod imp {
                 .expect("calendar should be initialized");
             let name = self.name.text();
 
-            let manager = calendar.manager().unwrap().clone();
-            match manager.try_set_calendar_name_future(&calendar, &name).await {
+            match calendar.try_set_name_future(&name).await {
                 Ok(()) => {
                     debug!("Calendar name updated: {}", calendar.uri().unwrap());
                 }
@@ -125,8 +124,7 @@ mod imp {
                 .obj()
                 .calendar()
                 .expect("calendar should be initialized");
-            let manager = calendar.manager().unwrap().clone();
-            match manager.try_remove_calendar_future(&calendar).await {
+            match calendar.try_remove_future().await {
                 Ok(()) => {
                     debug!("Calendar removed: {}", calendar.uri().unwrap());
                 }

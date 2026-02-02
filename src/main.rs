@@ -19,7 +19,7 @@ fn main() -> glib::ExitCode {
     // TODO: Debug - scrollwheel after scrolling down with pad is bugged
     unsafe {
         //     std::env::set_var("GDK_DEBUG", "events");
-        std::env::set_var("RUST_BACKTRACE", "1");
+        std::env::set_var("RUST_BACKTRACE", "full");
     }
     let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| {
         EnvFilter::new(format!(

@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, prelude::*};
+use clepsydre::Calendar;
 use tracing::{debug, warn};
 
 use crate::utils::{PaintableCallbacks, TemplateCallbacks};
@@ -77,11 +77,7 @@ mod imp {
             self.circle_loading.set_visible_child_name("loading");
             self.obj().set_activatable(false);
 
-            let manager = calendar.manager().unwrap().clone();
-            match manager
-                .try_set_calendar_visible_future(&calendar, visible)
-                .await
-            {
+            match calendar.try_set_visible_future(visible).await {
                 Ok(()) => {
                     debug!("Calendar visibility updated: {}", calendar.uri().unwrap());
                 }

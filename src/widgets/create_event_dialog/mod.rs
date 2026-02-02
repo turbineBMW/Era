@@ -1,5 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, Timeframe, prelude::*};
+use clepsydre::{Calendar, Timeframe};
 use tracing::{debug, warn};
 
 mod calendar_combo_row;
@@ -97,10 +97,8 @@ mod imp {
                 &start.format_iso8601().unwrap(),
                 &end.format_iso8601().unwrap(),
             );
-            let manager = calendar.manager().unwrap();
-            match manager
+            match calendar
                 .try_create_event_future(
-                    &calendar,
                     &name,
                     &description,
                     &location,
