@@ -51,20 +51,18 @@ cargo-clippy:
 
 blueprint-format:
   stage: check
-  image: fedora:latest
+  image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
   interruptible: true
   before_script:
-    - dnf install -y blueprint-compiler
     - shopt -s globstar
   script:
     - blueprint-compiler format **/*.blp
 
 blueprint-lint:
   stage: check
-  image: fedora:latest
+  image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
   interruptible: true
   before_script:
-    - dnf install -y blueprint-compiler
     - shopt -s globstar
   script:
     - blueprint-compiler lint **/*.blp
