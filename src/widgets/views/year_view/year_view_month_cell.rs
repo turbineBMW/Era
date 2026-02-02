@@ -3,7 +3,7 @@ use std::{cell::Cell, cmp};
 use adw::{prelude::*, subclass::prelude::*};
 use glib::clone;
 
-use crate::Application;
+use crate::{Application, system_settings::FirstDayOfWeek};
 
 use super::YearViewStyling;
 
@@ -145,6 +145,21 @@ pub(crate) mod imp {
                     imp.update_day_label_color(current_year, current_month, current_day);
                 }
             ));
+
+            let system_settings = application.system_settings();
+            system_settings.connect_first_day_of_week_notify(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                #[weak]
+                application,
+                move |_| {
+                    let current_year = application.current_year();
+                    let current_month = application.current_month();
+                    let current_day = application.current_day();
+                    imp.set_days_grid();
+                    imp.update_day_label_color(current_year, current_month, current_day);
+                }
+            ));
         }
 
         fn dispose(&self) {
@@ -232,12 +247,34 @@ pub(crate) mod imp {
 
     #[gtk::template_callbacks]
     impl YearViewMonthCell {
+        /// Convert FirstDayOfWeek to a numeric offset (0 = Monday, 6 = Sunday).
+        fn first_day_of_week_offset(first_day_of_week: FirstDayOfWeek) -> usize {
+            match first_day_of_week {
+                FirstDayOfWeek::Monday => 0,
+                FirstDayOfWeek::Tuesday => 1,
+                FirstDayOfWeek::Wednesday => 2,
+                FirstDayOfWeek::Thursday => 3,
+                FirstDayOfWeek::Friday => 4,
+                FirstDayOfWeek::Saturday => 5,
+                FirstDayOfWeek::Sunday => 6,
+            }
+        }
+
         fn set_days_grid(&self) {
             let year = self.year.get();
             let month = self.month.get();
             let first_day = jiff::civil::date(year as i16, month, 1);
             let days_in_month = first_day.days_in_month() as usize;
-            let weekday_of_first_day = first_day.weekday() as usize - 1;
+
+            // Get the first day of week from system settings
+            let application = Application::default();
+            let system_settings = application.system_settings();
+            let first_day_of_week = system_settings.first_day_of_week();
+            let first_day_offset = Self::first_day_of_week_offset(first_day_of_week);
+
+            // Calculate the position of the first day of the month in the grid
+            let weekday_of_first_day = first_day.weekday().to_monday_zero_offset() as usize;
+            let weekday_of_first_day = (weekday_of_first_day + 7 - first_day_offset) % 7;
 
             let mut cells = 0..42;
 
@@ -342,7 +379,17 @@ pub(crate) mod imp {
 
             if year == current_year && month == current_month {
                 let first_day = jiff::civil::date(year as i16, month, 1);
-                let weekday_of_first_day = first_day.weekday() as usize - 1;
+
+                // Get the first day of week from system settings
+                let application = Application::default();
+                let system_settings = application.system_settings();
+                let first_day_of_week = system_settings.first_day_of_week();
+                let first_day_offset = Self::first_day_of_week_offset(first_day_of_week);
+
+                // Calculate the position accounting for first day of week setting
+                let weekday_of_first_day = first_day.weekday().to_monday_zero_offset() as usize;
+                let weekday_of_first_day = (weekday_of_first_day + 7 - first_day_offset) % 7;
+
                 let current_day_cell_number = weekday_of_first_day as i32 + current_day as i32 - 1;
                 let current_day_label = self
                     .days_grid
