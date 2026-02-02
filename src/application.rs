@@ -6,15 +6,19 @@ use gettextrs::gettext;
 
 use crate::{
     config::{APP_ID, APP_NAME, BASE_RESOURCE_PATH, VERSION},
+    system_settings::SystemSettings,
     widgets::Window,
 };
 
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, glib::Properties)]
+    #[derive(Debug, glib::Properties)]
     #[properties(wrapper_type = super::Application)]
+    #[derive(Default)]
     pub struct Application {
+        #[property(get, set)]
+        system_settings: OnceCell<SystemSettings>,
         // TODO: Monitor the system to update those
         // TODO: Use i16 for year ; this requires support from gtk-rs
         // TODO: Probably use GDateTime?
@@ -45,9 +49,12 @@ mod imp {
             obj.setup_gactions();
             obj.set_accels_for_action("app.quit", &["<primary>q"]);
 
+            self.system_settings
+                .set(SystemSettings::new())
+                .expect("System settings should not already be initialized");
             self.manager
                 .set(clepsydre_eds::Manager::new().upcast())
-                .unwrap();
+                .expect("Manager should not already be initialized");
         }
     }
 

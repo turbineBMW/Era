@@ -1020,6 +1020,7 @@ dependencies = [
  "ashpd",
  "clepsydre-eds",
  "clepsydre-rebind",
+ "futures-util",
  "gdk4",
  "gettext-rs",
  "gio",
