@@ -3,9 +3,8 @@ using Gdk 4.0;
 using Adw 1;
 
 template $EventDetailsDialog: Adw.Dialog {
-  title: _("Event");
-  content-height: 500;
-  content-width: 500;
+  content-height: 1000;
+  content-width: 700;
 
   Adw.NavigationView navigation_view {
     Adw.NavigationPage {
@@ -42,6 +41,7 @@ template $EventDetailsDialog: Adw.Dialog {
               Label name_label {
                 label: bind template.event as <$ClepsydreEvent>.name;
                 xalign: 0;
+                use-markup: false;
 
                 styles [
                   "title-4",
@@ -52,6 +52,7 @@ template $EventDetailsDialog: Adw.Dialog {
                 label: bind $timeframe_label(template.event as <$ClepsydreEvent>) as <string>;
                 xalign: 0;
                 wrap: true;
+                use-markup: false;
               }
             }
 
@@ -62,6 +63,7 @@ template $EventDetailsDialog: Adw.Dialog {
                 title: _("Location");
                 subtitle: bind template.event as <$ClepsydreEvent>.location as <string>;
                 visible: bind $string_not_empty(template.event as <$ClepsydreEvent>.location) as <bool>;
+                use-markup: false;
 
                 styles [
                   "property",
@@ -87,6 +89,7 @@ template $EventDetailsDialog: Adw.Dialog {
                 title: _("Video Conference");
                 subtitle: bind template.event as <$ClepsydreEvent>.video_conference as <string>;
                 visible: bind $string_not_empty(template.event as <$ClepsydreEvent>.video_conference) as <bool>;
+                use-markup: false;
 
                 styles [
                   "property",
@@ -134,6 +137,7 @@ template $EventDetailsDialog: Adw.Dialog {
               Adw.ActionRow {
                 title: _("Notes");
                 subtitle: bind template.event as <$ClepsydreEvent>.description;
+                use-markup: false;
 
                 styles [
                   "property",
@@ -165,7 +169,7 @@ template $EventDetailsDialog: Adw.Dialog {
 
     Adw.NavigationPage {
       tag: "editor";
-      title: _("Event");
+      title: _("Edit Event");
 
       Adw.ToastOverlay editor_toast_overlay {
         Adw.ToolbarView {
@@ -177,15 +181,15 @@ template $EventDetailsDialog: Adw.Dialog {
 
             [start]
             Button {
-              use-underline: true;
-              label: _("Cancel");
+              icon-name: "cross-symbolic";
+              tooltip-text: _("Cancel");
               action-name: "navigation.pop";
             }
 
             [end]
             $LoadingButton save {
-              use-underline: true;
-              content-label: _("Save");
+              icon-name: "checkmark-symbolic";
+              tooltip-text: _("Save");
               sensitive: false;
               clicked => $save(template);
 

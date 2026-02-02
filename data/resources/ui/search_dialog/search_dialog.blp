@@ -2,8 +2,8 @@ using Gtk 4.0;
 using Adw 1;
 
 template $SearchDialog: Adw.Dialog {
-  content-height: 500;
-  content-width: 500;
+  content-height: 1000;
+  content-width: 700;
 
   Adw.ToastOverlay toast_overlay {
     Adw.ToolbarView {
@@ -15,13 +15,13 @@ template $SearchDialog: Adw.Dialog {
         };
       }
 
-      content: ScrolledWindow {
-        Adw.Clamp {
-          Stack stack {
-            StackPage {
-              name: "results";
+      content: Stack stack {
+        StackPage {
+          name: "results";
 
-              child: ListView results_view {
+          child: ScrolledWindow {
+            Adw.ClampScrollable {
+              ListView results_view {
                 factory: SignalListItemFactory {
                   bind => $event_item_bind();
                 };
@@ -31,15 +31,15 @@ template $SearchDialog: Adw.Dialog {
                 styles [
                   "events-list",
                 ]
-              };
+              }
             }
+          };
+        }
 
-            StackPage {
-              name: "loading";
+        StackPage {
+          name: "loading";
 
-              child: Adw.Spinner {};
-            }
-          }
+          child: Adw.Spinner {};
         }
       };
     }

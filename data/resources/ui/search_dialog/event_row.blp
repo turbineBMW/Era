@@ -13,51 +13,58 @@ template $EventRow: Box {
   }
 
   Box {
-    orientation: vertical;
+    spacing: 12;
 
-    Label {
-      label: bind template.event as <$ClepsydreEvent>.name;
-      vexpand: true;
-      valign: center;
+    Box {
+      orientation: vertical;
+
+      Label {
+        label: bind template.event as <$ClepsydreEvent>.name;
+        ellipsize: end;
+        xalign: 0.0;
+        use-markup: false;
+      }
+
+      Label {
+        label: bind template.event as <$ClepsydreEvent>.location as <string>;
+        ellipsize: end;
+        xalign: 0.0;
+        use-markup: false;
+
+        styles [
+          "dim-label",
+        ]
+      }
     }
 
-    Label {
-      label: bind template.event as <$ClepsydreEvent>.location as <string>;
-      xalign: 0.0;
+    Box {
+      orientation: vertical;
+      hexpand: true;
+      halign: end;
 
-      styles [
-        "dim-label",
-      ]
-    }
-  }
+      Label {
+        // TODO: Is it datetime here?
+        label: bind $get_start_time(
+          template.event as <$ClepsydreEvent>.timeframe as <$ClepsydreTimeframe>.start as <$DateTime>,
+          template.event as <$ClepsydreEvent>.timeframe as <$ClepsydreTimeframe>.all_day as <bool>
+          ) as <string>;
+        xalign: 1.0;
+        use-markup: false;
+      }
 
-  Box {
-    orientation: vertical;
-    hexpand: true;
-    halign: end;
+      Label {
+        // TODO: Is it datetime here?
+        label: bind $get_end_time(
+          template.event as <$ClepsydreEvent>.timeframe as <$ClepsydreTimeframe>.end as <$DateTime>,
+          template.event as <$ClepsydreEvent>.timeframe as <$ClepsydreTimeframe>.all_day as <bool>
+          ) as <string>;
+        xalign: 1.0;
+        use-markup: false;
 
-    Label {
-      // TODO: Is it datetime here?
-      label: bind $get_start_time(
-        template.event as <$ClepsydreEvent>.timeframe as <$ClepsydreTimeframe>.start as <$DateTime>,
-        template.event as <$ClepsydreEvent>.timeframe as <$ClepsydreTimeframe>.all_day as <bool>
-        ) as <string>;
-      xalign: 1.0;
-      vexpand: true;
-      valign: center;
-    }
-
-    Label {
-      // TODO: Is it datetime here?
-      label: bind $get_end_time(
-        template.event as <$ClepsydreEvent>.timeframe as <$ClepsydreTimeframe>.end as <$DateTime>,
-        template.event as <$ClepsydreEvent>.timeframe as <$ClepsydreTimeframe>.all_day as <bool>
-        ) as <string>;
-      xalign: 1.0;
-
-      styles [
-        "dim-label",
-      ]
+        styles [
+          "dim-label",
+        ]
+      }
     }
   }
 

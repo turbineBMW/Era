@@ -3,8 +3,8 @@ using Adw 1;
 
 template $CreateEventDialog: Adw.Dialog {
   title: _("Create Event");
-  content-height: 500;
-  content-width: 500;
+  content-height: 1000;
+  content-width: 700;
 
   Adw.ToastOverlay toast_overlay {
     Adw.ToolbarView {
@@ -14,15 +14,15 @@ template $CreateEventDialog: Adw.Dialog {
         show-end-title-buttons: false;
 
         Button cancel {
-          use-underline: true;
-          label: _("_Cancel");
+          icon-name: "cross-symbolic";
+          tooltip-text: _("Cancel");
           action-name: "window.close";
         }
 
         [end]
         $LoadingButton create {
-          use-underline: true;
-          content-label: _("_Create");
+          icon-name: "checkmark-symbolic";
+          tooltip-text: _("Create");
           clicked => $create_event(template);
 
           styles [
