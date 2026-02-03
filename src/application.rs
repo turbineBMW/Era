@@ -13,9 +13,8 @@ use crate::{
 mod imp {
     use super::*;
 
-    #[derive(Debug, glib::Properties)]
+    #[derive(Debug, Default, glib::Properties)]
     #[properties(wrapper_type = super::Application)]
-    #[derive(Default)]
     pub struct Application {
         #[property(get, set)]
         system_settings: OnceCell<SystemSettings>,

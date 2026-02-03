@@ -13,7 +13,7 @@ install-clepsydre:
     pwd
     git -C "{{ build_dir }}/clepsydre" checkout "{{ commit }}"
 
-    meson setup "{{ build_dir }}/clepsydre/build" "{{ build_dir }}/clepsydre" --libdir=lib/x86_64-linux-gnu -Dlibclepsydre=true -Dlibclepsydre-eds=true
+    meson setup "{{ build_dir }}/clepsydre/build" "{{ build_dir }}/clepsydre" --prefix=/usr --libdir=lib/x86_64-linux-gnu -Dlibclepsydre=true -Dlibclepsydre-eds=true
     meson compile -C "{{ build_dir }}/clepsydre/build"
     meson install -C "{{ build_dir }}/clepsydre/build"
 

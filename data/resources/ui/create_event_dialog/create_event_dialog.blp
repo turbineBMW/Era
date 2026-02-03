@@ -21,8 +21,14 @@ template $CreateEventDialog: Adw.Dialog {
 
         [end]
         $LoadingButton create {
-          icon-name: "checkmark-symbolic";
+          content-icon-name: "checkmark-symbolic";
           tooltip-text: _("Create");
+          sensitive: bind $is_event_valid(
+            name.text as <string>,
+            schedule_type.active-name as <string>,
+            start.text as <string>,
+            end.text as <string>
+            ) as <bool>;
           clicked => $create_event(template);
 
           styles [
@@ -49,6 +55,42 @@ template $CreateEventDialog: Adw.Dialog {
 
         Adw.PreferencesGroup {
           $CalendarComboRow calendar_choice {}
+        }
+
+        Adw.PreferencesGroup {
+          Box {
+            orientation: vertical;
+            spacing: 12;
+
+            Adw.ToggleGroup schedule_type {
+              active-name: "time-slot";
+              homogeneous: true;
+
+              Adw.Toggle {
+                label: _("_All Day");
+                use-underline: true;
+                name: "all-day";
+              }
+
+              Adw.Toggle {
+                label: _("_Time Slot");
+                use-underline: true;
+                name: "time-slot";
+              }
+            }
+
+            Adw.PreferencesGroup {
+              Adw.EntryRow start {
+                title: _("Start");
+              }
+            }
+
+            Adw.PreferencesGroup {
+              Adw.EntryRow end {
+                title: _("End");
+              }
+            }
+          }
         }
 
         Adw.PreferencesGroup {
