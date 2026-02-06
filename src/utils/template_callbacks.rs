@@ -7,8 +7,14 @@ pub struct TemplateCallbacks {}
 impl TemplateCallbacks {
     /// Inverts the given boolean.
     #[template_callback]
-    pub fn invert_boolean(boolean: bool) -> bool {
+    pub fn not(boolean: bool) -> bool {
         !boolean
+    }
+
+    /// Applies a logical "and".
+    #[template_callback]
+    pub fn both(first: bool, second: bool) -> bool {
+        first && second
     }
 
     /// Returns `true` when the given string is not empty.

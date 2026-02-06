@@ -10,7 +10,7 @@ template $CalendarRow: Adw.ActionRow {
 
       child: Box {
         Image {
-          visible: bind $invert_boolean(template.calendar as <$ClepsydreCalendar>.visible as <bool>) as <bool>;
+          visible: bind $not(template.calendar as <$ClepsydreCalendar>.visible as <bool>) as <bool>;
           pixel-size: 24;
           paintable: bind $get_circle_paintable_empty(
             template.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>
@@ -57,7 +57,7 @@ template $CalendarRow: Adw.ActionRow {
   [suffix]
   Image {
     icon-name: "read-only-symbolic";
-    visible: bind $invert_boolean(template.calendar as <$ClepsydreCalendar>.event_creation_enabled as <bool>) as <bool>;
+    visible: bind $not(template.calendar as <$ClepsydreCalendar>.event_creation_enabled as <bool>) as <bool>;
 
     accessibility {
       label: _("Read only");

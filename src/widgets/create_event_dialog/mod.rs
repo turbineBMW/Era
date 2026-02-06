@@ -176,7 +176,7 @@ mod imp {
                 .await
             {
                 Ok(event) => {
-                    debug!("Event created: {}", event.unwrap().uri().unwrap());
+                    debug!("Event created: {}", event.uri().unwrap());
                     self.obj().close();
                 }
                 Err(error) => {
@@ -186,7 +186,7 @@ mod imp {
                     self.calendar_choice.set_sensitive(true);
                     self.name.set_sensitive(true);
 
-                    warn!("Failed to create calendar: {error}");
+                    warn!("Failed to create event: {error}");
                     self.toast_overlay.dismiss_all();
                     let toast = adw::Toast::new("An error occurred");
                     toast.set_button_label(Some("Details"));

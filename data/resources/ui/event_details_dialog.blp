@@ -135,7 +135,7 @@ template $EventDetailsDialog: Adw.Dialog {
               visible: bind $string_not_empty(template.event as <$ClepsydreEvent>.description) as <bool>;
 
               Adw.ActionRow {
-                title: _("Notes");
+                title: _("Description");
                 subtitle: bind template.event as <$ClepsydreEvent>.description;
                 use-markup: false;
 
@@ -144,12 +144,29 @@ template $EventDetailsDialog: Adw.Dialog {
                 ]
               }
             }
+
+            Adw.PreferencesGroup {
+              visible: bind $both(
+                template.event as <$ClepsydreEvent>.editable,
+                template.event as <$ClepsydreEvent>.has_recurrence,
+              ) as <bool>;
+
+              Label {
+                label: _("This event has recurrence properties. Such events are currently not editable in this app.");
+
+                styles [
+                  "error",
+                ]
+              }
+            }
           };
 
           [bottom]
           ActionBar {
-            // TODO: Use read-only property of event
-            // visible: bind template.event as <$ClepsydreEvent>.read_only;
+            visible: bind $both(
+              template.event as <$ClepsydreEvent>.editable,
+              $not(template.event as <$ClepsydreEvent>.has_recurrence) as <bool>,
+            ) as <bool>;
 
             [center]
             Button {
@@ -228,6 +245,20 @@ template $EventDetailsDialog: Adw.Dialog {
             Adw.PreferencesGroup {
               Adw.EntryRow description_entry {
                 title: _("Description");
+              }
+            }
+
+            Adw.PreferencesGroup {
+              visible: bind template.event as <$ClepsydreEvent>.removable;
+
+              $LoadingButtonRow remove {
+                title: _("Remove");
+                use-underline: true;
+                activated => $remove(template);
+
+                styles [
+                  "destructive-action",
+                ]
               }
             }
           };

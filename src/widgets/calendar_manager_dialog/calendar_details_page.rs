@@ -136,10 +136,11 @@ mod imp {
                     toast.set_action_name(Some("calendar-details-page.show-error"));
                     toast.set_action_target(Some(&error.message()));
                     self.toast_overlay.add_toast(toast);
+
+                    self.remove.set_is_loading(false);
+                    self.name.set_sensitive(true);
                 }
             }
-            self.remove.set_is_loading(false);
-            self.name.set_sensitive(true);
         }
     }
 }

@@ -77,7 +77,7 @@ mod imp {
                 .await
             {
                 Ok(calendar) => {
-                    debug!("Calendar created: {}", calendar.unwrap().uri().unwrap());
+                    debug!("Calendar created: {}", calendar.uri().unwrap());
                     self.obj().close();
                 }
                 Err(error) => {

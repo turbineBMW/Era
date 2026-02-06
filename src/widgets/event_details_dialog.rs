@@ -6,16 +6,18 @@ use ashpd::desktop::{
     open_uri::OpenFileRequest,
 };
 use clepsydre::Event;
-use tracing::warn;
+use glib::clone;
+use tracing::{debug, warn};
 
 use crate::{
     utils::{PaintableCallbacks, TemplateCallbacks},
-    widgets::components::LoadingButton,
+    widgets::{
+        QrCodeDialog,
+        components::{ErrorDialog, LoadingButton, LoadingButtonRow},
+    },
 };
 
 mod imp {
-    use crate::widgets::QrCodeDialog;
-
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
@@ -29,8 +31,6 @@ mod imp {
         #[template_child]
         details_toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
-        name_label: TemplateChild<gtk::Label>,
-        #[template_child]
         editor_toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
         save: TemplateChild<LoadingButton>,
@@ -42,6 +42,8 @@ mod imp {
         video_conference_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
         description_entry: TemplateChild<adw::EntryRow>,
+        #[template_child]
+        remove: TemplateChild<LoadingButtonRow>,
         #[template_child]
         qr_code_dialog: TemplateChild<QrCodeDialog>,
     }
@@ -57,6 +59,18 @@ mod imp {
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
             PaintableCallbacks::bind_template_callbacks(klass);
+
+            klass.install_action(
+                "event-details-dialog.show-error",
+                Some(&String::static_variant_type()),
+                |obj, _, param| {
+                    let error_message = &param
+                        .and_then(glib::Variant::get::<String>)
+                        .expect("The parameter should be a string");
+                    let dialog = ErrorDialog::new(error_message);
+                    dialog.present(Some(obj));
+                },
+            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -66,8 +80,16 @@ mod imp {
 
     #[glib::derived_properties]
     impl ObjectImpl for EventDetailsDialog {
-        fn dispose(&self) {
-            self.name_label.unparent();
+        fn constructed(&self) {
+            let event = self.obj().event().unwrap();
+
+            event.connect_removed(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |_| {
+                    let _ = imp.obj().activate_action("window.close", None);
+                }
+            ));
         }
     }
 
@@ -208,6 +230,28 @@ mod imp {
         #[template_callback]
         async fn save(&self) {
             dbg!("todo");
+        }
+
+        #[template_callback]
+        async fn remove(&self) {
+            self.remove.set_is_loading(true);
+            let event = self.obj().event().expect("event should be initialized");
+            match event.try_remove_future().await {
+                Ok(()) => {
+                    debug!("Event removed: {}", event.uri().unwrap());
+                }
+                Err(error) => {
+                    warn!("Failed to remove event: {}", error);
+                    self.editor_toast_overlay.dismiss_all();
+                    let toast = adw::Toast::new("An error occurred");
+                    toast.set_button_label(Some("Details"));
+                    toast.set_action_name(Some("event-details-dialog.show-error"));
+                    toast.set_action_target(Some(&error.message()));
+                    self.editor_toast_overlay.add_toast(toast);
+
+                    self.remove.set_is_loading(false);
+                }
+            }
         }
     }
 }
