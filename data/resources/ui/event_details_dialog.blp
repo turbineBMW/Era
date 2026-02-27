@@ -73,7 +73,8 @@ template $EventDetailsDialog: Adw.Dialog {
                 Button {
                   icon-name: "map-symbolic";
                   valign: center;
-                  sensitive: false;
+                  tooltip-text: _("Open Map");
+                  clicked => $open_map(template);
 
                   accessibility {
                     label: _("Open map");

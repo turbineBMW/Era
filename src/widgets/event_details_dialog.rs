@@ -194,6 +194,34 @@ mod imp {
         }
 
         #[template_callback]
+        async fn open_map(&self) {
+            let location = self
+                .event
+                .borrow()
+                .clone()
+                .expect("event should be set")
+                .location()
+                .expect("Map button should not be available if no location is set");
+            let uri = url::Url::parse(&location)
+                .or_else(|_error| url::Url::parse(&format!("geo:0,0?q={}", location)))
+                .expect("should be a geo URI");
+            match OpenFileRequest::default().send_uri(&uri).await {
+                Ok(_) => {
+                    debug!("Map opened with URL: {uri}");
+                }
+                Err(error) => {
+                    warn!("Failed to open map: {error}");
+                    self.editor_toast_overlay.dismiss_all();
+                    let toast = adw::Toast::new("An error occurred");
+                    toast.set_button_label(Some("Details"));
+                    toast.set_action_name(Some("event-details-dialog.show-error"));
+                    toast.set_action_target(Some(&error.to_string()));
+                    self.editor_toast_overlay.add_toast(toast);
+                }
+            }
+        }
+
+        #[template_callback]
         async fn join(&self) {
             let event = self.obj().event().expect("event should be initialized");
             let uri = url::Url::parse(
