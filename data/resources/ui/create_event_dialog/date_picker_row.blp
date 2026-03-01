@@ -1,0 +1,39 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $DatePickerRow: Adw.EntryRow {
+  date: bind calendar.date bidirectional;
+  text: bind $format(template.date) as <string>;
+
+  EventControllerFocus row_focus {
+    notify::contains-focus => $maybe_validate_entry(template);
+  }
+
+  MenuButton {
+    icon-name: "month-symbolic";
+    valign: center;
+    tooltip-text: _("Edit Date");
+
+    EventControllerFocus button_focus {
+      notify::contains-focus => $maybe_validate_entry(template);
+    }
+
+    popover: Popover {
+      position: bottom;
+      margin-top: 12;
+      margin-bottom: 12;
+      margin-start: 12;
+      margin-end: 12;
+
+      Calendar calendar {}
+    };
+
+    accessibility {
+      label: _("Edit Date");
+    }
+
+    styles [
+      "flat",
+    ]
+  }
+}

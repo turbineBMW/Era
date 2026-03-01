@@ -5,6 +5,7 @@ template $CreateEventDialog: Adw.Dialog {
   title: _("Create Event");
   content-height: 1000;
   content-width: 700;
+  realize => $focus_name(template);
 
   Adw.ToastOverlay toast_overlay {
     Adw.ToolbarView {
@@ -23,12 +24,10 @@ template $CreateEventDialog: Adw.Dialog {
         $LoadingButton create {
           content-icon-name: "checkmark-symbolic";
           tooltip-text: _("Create");
-          sensitive: bind $is_event_valid(
-            name.text as <string>,
-            schedule_type.active-name as <string>,
-            start.text as <string>,
-            end.text as <string>
-            ) as <bool>;
+          sensitive: bind $neither(
+            $string_empty(name.text) as <bool>,
+            $invalid_schedule(schedule_type.active-name as <string>, start.date-time, end.date-time) as <bool>
+          ) as <bool>;
           clicked => $create_event(template);
 
           styles [
@@ -63,7 +62,7 @@ template $CreateEventDialog: Adw.Dialog {
             spacing: 12;
 
             Adw.ToggleGroup schedule_type {
-              active-name: "time-slot";
+              active-name: "all-day";
               homogeneous: true;
 
               Adw.Toggle {
@@ -79,16 +78,16 @@ template $CreateEventDialog: Adw.Dialog {
               }
             }
 
-            Adw.PreferencesGroup {
-              Adw.EntryRow start {
-                title: _("Start");
-              }
+            $DateTimePickerGroup start {
+              date-title: _("Start Date");
+              time-title: _("Start Time");
+              date-only: bind $string_equals(schedule_type.active-name, "all-day") as <bool>;
             }
 
-            Adw.PreferencesGroup {
-              Adw.EntryRow end {
-                title: _("End");
-              }
+            $DateTimePickerGroup end {
+              date-title: _("End Date");
+              time-title: _("End Time");
+              date-only: bind $string_equals(schedule_type.active-name, "all-day") as <bool>;
             }
           }
         }
@@ -96,6 +95,35 @@ template $CreateEventDialog: Adw.Dialog {
         Adw.PreferencesGroup {
           Adw.EntryRow description {
             title: _("Description");
+          }
+        }
+
+        Adw.PreferencesGroup {
+          visible: bind $either(
+            $string_empty(name.text) as <bool>,
+            $invalid_schedule(schedule_type.active-name as <string>, start.date-time, end.date-time) as <bool>
+          ) as <bool>;
+
+          Adw.ActionRow {
+            visible: bind $string_empty(name.text) as <bool>;
+            title: _("The name should not be empty");
+
+            styles [
+              "error",
+            ]
+          }
+
+          Adw.ActionRow {
+            visible: bind $invalid_schedule(
+              schedule_type.active-name as <string>,
+              start.date-time,
+              end.date-time
+              ) as <bool>;
+            title: _("The end should be after the start");
+
+            styles [
+              "error",
+            ]
           }
         }
       };

@@ -4,10 +4,15 @@ use glib::DateTime;
 use tracing::{debug, warn};
 
 mod calendar_combo_row;
+mod date_picker_row;
+mod date_time_picker_group;
 
-use crate::widgets::components::{ErrorDialog, LoadingButton};
+use crate::{
+    utils::TemplateCallbacks,
+    widgets::components::{ErrorDialog, LoadingButton},
+};
 
-use self::calendar_combo_row::CalendarComboRow;
+use self::{calendar_combo_row::CalendarComboRow, date_time_picker_group::DateTimePickerGroup};
 
 mod imp {
     use super::*;
@@ -32,9 +37,9 @@ mod imp {
         #[template_child]
         schedule_type: TemplateChild<adw::ToggleGroup>,
         #[template_child]
-        start: TemplateChild<adw::EntryRow>,
+        start: TemplateChild<DateTimePickerGroup>,
         #[template_child]
-        end: TemplateChild<adw::EntryRow>,
+        end: TemplateChild<DateTimePickerGroup>,
         #[template_child]
         description: TemplateChild<adw::EntryRow>,
     }
@@ -48,6 +53,7 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+            TemplateCallbacks::bind_template_callbacks(klass);
 
             klass.install_action(
                 "create-event-dialog.show-error",
@@ -67,71 +73,74 @@ mod imp {
         }
     }
 
-    // TODO: Call adw_entry_row_grab_focus_without_selecting on the name entry row
-    impl ObjectImpl for CreateEventDialog {
-        fn constructed(&self) {
-            let start = DateTime::now_local().expect("Current local time should be retrievable");
-            let start = DateTime::from_local(
-                start.year(),
-                start.month(),
-                start.day_of_month(),
-                start.hour(),
-                start.minute(),
-                0.,
-            )
-            .expect("Current date should be constructible without subsecond precision");
-            let end = start.add_hours(1).expect("Time in one hour should exist");
-            self.start
-                .set_text(&start.format_iso8601().expect("Date should be formattable"));
-            self.end
-                .set_text(&end.format_iso8601().expect("Date should be formattable"));
-        }
-    }
-
+    impl ObjectImpl for CreateEventDialog {}
     impl WidgetImpl for CreateEventDialog {}
     impl AdwDialogImpl for CreateEventDialog {}
 
     #[gtk::template_callbacks]
     impl CreateEventDialog {
-        #[template_callback(function)]
-        fn is_event_valid(name: &str, schedule_type: &str, start: &str, end: &str) -> bool {
-            if name.is_empty() {
-                return false;
-            }
+        #[template_callback]
+        fn focus_name(&self) {
+            self.name.grab_focus();
+        }
 
+        #[template_callback(function)]
+        fn invalid_schedule(
+            schedule_type: &str,
+            start: Option<DateTime>,
+            end: Option<DateTime>,
+        ) -> bool {
             let all_day = schedule_type == "all-day";
-            let Ok(start) = DateTime::from_iso8601(start, None) else {
+            let Some(start) = start else {
                 return false;
             };
-            let Ok(end) = DateTime::from_iso8601(end, None) else {
+            let Some(end) = end else {
                 return false;
             };
 
             if all_day {
-                if start.hour() != 0
-                    || start.minute() != 0
-                    || start.second() != 0
-                    || start.microsecond() != 0
-                    || start.timezone_abbreviation() != "UTC"
-                {
-                    // In all-day mode, start should be at midnight on UTC
-                    return false;
-                }
-                if end.hour() != 0
-                    || end.minute() != 0
-                    || end.second() != 0
-                    || end.microsecond() != 0
-                    || end.timezone_abbreviation() != "UTC"
-                {
-                    // In all-day mode, end should be at midnight on UTC
-                    return false;
-                }
+                let start_date =
+                    DateTime::from_utc(start.year(), start.month(), start.day_of_month(), 0, 0, 0.)
+                        .expect("Date should be valid");
+                let end_date =
+                    DateTime::from_utc(end.year(), end.month(), end.day_of_month(), 0, 0, 0.)
+                        .expect("Date should be valid");
+                end_date < start_date
+            } else {
+                end < start
             }
-            if end < start {
-                return false;
-            }
+        }
 
-            true
+        #[template_callback(function)]
+        fn is_event_valid(
+            name: &str,
+            schedule_type: &str,
+            start: Option<DateTime>,
+            end: Option<DateTime>,
+        ) -> bool {
+            let all_day = schedule_type == "all-day";
+            let Some(start) = start else {
+                return false;
+            };
+            let Some(end) = end else {
+                return false;
+            };
+
+            let invalid_name = name.is_empty();
+
+            let invalid_schedule = if all_day {
+                let start_date =
+                    DateTime::from_utc(start.year(), start.month(), start.day_of_month(), 0, 0, 0.)
+                        .expect("Date should be valid");
+                let end_date =
+                    DateTime::from_utc(end.year(), end.month(), end.day_of_month(), 0, 0, 0.)
+                        .expect("Date should be valid");
+                end_date < start_date
+            } else {
+                end < start
+            };
+
+            invalid_name || invalid_schedule
         }
 
         #[template_callback]
@@ -158,12 +167,14 @@ mod imp {
                 .active_name()
                 .expect("A schedule type should be set")
                 == "all-day";
-            let start = DateTime::from_iso8601(&self.start.text(), None)
-                .expect("Failed to parse start date");
-            let end =
-                DateTime::from_iso8601(&self.end.text(), None).expect("Failed to parse end date");
-            // TODO: Expect that timeframe is valid, ie that start and end are exact days in UTC if
-            // all-day and that start<end
+            let start = self
+                .start
+                .date_time()
+                .expect("DateTime should be initialized");
+            let end = self
+                .end
+                .date_time()
+                .expect("DateTime should be initialized");
             let timeframe = Timeframe::new(all_day, &start, &end);
             match calendar
                 .try_create_event_future(

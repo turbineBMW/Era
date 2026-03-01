@@ -1,0 +1,120 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $DateTimePickerGroup: Adw.PreferencesGroup {
+  $DatePickerRow date {
+    title: bind template.date-title;
+  }
+
+  Adw.EntryRow time {
+    title: bind template.time-title;
+    text: bind $format(template.date-time) as <string>;
+    visible: bind template.date-only inverted;
+
+    EventControllerFocus row_focus {
+      notify::contains-focus => $maybe_validate_entry(template);
+    }
+
+    MenuButton {
+      icon-name: "clock-symbolic";
+      valign: center;
+      tooltip-text: _("Edit Time");
+
+      EventControllerFocus button_focus {
+        notify::contains-focus => $maybe_validate_entry(template);
+      }
+
+      popover: Popover time_popover {
+        position: bottom;
+
+        Box {
+          spacing: 15;
+          margin-top: 6;
+          margin-bottom: 6;
+          margin-start: 6;
+          margin-end: 6;
+          orientation: vertical;
+
+          Box {
+            spacing: 12;
+            halign: center;
+            orientation: horizontal;
+
+            Box {
+              spacing: 6;
+              halign: center;
+
+              SpinButton {
+                xalign: 0.5;
+                orientation: vertical;
+
+                adjustment: Adjustment hour {
+                  upper: 23;
+                  value: bind $hour(template.date-time) as <int>;
+                  step-increment: 1;
+                  page-increment: 5;
+                  value-changed => $update_time(template);
+                };
+
+                output => $format_spin_time(template);
+              }
+
+              Label {
+                label: _(":");
+              }
+
+              SpinButton {
+                xalign: 0.5;
+                orientation: vertical;
+
+                adjustment: Adjustment minute {
+                  upper: 59;
+                  value: bind $minute(template.date-time) as <int>;
+                  step-increment: 1;
+                  page-increment: 10;
+                  value-changed => $update_time(template);
+                };
+
+                output => $format_spin_time(template);
+              }
+            }
+
+            // Adw.ToggleGroup period_toggle_group {
+            //   visible: false;
+            //   valign: center;
+            //   active-name: "am";
+            //   Adw.Toggle {
+            //     label: _("AM");
+            //     name: "am";
+            //   }
+            //   Adw.Toggle {
+            //     label: _("PM");
+            //     name: "pm";
+            //   }
+            // notify::active => $on_period_toggle_group_active_changed_cb();
+            // }
+          }
+
+          Button {
+            valign: center;
+            tooltip-text: _("Change Timezone");
+            sensitive: false;
+
+            Adw.ButtonContent time_zone_button_content {
+              icon-name: "globe-symbolic";
+              label: bind $timezone(template.date-time) as <string>;
+            }
+          }
+        }
+      };
+
+      accessibility {
+        label: _("Edit Time");
+      }
+
+      styles [
+        "flat",
+      ]
+    }
+  }
+}

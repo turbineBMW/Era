@@ -62,7 +62,7 @@ template $EventDetailsDialog: Adw.Dialog {
               Adw.ActionRow {
                 title: _("Location");
                 subtitle: bind template.event as <$ClepsydreEvent>.location as <string>;
-                visible: bind $string_not_empty(template.event as <$ClepsydreEvent>.location) as <bool>;
+                visible: bind $not($string_empty(template.event as <$ClepsydreEvent>.location) as <bool>) as <bool>;
                 use-markup: false;
 
                 styles [
@@ -89,7 +89,9 @@ template $EventDetailsDialog: Adw.Dialog {
               Adw.ActionRow {
                 title: _("Video Conference");
                 subtitle: bind template.event as <$ClepsydreEvent>.video_conference as <string>;
-                visible: bind $string_not_empty(template.event as <$ClepsydreEvent>.video_conference) as <bool>;
+                visible: bind $not(
+                  $string_empty(template.event as <$ClepsydreEvent>.video_conference) as <bool>
+                ) as <bool>;
                 use-markup: false;
 
                 styles [
@@ -133,7 +135,7 @@ template $EventDetailsDialog: Adw.Dialog {
             }
 
             Adw.PreferencesGroup {
-              visible: bind $string_not_empty(template.event as <$ClepsydreEvent>.description) as <bool>;
+              visible: bind $not($string_empty(template.event as <$ClepsydreEvent>.description) as <bool>) as <bool>;
 
               Adw.ActionRow {
                 title: _("Description");
