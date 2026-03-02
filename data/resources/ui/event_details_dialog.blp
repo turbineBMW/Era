@@ -173,15 +173,31 @@ template $EventDetailsDialog: Adw.Dialog {
             ) as <bool>;
 
             [center]
-            Button {
-              use-underline: true;
-              label: _("Edit");
-              clicked => $edit(template);
+            Box {
+              homogeneous: true;
+              spacing: 12;
 
-              styles [
-                "pill",
-                "suggested-action",
-              ]
+              Button edit {
+                label: _("_Edit");
+                use-underline: true;
+                clicked => $edit(template);
+
+                styles [
+                  "pill",
+                  "suggested-action",
+                ]
+              }
+
+              $LoadingButton remove {
+                content-label: _("_Remove");
+                use-underline: true;
+                clicked => $remove(template);
+
+                styles [
+                  "pill",
+                  "destructive-action",
+                ]
+              }
             }
           }
         }
@@ -249,20 +265,6 @@ template $EventDetailsDialog: Adw.Dialog {
             Adw.PreferencesGroup {
               Adw.EntryRow description_entry {
                 title: _("Description");
-              }
-            }
-
-            Adw.PreferencesGroup {
-              visible: bind template.event as <Clepsydre.Event>.removable;
-
-              $LoadingButtonRow remove {
-                title: _("Remove");
-                use-underline: true;
-                activated => $remove(template);
-
-                styles [
-                  "destructive-action",
-                ]
               }
             }
           };

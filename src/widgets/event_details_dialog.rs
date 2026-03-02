@@ -13,7 +13,7 @@ use crate::{
     utils::{PaintableCallbacks, TemplateCallbacks},
     widgets::{
         QrCodeDialog,
-        components::{ErrorDialog, LoadingButton, LoadingButtonRow},
+        components::{ErrorDialog, LoadingButton},
     },
 };
 
@@ -43,7 +43,9 @@ mod imp {
         #[template_child]
         description_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
-        remove: TemplateChild<LoadingButtonRow>,
+        edit: TemplateChild<gtk::Button>,
+        #[template_child]
+        remove: TemplateChild<LoadingButton>,
         #[template_child]
         qr_code_dialog: TemplateChild<QrCodeDialog>,
     }
@@ -263,6 +265,7 @@ mod imp {
         #[template_callback]
         async fn remove(&self) {
             self.remove.set_is_loading(true);
+            self.edit.set_sensitive(false);
             let event = self.obj().event().expect("event should be initialized");
             match event.try_remove_future().await {
                 Ok(()) => {
