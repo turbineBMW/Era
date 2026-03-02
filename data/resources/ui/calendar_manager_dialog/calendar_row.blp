@@ -1,6 +1,7 @@
 using Gtk 4.0;
 using Gdk 4.0;
 using Adw 1;
+using Clepsydre 0;
 
 template $CalendarRow: Adw.ActionRow {
   [prefix]
@@ -10,10 +11,10 @@ template $CalendarRow: Adw.ActionRow {
 
       child: Box {
         Image {
-          visible: bind $not(template.calendar as <$ClepsydreCalendar>.visible as <bool>) as <bool>;
+          visible: bind $not(template.calendar as <Clepsydre.Calendar>.visible as <bool>) as <bool>;
           pixel-size: 24;
           paintable: bind $get_circle_paintable_empty(
-            template.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>
+            template.calendar as <Clepsydre.Calendar>.color as <Gdk.RGBA>
             ) as <Gdk.Paintable>;
 
           accessibility {
@@ -22,10 +23,10 @@ template $CalendarRow: Adw.ActionRow {
         }
 
         Image {
-          visible: bind template.calendar as <$ClepsydreCalendar>.visible as <bool>;
+          visible: bind template.calendar as <Clepsydre.Calendar>.visible as <bool>;
           pixel-size: 24;
           paintable: bind $get_circle_paintable(
-            template.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>
+            template.calendar as <Clepsydre.Calendar>.color as <Gdk.RGBA>
             ) as <Gdk.Paintable>;
 
           accessibility {
@@ -47,7 +48,7 @@ template $CalendarRow: Adw.ActionRow {
     }
   }
 
-  title: bind template.calendar as <$ClepsydreCalendar>.name;
+  title: bind template.calendar as <Clepsydre.Calendar>.name;
   activatable: true;
   selectable: false;
   // TODO: The binding is probably done before the deactivation of markup, leading to a GTK warning if the name contains '&'
@@ -57,7 +58,7 @@ template $CalendarRow: Adw.ActionRow {
   [suffix]
   Image {
     icon-name: "read-only-symbolic";
-    visible: bind $not(template.calendar as <$ClepsydreCalendar>.event_creation_enabled as <bool>) as <bool>;
+    visible: bind $not(template.calendar as <Clepsydre.Calendar>.event-creation-enabled as <bool>) as <bool>;
 
     accessibility {
       label: _("Read only");

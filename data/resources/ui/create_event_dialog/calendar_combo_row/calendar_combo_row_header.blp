@@ -1,4 +1,5 @@
 using Gtk 4.0;
+using Clepsydre 0;
 
 template $CalendarComboRowHeader: Box {
   margin-start: 12;
@@ -7,6 +8,6 @@ template $CalendarComboRowHeader: Box {
   Label {
     ellipsize: end;
     xalign: 0.0;
-    label: bind template.collection as <$ClepsydreCollection>.name;
+    label: bind template.collection as <Clepsydre.Collection>.name;
   }
 }

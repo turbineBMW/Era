@@ -1,6 +1,7 @@
 using Gtk 4.0;
 using Gdk 4.0;
 using Adw 1;
+using Clepsydre 0;
 
 template $EventDetailsDialog: Adw.Dialog {
   content-height: 1000;
@@ -39,7 +40,7 @@ template $EventDetailsDialog: Adw.Dialog {
           content: Adw.PreferencesPage {
             Adw.PreferencesGroup {
               Label name_label {
-                label: bind template.event as <$ClepsydreEvent>.name;
+                label: bind template.event as <Clepsydre.Event>.name;
                 xalign: 0;
                 use-markup: false;
 
@@ -49,7 +50,7 @@ template $EventDetailsDialog: Adw.Dialog {
               }
 
               Label timeframe_label {
-                label: bind $timeframe_label(template.event as <$ClepsydreEvent>) as <string>;
+                label: bind $timeframe_label(template.event as <Clepsydre.Event>) as <string>;
                 xalign: 0;
                 wrap: true;
                 use-markup: false;
@@ -57,12 +58,12 @@ template $EventDetailsDialog: Adw.Dialog {
             }
 
             Adw.PreferencesGroup {
-              visible: bind $location_or_video_conference(template.event as <$ClepsydreEvent>) as <bool>;
+              visible: bind $location_or_video_conference(template.event as <Clepsydre.Event>) as <bool>;
 
               Adw.ActionRow {
                 title: _("Location");
-                subtitle: bind template.event as <$ClepsydreEvent>.location as <string>;
-                visible: bind $not($string_empty(template.event as <$ClepsydreEvent>.location) as <bool>) as <bool>;
+                subtitle: bind template.event as <Clepsydre.Event>.location as <string>;
+                visible: bind $not($string_empty(template.event as <Clepsydre.Event>.location) as <bool>) as <bool>;
                 use-markup: false;
 
                 styles [
@@ -88,9 +89,9 @@ template $EventDetailsDialog: Adw.Dialog {
 
               Adw.ActionRow {
                 title: _("Video Conference");
-                subtitle: bind template.event as <$ClepsydreEvent>.video_conference as <string>;
+                subtitle: bind template.event as <Clepsydre.Event>.video-conference as <string>;
                 visible: bind $not(
-                  $string_empty(template.event as <$ClepsydreEvent>.video_conference) as <bool>
+                  $string_empty(template.event as <Clepsydre.Event>.video-conference) as <bool>
                 ) as <bool>;
                 use-markup: false;
 
@@ -103,7 +104,7 @@ template $EventDetailsDialog: Adw.Dialog {
                   label: _("Join");
                   valign: center;
                   sensitive: bind $video_conference_is_a_uri(
-                    template.event as <$ClepsydreEvent>.video_conference
+                    template.event as <Clepsydre.Event>.video-conference
                     ) as <bool>;
                   clicked => $join(template);
                 }
@@ -121,25 +122,25 @@ template $EventDetailsDialog: Adw.Dialog {
                   Image {
                     pixel-size: 16;
                     paintable: bind $get_circle_paintable(
-                      template.event as <$ClepsydreEvent>.calendar as <$ClepsydreCalendar>.color as <Gdk.RGBA>
+                      template.event as <Clepsydre.Event>.calendar as <Clepsydre.Calendar>.color as <Gdk.RGBA>
                       ) as <Gdk.Paintable>;
                   }
 
                   Label {
                     ellipsize: end;
                     xalign: 0.0;
-                    label: bind template.event as <$ClepsydreEvent>.calendar as <$ClepsydreCalendar>.name;
+                    label: bind template.event as <Clepsydre.Event>.calendar as <Clepsydre.Calendar>.name;
                   }
                 }
               }
             }
 
             Adw.PreferencesGroup {
-              visible: bind $not($string_empty(template.event as <$ClepsydreEvent>.description) as <bool>) as <bool>;
+              visible: bind $not($string_empty(template.event as <Clepsydre.Event>.description) as <bool>) as <bool>;
 
               Adw.ActionRow {
                 title: _("Description");
-                subtitle: bind template.event as <$ClepsydreEvent>.description;
+                subtitle: bind template.event as <Clepsydre.Event>.description;
                 use-markup: false;
 
                 styles [
@@ -150,8 +151,8 @@ template $EventDetailsDialog: Adw.Dialog {
 
             Adw.PreferencesGroup {
               visible: bind $both(
-                template.event as <$ClepsydreEvent>.editable,
-                template.event as <$ClepsydreEvent>.has_recurrence,
+                template.event as <Clepsydre.Event>.editable,
+                template.event as <Clepsydre.Event>.has-recurrence,
               ) as <bool>;
 
               Label {
@@ -167,8 +168,8 @@ template $EventDetailsDialog: Adw.Dialog {
           [bottom]
           ActionBar {
             visible: bind $both(
-              template.event as <$ClepsydreEvent>.editable,
-              $not(template.event as <$ClepsydreEvent>.has_recurrence) as <bool>,
+              template.event as <Clepsydre.Event>.editable,
+              $not(template.event as <Clepsydre.Event>.has-recurrence) as <bool>,
             ) as <bool>;
 
             [center]
@@ -252,7 +253,7 @@ template $EventDetailsDialog: Adw.Dialog {
             }
 
             Adw.PreferencesGroup {
-              visible: bind template.event as <$ClepsydreEvent>.removable;
+              visible: bind template.event as <Clepsydre.Event>.removable;
 
               $LoadingButtonRow remove {
                 title: _("Remove");
