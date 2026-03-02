@@ -3,73 +3,64 @@ using Gio 2.0;
 using Adw 1;
 using Clepsydre 0;
 
-template $CollectionRow: ListBoxRow {
-  activatable: false;
-  valign: center;
-  selectable: false;
-  focusable: false;
+template $CollectionRow: Box {
+  orientation: vertical;
+  vexpand: true;
+  margin-top: 12;
+  margin-bottom: 12;
 
   Box {
-    orientation: vertical;
-    vexpand: true;
+    hexpand: true;
+    margin-bottom: 6;
 
-    Box {
-      hexpand: true;
+    Label name_label {
+      label: bind template.collection as <Clepsydre.Collection>.name;
+      halign: start;
       margin-bottom: 6;
 
-      Label name_label {
-        label: bind template.collection as <Clepsydre.Collection>.name;
-        halign: start;
-        margin-bottom: 6;
-
-        styles [
-          "heading",
-        ]
-      }
-
-      Button {
-        icon-name: "list-add-symbolic";
-        visible: bind template.collection as <Clepsydre.Collection>.calendar-creation-enabled as <bool>;
-        halign: end;
-        hexpand: true;
-        clicked => $open_calendar_creation_dialog(template);
-
-        styles [
-          "flat",
-        ]
-      }
-    }
-
-    ListBox {
-      visible: bind $list_is_empty(
-        template.collection as <Clepsydre.Collection>.calendars as <Gio.ListStore>.n-items
-        ) as <bool>;
-      vexpand: true;
-      selection-mode: none;
-
-      Adw.ActionRow {
-        title: _("No Calendar in This Collection");
-      }
-
       styles [
-        "boxed-list",
+        "heading",
       ]
     }
 
-    ListBox calendars_list {
-      visible: bind $list_is_not_empty(
-        template.collection as <Clepsydre.Collection>.calendars as <Gio.ListStore>.n-items
-        ) as <bool>;
-      vexpand: true;
-      selection-mode: none;
+    Button {
+      icon-name: "list-add-symbolic";
+      visible: bind template.collection as <Clepsydre.Collection>.calendar-creation-enabled as <bool>;
+      halign: end;
+      hexpand: true;
+      clicked => $open_calendar_creation_dialog(template);
 
       styles [
-        "boxed-list",
+        "flat",
       ]
     }
   }
 
-  styles [
-    "provider-row",
-  ]
+  ListBox {
+    visible: bind $is_zero(
+      template.collection as <Clepsydre.Collection>.calendars as <Gio.ListStore>.n-items
+      ) as <bool>;
+    vexpand: true;
+    selection-mode: none;
+
+    Adw.ActionRow {
+      title: _("No Calendar in This Collection");
+    }
+
+    styles [
+      "boxed-list",
+    ]
+  }
+
+  ListBox calendars_list {
+    visible: bind $not(
+      $is_zero(template.collection as <Clepsydre.Collection>.calendars as <Gio.ListStore>.n-items) as <bool>
+    ) as <bool>;
+    vexpand: true;
+    selection-mode: none;
+
+    styles [
+      "boxed-list",
+    ]
+  }
 }

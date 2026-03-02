@@ -7,7 +7,6 @@ blueprints = custom_target(
     'ui/calendar_manager_dialog/calendar_manager_dialog.blp',
     'ui/calendar_manager_dialog/calendar_row.blp',
     'ui/calendar_manager_dialog/collection_row.blp',
-    'ui/calendar_manager_dialog/collections_list.blp',
     'ui/calendar_manager_dialog/collections_list_page.blp',
 
     # Components

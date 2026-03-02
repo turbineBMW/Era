@@ -1,5 +1,6 @@
 using Gtk 4.0;
 using Adw 1;
+using Clepsydre 0;
 
 template $CollectionsListPage: Adw.NavigationPage {
   title: _("Calendars");
@@ -9,7 +10,38 @@ template $CollectionsListPage: Adw.NavigationPage {
       [top]
       Adw.HeaderBar {}
 
-      content: $CollectionsList collections_list {};
+      content: ScrolledWindow {
+        Adw.ClampScrollable {
+          ListView {
+            margin-start: 6;
+            margin-top: 6;
+            margin-bottom: 6;
+            margin-end: 6;
+
+            model: NoSelection {
+              model: SortListModel {
+                sorter: StringSorter {
+                  expression: expr item as <Clepsydre.Collection>.name;
+                };
+
+                model: bind template
+                  .root as <Window>
+                  .application as <$KalendasomApplication>
+                  .manager as <Clepsydre.Manager>
+                  .collections-model as <Clepsydre.CollectionsModel>;
+              };
+            };
+
+            factory: SignalListItemFactory {
+              bind => $collection_item_bind();
+            };
+
+            styles [
+              "providers-list",
+            ]
+          }
+        }
+      };
     }
   };
 }

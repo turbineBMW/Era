@@ -7,7 +7,6 @@ mod calendar_creation_dialog;
 mod calendar_details_page;
 mod calendar_row;
 mod collection_row;
-mod collections_list;
 mod collections_list_page;
 
 use crate::Application;

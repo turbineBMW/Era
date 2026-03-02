@@ -6,6 +6,8 @@ use clepsydre::{Calendar, Collection};
 use super::{calendar_creation_dialog::CalendarCreationDialog, calendar_row::CalendarRow};
 
 mod imp {
+    use crate::utils::TemplateCallbacks;
+
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
@@ -24,11 +26,12 @@ mod imp {
     impl ObjectSubclass for CollectionRow {
         const NAME: &'static str = "CollectionRow";
         type Type = super::CollectionRow;
-        type ParentType = gtk::ListBoxRow;
+        type ParentType = gtk::Box;
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+            TemplateCallbacks::bind_template_callbacks(klass);
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -59,8 +62,9 @@ mod imp {
                 });
         }
     }
+
     impl WidgetImpl for CollectionRow {}
-    impl ListBoxRowImpl for CollectionRow {}
+    impl BoxImpl for CollectionRow {}
 
     #[gtk::template_callbacks]
     impl CollectionRow {
@@ -74,23 +78,13 @@ mod imp {
             );
             dialog.present(Some(&*self.obj()));
         }
-
-        #[template_callback]
-        fn list_is_empty(&self, n_items: u32) -> bool {
-            n_items == 0
-        }
-
-        #[template_callback]
-        fn list_is_not_empty(&self, n_items: u32) -> bool {
-            n_items > 0
-        }
     }
 }
 
 glib::wrapper! {
     pub struct CollectionRow(ObjectSubclass<imp::CollectionRow>)
-        @extends gtk::Widget, gtk::ListBoxRow,
-        @implements gtk::Accessible, gtk::Actionable, gtk::Buildable, gtk::ConstraintTarget;
+        @extends gtk::Widget, gtk::Box,
+        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
 }
 
 impl CollectionRow {

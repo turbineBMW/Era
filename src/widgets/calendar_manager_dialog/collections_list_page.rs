@@ -1,12 +1,8 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Collection, prelude::*};
 
-use crate::{
-    application::Application,
-    widgets::{
-        calendar_manager_dialog::collections_list::CollectionsList, components::ErrorDialog,
-    },
-};
+use crate::widgets::components::ErrorDialog;
+
+use super::collection_row::CollectionRow;
 
 mod imp {
     use super::*;
@@ -16,8 +12,6 @@ mod imp {
     pub struct CollectionsListPage {
         #[template_child]
         toast_overlay: TemplateChild<adw::ToastOverlay>,
-        #[template_child]
-        collections_list: TemplateChild<CollectionsList>,
     }
 
     #[glib::object_subclass]
@@ -28,6 +22,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
+            klass.bind_template_callbacks();
 
             klass.install_action(
                 "collections-list-page.show-error",
@@ -47,26 +42,26 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for CollectionsListPage {
-        fn constructed(&self) {
-            self.parent_constructed();
-
-            let manager = Application::default().manager();
-
-            let collections_model = manager.collections_model().unwrap();
-            let sorted_collections_model = gtk::SortListModel::new(
-                Some(collections_model),
-                Some(gtk::StringSorter::new(Some(Collection::this_expression(
-                    "name",
-                )))),
-            );
-            self.collections_list
-                .bind_model(sorted_collections_model.upcast_ref());
-        }
-    }
-
+    impl ObjectImpl for CollectionsListPage {}
     impl WidgetImpl for CollectionsListPage {}
     impl NavigationPageImpl for CollectionsListPage {}
+
+    #[gtk::template_callbacks]
+    impl CollectionsListPage {
+        #[template_callback]
+        fn collection_item_bind(_factory: gtk::SignalListItemFactory, item: gtk::ListItem) {
+            let collection = item
+                .item()
+                .expect("item should be bound")
+                .downcast()
+                .expect("item should be a Collection");
+
+            let collection_row = CollectionRow::new(&collection);
+            item.set_child(Some(&collection_row));
+            item.set_activatable(false);
+            item.set_focusable(false);
+        }
+    }
 }
 
 glib::wrapper! {
