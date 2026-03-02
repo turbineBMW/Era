@@ -1,8 +1,31 @@
 using Gtk 4.0;
 using Adw 1;
+using Clepsydre 0;
 
 template $CalendarComboRow: Adw.ComboRow {
   title: _("Calendar");
+
+  model: FilterListModel model {
+    filter: BoolFilter {
+      expression: expr item as <Clepsydre.Calendar>.event-creation-enabled;
+    };
+
+    model: FlattenListModel {
+      model: MapListModel map {
+        model: SortListModel {
+          sorter: StringSorter {
+            expression: expr item as <Clepsydre.Collection>.name;
+          };
+
+          model: bind template
+            .root as <Window>
+            .application as <$KalendasomApplication>
+            .manager as <Clepsydre.Manager>
+            .collections-model as <Clepsydre.CollectionsModel>;
+        };
+      };
+    };
+  };
 
   factory: SignalListItemFactory {
     bind => $calendar_item_bind();

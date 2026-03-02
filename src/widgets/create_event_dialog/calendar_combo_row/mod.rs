@@ -1,15 +1,11 @@
-use std::cell::OnceCell;
-
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, Collection, prelude::*};
-use gio::ListModel;
+use clepsydre::{Calendar, Collection};
 use glib::clone;
+use gtk::{FilterListModel, MapListModel};
 
 mod calendar_combo_row_header;
 mod calendar_combo_row_item;
 mod calendar_combo_row_list_item;
-
-use crate::Application;
 
 use self::{
     calendar_combo_row_header::CalendarComboRowHeader,
@@ -23,7 +19,10 @@ mod imp {
     #[derive(Default, gtk::CompositeTemplate)]
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_combo_row.ui")]
     pub struct CalendarComboRow {
-        model: OnceCell<ListModel>,
+        #[template_child]
+        model: TemplateChild<FilterListModel>,
+        #[template_child]
+        map: TemplateChild<MapListModel>,
     }
 
     #[glib::object_subclass]
@@ -46,21 +45,7 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
-            let manager = Application::default().manager();
-
-            let collections_model = manager
-                .collections_model()
-                .expect("collections model should be set");
-            // Sort collections by name
-            let sorted_collections_model = gtk::SortListModel::new(
-                Some(collections_model),
-                Some(gtk::StringSorter::new(Some(Collection::this_expression(
-                    "name",
-                )))),
-            );
-            // Collections are unsorted models of calendars. Sort the calendars within each
-            // collection by name.
-            let map_model = gtk::MapListModel::new(Some(sorted_collections_model), |object| {
+            self.map.set_map_func(|object| {
                 let collection = object
                     .downcast_ref::<Collection>()
                     .expect("Collections model should only contain Collections");
@@ -72,17 +57,6 @@ mod imp {
                 )
                 .upcast()
             });
-            let flattened_model = gtk::FlattenListModel::new(Some(map_model));
-            // Filter out read-only calendars
-            let filtered_model = gtk::FilterListModel::new(
-                Some(flattened_model),
-                Some(gtk::BoolFilter::new(Some(Calendar::this_expression(
-                    "event-creation-enabled",
-                )))),
-            );
-            self.model.get_or_init(|| filtered_model.upcast());
-
-            self.obj().set_model(Some(self.model()));
         }
     }
 
@@ -94,12 +68,6 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl CalendarComboRow {
-        fn model(&self) -> &ListModel {
-            self.model
-                .get()
-                .expect("flattened_collections_model should be initialized")
-        }
-
         #[template_callback]
         fn calendar_item_bind(_factory: gtk::SignalListItemFactory, item: gtk::ListItem) {
             let calendar = item
@@ -118,8 +86,8 @@ mod imp {
             _factory: gtk::SignalListItemFactory,
         ) {
             let start = header.start();
-            let model = self.model();
-            let collection = model
+            let collection = self
+                .model
                 .item(start)
                 .expect("item should exist at this position")
                 .downcast::<Calendar>()

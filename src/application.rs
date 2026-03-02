@@ -33,7 +33,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for Application {
-        const NAME: &'static str = "CalendarManagerApplication";
+        const NAME: &'static str = "KalendasomApplication";
         type Type = super::Application;
         type ParentType = adw::Application;
     }
@@ -115,7 +115,8 @@ impl Application {
             .version(VERSION)
             .developers(vec!["Titouan Real"])
             .designers(vec!["Philipp Sauberz"])
-            // Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
+            // Translators: Replace "translator-credits" with your name/username, and optionally an
+            // email or URL.
             .translator_credits(gettext("translator-credits"))
             .website("https://gitlab.gnome.org/TitouanReal/kalendasom")
             .issue_url("https://gitlab.gnome.org/TitouanReal/kalendasom/-/issues")
