@@ -93,7 +93,7 @@ mod imp {
                 .item()
                 .expect("item should be bound")
                 .downcast()
-                .expect("item should be a Calendar");
+                .expect("item should be an Event");
             let event_row = EventRow::new(&event);
             item.set_child(Some(&event_row));
         }

@@ -11,7 +11,7 @@ codegen-units = 1
 [dependencies]
 adw = { package = "libadwaita", version = "0.8.0", features = ["v1_8"] }
 ashpd = { version = "0.12.0", default-features = false, features = ["async-std"] }
-futures-util = "0.3"
+futures-util = "0.3.32"
 clepsydre = { package = "clepsydre-rebind", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git" }
 clepsydre_eds = { package = "clepsydre-eds", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git" }
 gettext-rs = { version = "0.7.7", features = ["gettext-system"] }
@@ -19,8 +19,8 @@ gio = { version = "0.21.4", features = ["v2_84"] }
 glib = { version = "0.21.4", features = ["v2_84"] }
 gdk = { package = "gdk4", version = "0.10.1", features = ["v4_20"] }
 gtk = { package = "gtk4", version = "0.10.2", features = ["gnome_48"] }
-jiff = "0.2.16"
+jiff = "0.2.22"
 qrcode = "0.14.1"
-tracing = "0.1.41"
-tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
-url = "2.5.7"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
+url = "2.5.8"

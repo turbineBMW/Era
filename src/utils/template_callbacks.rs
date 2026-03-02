@@ -13,20 +13,30 @@ impl TemplateCallbacks {
 
     /// Applies a logical "and".
     #[template_callback]
-    pub fn both(first: bool, second: bool) -> bool {
-        first && second
+    pub fn both(left: bool, right: bool) -> bool {
+        left && right
     }
 
     /// Applies a logical "or".
     #[template_callback]
-    pub fn either(first: bool, second: bool) -> bool {
-        first || second
+    pub fn either(left: bool, right: bool) -> bool {
+        left || right
     }
 
-    /// Applies a logical "".
+    /// Applies a logical "and(not, not)".
     #[template_callback]
-    pub fn neither(first: bool, second: bool) -> bool {
-        !first && !second
+    pub fn neither(left: bool, right: bool) -> bool {
+        !left && !right
+    }
+
+    /// Applies a ternary operator.
+    #[template_callback]
+    pub fn ternary(condition: bool, left: &str, right: &str) -> String {
+        if condition {
+            left.to_string()
+        } else {
+            right.to_string()
+        }
     }
 
     /// Returns `true` when the given string is empty.
@@ -39,5 +49,11 @@ impl TemplateCallbacks {
     #[template_callback]
     pub fn string_equals(left: &str, right: &str) -> bool {
         left == right
+    }
+
+    /// Returns `true` when the given model is empty.
+    #[template_callback]
+    pub fn is_zero(int: u32) -> bool {
+        int == 0
     }
 }

@@ -2,9 +2,13 @@ use std::cell::{Cell, RefCell};
 
 use adw::{prelude::*, subclass::prelude::*};
 use glib::{DateTime, TimeZone, clone};
-use gtk::{Adjustment, EventControllerFocus, SpinButton, Widget};
+use gtk::{Adjustment, EventControllerFocus, Popover, SpinButton, Widget};
 
-use super::date_picker_row::DatePickerRow;
+mod date_picker_row;
+mod object_time_zone;
+mod time_zone_picker_dialog;
+
+use self::{date_picker_row::DatePickerRow, time_zone_picker_dialog::TimeZonePickerDialog};
 
 mod imp {
     use super::*;
@@ -29,6 +33,8 @@ mod imp {
         hour: TemplateChild<Adjustment>,
         #[template_child]
         minute: TemplateChild<Adjustment>,
+        #[template_child]
+        popover: TemplateChild<Popover>,
         #[template_child]
         row_focus: TemplateChild<EventControllerFocus>,
         #[template_child]
@@ -200,7 +206,7 @@ mod imp {
                     minute as i32,
                     0.,
                 )
-                .unwrap(),
+                .expect("DateTime should be constructible"),
             );
         }
 
@@ -228,7 +234,38 @@ mod imp {
                 return String::new();
             };
 
-            date_time.timezone_abbreviation().to_string()
+            date_time.timezone().identifier().to_string()
+        }
+
+        #[template_callback]
+        fn select_timezone(&self) {
+            self.popover.popdown();
+            let dialog = TimeZonePickerDialog::new();
+            dialog.connect_time_zone_picked(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |_dialog, time_zone_id| {
+                    let date = imp
+                        .obj()
+                        .date_time()
+                        .expect("DateTime should be initialized");
+                    let time_zone = TimeZone::from_identifier(Some(&time_zone_id))
+                        .expect("TimeZone ID should be valid");
+                    imp.obj().set_date_time(
+                        DateTime::new(
+                            &time_zone,
+                            date.year(),
+                            date.month(),
+                            date.day_of_month(),
+                            date.hour(),
+                            date.minute(),
+                            0.,
+                        )
+                        .unwrap(),
+                    );
+                }
+            ));
+            dialog.present(Some(&*self.obj()));
         }
     }
 }

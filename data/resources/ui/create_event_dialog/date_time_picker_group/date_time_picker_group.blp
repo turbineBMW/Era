@@ -24,7 +24,7 @@ template $DateTimePickerGroup: Adw.PreferencesGroup {
         notify::contains-focus => $maybe_validate_entry(template);
       }
 
-      popover: Popover time_popover {
+      popover: Popover popover {
         position: bottom;
 
         Box {
@@ -98,9 +98,9 @@ template $DateTimePickerGroup: Adw.PreferencesGroup {
           Button {
             valign: center;
             tooltip-text: _("Change Timezone");
-            sensitive: false;
+            clicked => $select_timezone(template);
 
-            Adw.ButtonContent time_zone_button_content {
+            Adw.ButtonContent {
               icon-name: "globe-symbolic";
               label: bind $timezone(template.date-time) as <string>;
             }

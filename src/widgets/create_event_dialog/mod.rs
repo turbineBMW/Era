@@ -4,7 +4,6 @@ use glib::DateTime;
 use tracing::{debug, warn};
 
 mod calendar_combo_row;
-mod date_picker_row;
 mod date_time_picker_group;
 
 use crate::{

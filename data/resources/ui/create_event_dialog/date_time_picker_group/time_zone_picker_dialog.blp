@@ -1,0 +1,69 @@
+using Gtk 4.0;
+using Adw 1;
+using Gio 2.0;
+
+template $TimeZonePickerDialog: Adw.Dialog {
+  title: _("Select Timezone");
+  content-width: 400;
+  content-height: 540;
+
+  child: Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar dialog-header-bar {}
+
+    [top]
+    Adw.Bin {
+      Entry input {
+        placeholder-text: _("Search Timezones");
+      }
+
+      styles [
+        "toolbar",
+      ]
+    }
+
+    content: Stack {
+      visible-child-name: bind $ternary($is_zero(filter.n-items) as <bool>, "empty", "time_zones") as <string>;
+
+      StackPage {
+        name: "empty";
+
+        child: Adw.StatusPage {
+          icon-name: "loupe-symbolic";
+          title: _("No Result");
+        };
+      }
+
+      StackPage {
+        name: "time_zones";
+
+        child: ScrolledWindow {
+          ListView {
+            model: NoSelection {
+              model: FilterListModel filter {
+                model: Gio.ListStore time_zones {
+                  item-type: typeof<$ObjectTimeZone>;
+                };
+
+                filter: StringFilter {
+                  match-mode: substring;
+                  ignore-case: true;
+                  search: bind input.text;
+                  expression: expr item as <$ObjectTimeZone>.identifier;
+                };
+              };
+            };
+
+            single-click-activate: true;
+
+            factory: SignalListItemFactory {
+              bind => $time_zone_item_bind();
+            };
+
+            activate => $select_time_zone(template);
+          }
+        };
+      }
+    };
+  };
+}
