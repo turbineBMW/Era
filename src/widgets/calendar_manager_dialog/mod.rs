@@ -1,6 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::prelude::*;
-use glib::clone;
 use tracing::error;
 
 mod calendar_creation_dialog;
@@ -9,7 +8,7 @@ mod calendar_row;
 mod collection_row;
 mod collections_list_page;
 
-use crate::Application;
+use crate::{Application, utils::TemplateCallbacks};
 
 use self::{
     calendar_details_page::CalendarDetailsPage, collections_list_page::CollectionsListPage,
@@ -21,8 +20,6 @@ mod imp {
     #[derive(Debug, Default, gtk::CompositeTemplate)]
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_manager_dialog.ui")]
     pub struct CalendarManagerDialog {
-        #[template_child]
-        stack: TemplateChild<gtk::Stack>,
         #[template_child]
         navigation_view: TemplateChild<adw::NavigationView>,
         #[template_child]
@@ -37,6 +34,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
+            TemplateCallbacks::bind_template_callbacks(klass);
 
             klass.install_action(
                 "calendar-manager.show-calendar-subpage",
@@ -66,38 +64,9 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for CalendarManagerDialog {
-        fn constructed(&self) {
-            self.parent_constructed();
-
-            let manager = Application::default().manager();
-
-            let collections_model = manager.collections_model().unwrap();
-
-            if collections_model.n_items() == 0 {
-                self.stack.set_visible_child_name("empty");
-            } else {
-                self.stack.set_visible_child_name("collections");
-            }
-
-            collections_model.connect_items_changed(clone!(
-                #[weak(rename_to = imp)]
-                self,
-                move |collections_model, _, _, _| {
-                    if collections_model.n_items() == 0 {
-                        imp.stack.set_visible_child_name("empty");
-                    } else {
-                        imp.stack.set_visible_child_name("collections");
-                    }
-                }
-            ));
-        }
-    }
-
+    impl ObjectImpl for CalendarManagerDialog {}
     impl WidgetImpl for CalendarManagerDialog {}
     impl AdwDialogImpl for CalendarManagerDialog {}
-
-    impl CalendarManagerDialog {}
 }
 
 glib::wrapper! {
