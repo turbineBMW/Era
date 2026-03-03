@@ -3,13 +3,14 @@ use std::sync::LazyLock;
 use adw::{prelude::*, subclass::prelude::*};
 use gio::ListStore;
 use glib::{GString, TimeZone, closure_local, subclass::Signal};
-use gtk::{Entry, FilterListModel, Label};
+use gtk::{Entry, FilterListModel};
 
 use crate::utils::TemplateCallbacks;
 
-use super::object_time_zone::ObjectTimeZone;
+use super::{object_time_zone::ObjectTimeZone, time_zone_row::TimeZoneRow};
 
 mod imp {
+
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
@@ -45,6 +46,8 @@ mod imp {
     #[glib::derived_properties]
     impl ObjectImpl for TimeZonePickerDialog {
         fn constructed(&self) {
+            // TODO: Create the model once at app start to reduce the time the dialog takes to
+            // display
             for tzid in jiff::tz::db().available() {
                 let Some(time_zone) = TimeZone::from_identifier(Some(tzid.as_str())) else {
                     continue;
@@ -78,8 +81,8 @@ mod imp {
                 .expect("item should be bound")
                 .downcast()
                 .expect("item should be an ObjectTimeZone");
-            let label = Label::new(Some(&time_zone.time_zone().identifier()));
-            item.set_child(Some(&label));
+            let time_zone_row = TimeZoneRow::new(&time_zone);
+            item.set_child(Some(&time_zone_row));
         }
 
         #[template_callback]

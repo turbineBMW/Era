@@ -23,6 +23,7 @@ blueprints = custom_target(
     'ui/create_event_dialog/date_time_picker_group/date_picker_row.blp',
     'ui/create_event_dialog/date_time_picker_group/date_time_picker_group.blp',
     'ui/create_event_dialog/date_time_picker_group/time_zone_picker_dialog.blp',
+    'ui/create_event_dialog/date_time_picker_group/time_zone_row.blp',
 
     # Event Details Dialog
     'ui/event_details_dialog.blp',

@@ -1,5 +1,7 @@
 //! Collection of template callbacks.
 
+use glib::Object;
+
 /// Struct used as a collection of template callbacks.
 pub struct TemplateCallbacks {}
 
@@ -51,7 +53,19 @@ impl TemplateCallbacks {
         left == right
     }
 
-    /// Returns `true` when the given model is empty.
+    /// Returns `true` when the given option object is some.
+    #[template_callback]
+    pub fn is_some(option: Option<Object>) -> bool {
+        option.is_some()
+    }
+
+    /// Returns `true` when the given option object is none.
+    #[template_callback]
+    pub fn is_none(option: Option<Object>) -> bool {
+        option.is_none()
+    }
+
+    /// Returns `true` when the given number is zero.
     #[template_callback]
     pub fn is_zero(int: u32) -> bool {
         int == 0

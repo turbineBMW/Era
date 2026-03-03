@@ -7,6 +7,7 @@ use gtk::{Adjustment, EventControllerFocus, Popover, SpinButton, Widget};
 mod date_picker_row;
 mod object_time_zone;
 mod time_zone_picker_dialog;
+mod time_zone_row;
 
 use self::{date_picker_row::DatePickerRow, time_zone_picker_dialog::TimeZonePickerDialog};
 

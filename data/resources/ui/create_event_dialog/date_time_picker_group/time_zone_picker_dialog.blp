@@ -39,6 +39,10 @@ template $TimeZonePickerDialog: Adw.Dialog {
 
         child: ScrolledWindow {
           ListView {
+            show-separators: true;
+            margin-start: 12;
+            margin-end: 12;
+
             model: NoSelection {
               model: FilterListModel filter {
                 model: Gio.ListStore time_zones {
