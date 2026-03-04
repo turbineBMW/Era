@@ -3,11 +3,11 @@ use std::cell::RefCell;
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Calendar, Collection};
 
+use crate::utils::TemplateCallbacks;
+
 use super::{calendar_creation_dialog::CalendarCreationDialog, calendar_row::CalendarRow};
 
 mod imp {
-    use crate::utils::TemplateCallbacks;
-
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
@@ -16,8 +16,6 @@ mod imp {
     pub struct CollectionRow {
         #[property(get, construct_only)]
         collection: RefCell<Option<Collection>>,
-        #[template_child]
-        name_label: TemplateChild<gtk::Label>,
         #[template_child]
         calendars_list: TemplateChild<gtk::ListBox>,
     }

@@ -27,7 +27,10 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="time_zone_picker_dialog.ui">ui/create_event_dialog/date_time_picker_group/time_zone_picker_dialog.ui</file>
 
     <!-- Event Details Dialog -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="event_details_dialog.ui">ui/event_details_dialog.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="attendee_row.ui">ui/event_details_dialog/attendee_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="event_details_dialog.ui">ui/event_details_dialog/event_details_dialog.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="participants_row.ui">ui/event_details_dialog/participants_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="resources_row.ui">ui/event_details_dialog/resources_row.ui</file>
 
     <!-- Qr Code Dialog -->
     <file compressed="true" preprocess="xml-stripblanks" alias="qr_code_dialog.ui">ui/qr_code_dialog.ui</file>
@@ -66,5 +69,8 @@
     <file preprocess="xml-stripblanks" alias="clock-symbolic.svg">icons/clock-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="globe-symbolic.svg">icons/globe-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="loupe-symbolic.svg">icons/loupe-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="accepted-symbolic.svg">icons/accepted-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="questionmark-symbolic.svg">icons/questionmark-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="declined-symbolic.svg">icons/declined-symbolic.svg</file>
   </gresource>
 </gresources>

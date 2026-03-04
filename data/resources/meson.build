@@ -25,7 +25,10 @@ blueprints = custom_target(
     'ui/create_event_dialog/date_time_picker_group/time_zone_picker_dialog.blp',
 
     # Event Details Dialog
-    'ui/event_details_dialog.blp',
+    'ui/event_details_dialog/attendee_row.blp',
+    'ui/event_details_dialog/event_details_dialog.blp',
+    'ui/event_details_dialog/participants_row.blp',
+    'ui/event_details_dialog/resources_row.blp',
 
     # Qr Code Dialog
     'ui/qr_code_dialog.blp',

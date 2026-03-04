@@ -1,5 +1,6 @@
 //! Collection of template callbacks.
 
+use clepsydre::ParticipationStatus;
 use glib::Object;
 
 /// Struct used as a collection of template callbacks.
@@ -29,6 +30,12 @@ impl TemplateCallbacks {
     #[template_callback]
     pub fn neither(left: bool, right: bool) -> bool {
         !left && !right
+    }
+
+    /// Applies a logical "and(not, not, not)".
+    #[template_callback]
+    pub fn none_of_three(left: bool, middle: bool, right: bool) -> bool {
+        !left && !middle && !right
     }
 
     /// Applies a ternary operator.
@@ -69,5 +76,14 @@ impl TemplateCallbacks {
     #[template_callback]
     pub fn is_zero(int: u32) -> bool {
         int == 0
+    }
+
+    /// Returns `true` when the participation statuses are equals.
+    #[template_callback]
+    pub fn participation_status_equals(
+        left: ParticipationStatus,
+        right: ParticipationStatus,
+    ) -> bool {
+        left == right
     }
 }
