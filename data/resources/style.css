@@ -1,14 +1,13 @@
-.providers-list {
+.collections-list {
     background-color: var(--theme-base-bg);
-}
-
-.provider-row {
-    margin-top: 12px;
-    margin-bottom: 12px;
 }
 
 .events-list {
     background-color: var(--theme-base-bg);
+}
+
+.loading-button-row {
+    padding: 12px 40px;
 }
 
 .year-view {
