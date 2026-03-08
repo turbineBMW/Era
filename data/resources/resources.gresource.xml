@@ -25,7 +25,6 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="date_picker_row.ui">ui/create_event_dialog/date_time_picker_group/date_picker_row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="date_time_picker_group.ui">ui/create_event_dialog/date_time_picker_group/date_time_picker_group.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="time_zone_picker_dialog.ui">ui/create_event_dialog/date_time_picker_group/time_zone_picker_dialog.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="time_zone_row.ui">ui/create_event_dialog/date_time_picker_group/time_zone_row.ui</file>
 
     <!-- Event Details Dialog -->
     <file compressed="true" preprocess="xml-stripblanks" alias="event_details_dialog.ui">ui/event_details_dialog.ui</file>

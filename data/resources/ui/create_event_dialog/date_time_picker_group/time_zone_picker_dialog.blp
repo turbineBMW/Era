@@ -60,8 +60,16 @@ template $TimeZonePickerDialog: Adw.Dialog {
 
             single-click-activate: true;
 
-            factory: SignalListItemFactory {
-              bind => $time_zone_item_bind();
+            factory: BuilderListItemFactory {
+              template ListItem {
+                child: Label {
+                  margin-top: 12;
+                  margin-bottom: 12;
+                  label: bind template.item as <$ObjectTimeZone>.identifier as <string>;
+                  xalign: 0;
+                  wrap: true;
+                };
+              }
             };
 
             activate => $select_time_zone(template);

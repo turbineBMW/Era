@@ -7,7 +7,7 @@ use gtk::{Entry, FilterListModel};
 
 use crate::utils::TemplateCallbacks;
 
-use super::{object_time_zone::ObjectTimeZone, time_zone_row::TimeZoneRow};
+use super::object_time_zone::ObjectTimeZone;
 
 mod imp {
 
@@ -33,6 +33,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             ObjectTimeZone::ensure_type();
+
             klass.bind_template();
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
@@ -74,17 +75,6 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl TimeZonePickerDialog {
-        #[template_callback]
-        fn time_zone_item_bind(_factory: gtk::SignalListItemFactory, item: gtk::ListItem) {
-            let time_zone: ObjectTimeZone = item
-                .item()
-                .expect("item should be bound")
-                .downcast()
-                .expect("item should be an ObjectTimeZone");
-            let time_zone_row = TimeZoneRow::new(&time_zone);
-            item.set_child(Some(&time_zone_row));
-        }
-
         #[template_callback]
         fn select_time_zone(&self, position: u32) {
             let tzid = self
