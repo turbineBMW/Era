@@ -27,10 +27,11 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="time_zone_picker_dialog.ui">ui/create_event_dialog/date_time_picker_group/time_zone_picker_dialog.ui</file>
 
     <!-- Event Details Dialog -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="attendee_row.ui">ui/event_details_dialog/attendee_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="attendees_list_page.ui">ui/event_details_dialog/attendees_list_page.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="attendee_list_row.ui">ui/event_details_dialog/attendee_list_row/attendee_list_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="attendee_row.ui">ui/event_details_dialog/attendee_list_row/attendee_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="attendee_status_section.ui">ui/event_details_dialog/attendee_list_row/attendee_status_section.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="event_details_dialog.ui">ui/event_details_dialog/event_details_dialog.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="participants_row.ui">ui/event_details_dialog/participants_row.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="resources_row.ui">ui/event_details_dialog/resources_row.ui</file>
 
     <!-- Qr Code Dialog -->
     <file compressed="true" preprocess="xml-stripblanks" alias="qr_code_dialog.ui">ui/qr_code_dialog.ui</file>
@@ -53,6 +54,7 @@
   </gresource>
 
   <gresource prefix="/io/gitlab/TitouanReal/Kalendasom/icons">
+    <!-- TODO: Replace by new icons -->
     <file preprocess="xml-stripblanks" alias="info-outline-symbolic.svg">icons/info-outline-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="year-symbolic.svg">icons/year-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="month-symbolic.svg">icons/month-symbolic.svg</file>
@@ -69,8 +71,12 @@
     <file preprocess="xml-stripblanks" alias="clock-symbolic.svg">icons/clock-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="globe-symbolic.svg">icons/globe-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="loupe-symbolic.svg">icons/loupe-symbolic.svg</file>
-    <file preprocess="xml-stripblanks" alias="accepted-symbolic.svg">icons/accepted-symbolic.svg</file>
+    <!-- New icons -->
+    <file preprocess="xml-stripblanks" alias="circle-check-symbolic.svg">icons/circle-check-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="questionmark-symbolic.svg">icons/questionmark-symbolic.svg</file>
-    <file preprocess="xml-stripblanks" alias="declined-symbolic.svg">icons/declined-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="stop-sign-one-way-symbolic.svg">icons/stop-sign-one-way-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="sand-watch-symbolic.svg">icons/sand-watch-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="switch-user-symbolic.svg">icons/switch-user-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="people-symbolic.svg">icons/people-symbolic.svg</file>
   </gresource>
 </gresources>

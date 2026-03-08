@@ -12,7 +12,7 @@ project(
 i18n = import('i18n')
 gnome = import('gnome')
 
-dependency('gtk4', version: '>= 4.20')
+dependency('gtk4', version: '>= 4.21')
 dependency('libadwaita-1', version: '>= 1.8')
 dependency('clepsydre-0', version: '>= 0.1')
 dependency('clepsydre-eds-0', version: '>= 0.1')

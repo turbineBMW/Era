@@ -1,4 +1,4 @@
-use std::{cell::RefCell, cmp};
+use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
 use ashpd::Uri;
@@ -6,23 +6,22 @@ use ashpd::desktop::{
     file_chooser::{FileFilter, SelectedFiles},
     open_uri::OpenFileRequest,
 };
-use clepsydre::{Attendee, AttendeeType, Event, ParticipationStatus};
+use clepsydre::Event;
 use glib::clone;
 use tracing::{debug, warn};
 
 use crate::{
-    utils::{PaintableCallbacks, TemplateCallbacks},
+    utils::{AttendeeTypeFilter, PaintableCallbacks, TemplateCallbacks},
     widgets::{
         QrCodeDialog,
         components::{ErrorDialog, LoadingButton},
     },
 };
 
-mod attendee_row;
-mod participants_row;
-mod resources_row;
+mod attendee_list_row;
+mod attendees_list_page;
 
-use self::{participants_row::ParticipantsRow, resources_row::ResourcesRow};
+use self::{attendee_list_row::AttendeeListRow, attendees_list_page::AttendeeListPage};
 
 mod imp {
     use super::*;
@@ -37,12 +36,6 @@ mod imp {
         navigation_view: TemplateChild<adw::NavigationView>,
         #[template_child]
         details_toast_overlay: TemplateChild<adw::ToastOverlay>,
-        #[template_child]
-        attendee_sorter: TemplateChild<gtk::CustomSorter>,
-        #[template_child]
-        participant_filter: TemplateChild<gtk::CustomFilter>,
-        #[template_child]
-        resource_filter: TemplateChild<gtk::CustomFilter>,
         #[template_child]
         edit: TemplateChild<gtk::Button>,
         #[template_child]
@@ -70,8 +63,9 @@ mod imp {
         type ParentType = adw::Dialog;
 
         fn class_init(klass: &mut Self::Class) {
-            ParticipantsRow::ensure_type();
-            ResourcesRow::ensure_type();
+            AttendeeListRow::ensure_type();
+            AttendeeTypeFilter::ensure_type();
+            AttendeeListPage::ensure_type();
 
             klass.bind_template();
             klass.bind_template_callbacks();
@@ -99,55 +93,9 @@ mod imp {
     #[glib::derived_properties]
     impl ObjectImpl for EventDetailsDialog {
         fn constructed(&self) {
-            self.attendee_sorter.set_sort_func(|left, right| {
-                let left_attendee = left
-                    .downcast_ref::<Attendee>()
-                    .expect("Item should be an Attendee");
-                let right_attendee = right
-                    .downcast_ref::<Attendee>()
-                    .expect("Item should be an Attendee");
-                let left_name = left_attendee.name();
-                let right_name = right_attendee.name();
-
-                match (
-                    left_attendee.participation_status(),
-                    right_attendee.participation_status(),
-                ) {
-                    (left, right) if left == right => left_name.cmp(&right_name),
-                    (ParticipationStatus::Accepted, _) => cmp::Ordering::Less,
-                    (_, ParticipationStatus::Accepted) => cmp::Ordering::Greater,
-                    (ParticipationStatus::Tentative, _) => cmp::Ordering::Less,
-                    (_, ParticipationStatus::Tentative) => cmp::Ordering::Greater,
-                    (ParticipationStatus::Declined, _) => cmp::Ordering::Less,
-                    (_, ParticipationStatus::Declined) => cmp::Ordering::Greater,
-                    _ => left_name.cmp(&right_name),
-                }
-                .into()
-            });
-
-            self.participant_filter.set_filter_func(|attendee| {
-                let attendee = attendee
-                    .downcast_ref::<Attendee>()
-                    .expect("Item should be an Attendee");
-                let attendee_type = attendee.attendee_type();
-                [
-                    AttendeeType::Individual,
-                    AttendeeType::Group,
-                    AttendeeType::Unknown,
-                ]
-                .contains(&attendee_type)
-            });
-
-            self.resource_filter.set_filter_func(|attendee| {
-                let attendee = attendee
-                    .downcast_ref::<Attendee>()
-                    .expect("Item should be an Attendee");
-                let attendee_type = attendee.attendee_type();
-                [AttendeeType::Resource, AttendeeType::Room].contains(&attendee_type)
-            });
-
             let event = self.obj().event().unwrap();
 
+            // TODO: Doesn't work if a subdialog is shown
             event.connect_removed(clone!(
                 #[weak(rename_to = imp)]
                 self,
@@ -307,6 +255,14 @@ mod imp {
                     self.details_toast_overlay.add_toast(toast);
                 }
             }
+        }
+
+        #[template_callback]
+        fn open_attendees_details(&self, row: &AttendeeListRow) {
+            let attendees_list_page =
+                AttendeeListPage::new(&self.obj().event(), row.attendee_type_selection());
+            attendees_list_page.set_title(&row.title());
+            self.navigation_view.push(&attendees_list_page);
         }
 
         #[template_callback]

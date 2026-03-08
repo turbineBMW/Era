@@ -1,0 +1,92 @@
+using Gtk 4.0;
+using Clepsydre 0;
+
+template $AttendeeRow: Box {
+  spacing: 6;
+  margin-top: 3;
+  margin-bottom: 3;
+
+  Image {
+    icon-name: "circle-check-symbolic";
+    visible: bind $participation_status_equals(
+      template.attendee as <Clepsydre.Attendee>.participation-status,
+      accepted as <Clepsydre.ParticipationStatus>
+    ) as <bool>;
+
+    styles [
+      "success",
+      "small-participation-status-icon",
+    ]
+  }
+
+  Image {
+    icon-name: "questionmark-symbolic";
+    visible: bind $participation_status_equals(
+      template.attendee as <Clepsydre.Attendee>.participation-status,
+      tentative as <Clepsydre.ParticipationStatus>
+    ) as <bool>;
+
+    styles [
+      "warning",
+      "small-participation-status-icon",
+    ]
+  }
+
+  Image {
+    icon-name: "stop-sign-one-way-symbolic";
+    visible: bind $participation_status_equals(
+      template.attendee as <Clepsydre.Attendee>.participation-status,
+      declined as <Clepsydre.ParticipationStatus>
+    ) as <bool>;
+
+    styles [
+      "error",
+      "small-participation-status-icon",
+    ]
+  }
+
+  Image {
+    icon-name: "sand-watch-symbolic";
+    visible: bind $participation_status_equals(
+      template.attendee as <Clepsydre.Attendee>.participation-status,
+      needs_action as <Clepsydre.ParticipationStatus>
+    ) as <bool>;
+
+    styles [
+      "small-participation-status-icon",
+    ]
+  }
+
+  Image {
+    icon-name: "switch-user-symbolic";
+    visible: bind $participation_status_equals(
+      template.attendee as <Clepsydre.Attendee>.participation-status,
+      delegated as <Clepsydre.ParticipationStatus>
+    ) as <bool>;
+
+    styles [
+      "small-participation-status-icon",
+    ]
+  }
+
+  Label {
+    label: bind template.attendee as <Clepsydre.Attendee>.name;
+    ellipsize: end;
+  }
+
+  Image {
+    icon-name: "people-symbolic";
+    visible: bind $attendee_type_equals(
+      template.attendee as <Clepsydre.Attendee>.attendee-type,
+      group as <Clepsydre.AttendeeType>
+    ) as <bool>;
+
+    styles [
+      "small-participation-status-icon",
+    ]
+  }
+
+  styles [
+    "attendee-row",
+  ]
+}

@@ -1,0 +1,66 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $AttendeeListRow: Adw.PreferencesRow {
+  child: Box {
+    spacing: 6;
+    margin-top: 12;
+    margin-bottom: 12;
+    margin-start: 12;
+    margin-end: 12;
+    orientation: vertical;
+
+    Box {
+      spacing: 6;
+
+      Label {
+        label: bind template.title;
+        xalign: 0.0;
+        hexpand: true;
+      }
+
+      Label {
+        label: bind $number_of_attendees(template.event, template.attendee-type-selection);
+      }
+
+      Image {
+        icon-name: "go-next-symbolic";
+      }
+    }
+
+    Box {
+      orientation: vertical;
+      spacing: 6;
+
+      $AttendeeStatusSection accepted_section {
+        event: bind template.event;
+        attendee-type-selection: bind template.attendee-type-selection;
+        participation-status-selection: accepted;
+      }
+
+      $AttendeeStatusSection tentative_section {
+        event: bind template.event;
+        attendee-type-selection: bind template.attendee-type-selection;
+        participation-status-selection: tentative;
+      }
+
+      $AttendeeStatusSection declined_section {
+        event: bind template.event;
+        attendee-type-selection: bind template.attendee-type-selection;
+        participation-status-selection: declined;
+      }
+
+      $AttendeeStatusSection needs_action_section {
+        event: bind template.event;
+        attendee-type-selection: bind template.attendee-type-selection;
+        participation-status-selection: needs_action;
+      }
+
+      $AttendeeStatusSection delegated_section {
+        event: bind template.event;
+        attendee-type-selection: bind template.attendee-type-selection;
+        participation-status-selection: delegated;
+      }
+    }
+  };
+}

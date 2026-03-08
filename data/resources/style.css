@@ -18,6 +18,10 @@
     font-size: smaller;
 }
 
+.small-participation-status-icon {
+    -gtk-icon-weight: 134;
+}
+
 .year-view {
     --raised-shade-color-base: color-mix(
         in srgb,

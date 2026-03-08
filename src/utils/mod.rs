@@ -1,11 +1,16 @@
 use gettextrs::gettext;
 
+mod attendee_type_filter;
 mod child_property_ext;
 mod macros;
 mod paintable_callbacks;
+mod participation_status_filter;
 mod template_callbacks;
 
-pub use self::{child_property_ext::*, paintable_callbacks::*, template_callbacks::*};
+pub use self::{
+    attendee_type_filter::*, child_property_ext::*, paintable_callbacks::*,
+    participation_status_filter::*, template_callbacks::*,
+};
 
 pub fn get_month_name(month: i8) -> String {
     match month {
