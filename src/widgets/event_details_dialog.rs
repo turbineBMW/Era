@@ -1,6 +1,7 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
+use ashpd::Uri;
 use ashpd::desktop::{
     file_chooser::{FileFilter, SelectedFiles},
     open_uri::OpenFileRequest,
@@ -174,7 +175,7 @@ mod imp {
             };
 
             if let Some(file_uri) = files.uris().first() {
-                let file = gio::File::for_uri(file_uri.as_ref());
+                let file = gio::File::for_uri(file_uri.as_str());
                 file.replace_contents_future(
                     ics_content,
                     None,
@@ -204,8 +205,11 @@ mod imp {
                 .expect("event should be set")
                 .location()
                 .expect("Map button should not be available if no location is set");
-            let uri = url::Url::parse(&location)
-                .or_else(|_error| url::Url::parse(&format!("geo:0,0?q={}", location)))
+            // TODO: Use correct geo URI once ASHPD removes this limitation
+            // See https://github.com/bilelmoussaoui/ashpd/issues/385
+            // Use "geo://0,0?q={}" instead
+            let uri = Uri::parse(&location)
+                .or_else(|_error| Uri::parse(&format!("geo://0,0?q={}", location)))
                 .expect("should be a geo URI");
             match OpenFileRequest::default().send_uri(&uri).await {
                 Ok(_) => {
@@ -226,7 +230,7 @@ mod imp {
         #[template_callback]
         async fn join(&self) {
             let event = self.obj().event().expect("event should be initialized");
-            let uri = url::Url::parse(
+            let uri = Uri::parse(
                 &event
                     .video_conference()
                     .expect("join should not be callable if video_conference is not a URI"),
