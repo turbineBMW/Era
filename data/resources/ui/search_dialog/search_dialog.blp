@@ -2,17 +2,25 @@ using Gtk 4.0;
 using Adw 1;
 
 template $SearchDialog: Adw.Dialog {
+  title: _("Search Events");
   content-height: 1000;
   content-width: 700;
 
   Adw.ToastOverlay toast_overlay {
     Adw.ToolbarView {
       [top]
-      Adw.HeaderBar {
-        title-widget: SearchEntry search_entry {
+      Adw.HeaderBar {}
+
+      [top]
+      Adw.Clamp {
+        Entry search_entry {
           placeholder-text: _("Search");
-          search-changed => $search_events(template);
-        };
+          notify::text => $search_events(template);
+        }
+
+        styles [
+          "toolbar",
+        ]
       }
 
       content: Stack stack {
@@ -22,6 +30,8 @@ template $SearchDialog: Adw.Dialog {
           child: ScrolledWindow {
             Adw.ClampScrollable {
               ListView results_view {
+                single-click-activate: true;
+
                 factory: SignalListItemFactory {
                   bind => $event_item_bind();
                 };
