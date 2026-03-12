@@ -61,6 +61,7 @@ blueprint-format:
 blueprint-lint:
   stage: check
   image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
+  when: manual
   interruptible: true
   before_script:
     - shopt -s globstar
