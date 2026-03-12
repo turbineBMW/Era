@@ -215,11 +215,8 @@ mod imp {
                 .expect("event should be set")
                 .location()
                 .expect("Map button should not be available if no location is set");
-            // TODO: Use correct geo URI once ASHPD removes this limitation
-            // See https://github.com/bilelmoussaoui/ashpd/issues/385
-            // Use "geo://0,0?q={}" instead
             let uri = Uri::parse(&location)
-                .or_else(|_error| Uri::parse(&format!("geo://0,0?q={}", location)))
+                .or_else(|_error| Uri::parse(&format!("geo:0,0?q={}", location)))
                 .expect("should be a geo URI");
             match OpenFileRequest::default().send_uri(&uri).await {
                 Ok(_) => {
