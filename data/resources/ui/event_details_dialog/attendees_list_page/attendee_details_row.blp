@@ -1,0 +1,108 @@
+using Gtk 4.0;
+using Adw 1;
+using Clepsydre 0;
+
+template $AttendeeDetailsRow: Adw.PreferencesRow {
+  activatable: false;
+
+  child: Box {
+    spacing: 12;
+    margin-top: 6;
+    margin-bottom: 6;
+    margin-start: 12;
+    margin-end: 12;
+
+    Box {
+      orientation: vertical;
+      spacing: 3;
+
+      Box {
+        spacing: 6;
+        valign: baseline;
+
+        Label {
+          label: bind template.attendee as <Clepsydre.Attendee>.name;
+          xalign: 0.0;
+          wrap: true;
+
+          styles [
+            "title",
+          ]
+        }
+
+        $AttendeeRoleBadge {
+          role: bind template.attendee as <Clepsydre.Attendee>.attendee-role;
+          visible: bind $not(
+            $attendee_role_equals(
+              template.attendee as <Clepsydre.Attendee>.attendee-role,
+              required as <Clepsydre.AttendeeRole>
+            ) as <bool>
+          ) as <bool>;
+        }
+      }
+
+      Label {
+        label: bind template.attendee as <Clepsydre.Attendee>.uri;
+        hexpand: true;
+        halign: start;
+        wrap: true;
+
+        styles [
+          "subtitle",
+        ]
+      }
+    }
+
+    Image {
+      icon-name: "circle-check-symbolic";
+      visible: bind $participation_status_equals(
+        template.attendee as <Clepsydre.Attendee>.participation-status,
+        accepted as <Clepsydre.ParticipationStatus>
+      ) as <bool>;
+
+      styles [
+        "success",
+      ]
+    }
+
+    Image {
+      icon-name: "questionmark-symbolic";
+      visible: bind $participation_status_equals(
+        template.attendee as <Clepsydre.Attendee>.participation-status,
+        tentative as <Clepsydre.ParticipationStatus>
+      ) as <bool>;
+
+      styles [
+        "warning",
+      ]
+    }
+
+    Image {
+      icon-name: "stop-sign-one-way-symbolic";
+      visible: bind $participation_status_equals(
+        template.attendee as <Clepsydre.Attendee>.participation-status,
+        declined as <Clepsydre.ParticipationStatus>
+      ) as <bool>;
+
+      styles [
+        "error",
+      ]
+    }
+
+    Image {
+      icon-name: "sand-watch-symbolic";
+      visible: bind $participation_status_equals(
+        template.attendee as <Clepsydre.Attendee>.participation-status,
+        needs_action as <Clepsydre.ParticipationStatus>
+      ) as <bool>;
+    }
+
+    Image {
+      icon-name: "switch-user-symbolic";
+      visible: bind $participation_status_equals(
+        template.attendee as <Clepsydre.Attendee>.participation-status,
+        delegated as <Clepsydre.ParticipationStatus>
+      ) as <bool>;
+    }
+  };
+}

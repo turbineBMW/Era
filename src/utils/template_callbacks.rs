@@ -1,6 +1,6 @@
 //! Collection of template callbacks.
 
-use clepsydre::{AttendeeType, ParticipationStatus};
+use clepsydre::{AttendeeRole, AttendeeType, ParticipationStatus};
 use glib::Object;
 
 /// Struct used as a collection of template callbacks.
@@ -90,6 +90,12 @@ impl TemplateCallbacks {
     /// Returns `true` when the attendee types are equals.
     #[template_callback]
     pub fn attendee_type_equals(left: AttendeeType, right: AttendeeType) -> bool {
+        left == right
+    }
+
+    /// Returns `true` when the attendee roles are equals.
+    #[template_callback]
+    pub fn attendee_role_equals(left: AttendeeRole, right: AttendeeRole) -> bool {
         left == right
     }
 }

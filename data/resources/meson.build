@@ -25,7 +25,8 @@ blueprints = custom_target(
     'ui/create_event_dialog/date_time_picker_group/time_zone_picker_dialog.blp',
 
     # Event Details Dialog
-    'ui/event_details_dialog/attendees_list_page.blp',
+    'ui/event_details_dialog/attendees_list_page/attendee_details_row.blp',
+    'ui/event_details_dialog/attendees_list_page/attendees_list_page.blp',
     'ui/event_details_dialog/attendee_list_row/attendee_list_row.blp',
     'ui/event_details_dialog/attendee_list_row/attendee_row.blp',
     'ui/event_details_dialog/attendee_list_row/attendee_status_section.blp',

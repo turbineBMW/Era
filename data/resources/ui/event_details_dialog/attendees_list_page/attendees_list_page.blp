@@ -1,0 +1,137 @@
+using Gtk 4.0;
+using Adw 1;
+using Clepsydre 0;
+
+template $AttendeeDetailsPage: Adw.NavigationPage {
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    [top]
+    Adw.Clamp {
+      maximum-size: 400;
+
+      Entry search_entry {
+        placeholder-text: _("Search");
+      }
+
+      styles [
+        "toolbar",
+      ]
+    }
+
+    content: Stack {
+      visible-child-name: bind $ternary($is_zero(search_results.n-items) as <bool>, "empty", "list");
+
+      StackPage {
+        name: "empty";
+
+        child: Adw.StatusPage {
+          icon-name: "loupe-symbolic";
+          title: _("No Result");
+        };
+      }
+
+      StackPage {
+        name: "list";
+
+        child: Adw.PreferencesPage {
+          Adw.PreferencesGroup accepted_group {
+            title: _("Accepted");
+            visible: bind $not($is_zero(accepted_model.n-items) as <bool>) as <bool>;
+          }
+
+          Adw.PreferencesGroup tentative_group {
+            title: _("Tentative");
+            visible: bind $not($is_zero(tentative_model.n-items) as <bool>) as <bool>;
+          }
+
+          Adw.PreferencesGroup declined_group {
+            title: _("Declined");
+            visible: bind $not($is_zero(declined_model.n-items) as <bool>) as <bool>;
+          }
+
+          Adw.PreferencesGroup delegated_group {
+            title: _("Delegated");
+            visible: bind $not($is_zero(delegated_model.n-items) as <bool>) as <bool>;
+          }
+
+          Adw.PreferencesGroup needs_action_group {
+            title: _("Needs Action");
+            visible: bind $not($is_zero(needs_action_model.n-items) as <bool>) as <bool>;
+          }
+        };
+      }
+    };
+  }
+}
+
+FilterListModel search_results {
+  filter: AnyFilter {
+    StringFilter {
+      match-mode: substring;
+      ignore-case: true;
+      search: bind search_entry.text;
+      expression: expr item as <Clepsydre.Attendee>.name;
+    }
+
+    StringFilter {
+      match-mode: substring;
+      ignore-case: true;
+      search: bind search_entry.text;
+      expression: expr item as <Clepsydre.Attendee>.uri;
+    }
+  };
+
+  model: FilterListModel {
+    filter: $AttendeeTypeFilter {
+      attendee-type-selection: bind template.attendee-type-selection;
+    };
+
+    model: SortListModel {
+      sorter: CustomSorter attendee_sorter {};
+
+      model: bind template.event as <Clepsydre.Event>.attendees;
+    };
+  };
+}
+
+FilterListModel accepted_model {
+  filter: $ParticipationStatusFilter {
+    participation-status-selection: accepted;
+  };
+
+  model: search_results;
+}
+
+FilterListModel declined_model {
+  filter: $ParticipationStatusFilter {
+    participation-status-selection: declined;
+  };
+
+  model: search_results;
+}
+
+FilterListModel tentative_model {
+  filter: $ParticipationStatusFilter {
+    participation-status-selection: tentative;
+  };
+
+  model: search_results;
+}
+
+FilterListModel needs_action_model {
+  filter: $ParticipationStatusFilter {
+    participation-status-selection: needs-action;
+  };
+
+  model: search_results;
+}
+
+FilterListModel delegated_model {
+  filter: $ParticipationStatusFilter {
+    participation-status-selection: delegated;
+  };
+
+  model: search_results;
+}

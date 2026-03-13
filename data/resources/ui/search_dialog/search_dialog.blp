@@ -13,6 +13,8 @@ template $SearchDialog: Adw.Dialog {
 
       [top]
       Adw.Clamp {
+        maximum-size: 400;
+
         Entry search_entry {
           placeholder-text: _("Search");
           notify::text => $search_events(template);

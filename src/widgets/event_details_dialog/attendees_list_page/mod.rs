@@ -1,10 +1,14 @@
 use std::cell::{Cell, RefCell};
-use std::cmp;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Attendee, Event, ParticipationStatus};
+use clepsydre::{Attendee, Event};
 
 use crate::utils::{AttendeeTypeFilter, AttendeeTypeSelection, TemplateCallbacks};
+
+mod attendee_details_row;
+mod attendee_role_badge;
+
+use self::attendee_details_row::AttendeeDetailsRow;
 
 mod imp {
     use super::*;
@@ -18,7 +22,27 @@ mod imp {
         #[property(get, set)]
         attendee_type_selection: Cell<AttendeeTypeSelection>,
         #[template_child]
+        accepted_group: TemplateChild<adw::PreferencesGroup>,
+        #[template_child]
+        tentative_group: TemplateChild<adw::PreferencesGroup>,
+        #[template_child]
+        declined_group: TemplateChild<adw::PreferencesGroup>,
+        #[template_child]
+        needs_action_group: TemplateChild<adw::PreferencesGroup>,
+        #[template_child]
+        delegated_group: TemplateChild<adw::PreferencesGroup>,
+        #[template_child]
         attendee_sorter: TemplateChild<gtk::CustomSorter>,
+        #[template_child]
+        accepted_model: TemplateChild<gtk::FilterListModel>,
+        #[template_child]
+        tentative_model: TemplateChild<gtk::FilterListModel>,
+        #[template_child]
+        declined_model: TemplateChild<gtk::FilterListModel>,
+        #[template_child]
+        needs_action_model: TemplateChild<gtk::FilterListModel>,
+        #[template_child]
+        delegated_model: TemplateChild<gtk::FilterListModel>,
     }
 
     #[glib::object_subclass]
@@ -55,21 +79,19 @@ mod imp {
                 let left_name = left_attendee.name();
                 let right_name = right_attendee.name();
 
-                match (
-                    left_attendee.participation_status(),
-                    right_attendee.participation_status(),
-                ) {
-                    (left, right) if left == right => left_name.cmp(&right_name),
-                    (ParticipationStatus::Accepted, _) => cmp::Ordering::Less,
-                    (_, ParticipationStatus::Accepted) => cmp::Ordering::Greater,
-                    (ParticipationStatus::Tentative, _) => cmp::Ordering::Less,
-                    (_, ParticipationStatus::Tentative) => cmp::Ordering::Greater,
-                    (ParticipationStatus::Declined, _) => cmp::Ordering::Less,
-                    (_, ParticipationStatus::Declined) => cmp::Ordering::Greater,
-                    _ => left_name.cmp(&right_name),
-                }
-                .into()
+                left_name.cmp(&right_name).into()
             });
+
+            self.accepted_group
+                .bind_model(Some(&*self.accepted_model), Self::attendee_row);
+            self.tentative_group
+                .bind_model(Some(&*self.tentative_model), Self::attendee_row);
+            self.declined_group
+                .bind_model(Some(&*self.declined_model), Self::attendee_row);
+            self.needs_action_group
+                .bind_model(Some(&*self.needs_action_model), Self::attendee_row);
+            self.delegated_group
+                .bind_model(Some(&*self.delegated_model), Self::attendee_row);
         }
     }
 
@@ -77,7 +99,14 @@ mod imp {
     impl NavigationPageImpl for AttendeesListPage {}
 
     #[gtk::template_callbacks]
-    impl AttendeesListPage {}
+    impl AttendeesListPage {
+        fn attendee_row(attendee: &glib::Object) -> gtk::Widget {
+            let attendee = attendee
+                .downcast_ref::<Attendee>()
+                .expect("item should be an attendee");
+            AttendeeDetailsRow::new(Some(attendee)).upcast()
+        }
+    }
 }
 
 impl AttendeeListPage {

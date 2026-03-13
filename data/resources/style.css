@@ -22,6 +22,29 @@
     -gtk-icon-weight: 134;
 }
 
+badge {
+    color: var(--dark-5);
+    background-color: var(--light-3);
+    border-radius: 0.4em;
+    padding: 0.1em 0.5em;
+    font-size: 0.8em;
+}
+
+badge.chair {
+    color: var(--accent-fg-color);
+    background-color: var(--accent-bg-color);
+}
+
+badge.optional {
+    color: var(--light-1);
+    background-color: var(--dark-2);
+}
+
+badge.non-participant {
+    color: var(--light-1);
+    background-color: var(--dark-2);
+}
+
 .year-view {
     --raised-shade-color-base: color-mix(
         in srgb,

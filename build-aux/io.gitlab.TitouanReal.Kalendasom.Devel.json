@@ -90,7 +90,7 @@
         {
           "type": "git",
           "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-          "commit": "0a6c12d6d3ad7997647f925b6da73c7a7789208a"
+          "commit": "6fa864f6b28392b18db0342c49f57603c3e4d304"
         }
       ],
       "config-opts": ["-Dlibclepsydre=true", "-Dlibclepsydre-eds=true"]

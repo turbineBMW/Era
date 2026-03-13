@@ -11,7 +11,7 @@ use glib::clone;
 use tracing::{debug, warn};
 
 use crate::{
-    utils::{AttendeeTypeFilter, PaintableCallbacks, TemplateCallbacks},
+    utils::{PaintableCallbacks, TemplateCallbacks},
     widgets::{
         QrCodeDialog,
         components::{ErrorDialog, LoadingButton},
@@ -64,8 +64,6 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             AttendeeListRow::ensure_type();
-            AttendeeTypeFilter::ensure_type();
-            AttendeeListPage::ensure_type();
 
             klass.bind_template();
             klass.bind_template_callbacks();
