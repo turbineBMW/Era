@@ -3,13 +3,11 @@ use std::{cell::Cell, cmp};
 use adw::{prelude::*, subclass::prelude::*};
 use glib::clone;
 
-use crate::{Application, system_settings::FirstDayOfWeek};
+use crate::{Application, system_settings::FirstDayOfWeek, utils};
 
 use super::YearViewStyling;
 
-pub(crate) mod imp {
-    use crate::utils;
-
+mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
@@ -19,7 +17,7 @@ pub(crate) mod imp {
         #[property(get, set)]
         year: Cell<i32>,
         #[property(get, construct_only)]
-        month: Cell<i8>,
+        month: Cell<i32>,
         #[property(get, set, builder(YearViewStyling::default()))]
         styling: Cell<YearViewStyling>,
         #[template_child]
@@ -78,21 +76,17 @@ pub(crate) mod imp {
             }
 
             let application = Application::default();
-            let current_year = application.current_year();
-            let current_month = application.current_month();
-            self.update_month_label_color(current_year, current_month);
+            let dt = application.current_datetime();
+            self.update_month_label_color(dt.year(), dt.month());
 
             obj.connect_year_notify(clone!(
                 #[weak]
                 application,
                 move |obj| {
-                    let current_year = application.current_year();
-                    let current_month = application.current_month();
-                    let current_day = application.current_day();
+                    let dt = application.current_datetime();
+                    obj.imp().update_month_label_color(dt.year(), dt.month());
                     obj.imp()
-                        .update_month_label_color(current_year, current_month);
-                    obj.imp()
-                        .update_day_label_color(current_year, current_month, current_day);
+                        .update_day_label_color(dt.year(), dt.month(), dt.day_of_month());
                 }
             ));
 
@@ -100,49 +94,20 @@ pub(crate) mod imp {
                 #[weak]
                 application,
                 move |obj| {
-                    let current_year = application.current_year();
-                    let current_month = application.current_month();
-                    let current_day = application.current_day();
+                    let dt = application.current_datetime();
+                    obj.imp().update_month_label_color(dt.year(), dt.month());
                     obj.imp()
-                        .update_month_label_color(current_year, current_month);
-                    obj.imp()
-                        .update_day_label_color(current_year, current_month, current_day);
+                        .update_day_label_color(dt.year(), dt.month(), dt.day_of_month());
                 }
             ));
 
-            application.connect_current_year_notify(clone!(
+            application.connect_current_datetime_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 move |application| {
-                    let current_year = application.current_year();
-                    let current_month = application.current_month();
-                    let current_day = application.current_day();
-                    imp.update_month_label_color(current_year, current_month);
-                    imp.update_day_label_color(current_year, current_month, current_day);
-                }
-            ));
-
-            application.connect_current_month_notify(clone!(
-                #[weak(rename_to = imp)]
-                self,
-                move |application| {
-                    let current_year = application.current_year();
-                    let current_month = application.current_month();
-                    let current_day = application.current_day();
-                    imp.update_month_label_color(current_year, current_month);
-                    imp.update_day_label_color(current_year, current_month, current_day);
-                }
-            ));
-
-            application.connect_current_day_notify(clone!(
-                #[weak(rename_to = imp)]
-                self,
-                move |application| {
-                    let current_year = application.current_year();
-                    let current_month = application.current_month();
-                    let current_day = application.current_day();
-                    imp.update_month_label_color(current_year, current_month);
-                    imp.update_day_label_color(current_year, current_month, current_day);
+                    let dt = application.current_datetime();
+                    imp.update_month_label_color(dt.year(), dt.month());
+                    imp.update_day_label_color(dt.year(), dt.month(), dt.day_of_month());
                 }
             ));
 
@@ -153,11 +118,9 @@ pub(crate) mod imp {
                 #[weak]
                 application,
                 move |_| {
-                    let current_year = application.current_year();
-                    let current_month = application.current_month();
-                    let current_day = application.current_day();
+                    let dt = application.current_datetime();
                     imp.set_days_grid();
-                    imp.update_day_label_color(current_year, current_month, current_day);
+                    imp.update_day_label_color(dt.year(), dt.month(), dt.day_of_month());
                 }
             ));
         }
@@ -263,7 +226,7 @@ pub(crate) mod imp {
         fn set_days_grid(&self) {
             let year = self.year.get();
             let month = self.month.get();
-            let first_day = jiff::civil::date(year as i16, month, 1);
+            let first_day = jiff::civil::date(year as i16, month as i8, 1);
             let days_in_month = first_day.days_in_month() as usize;
 
             // Get the first day of week from system settings
@@ -357,7 +320,7 @@ pub(crate) mod imp {
             }
         }
 
-        fn update_month_label_color(&self, current_year: i32, current_month: i8) {
+        fn update_month_label_color(&self, current_year: i32, current_month: i32) {
             if self.year.get() == current_year && self.month.get() == current_month {
                 self.month_label.add_css_class("accent");
             } else {
@@ -365,7 +328,7 @@ pub(crate) mod imp {
             }
         }
 
-        fn update_day_label_color(&self, current_year: i32, current_month: i8, current_day: i8) {
+        fn update_day_label_color(&self, current_year: i32, current_month: i32, current_day: i32) {
             let year = self.year.get();
             let month = self.month.get();
 
@@ -378,7 +341,7 @@ pub(crate) mod imp {
             }
 
             if year == current_year && month == current_month {
-                let first_day = jiff::civil::date(year as i16, month, 1);
+                let first_day = jiff::civil::date(year as i16, month as i8, 1);
 
                 // Get the first day of week from system settings
                 let application = Application::default();
@@ -390,7 +353,7 @@ pub(crate) mod imp {
                 let weekday_of_first_day = first_day.weekday().to_monday_zero_offset() as usize;
                 let weekday_of_first_day = (weekday_of_first_day + 7 - first_day_offset) % 7;
 
-                let current_day_cell_number = weekday_of_first_day as i32 + current_day as i32 - 1;
+                let current_day_cell_number = weekday_of_first_day as i32 + current_day - 1;
                 let current_day_label = self
                     .days_grid
                     .child_at(current_day_cell_number % 7, current_day_cell_number / 7)
@@ -414,7 +377,7 @@ glib::wrapper! {
 }
 
 impl YearViewMonthCell {
-    pub fn new(year: i32, month: i8) -> Self {
+    pub fn new(year: i32, month: i32) -> Self {
         glib::Object::builder()
             .property("year", year)
             .property("month", month)

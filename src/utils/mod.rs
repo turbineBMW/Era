@@ -12,7 +12,7 @@ pub use self::{
     participation_status_filter::*, template_callbacks::*,
 };
 
-pub fn get_month_name(month: i8) -> String {
+pub fn get_month_name(month: i32) -> String {
     match month {
         1 => gettext("January"),
         2 => gettext("February"),
@@ -26,6 +26,8 @@ pub fn get_month_name(month: i8) -> String {
         10 => gettext("October"),
         11 => gettext("November"),
         12 => gettext("December"),
+        // TODO: Because of bindings somewhere, this is called with 0 during initialization of some
+        // thing. Would be nice to remove those calls, so that we can panic here
         _ => gettext("Invalid Month"),
     }
 }

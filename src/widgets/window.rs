@@ -141,8 +141,9 @@ pub mod imp {
         }
 
         #[template_callback]
-        fn open_month_view(&self, year: i32, month: i8) {
-            let date = jiff::civil::Date::new(year as i16, month, 1).expect("Date should be valid");
+        fn open_month_view(&self, year: i32, month: i32) {
+            let date =
+                jiff::civil::Date::new(year as i16, month as i8, 1).expect("Date should be valid");
             let week = date.iso_week_date().week();
             self.month_view.set_year(year);
             self.month_view.set_week(week);
@@ -151,7 +152,7 @@ pub mod imp {
         }
 
         #[template_callback(function)]
-        fn get_year_month_label(year: i32, month: i8) -> String {
+        fn get_year_month_label(year: i32, month: i32) -> String {
             let month_name = utils::get_month_name(month);
             format!("{month_name} {year} ")
         }

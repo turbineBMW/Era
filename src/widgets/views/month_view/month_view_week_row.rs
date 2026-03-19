@@ -4,7 +4,7 @@ use adw::{prelude::*, subclass::prelude::*};
 
 // use super::MonthViewDayCell;
 
-pub(crate) mod imp {
+mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]

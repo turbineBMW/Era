@@ -1,10 +1,12 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use ashpd::Uri;
-use ashpd::desktop::{
-    file_chooser::{FileFilter, SelectedFiles},
-    open_uri::OpenFileRequest,
+use ashpd::{
+    Uri,
+    desktop::{
+        file_chooser::{FileFilter, SelectedFiles},
+        open_uri::OpenFileRequest,
+    },
 };
 use clepsydre::Event;
 use glib::clone;
@@ -111,25 +113,18 @@ mod imp {
     impl EventDetailsDialog {
         #[template_callback]
         fn timeframe_label(&self) -> String {
-            if let Some(event) = self.obj().event() {
-                let start = event
-                    .timeframe()
-                    .unwrap()
-                    .start()
-                    .unwrap()
-                    .format_iso8601()
-                    .unwrap();
-                let end = event
-                    .timeframe()
-                    .unwrap()
-                    .end()
-                    .unwrap()
-                    .format_iso8601()
-                    .unwrap();
-                format!("{} - {}", start, end)
-            } else {
-                String::new()
-            }
+            let Some(event) = self.obj().event() else {
+                return String::new();
+            };
+
+            let start = event.timeframe().unwrap().start().unwrap();
+            let end = event.timeframe().unwrap().end().unwrap();
+
+            format!(
+                "{} - {}",
+                start.format_iso8601().unwrap(),
+                end.format_iso8601().unwrap()
+            )
         }
 
         #[template_callback]

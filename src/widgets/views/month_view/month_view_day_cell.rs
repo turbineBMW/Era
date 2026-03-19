@@ -2,7 +2,7 @@ use std::cell::Cell;
 
 use adw::{prelude::*, subclass::prelude::*};
 
-pub(crate) mod imp {
+mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]

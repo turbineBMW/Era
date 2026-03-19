@@ -51,7 +51,10 @@ template $EventDetailsDialog: Adw.Dialog {
               }
 
               Label timeframe_label {
-                label: bind $timeframe_label(template.event as <Clepsydre.Event>) as <string>;
+                label: bind $timeframe_label(
+                  template.event as <Clepsydre.Event>,
+                  template.root as <Window>.application as <$KalendasomApplication>.current-datetime
+                  ) as <string>;
                 xalign: 0;
                 wrap: true;
                 use-markup: false;

@@ -13,7 +13,7 @@ mod month_view_week_row;
 // use self::month_view_day_cell::MonthViewDayCell,
 use self::month_view_week_row::MonthViewWeekRow;
 
-pub(crate) mod imp {
+mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
@@ -24,7 +24,7 @@ pub(crate) mod imp {
         year: Cell<i32>,
         // month will not change by itself. Create setters for year and week, and emit notifies
         #[property(get = Self::month)]
-        _month: Cell<i8>,
+        _month: Cell<i32>,
         #[property(get, set)]
         week: Cell<i8>,
         week_rows: OnceCell<Mutex<Vec<MonthViewWeekRow>>>,
@@ -142,14 +142,14 @@ pub(crate) mod imp {
 
     #[gtk::template_callbacks]
     impl MonthView {
-        fn month(&self) -> i8 {
+        fn month(&self) -> i32 {
             let weekdate = jiff::civil::ISOWeekDate::new(
                 self.obj().year() as i16,
                 self.obj().week(),
                 jiff::civil::Weekday::Monday,
             )
             .expect("Week number should be valid");
-            weekdate.date().month()
+            weekdate.date().month() as i32
         }
 
         #[template_callback]

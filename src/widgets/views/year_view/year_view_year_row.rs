@@ -10,7 +10,7 @@ use super::{YearViewMonthCell, YearViewStyling};
 const SIDE_MARGIN: i32 = 12;
 const SPACING: i32 = 6;
 
-pub(crate) mod imp {
+mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
@@ -69,23 +69,23 @@ pub(crate) mod imp {
             });
 
             let application = Application::default();
-            let current_year = application.current_year();
+            let current_year = application.current_datetime().year();
             self.update_year_label_color(current_year);
 
             obj.connect_year_notify(clone!(
                 #[weak]
                 application,
                 move |obj| {
-                    let current_year = application.current_year();
+                    let current_year = application.current_datetime().year();
                     obj.imp().update_year_label_color(current_year);
                 }
             ));
 
-            application.connect_current_year_notify(clone!(
+            application.connect_current_datetime_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 move |application| {
-                    let current_year = application.current_year();
+                    let current_year = application.current_datetime().year();
                     imp.update_year_label_color(current_year);
                 }
             ));
@@ -102,7 +102,7 @@ pub(crate) mod imp {
                 vec![
                     Signal::builder("month-clicked")
                         // Year, Month
-                        .param_types([i32::static_type(), i8::static_type()])
+                        .param_types([i32::static_type(), i32::static_type()])
                         .build(),
                 ]
             });
@@ -260,14 +260,14 @@ impl YearViewYearRow {
         glib::Object::builder().property("year", year).build()
     }
 
-    pub fn connect_month_clicked<F: Fn(&Self, i32, i8) + 'static>(
+    pub fn connect_month_clicked<F: Fn(&Self, i32, i32) + 'static>(
         &self,
         f: F,
     ) -> glib::SignalHandlerId {
         self.connect_closure(
             "month-clicked",
             true,
-            closure_local!(move |obj: Self, year: i32, month: i8| {
+            closure_local!(move |obj: Self, year: i32, month: i32| {
                 f(&obj, year, month);
             }),
         )

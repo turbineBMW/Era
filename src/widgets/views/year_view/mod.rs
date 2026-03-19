@@ -38,7 +38,7 @@ pub enum YearViewStyling {
     Wide,
 }
 
-pub(crate) mod imp {
+mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
@@ -80,7 +80,7 @@ pub(crate) mod imp {
             let obj = self.obj();
 
             let application = Application::default();
-            let current_year = application.current_year();
+            let current_year = application.current_datetime().year();
             self.year.set(current_year);
             obj.notify_year();
 
@@ -133,7 +133,7 @@ pub(crate) mod imp {
                 vec![
                     Signal::builder("month-clicked")
                         // Year, Month
-                        .param_types([i32::static_type(), i8::static_type()])
+                        .param_types([i32::static_type(), i32::static_type()])
                         .build(),
                 ]
             });
