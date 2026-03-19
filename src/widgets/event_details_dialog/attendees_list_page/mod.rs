@@ -22,6 +22,8 @@ mod imp {
         #[property(get, set)]
         attendee_type_selection: Cell<AttendeeTypeSelection>,
         #[template_child]
+        search_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
         accepted_group: TemplateChild<adw::PreferencesGroup>,
         #[template_child]
         tentative_group: TemplateChild<adw::PreferencesGroup>,
@@ -57,6 +59,15 @@ mod imp {
             klass.bind_template();
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
+
+            klass.install_action("attendees-list-page.focus-search", None, |obj, _, _| {
+                obj.imp().search_entry.grab_focus();
+            });
+            klass.add_binding_action(
+                gdk::Key::F,
+                gdk::ModifierType::CONTROL_MASK,
+                "attendees-list-page.focus-search",
+            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
