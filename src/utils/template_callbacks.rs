@@ -54,6 +54,12 @@ impl TemplateCallbacks {
         string.is_empty()
     }
 
+    /// Returns `true` when the given string is empty or contains only whitespace.
+    #[template_callback]
+    pub fn trimmed_string_empty(string: &str) -> bool {
+        string.trim().is_empty()
+    }
+
     /// Returns `true` when the given strings are equal.
     #[template_callback]
     pub fn string_equals(left: &str, right: &str) -> bool {

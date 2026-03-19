@@ -13,7 +13,7 @@ use self::{date_picker_row::DatePickerRow, time_zone_picker_dialog::TimeZonePick
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
+    #[derive(Debug, gtk::CompositeTemplate, glib::Properties)]
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/date_time_picker_group.ui")]
     #[properties(wrapper_type = super::DateTimePickerGroup)]
     pub struct DateTimePickerGroup {
@@ -24,7 +24,7 @@ mod imp {
         #[property(get, set)]
         date_only: Cell<bool>,
         #[property(get, set)]
-        date_time: RefCell<Option<DateTime>>,
+        date_time: RefCell<DateTime>,
         #[template_child]
         date: TemplateChild<DatePickerRow>,
         #[template_child]
@@ -39,6 +39,30 @@ mod imp {
         row_focus: TemplateChild<EventControllerFocus>,
         #[template_child]
         button_focus: TemplateChild<EventControllerFocus>,
+    }
+
+    impl Default for DateTimePickerGroup {
+        fn default() -> Self {
+            let timezone = TimeZone::local();
+            let now = DateTime::now_local().expect("Local time should be available");
+            Self {
+                date_title: RefCell::default(),
+                time_title: RefCell::default(),
+                date_only: Cell::default(),
+                date_time: RefCell::new(
+                    DateTime::from_utc(now.year(), now.month(), now.day_of_month(), 0, 0, 0.)
+                        .and_then(|d| d.to_timezone(&timezone))
+                        .expect("Date should be valid"),
+                ),
+                date: TemplateChild::default(),
+                time: TemplateChild::default(),
+                hour: TemplateChild::default(),
+                minute: TemplateChild::default(),
+                popover: TemplateChild::default(),
+                row_focus: TemplateChild::default(),
+                button_focus: TemplateChild::default(),
+            }
+        }
     }
 
     #[glib::object_subclass]
@@ -60,6 +84,8 @@ mod imp {
     #[glib::derived_properties]
     impl ObjectImpl for DateTimePickerGroup {
         fn constructed(&self) {
+            self.parent_constructed();
+
             let date = self.date.date().expect("Date should be initialized");
             let timezone = TimeZone::local();
 
@@ -80,10 +106,7 @@ mod imp {
                 #[weak(rename_to = imp)]
                 self,
                 move |_| {
-                    let time = imp
-                        .obj()
-                        .date_time()
-                        .expect("DateTime should be initialized");
+                    let time = imp.obj().date_time();
                     let date = imp.date.date().expect("Date should be initialized");
                     imp.obj().set_date_time(
                         DateTime::new(
@@ -109,9 +132,7 @@ mod imp {
     impl DateTimePickerGroup {
         #[template_callback]
         fn format(&self) -> String {
-            let Some(date_time) = self.obj().date_time() else {
-                return String::new();
-            };
+            let date_time = self.obj().date_time();
             format!("{:02}:{:02}", date_time.hour(), date_time.minute())
         }
 
@@ -146,10 +167,7 @@ mod imp {
                 }
             };
 
-            let old_date_time = self
-                .obj()
-                .date_time()
-                .expect("DateTime should be initialized");
+            let old_date_time = self.obj().date_time();
             let Ok(new_date_time) = DateTime::new(
                 &old_date_time.timezone(),
                 old_date_time.year(),
@@ -166,10 +184,7 @@ mod imp {
         }
 
         fn set_entry_from_time(&self) {
-            let date_time = self
-                .obj()
-                .date_time()
-                .expect("DateTime should be initialized");
+            let date_time = self.obj().date_time();
             self.time.set_text(&format!(
                 "{:02}:{:02}",
                 date_time.hour(),
@@ -190,10 +205,7 @@ mod imp {
 
         #[template_callback]
         fn update_time(&self) {
-            let date = self
-                .obj()
-                .date_time()
-                .expect("DateTime should be initialized");
+            let date = self.obj().date_time();
             let hour = self.hour.value();
             let minute = self.minute.value();
             self.obj().set_date_time(
@@ -212,29 +224,17 @@ mod imp {
 
         #[template_callback]
         fn hour(&self) -> i32 {
-            let Some(date_time) = self.obj().date_time() else {
-                return 0;
-            };
-
-            date_time.hour()
+            self.obj().date_time().hour()
         }
 
         #[template_callback]
         fn minute(&self) -> i32 {
-            let Some(date_time) = self.obj().date_time() else {
-                return 0;
-            };
-
-            date_time.minute()
+            self.obj().date_time().minute()
         }
 
         #[template_callback]
         fn timezone(&self) -> String {
-            let Some(date_time) = self.obj().date_time() else {
-                return String::new();
-            };
-
-            date_time.timezone().identifier().to_string()
+            self.obj().date_time().timezone().identifier().to_string()
         }
 
         #[template_callback]
@@ -245,10 +245,7 @@ mod imp {
                 #[weak(rename_to = imp)]
                 self,
                 move |_dialog, time_zone_id| {
-                    let date = imp
-                        .obj()
-                        .date_time()
-                        .expect("DateTime should be initialized");
+                    let date = imp.obj().date_time();
                     let time_zone = TimeZone::from_identifier(Some(&time_zone_id))
                         .expect("TimeZone ID should be valid");
                     imp.obj().set_date_time(

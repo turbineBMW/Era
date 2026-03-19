@@ -24,11 +24,7 @@ template $CreateEventDialog: Adw.Dialog {
         $LoadingButton create {
           content-icon-name: "checkmark-symbolic";
           tooltip-text: _("Create");
-          sensitive: bind $neither(
-            $string_empty(name.text) as <bool>,
-            $invalid_schedule(schedule_type.active-name as <string>, start.date-time, end.date-time) as <bool>
-          ) as <bool>;
-          clicked => $create_event(template);
+          action-name: "create-event-dialog.save";
 
           styles [
             "suggested-action",
@@ -100,12 +96,12 @@ template $CreateEventDialog: Adw.Dialog {
 
         Adw.PreferencesGroup {
           visible: bind $either(
-            $string_empty(name.text) as <bool>,
+            $trimmed_string_empty(name.text) as <bool>,
             $invalid_schedule(schedule_type.active-name as <string>, start.date-time, end.date-time) as <bool>
           ) as <bool>;
 
           Adw.ActionRow {
-            visible: bind $string_empty(name.text) as <bool>;
+            visible: bind $trimmed_string_empty(name.text) as <bool>;
             title: _("The name should not be empty");
 
             styles [

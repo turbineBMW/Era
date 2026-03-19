@@ -1,12 +1,13 @@
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Calendar, Timeframe};
-use glib::DateTime;
+use glib::{DateTime, clone};
 use tracing::{debug, warn};
 
 mod calendar_combo_row;
 mod date_time_picker_group;
 
 use crate::{
+    spawn,
     utils::TemplateCallbacks,
     widgets::components::{ErrorDialog, LoadingButton},
 };
@@ -54,6 +55,22 @@ mod imp {
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
 
+            klass.install_action("create-event-dialog.save", None, |obj, _, _| {
+                let imp = obj.imp();
+                spawn!(clone!(
+                    #[weak]
+                    imp,
+                    async move {
+                        imp.create_event().await;
+                    }
+                ));
+            });
+            klass.add_binding_action(
+                gdk::Key::S,
+                gdk::ModifierType::CONTROL_MASK,
+                "create-event-dialog.save",
+            );
+
             klass.install_action(
                 "create-event-dialog.show-error",
                 Some(&String::static_variant_type()),
@@ -72,7 +89,55 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for CreateEventDialog {}
+    impl ObjectImpl for CreateEventDialog {
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let update_save_action = clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move || {
+                    let name = imp.name.text();
+                    let schedule_type = imp
+                        .schedule_type
+                        .active_name()
+                        .map(|s| s.to_string())
+                        .unwrap_or_default();
+                    let start = imp.start.date_time();
+                    let end = imp.end.date_time();
+                    let is_invalid = name.trim().is_empty()
+                        || Self::invalid_schedule(&schedule_type, start, end);
+                    let enabled = !is_invalid;
+                    imp.obj()
+                        .action_set_enabled("create-event-dialog.save", enabled);
+                }
+            );
+
+            self.name.connect_changed(clone!(
+                #[strong]
+                update_save_action,
+                move |_| update_save_action()
+            ));
+            self.schedule_type.connect_active_name_notify(clone!(
+                #[strong]
+                update_save_action,
+                move |_| update_save_action()
+            ));
+            self.start.connect_date_time_notify(clone!(
+                #[strong]
+                update_save_action,
+                move |_| update_save_action()
+            ));
+            self.end.connect_date_time_notify(clone!(
+                #[strong]
+                update_save_action,
+                move |_| update_save_action()
+            ));
+
+            update_save_action();
+        }
+    }
+
     impl WidgetImpl for CreateEventDialog {}
     impl AdwDialogImpl for CreateEventDialog {}
 
@@ -84,20 +149,8 @@ mod imp {
         }
 
         #[template_callback(function)]
-        fn invalid_schedule(
-            schedule_type: &str,
-            start: Option<DateTime>,
-            end: Option<DateTime>,
-        ) -> bool {
-            let all_day = schedule_type == "all-day";
-            let Some(start) = start else {
-                return false;
-            };
-            let Some(end) = end else {
-                return false;
-            };
-
-            if all_day {
+        fn invalid_schedule(schedule_type: &str, start: DateTime, end: DateTime) -> bool {
+            if schedule_type == "all-day" {
                 let start_date =
                     DateTime::from_utc(start.year(), start.month(), start.day_of_month(), 0, 0, 0.)
                         .expect("Date should be valid");
@@ -110,39 +163,6 @@ mod imp {
             }
         }
 
-        #[template_callback(function)]
-        fn is_event_valid(
-            name: &str,
-            schedule_type: &str,
-            start: Option<DateTime>,
-            end: Option<DateTime>,
-        ) -> bool {
-            let all_day = schedule_type == "all-day";
-            let Some(start) = start else {
-                return false;
-            };
-            let Some(end) = end else {
-                return false;
-            };
-
-            let invalid_name = name.is_empty();
-
-            let invalid_schedule = if all_day {
-                let start_date =
-                    DateTime::from_utc(start.year(), start.month(), start.day_of_month(), 0, 0, 0.)
-                        .expect("Date should be valid");
-                let end_date =
-                    DateTime::from_utc(end.year(), end.month(), end.day_of_month(), 0, 0, 0.)
-                        .expect("Date should be valid");
-                end_date < start_date
-            } else {
-                end < start
-            };
-
-            invalid_name || invalid_schedule
-        }
-
-        #[template_callback]
         async fn create_event(&self) {
             self.cancel.set_sensitive(false);
             self.create.set_is_loading(true);
@@ -166,14 +186,8 @@ mod imp {
                 .active_name()
                 .expect("A schedule type should be set")
                 == "all-day";
-            let start = self
-                .start
-                .date_time()
-                .expect("DateTime should be initialized");
-            let end = self
-                .end
-                .date_time()
-                .expect("DateTime should be initialized");
+            let start = self.start.date_time();
+            let end = self.end.date_time();
             let timeframe = Timeframe::new(all_day, &start, &end);
             match calendar
                 .try_create_event_future(
