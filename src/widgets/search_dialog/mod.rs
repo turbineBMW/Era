@@ -37,6 +37,15 @@ mod imp {
             klass.bind_template();
             klass.bind_template_callbacks();
 
+            klass.install_action("search-dialog.focus-search", None, |obj, _, _| {
+                obj.imp().search_entry.grab_focus();
+            });
+            klass.add_binding_action(
+                gdk::Key::F,
+                gdk::ModifierType::CONTROL_MASK,
+                "search-dialog.focus-search",
+            );
+
             klass.install_action(
                 "search-dialog.show-error",
                 Some(&String::static_variant_type()),
@@ -55,7 +64,6 @@ mod imp {
         }
     }
 
-    // TODO: Call adw_entry_row_grab_focus_without_selecting on the name entry row
     impl ObjectImpl for SearchDialog {}
     impl WidgetImpl for SearchDialog {}
     impl AdwDialogImpl for SearchDialog {}
