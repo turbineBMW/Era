@@ -80,8 +80,15 @@ mod imp {
             let text = self.search_entry.text();
             match manager.search_events_future(&text).await {
                 Ok(results) => {
+                    let results_list = results.unwrap();
                     self.results_view
-                        .set_model(Some(&gtk::NoSelection::new(Some(results.unwrap()))));
+                        .set_model(Some(&gtk::NoSelection::new(Some(results_list.clone()))));
+                    self.stack
+                        .set_visible_child_name(if results_list.clone().n_items() == 0 {
+                            "no-results"
+                        } else {
+                            "results"
+                        });
                 }
                 Err(error) => {
                     warn!("Failed to search events: {error}");
@@ -92,7 +99,6 @@ mod imp {
                     self.toast_overlay.add_toast(toast);
                 }
             }
-            self.stack.set_visible_child_name("results");
         }
 
         #[template_callback]

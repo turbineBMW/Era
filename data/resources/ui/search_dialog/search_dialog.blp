@@ -53,6 +53,16 @@ template $SearchDialog: Adw.Dialog {
 
           child: Adw.Spinner {};
         }
+
+        StackPage {
+          name: "no-results";
+
+          child: Adw.StatusPage {
+            icon-name: "loupe-symbolic";
+            title: _("No Results Found");
+            description: _("Try a different search term");
+          };
+        }
       };
     }
   }
