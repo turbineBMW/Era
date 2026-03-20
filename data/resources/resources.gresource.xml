@@ -79,5 +79,6 @@
     <file preprocess="xml-stripblanks" alias="sand-watch-symbolic.svg">icons/sand-watch-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="switch-user-symbolic.svg">icons/switch-user-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="people-symbolic.svg">icons/people-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="dialog-error-symbolic">icons/dialog-error-symbolic.svg</file>
   </gresource>
 </gresources>

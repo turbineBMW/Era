@@ -63,6 +63,16 @@ template $SearchDialog: Adw.Dialog {
             description: _("Try a different search term");
           };
         }
+
+        StackPage {
+          name: "error";
+
+          child: Adw.StatusPage {
+            icon-name: "dialog-error-symbolic";
+            title: _("Unable to Search Events");
+            description: _("An error occurred in the backend. Try searching again");
+          };
+        }
       };
     }
   }

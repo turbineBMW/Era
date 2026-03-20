@@ -97,6 +97,7 @@ mod imp {
                     toast.set_action_name(Some("search-dialog.show-error"));
                     toast.set_action_target(Some(&error.message()));
                     self.toast_overlay.add_toast(toast);
+                    self.stack.set_visible_child_name("error");
                 }
             }
         }
