@@ -69,6 +69,7 @@ impl TryFrom<zvariant::OwnedValue> for ClockFormat {
 /// The first day of the week setting.
 #[derive(Debug, Default, Hash, Eq, PartialEq, Clone, Copy, glib::Enum)]
 #[enum_type(name = "FirstDayOfWeek")]
+#[repr(i32)]
 pub enum FirstDayOfWeek {
     #[default]
     #[enum_value(name = "Monday", nick = "monday")]

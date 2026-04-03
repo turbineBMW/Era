@@ -1,3 +1,12 @@
+sass_bin = find_program('grass')
+
+stylesheet = custom_target(
+    'stylesheet',
+    input: 'style.scss',
+    output: 'style.css',
+    command: [sass_bin, '@INPUT@', '@OUTPUT@'],
+)
+
 blueprints = custom_target(
   'blueprints',
   input: files(
@@ -44,6 +53,8 @@ blueprints = custom_target(
 
     # Views
     'ui/views/month_view/month_view.blp',
+    'ui/views/month_view/month_view_day_cell.blp',
+    'ui/views/month_view/month_view_inner.blp',
     'ui/views/month_view/month_view_week_row.blp',
     'ui/views/year_view/year_view.blp',
     'ui/views/year_view/year_view_month_cell.blp',
@@ -65,7 +76,7 @@ gnome.compile_resources(
   meson.project_name(),
   'resources.gresource.xml',
   gresource_bundle: true,
-  dependencies: blueprints,
+  dependencies: [blueprints, stylesheet],
   install: true,
   install_dir: pkgdatadir,
 )

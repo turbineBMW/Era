@@ -1,7 +1,10 @@
 //! Collection of template callbacks.
 
 use clepsydre::{AttendeeRole, AttendeeType, ParticipationStatus};
+use gettextrs::gettext;
 use glib::Object;
+
+use crate::system_settings::FirstDayOfWeek;
 
 /// Struct used as a collection of template callbacks.
 pub struct TemplateCallbacks {}
@@ -84,6 +87,12 @@ impl TemplateCallbacks {
         int == 0
     }
 
+    /// Returns `true` when the given numbers are equal.
+    #[template_callback]
+    pub fn int_equals(left: i32, right: i32) -> bool {
+        left == right
+    }
+
     /// Returns `true` when the participation statuses are equals.
     #[template_callback]
     pub fn participation_status_equals(
@@ -103,5 +112,64 @@ impl TemplateCallbacks {
     #[template_callback]
     pub fn attendee_role_equals(left: AttendeeRole, right: AttendeeRole) -> bool {
         left == right
+    }
+
+    /// Returns the abbreviation of the day.
+    #[template_callback]
+    pub fn day_abbreviation(first_day_of_week: FirstDayOfWeek, offset: i32) -> String {
+        let base: i32 = first_day_of_week as i32;
+        let day = (base + offset) % 7;
+        match day {
+            1 => gettext("MON"),
+            2 => gettext("TUE"),
+            3 => gettext("WED"),
+            4 => gettext("THU"),
+            5 => gettext("FRI"),
+            6 => gettext("SAT"),
+            0 => gettext("SUN"),
+            _ => panic!("Invalid day number: {day}"),
+        }
+    }
+
+    /// Returns the name of the month.
+    #[template_callback]
+    pub fn month_name(month: i32) -> String {
+        match month {
+            1 => gettext("january"),
+            2 => gettext("february"),
+            3 => gettext("march"),
+            4 => gettext("april"),
+            5 => gettext("may"),
+            6 => gettext("june"),
+            7 => gettext("july"),
+            8 => gettext("august"),
+            9 => gettext("september"),
+            10 => gettext("october"),
+            11 => gettext("november"),
+            12 => gettext("december"),
+            // TODO: Fix the issues that stop us from panicking here.
+            _ => "invalid month".to_string(),
+        }
+    }
+
+    /// Returns the abbreviation of the month.
+    #[template_callback]
+    pub fn month_abbreviation(month: i32) -> String {
+        match month {
+            1 => gettext("Jan"),
+            2 => gettext("Feb"),
+            3 => gettext("Mar"),
+            4 => gettext("Apr"),
+            5 => gettext("May"),
+            6 => gettext("Jun"),
+            7 => gettext("Jul"),
+            8 => gettext("Aug"),
+            9 => gettext("Sep"),
+            10 => gettext("Oct"),
+            11 => gettext("Nov"),
+            12 => gettext("Dec"),
+            // TODO: Fix the issues that stop us from panicking here.
+            _ => "invalid month".to_string(),
+        }
     }
 }

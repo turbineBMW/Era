@@ -1,0 +1,207 @@
+.collections-list {
+    background-color: var(--window-bg-color);
+}
+
+.events-list {
+    background-color: var(--window-bg-color);
+}
+
+.loading-button-row {
+    padding: 12px 40px;
+}
+
+.attendees-list {
+    background-color: var(--window-bg-color);
+}
+
+.attendee-row {
+    font-size: smaller;
+}
+
+.small-participation-status-icon {
+    -gtk-icon-weight: 134;
+}
+
+attendee-role-badge {
+    color: var(--dark-5);
+    background-color: var(--light-3);
+    border-radius: 0.4em;
+    padding: 0.1em 0.5em;
+    font-size: 0.8em;
+
+    &.chair {
+        color: var(--accent-fg-color);
+        background-color: var(--accent-bg-color);
+    }
+
+    &.optional,
+    &.non-participant {
+        color: var(--light-1);
+        background-color: var(--dark-2);
+    }
+}
+
+year-view {
+    --raised-shade-color-base: color-mix(
+        in srgb,
+        var(--headerbar-shade-color) 50%,
+        transparent
+    );
+
+    box-shadow:
+        inset 0 -1px var(--raised-shade-color, var(--raised-shade-color-base)),
+        inset 0 -2px 4px var(--raised-shade-color-base),
+        inset 0 1px var(--raised-shade-color, var(--raised-shade-color-base)),
+        inset 0 2px 4px var(--raised-shade-color-base);
+}
+
+.year-view-flow-box {
+    > flowboxchild {
+        padding: 6px;
+    }
+}
+
+.year-view-days-grid-day-label-narrow {
+    font-weight: 400;
+    font-size: 57%;
+}
+
+.year-view-days-grid-day-label-medium {
+    font-weight: 400;
+    font-size: 100%;
+}
+
+.year-view-days-grid-day-label-wide {
+    font-weight: 400;
+    font-size: 130%;
+}
+
+month-view {
+    > month-view-inner {
+        --raised-shade-color-base: color-mix(
+            in srgb,
+            var(--headerbar-shade-color) 50%,
+            transparent
+        );
+
+        box-shadow:
+            inset 0 -1px
+                var(--raised-shade-color, var(--raised-shade-color-base)),
+            inset 0 -2px 4px var(--raised-shade-color-base),
+            inset 0 1px
+                var(--raised-shade-color, var(--raised-shade-color-base)),
+            inset 0 2px 4px var(--raised-shade-color-base);
+    }
+
+    > box.header {
+        > label.day-name {
+            font-weight: bold;
+            margin: 6px;
+            opacity: var(--dim-opacity);
+        }
+    }
+}
+
+month-view-day-cell {
+    &:dir(ltr) {
+        --offset: -1px;
+    }
+    &:dir(rtl) {
+        --offset: 1px;
+    }
+
+    box-shadow:
+        0 -1px var(--border-color),
+        var(--offset) 0 var(--border-color);
+
+    &:hover {
+        --bg-color: rgb(from var(--window-fg-color) r g b / 0);
+        --real-bg-color: rgb(from var(--bg-color) r g b / calc(alpha + 3.75%));
+
+        background-color: var(--real-bg-color);
+    }
+
+    > box.header {
+        margin: 6px;
+    }
+
+    &.separator-top {
+        // TODO: Why do we need two separator colors?
+        --month-separator-color: rgb(
+            from var(--border-color) r g b / calc(alpha + 7.5%)
+        );
+        --second-month-separator-color: rgb(
+            from var(--month-separator-color) r g b / calc(alpha * 2)
+        );
+
+        box-shadow:
+            0 -1px var(--second-month-separator-color),
+            var(--offset) 0 var(--border-color);
+
+        &.separator-side {
+            box-shadow:
+                0 -1px var(--second-month-separator-color),
+                var(--offset) 0 var(--month-separator-color),
+                var(--offset) -1px var(--month-separator-color);
+        }
+    }
+
+    &.narrow {
+        label.day,
+        label.month {
+            border-radius: 6px;
+        }
+
+        label.month {
+            font-size: 120%;
+            font-weight: 700;
+        }
+    }
+
+    &.medium {
+        label.day,
+        label.month {
+            border-radius: 6px;
+            padding: 0 6px 0 6px;
+        }
+
+        label.month {
+            font-weight: 700;
+        }
+
+        @media (prefers-color-scheme: light) {
+            label.month {
+                color: white;
+                background-color: var(--dark-2);
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            label.month {
+                color: black;
+                background-color: var(--light-3);
+            }
+        }
+    }
+
+    &.today {
+        label.day,
+        label.month {
+            font-weight: 700;
+            color: var(--accent-fg-color);
+            background-color: var(--accent-bg-color);
+        }
+    }
+}
+
+.error-message {
+    box {
+        > textview {
+            border-radius: 8px;
+            padding: 8px;
+            > text {
+                background: none;
+            }
+        }
+    }
+}

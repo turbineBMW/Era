@@ -449,8 +449,22 @@ template $CalendarManagerWindow: Adw.ApplicationWindow {
         }
 
         [month_view]
-        $MonthView month_view {
-          day_clicked => $open_days_view(template);
+        Adw.BreakpointBin {
+          width-request: 100;
+          height-request: 100;
+
+          child: $MonthView month_view {
+            styling: medium;
+            // day_clicked => $open_days_view(template);
+          };
+
+          Adw.Breakpoint {
+            condition ("max-width: 720sp")
+
+            setters {
+              month_view.styling: narrow;
+            }
+          }
         }
       };
     }

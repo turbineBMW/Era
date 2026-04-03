@@ -32,7 +32,7 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
-            klass.set_css_name("badge");
+            klass.set_css_name("attendee-role-badge");
         }
     }
 

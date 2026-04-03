@@ -1,17 +1,25 @@
-use std::{
-    cell::{Cell, OnceCell},
-    sync::{LazyLock, Mutex},
-};
+use std::marker::PhantomData;
 
 use adw::{prelude::*, subclass::prelude::*};
-use glib::subclass::Signal;
-use gtk::Allocation;
+use glib::clone;
+
+use crate::utils::TemplateCallbacks;
 
 mod month_view_day_cell;
+mod month_view_inner;
 mod month_view_week_row;
 
-// use self::month_view_day_cell::MonthViewDayCell,
-use self::month_view_week_row::MonthViewWeekRow;
+use self::month_view_inner::MonthViewInner;
+
+#[derive(Debug, Default, Hash, Eq, PartialEq, Clone, Copy, glib::Enum)]
+#[enum_type(name = "MonthViewStyling")]
+pub enum MonthViewStyling {
+    #[enum_value(name = "Narrow", nick = "narrow")]
+    Narrow,
+    #[default]
+    #[enum_value(name = "Medium", nick = "medium")]
+    Medium,
+}
 
 mod imp {
     use super::*;
@@ -20,26 +28,32 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/month_view.ui")]
     #[properties(wrapper_type = super::MonthView)]
     pub struct MonthView {
-        #[property(get, set)]
-        year: Cell<i32>,
-        // month will not change by itself. Create setters for year and week, and emit notifies
+        #[property(get = Self::year)]
+        year: PhantomData<i32>,
         #[property(get = Self::month)]
-        _month: Cell<i32>,
-        #[property(get, set)]
-        week: Cell<i8>,
-        week_rows: OnceCell<Mutex<Vec<MonthViewWeekRow>>>,
-        scroll_offset: Cell<f64>,
+        month: PhantomData<i32>,
+        #[property(get = Self::day)]
+        day: PhantomData<i32>,
+        #[property(get = Self::styling, set = Self::set_styling, builder(MonthViewStyling::default()))]
+        styling: PhantomData<MonthViewStyling>,
+        #[template_child]
+        header: TemplateChild<gtk::Box>,
+        #[template_child]
+        month_view_inner: TemplateChild<MonthViewInner>,
     }
 
     #[glib::object_subclass]
     impl ObjectSubclass for MonthView {
         const NAME: &'static str = "MonthView";
         type Type = super::MonthView;
-        type ParentType = gtk::Widget;
+        type ParentType = gtk::Box;
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+            TemplateCallbacks::bind_template_callbacks(klass);
+
+            klass.set_css_name("month-view");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -50,129 +64,77 @@ mod imp {
     #[glib::derived_properties]
     impl ObjectImpl for MonthView {
         fn constructed(&self) {
+            self.parent_constructed();
+
             let obj = self.obj();
 
-            let now = jiff::Zoned::now();
-            let current_year = now.year() as i32;
-            let current_week = now.iso_week_date().week();
-            obj.set_year(current_year);
-            obj.set_week(current_week);
-
-            let first_row = if current_week == 0 {
-                let last_day = jiff::civil::Date::new(current_year as i16 - 1, 12, 31).unwrap();
-                let last_week = last_day.iso_week_date().week();
-                MonthViewWeekRow::new(current_year - 1, last_week)
-            } else {
-                MonthViewWeekRow::new(current_year, current_week)
-            };
-            // first_row.connect_month_clicked(clone!(
-            //     #[weak(rename_to = imp)]
-            //     self,
-            //     move |_row, year, month| {
-            //         imp.obj()
-            //             .emit_by_name::<()>("month-clicked", &[&year, &month]);
-            //     }
-            // ));
-            first_row.insert_before(&*self.obj(), None::<&gtk::Widget>);
-
-            let (row_height, ..) = first_row.measure(gtk::Orientation::Vertical, 400);
-            let offset = row_height as f64;
-            self.scroll_offset.set(offset);
-            let nb_rows = (self.obj().height() / row_height + 1) as u8;
-
-            let mut week_rows = vec![first_row];
-            let mut first_day_of_new_week = jiff::civil::ISOWeekDate::new(
-                current_year as i16,
-                current_week,
-                jiff::civil::Weekday::Monday,
-            )
-            .unwrap()
-            .date();
-            for _ in 0..nb_rows {
-                first_day_of_new_week = first_day_of_new_week
-                    .checked_add(jiff::Span::new().days(7))
-                    .unwrap();
-                let row = MonthViewWeekRow::new(
-                    first_day_of_new_week.year() as i32,
-                    first_day_of_new_week.iso_week_date().week(),
-                );
-                row.insert_before(&*self.obj(), None::<&gtk::Widget>);
-                // row.connect_month_clicked(clone!(
-                //     #[weak(rename_to = imp)]
-                //     self,
-                //     move |_row, year, month| {
-                //         imp.obj()
-                //             .emit_by_name::<()>("month-clicked", &[&year, &month]);
-                //     }
-                // ));
-                week_rows.push(row);
-            }
-            self.week_rows.get_or_init(|| Mutex::new(week_rows));
-        }
-
-        fn dispose(&self) {
-            for row in self.week_rows.get().unwrap().lock().unwrap().iter() {
-                row.unparent();
-            }
-        }
-
-        fn signals() -> &'static [Signal] {
-            static SIGNALS: LazyLock<Vec<Signal>> =
-                LazyLock::new(|| vec![Signal::builder("day-clicked").build()]);
-            SIGNALS.as_ref()
+            self.month_view_inner.connect_year_notify(clone!(
+                #[weak]
+                obj,
+                move |_| {
+                    obj.notify_year();
+                }
+            ));
+            self.month_view_inner.connect_month_notify(clone!(
+                #[weak]
+                obj,
+                move |_| {
+                    obj.notify_month();
+                }
+            ));
+            self.month_view_inner.connect_day_notify(clone!(
+                #[weak]
+                obj,
+                move |_| {
+                    obj.notify_day();
+                }
+            ));
         }
     }
 
-    impl WidgetImpl for MonthView {
-        fn size_allocate(&self, width: i32, _height: i32, baseline: i32) {
-            let week_rows = self.week_rows.get().unwrap().lock().unwrap();
-            let first_row = week_rows.first().unwrap();
-            let (row_height, ..) = first_row.measure(gtk::Orientation::Vertical, width);
-            for (i, row) in week_rows.iter().enumerate() {
-                let allocation = Allocation::new(
-                    0,
-                    -self.scroll_offset.get() as i32 + i as i32 * row_height,
-                    width,
-                    row_height,
-                );
-                row.size_allocate(&allocation, baseline);
-            }
-        }
-    }
+    impl WidgetImpl for MonthView {}
+    impl BoxImpl for MonthView {}
 
     #[gtk::template_callbacks]
     impl MonthView {
+        fn year(&self) -> i32 {
+            self.month_view_inner.year()
+        }
+
         fn month(&self) -> i32 {
-            let weekdate = jiff::civil::ISOWeekDate::new(
-                self.obj().year() as i16,
-                self.obj().week(),
-                jiff::civil::Weekday::Monday,
-            )
-            .expect("Week number should be valid");
-            weekdate.date().month() as i32
+            self.month_view_inner.month()
         }
 
-        #[template_callback]
-        fn get_month_label(&self) -> String {
-            let year = self.obj().year();
-            let month = self.obj().month();
-            format!("{year} {month}")
+        fn day(&self) -> i32 {
+            self.month_view_inner.day()
         }
 
-        #[template_callback]
-        fn day_cell_clicked(&self) {
-            self.obj().emit_by_name::<()>("day-clicked", &[]);
+        /// Sets the triplet year-month-day.
+        pub(super) fn set_year_month_day(&self, year: i32, month: i32, day: i32) {
+            self.month_view_inner.set_year_month_day(year, month, day);
         }
 
-        #[template_callback]
-        fn scroll(&self, _dx: f64, _dy: f64) -> bool {
-            true
+        /// Gets the styling used for the view.
+        fn styling(&self) -> MonthViewStyling {
+            self.month_view_inner.styling()
+        }
+
+        /// Sets the styling used for the view.
+        fn set_styling(&self, styling: MonthViewStyling) {
+            self.month_view_inner.set_styling(styling);
         }
     }
 }
 
 glib::wrapper! {
     pub struct MonthView(ObjectSubclass<imp::MonthView>)
-        @extends gtk::Widget,
-        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
+        @extends gtk::Widget, gtk::Box,
+        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
+}
+
+impl MonthView {
+    /// Sets the triplet year-month-day.
+    pub fn set_year_month_day(&self, year: i32, month: i32, day: i32) {
+        self.imp().set_year_month_day(year, month, day);
+    }
 }

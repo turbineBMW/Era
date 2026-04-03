@@ -1,0 +1,61 @@
+using Gtk 4.0;
+
+template $MonthViewDayCell: Widget {
+  Box header_narrow {
+    // TODO: Use month_view_styling_equals once blueprint bug is fixed
+    visible: bind $month_view_styling_narrow(template.styling);
+
+    styles [
+      "header",
+    ]
+
+    Label {
+      label: bind template.day;
+      visible: bind $not($int_equals(template.day, 1) as <bool>);
+      hexpand: true;
+
+      styles [
+        "day",
+      ]
+    }
+
+    Label {
+      label: bind $month_abbreviation(template.month);
+      ellipsize: end;
+      visible: bind $int_equals(template.day, 1);
+      hexpand: true;
+
+      styles [
+        "month",
+      ]
+    }
+  }
+
+  Box header_medium {
+    // TODO: Use month_view_styling_equals once blueprint bug is fixed
+    visible: bind $month_view_styling_medium(template.styling);
+
+    styles [
+      "header",
+    ]
+
+    Label {
+      label: bind template.day;
+      visible: bind $not($int_equals(template.day, 1) as <bool>);
+
+      styles [
+        "day",
+      ]
+    }
+
+    Label {
+      label: bind $month_name(template.month);
+      ellipsize: end;
+      visible: bind $int_equals(template.day, 1);
+
+      styles [
+        "month",
+      ]
+    }
+  }
+}

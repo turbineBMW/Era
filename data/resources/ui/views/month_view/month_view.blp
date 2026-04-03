@@ -1,12 +1,136 @@
 using Gtk 4.0;
 
-template $MonthView: Widget {
-  overflow: hidden;
+template $MonthView: Box {
   hexpand: true;
   vexpand: true;
+  orientation: vertical;
 
-  EventControllerScroll {
-    flags: vertical | kinetic;
-    scroll => $scroll(template);
+  Box header {
+    homogeneous: true;
+
+    styles [
+      "header",
+    ]
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        1
+      );
+      hexpand: true;
+
+      styles [
+        "caption",
+        "day-name",
+      ]
+    }
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        2
+      );
+      hexpand: true;
+
+      styles [
+        "caption",
+        "day-name",
+      ]
+    }
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        3
+      );
+      hexpand: true;
+
+      styles [
+        "caption",
+        "day-name",
+      ]
+    }
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        4
+      );
+      hexpand: true;
+
+      styles [
+        "caption",
+        "day-name",
+      ]
+    }
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        5
+      );
+      hexpand: true;
+
+      styles [
+        "caption",
+        "day-name",
+      ]
+    }
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        6
+      );
+      hexpand: true;
+
+      styles [
+        "caption",
+        "day-name",
+      ]
+    }
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        7
+      );
+      hexpand: true;
+
+      styles [
+        "caption",
+        "day-name",
+      ]
+    }
   }
+
+  $MonthViewInner month_view_inner {}
 }

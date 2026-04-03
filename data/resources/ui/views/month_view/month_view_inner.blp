@@ -1,0 +1,35 @@
+using Gtk 4.0;
+
+template $MonthViewInner: Widget {
+  overflow: hidden;
+  hexpand: true;
+  vexpand: true;
+
+  EventControllerScroll {
+    flags: vertical | kinetic;
+    scroll-begin => $kinetic_scroll_begin(template);
+    scroll => $kinetic_scroll(template);
+    decelerate => $kinetic_scroll_decelerate(template);
+  }
+
+  EventControllerScroll {
+    flags: vertical | discrete;
+    scroll => $discrete_scroll(template);
+  }
+
+  GestureSwipe {
+    touch-only: true;
+    swipe => $swipe(template);
+  }
+
+  GestureZoom {
+    begin => $zoom_begin(template);
+    scale-changed => $zoom_scale_changed(template);
+  }
+
+  EventControllerMotion {
+    enter => $motion_enter(template);
+    motion => $motion(template);
+    leave => $motion_leave(template);
+  }
+}

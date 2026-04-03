@@ -142,11 +142,7 @@ pub mod imp {
 
         #[template_callback]
         fn open_month_view(&self, year: i32, month: i32) {
-            let date =
-                jiff::civil::Date::new(year as i16, month as i8, 1).expect("Date should be valid");
-            let week = date.iso_week_date().week();
-            self.month_view.set_year(year);
-            self.month_view.set_week(week);
+            self.month_view.set_year_month_day(year, month, 1);
             self.wide_view_stack.set_visible_child_name("month");
             self.narrow_stack.set_visible_child_name("month");
         }

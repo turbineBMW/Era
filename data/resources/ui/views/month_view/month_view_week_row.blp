@@ -3,31 +3,31 @@ using Gtk 4.0;
 template $MonthViewWeekRow: Box {
   homogeneous: true;
 
-  Label {
-    label: "1rst";
+  $MonthViewDayCell day_1 {
+    styling: bind template.styling;
   }
 
-  Label {
-    label: "2nd";
+  $MonthViewDayCell day_2 {
+    styling: bind template.styling;
   }
 
-  Label {
-    label: "3rd";
+  $MonthViewDayCell day_3 {
+    styling: bind template.styling;
   }
 
-  Label {
-    label: "4th";
+  $MonthViewDayCell day_4 {
+    styling: bind template.styling;
   }
 
-  Label {
-    label: "5th";
+  $MonthViewDayCell day_5 {
+    styling: bind template.styling;
   }
 
-  Label {
-    label: "6th";
+  $MonthViewDayCell day_6 {
+    styling: bind template.styling;
   }
 
-  Label {
-    label: "7th";
+  $MonthViewDayCell day_7 {
+    styling: bind template.styling;
   }
 }
