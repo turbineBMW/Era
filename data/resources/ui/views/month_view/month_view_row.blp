@@ -1,0 +1,316 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $MonthViewRow: Widget {
+  Overlay overlay {
+    Grid {
+      Separator above_1 {
+        layout {
+          column: 0;
+          row: 0;
+        }
+
+        hexpand: true;
+      }
+
+      Separator corner_between_1_and_2 {
+        layout {
+          column: 1;
+          row: 0;
+        }
+      }
+
+      Separator above_2 {
+        layout {
+          column: 2;
+          row: 0;
+        }
+
+        hexpand: true;
+      }
+
+      Separator corner_between_2_and_3 {
+        layout {
+          column: 3;
+          row: 0;
+        }
+      }
+
+      Separator above_3 {
+        layout {
+          column: 4;
+          row: 0;
+        }
+
+        hexpand: true;
+      }
+
+      Separator corner_between_3_and_4 {
+        layout {
+          column: 5;
+          row: 0;
+        }
+      }
+
+      Separator above_4 {
+        layout {
+          column: 6;
+          row: 0;
+        }
+
+        hexpand: true;
+      }
+
+      Separator corner_between_4_and_5 {
+        layout {
+          column: 7;
+          row: 0;
+        }
+      }
+
+      Separator above_5 {
+        layout {
+          column: 8;
+          row: 0;
+        }
+
+        hexpand: true;
+      }
+
+      Separator corner_between_5_and_6 {
+        layout {
+          column: 9;
+          row: 0;
+        }
+      }
+
+      Separator above_6 {
+        layout {
+          column: 10;
+          row: 0;
+        }
+
+        hexpand: true;
+      }
+
+      Separator corner_between_6_and_7 {
+        layout {
+          column: 11;
+          row: 0;
+        }
+      }
+
+      Separator above_7 {
+        layout {
+          column: 12;
+          row: 0;
+        }
+
+        hexpand: true;
+      }
+
+      Adw.Bin cell_1 {
+        layout {
+          column: 0;
+          row: 1;
+        }
+
+        hexpand: true;
+        vexpand: true;
+
+        styles [
+          "cell",
+        ]
+
+        $MonthViewHeader header_1 {
+          styling: bind template.styling;
+          valign: start;
+        }
+      }
+
+      Separator between_1_and_2 {
+        layout {
+          column: 1;
+          row: 1;
+        }
+
+        orientation: vertical;
+      }
+
+      Adw.Bin cell_2 {
+        layout {
+          column: 2;
+          row: 1;
+        }
+
+        hexpand: true;
+        vexpand: true;
+
+        styles [
+          "cell",
+        ]
+
+        $MonthViewHeader header_2 {
+          styling: bind template.styling;
+          valign: start;
+        }
+      }
+
+      Separator between_2_and_3 {
+        layout {
+          column: 3;
+          row: 1;
+        }
+
+        orientation: vertical;
+      }
+
+      Adw.Bin cell_3 {
+        layout {
+          column: 4;
+          row: 1;
+        }
+
+        hexpand: true;
+        vexpand: true;
+
+        styles [
+          "cell",
+        ]
+
+        $MonthViewHeader header_3 {
+          styling: bind template.styling;
+          valign: start;
+        }
+      }
+
+      Separator between_3_and_4 {
+        layout {
+          column: 5;
+          row: 1;
+        }
+
+        orientation: vertical;
+      }
+
+      Adw.Bin cell_4 {
+        layout {
+          column: 6;
+          row: 1;
+        }
+
+        hexpand: true;
+        vexpand: true;
+
+        styles [
+          "cell",
+        ]
+
+        $MonthViewHeader header_4 {
+          styling: bind template.styling;
+          valign: start;
+        }
+      }
+
+      Separator between_4_and_5 {
+        layout {
+          column: 7;
+          row: 1;
+        }
+
+        orientation: vertical;
+      }
+
+      Adw.Bin cell_5 {
+        layout {
+          column: 8;
+          row: 1;
+        }
+
+        hexpand: true;
+        vexpand: true;
+
+        styles [
+          "cell",
+        ]
+
+        $MonthViewHeader header_5 {
+          styling: bind template.styling;
+          valign: start;
+        }
+      }
+
+      Separator between_5_and_6 {
+        layout {
+          column: 9;
+          row: 1;
+        }
+
+        orientation: vertical;
+      }
+
+      Adw.Bin cell_6 {
+        layout {
+          column: 10;
+          row: 1;
+        }
+
+        hexpand: true;
+        vexpand: true;
+
+        styles [
+          "cell",
+        ]
+
+        $MonthViewHeader header_6 {
+          styling: bind template.styling;
+          valign: start;
+        }
+      }
+
+      Separator between_6_and_7 {
+        layout {
+          column: 11;
+          row: 1;
+        }
+
+        orientation: vertical;
+      }
+
+      Adw.Bin cell_7 {
+        layout {
+          column: 12;
+          row: 1;
+        }
+
+        hexpand: true;
+        vexpand: true;
+
+        styles [
+          "cell",
+        ]
+
+        $MonthViewHeader header_7 {
+          styling: bind template.styling;
+          valign: start;
+        }
+      }
+    }
+
+    // [overlay]
+  }
+}
+
+SizeGroup {
+  mode: horizontal;
+
+  widgets [
+    cell_1,
+    cell_2,
+    cell_3,
+    cell_4,
+    cell_5,
+    cell_6,
+    cell_7,
+  ]
+}

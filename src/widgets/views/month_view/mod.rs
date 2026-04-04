@@ -5,9 +5,9 @@ use glib::clone;
 
 use crate::utils::TemplateCallbacks;
 
-mod month_view_day_cell;
+mod month_view_header;
 mod month_view_inner;
-mod month_view_week_row;
+mod month_view_row;
 
 use self::month_view_inner::MonthViewInner;
 

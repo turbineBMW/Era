@@ -102,54 +102,31 @@ month-view {
     }
 }
 
-month-view-day-cell {
-    &:dir(ltr) {
-        --offset: -1px;
-    }
-    &:dir(rtl) {
-        --offset: 1px;
-    }
+month-view-row {
+    .cell:hover {
+        --bg-color: rgb(from var(--window-fg-color) r g b / 3.75%);
 
-    box-shadow:
-        0 -1px var(--border-color),
-        var(--offset) 0 var(--border-color);
-
-    &:hover {
-        --bg-color: rgb(from var(--window-fg-color) r g b / 0);
-        --real-bg-color: rgb(from var(--bg-color) r g b / calc(alpha + 3.75%));
-
-        background-color: var(--real-bg-color);
+        background-color: var(--bg-color);
     }
 
-    > box.header {
-        margin: 6px;
-    }
-
-    &.separator-top {
-        // TODO: Why do we need two separator colors?
-        --month-separator-color: rgb(
-            from var(--border-color) r g b / calc(alpha + 7.5%)
-        );
-        --second-month-separator-color: rgb(
-            from var(--month-separator-color) r g b / calc(alpha * 2)
+    separator.month-separator {
+        --bg-color: rgb(
+            from rgb(from var(--border-color) r g b / calc(alpha + 7.5%)) r g
+                b / calc(alpha * 5)
         );
 
-        box-shadow:
-            0 -1px var(--second-month-separator-color),
-            var(--offset) 0 var(--border-color);
-
-        &.separator-side {
-            box-shadow:
-                0 -1px var(--second-month-separator-color),
-                var(--offset) 0 var(--month-separator-color),
-                var(--offset) -1px var(--month-separator-color);
-        }
+        background-color: var(--bg-color);
     }
+}
 
+month-view-header {
     &.narrow {
+        margin: 6px 3px 6px 3px;
+
         label.day,
         label.month {
             border-radius: 6px;
+            padding: 0 3px 0 3px;
         }
 
         label.month {
@@ -159,6 +136,8 @@ month-view-day-cell {
     }
 
     &.medium {
+        margin: 6px;
+
         label.day,
         label.month {
             border-radius: 6px;

@@ -9,13 +9,19 @@ use glib::clone;
 use gtk::Allocation;
 use jiff::ToSpan;
 
-use crate::Application;
+use crate::{Application, system_settings::FirstDayOfWeek};
 
-use super::{MonthViewStyling, month_view_week_row::MonthViewWeekRow};
+use super::{
+    MonthViewStyling,
+    month_view_row::{self, MonthViewWeekRow},
+};
 
 const NB_ROWS: i32 = 200;
 const MINIMUM_NB_ROWS_ABOVE: i32 = 5;
 const MINIMUM_NB_ROWS_BELOW: i32 = 5;
+
+const MINIMUM_ROW_HEIGHT: i32 = month_view_row::MINIMUM_HEIGHT;
+const NATURAL_ROW_HEIGHT: i32 = month_view_row::NATURAL_HEIGHT;
 
 const VELOCITY_THRESHOLD_TO_RETURN: f64 = 300.;
 const VELOCITY_THRESHOLD_TO_SNAP: f64 = 400.;
@@ -44,10 +50,6 @@ mod imp {
 
         /// Rows contained in the view.
         rows: OnceCell<Mutex<Vec<MonthViewWeekRow>>>,
-        /// Minimum week row height. This is assumed to be constant.
-        minimum_week_row_height: Cell<i32>,
-        /// Natural week row height. This is assumed to be constant.
-        natural_week_row_height: Cell<i32>,
 
         /// Offset of the top of the first row. This is also the number of pixels above the
         /// view that are not visible.
@@ -74,11 +76,7 @@ mod imp {
         fn default() -> Self {
             let rows = OnceCell::new();
             rows.get_or_init(|| {
-                Mutex::new(
-                    (0..NB_ROWS)
-                        .map(|_i| MonthViewWeekRow::new(1, 1, 1))
-                        .collect(),
-                )
+                Mutex::new((0..NB_ROWS).map(|_i| MonthViewWeekRow::new()).collect())
             });
 
             let now = Application::default().current_datetime();
@@ -92,9 +90,7 @@ mod imp {
                 day,
                 styling: Default::default(),
                 rows,
-                minimum_week_row_height: Default::default(),
-                natural_week_row_height: Default::default(),
-                scroll_offset: Default::default(),
+                scroll_offset: Cell::new(2 * NATURAL_ROW_HEIGHT),
                 scroll_animation: Default::default(),
                 pixels_waiting: Default::default(),
                 pixels_left: Default::default(),
@@ -160,22 +156,9 @@ mod imp {
 
     impl WidgetImpl for MonthViewInner {
         fn size_allocate(&self, width: i32, _height: i32, baseline: i32) {
-            let week_rows = self.rows().lock().unwrap();
-            let first_row = week_rows.first().unwrap();
-            // We assume here that all rows request the same height. This is a little more
-            // optimized, but it could be broken if our assumption is incorrect.
-            // TODO: Measure rows one by one?
-            // Variable row height needs special support across many functions here, support that I
-            // don't know how to do anyway.
-            let (minimum_row_height, natural_row_height, ..) =
-                first_row.measure(gtk::Orientation::Vertical, width);
-
-            self.minimum_week_row_height.set(minimum_row_height);
-            self.natural_week_row_height.set(natural_row_height);
-
             let row_height = self.row_height();
 
-            for (i, row) in week_rows.iter().enumerate() {
+            for (i, row) in self.rows().lock().unwrap().iter().enumerate() {
                 let allocation = Allocation::new(
                     0,
                     -self.scroll_offset.get() + i as i32 * row_height,
@@ -216,7 +199,7 @@ mod imp {
 
         /// Gets the row height. We assume all rows have the same height.
         fn row_height(&self) -> i32 {
-            (self.natural_week_row_height.get() as f64 * self.dynamic_zoom_level.get()) as i32
+            (NATURAL_ROW_HEIGHT as f64 * self.dynamic_zoom_level.get()) as i32
         }
 
         /// Updates the view to the currently stored date.
@@ -232,28 +215,9 @@ mod imp {
 
             for (i, row) in self.rows().lock().unwrap().iter().enumerate() {
                 let date = base_date.checked_add((i as i32).weeks()).unwrap();
-                row.set_year(date.year() as i32);
-                row.set_month(date.month() as i32);
-                row.set_day(date.day() as i32);
-                // TODO: Use this instead
-                // row.set_year_month_day(date.year() as i32, date.month() as i32, date.day() as
-                // i32);
+                row.set_year_month_day(date.year() as i32, date.month() as i32, date.day() as i32);
             }
 
-            // TODO: Fix this
-            // When running at startup, size_allocate hasn't been called yet. The natural row height
-            // is not set yet, it is still 0, so row_height is 0 too. Hence when
-            // starting the app there is a desync between the year/month/day properties and the
-            // view.
-            // Potential solution: keep the offset at zero intentionally, and use:
-            // let base_date = jiff::civil::Date::new(
-            //     self.year.get() as i16,
-            //     self.month.get() as i8,
-            //     self.day.get() as i8,
-            // )
-            // .unwrap();
-            // However that would mean no row above would be created already. If a user with not so
-            // good hardware scrolls up, it might be laggy to load and display events above.
             let row_height = self.row_height();
             let current_offset = self.scroll_offset.get();
             self.scroll_offset_add(MINIMUM_NB_ROWS_ABOVE * row_height - current_offset);
@@ -293,15 +257,11 @@ mod imp {
 
                 let last_row = rows.pop().unwrap();
 
-                last_row.set_year(new_last_row_date.year() as i32);
-                last_row.set_month(new_last_row_date.month() as i32);
-                last_row.set_day(new_last_row_date.day() as i32);
-                // TODO: Use this instead
-                // last_row.set_year_month_day(
-                //     new_last_row_date.year() as i32,
-                //     new_last_row_date.month() as i32,
-                //     new_last_row_date.day() as i32,
-                // );
+                last_row.set_year_month_day(
+                    new_last_row_date.year() as i32,
+                    new_last_row_date.month() as i32,
+                    new_last_row_date.day() as i32,
+                );
 
                 rows.insert(0, last_row);
             } else if bottom_offset > bottom_threshold {
@@ -320,15 +280,11 @@ mod imp {
                 let new_first_row_date = last_row_date.checked_add(1.week()).unwrap();
 
                 let first_row = rows.remove(0);
-                first_row.set_year(new_first_row_date.year() as i32);
-                first_row.set_month(new_first_row_date.month() as i32);
-                first_row.set_day(new_first_row_date.day() as i32);
-                // TODO: use this instead
-                // first_row.set_year_month_day(
-                //     new_first_row_date.year() as i32,
-                //     new_first_row_date.month() as i32,
-                //     new_first_row_date.day() as i32,
-                // );
+                first_row.set_year_month_day(
+                    new_first_row_date.year() as i32,
+                    new_first_row_date.month() as i32,
+                    new_first_row_date.day() as i32,
+                );
 
                 rows.push(first_row);
             } else {
@@ -338,42 +294,65 @@ mod imp {
             mem::drop(rows);
 
             self.update_date();
+
+            self.obj().queue_allocate();
         }
 
         /// Updates the view's date to the one of the most top visible row.
         fn update_date(&self) {
             let rows = self.rows().lock().unwrap();
             let row_height = self.row_height();
-            // TODO: Use the first day of the row as reference
 
-            // TODO: Fix this
-            // When running at startup, size_allocate hasn't been called yet. The natural row height
-            // is not set yet, it is still 0, so row_height is 0 too.
-            if row_height > 0 {
-                let highest_visible_row = rows
-                    .get((self.scroll_offset.get() / row_height) as usize)
-                    .unwrap()
-                    .clone();
+            let highest_visible_row = rows
+                .get((self.scroll_offset.get() / row_height) as usize)
+                .unwrap()
+                .clone();
 
-                // TODO: Decide of a strategy for rows that are between two months
-                let year = highest_visible_row.year();
-                let month = highest_visible_row.month();
-                let day = highest_visible_row.day();
+            let year = highest_visible_row.year();
+            let month = highest_visible_row.month();
+            let day = highest_visible_row.day();
 
-                if self.year.get() != year {
-                    self.year.set(year);
-                    self.obj().notify_year();
-                }
+            let date = jiff::civil::Date::new(year as i16, month as i8, day as i8).unwrap();
 
-                if self.month.get() != month {
-                    self.month.set(month);
-                    self.obj().notify_month();
-                }
+            let base = match Application::default().system_settings().first_day_of_week() {
+                FirstDayOfWeek::Monday => 1,
+                FirstDayOfWeek::Tuesday => 2,
+                FirstDayOfWeek::Wednesday => 3,
+                FirstDayOfWeek::Thursday => 4,
+                FirstDayOfWeek::Friday => 5,
+                FirstDayOfWeek::Saturday => 6,
+                FirstDayOfWeek::Sunday => 7,
+            };
+            let offset = match date.weekday() {
+                jiff::civil::Weekday::Monday => 1,
+                jiff::civil::Weekday::Tuesday => 2,
+                jiff::civil::Weekday::Wednesday => 3,
+                jiff::civil::Weekday::Thursday => 4,
+                jiff::civil::Weekday::Friday => 5,
+                jiff::civil::Weekday::Saturday => 6,
+                jiff::civil::Weekday::Sunday => 7,
+            };
 
-                if self.day.get() != day {
-                    self.day.set(day);
-                    self.obj().notify_day();
-                }
+            let go_back_by = offset - base - 6;
+
+            let last_day_of_the_row = date.checked_sub(go_back_by.days()).unwrap();
+            let year = last_day_of_the_row.year() as i32;
+            let month = last_day_of_the_row.month() as i32;
+            let day = last_day_of_the_row.day() as i32;
+
+            if self.year.get() != year {
+                self.year.set(year);
+                self.obj().notify_year();
+            }
+
+            if self.month.get() != month {
+                self.month.set(month);
+                self.obj().notify_month();
+            }
+
+            if self.day.get() != day {
+                self.day.set(day);
+                self.obj().notify_day();
             }
         }
 
@@ -451,8 +430,7 @@ mod imp {
             let current_offset_of_gesture_center = self.scroll_offset.get() + y_center as i32;
             let current_zoom = self.dynamic_zoom_level.get();
 
-            let max_ratio = self.natural_week_row_height.get() as f64
-                / self.minimum_week_row_height.get() as f64;
+            let max_ratio = NATURAL_ROW_HEIGHT as f64 / MINIMUM_ROW_HEIGHT as f64;
             let new_zoom =
                 (self.static_zoom_level.get() + scale - 1.).clamp(1. / max_ratio, max_ratio);
 

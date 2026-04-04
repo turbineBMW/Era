@@ -52,10 +52,12 @@ blueprints = custom_target(
     'ui/shortcuts_dialog.blp',
 
     # Views
+    # Month View
     'ui/views/month_view/month_view.blp',
-    'ui/views/month_view/month_view_day_cell.blp',
+    'ui/views/month_view/month_view_header.blp',
     'ui/views/month_view/month_view_inner.blp',
-    'ui/views/month_view/month_view_week_row.blp',
+    'ui/views/month_view/month_view_row.blp',
+    # Year View
     'ui/views/year_view/year_view.blp',
     'ui/views/year_view/year_view_month_cell.blp',
     'ui/views/year_view/year_view_year_row.blp',
