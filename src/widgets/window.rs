@@ -26,6 +26,8 @@ pub mod imp {
         #[template_child]
         narrow_stack: TemplateChild<gtk::Stack>,
         #[template_child]
+        narrow_view_stack: TemplateChild<adw::ViewStack>,
+        #[template_child]
         year_view: TemplateChild<YearView>,
         #[template_child]
         month_view: TemplateChild<MonthView>,
@@ -107,6 +109,93 @@ pub mod imp {
                     }
                 }
             ));
+
+            self.narrow_stack.connect_visible_child_name_notify(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |_| {
+                    match imp
+                        .narrow_stack
+                        .visible_child_name()
+                        .expect("Narrow stack should have a visible child")
+                        .as_str()
+                    {
+                        "year" => imp.wide_view_stack.set_visible_child_name("year"),
+                        "month" => imp.wide_view_stack.set_visible_child_name("month"),
+                        "days" => match imp
+                            .narrow_view_stack
+                            .visible_child_name()
+                            .expect("Narrow stack should have a visible child")
+                            .as_str()
+                        {
+                            "days" => imp.wide_view_stack.set_visible_child_name("week"),
+                            "day" => imp.wide_view_stack.set_visible_child_name("days"),
+                            "agenda" => imp.wide_view_stack.set_visible_child_name("agenda"),
+                            name => panic!("Unknown narrow stack child name: {name}"),
+                        },
+                        name => panic!("Unknown narrow stack child name: {name}"),
+                    }
+                }
+            ));
+
+            self.narrow_view_stack
+                .connect_visible_child_name_notify(clone!(
+                    #[weak(rename_to = imp)]
+                    self,
+                    move |_| {
+                        match imp
+                            .narrow_stack
+                            .visible_child_name()
+                            .expect("Narrow stack should have a visible child")
+                            .as_str()
+                        {
+                            "year" => imp.wide_view_stack.set_visible_child_name("year"),
+                            "month" => imp.wide_view_stack.set_visible_child_name("month"),
+                            "days" => match imp
+                                .narrow_view_stack
+                                .visible_child_name()
+                                .expect("Narrow stack should have a visible child")
+                                .as_str()
+                            {
+                                "days" => imp.wide_view_stack.set_visible_child_name("week"),
+                                "day" => imp.wide_view_stack.set_visible_child_name("days"),
+                                "agenda" => imp.wide_view_stack.set_visible_child_name("agenda"),
+                                name => panic!("Unknown narrow view stack child name: {name}"),
+                            },
+                            name => panic!("Unknown narrow stack child name: {name}"),
+                        }
+                    }
+                ));
+
+            self.wide_view_stack
+                .connect_visible_child_name_notify(clone!(
+                    #[weak(rename_to = imp)]
+                    self,
+                    move |_| {
+                        match imp
+                            .wide_view_stack
+                            .visible_child_name()
+                            .expect("Narrow stack should have a visible child")
+                            .as_str()
+                        {
+                            "year" => imp.narrow_stack.set_visible_child_name("year"),
+                            "month" => imp.narrow_stack.set_visible_child_name("month"),
+                            "week" => {
+                                imp.narrow_stack.set_visible_child_name("days");
+                                imp.narrow_view_stack.set_visible_child_name("days");
+                            }
+                            "days" => {
+                                imp.narrow_stack.set_visible_child_name("days");
+                                imp.narrow_view_stack.set_visible_child_name("day");
+                            }
+                            "agenda" => {
+                                imp.narrow_stack.set_visible_child_name("days");
+                                imp.narrow_view_stack.set_visible_child_name("agenda");
+                            }
+                            name => panic!("Unknown wide view stack child name: {name}"),
+                        }
+                    }
+                ));
         }
     }
 

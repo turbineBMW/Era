@@ -126,10 +126,14 @@ month-view-header {
         label.day,
         label.month {
             border-radius: 6px;
-            padding: 0 3px 0 3px;
+        }
+
+        label.day {
+            padding: 0 6px 0 6px;
         }
 
         label.month {
+            padding: 0 3px 0 3px;
             font-size: 120%;
             font-weight: 700;
         }

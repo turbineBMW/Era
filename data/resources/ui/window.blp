@@ -78,61 +78,83 @@ template $CalendarManagerWindow: Adw.ApplicationWindow {
                 }
               }
 
-              content: Adw.ViewStack wide_view_stack {
-                Adw.ViewStackPage {
-                  name: "year";
-                  title: _("_Year");
-                  use-underline: true;
-                  icon-name: "year-symbolic";
+              content: Adw.BreakpointBin {
+                width-request: 100;
+                height-request: 100;
 
-                  child: Adw.LayoutSlot {
-                    id: "year_view";
-                  };
+                Adw.Breakpoint {
+                  condition ("max-width: 720sp")
+
+                  setters {
+                    year_view.styling: narrow;
+                    month_view.styling: narrow;
+                  }
                 }
 
-                Adw.ViewStackPage {
-                  name: "month";
-                  title: _("_Month");
-                  use-underline: true;
-                  icon-name: "month-symbolic";
+                Adw.Breakpoint {
+                  condition ("min-width: 1100sp")
 
-                  child: Adw.LayoutSlot {
-                    id: "month_view";
-                  };
+                  setters {
+                    year_view.styling: wide;
+                  }
                 }
 
-                Adw.ViewStackPage {
-                  name: "week";
-                  title: _("_Week");
-                  use-underline: true;
-                  icon-name: "week-symbolic";
+                child: Adw.ViewStack wide_view_stack {
+                  Adw.ViewStackPage {
+                    name: "year";
+                    title: _("_Year");
+                    use-underline: true;
+                    icon-name: "year-symbolic";
 
-                  child: Label {
-                    label: "Week";
-                  };
-                }
+                    child: Adw.LayoutSlot {
+                      id: "year_view";
+                    };
+                  }
 
-                Adw.ViewStackPage {
-                  name: "days";
-                  title: _("_Days");
-                  use-underline: true;
-                  icon-name: "days-symbolic";
+                  Adw.ViewStackPage {
+                    name: "month";
+                    title: _("_Month");
+                    use-underline: true;
+                    icon-name: "month-symbolic";
 
-                  child: Label {
-                    label: "Days";
-                  };
-                }
+                    child: Adw.LayoutSlot {
+                      id: "month_view";
+                    };
+                  }
 
-                Adw.ViewStackPage {
-                  name: "agenda";
-                  title: _("_Agenda");
-                  use-underline: true;
-                  icon-name: "view-list-symbolic";
+                  Adw.ViewStackPage {
+                    name: "week";
+                    title: _("_Week");
+                    use-underline: true;
+                    icon-name: "week-symbolic";
 
-                  child: Label {
-                    label: "Agenda";
-                  };
-                }
+                    child: Label {
+                      label: "Week";
+                    };
+                  }
+
+                  Adw.ViewStackPage {
+                    name: "days";
+                    title: _("_Days");
+                    use-underline: true;
+                    icon-name: "days-symbolic";
+
+                    child: Label {
+                      label: "Days";
+                    };
+                  }
+
+                  Adw.ViewStackPage {
+                    name: "agenda";
+                    title: _("_Agenda");
+                    use-underline: true;
+                    icon-name: "view-list-symbolic";
+
+                    child: Label {
+                      label: "Agenda";
+                    };
+                  }
+                };
               };
 
               [bottom]
@@ -422,49 +444,15 @@ template $CalendarManagerWindow: Adw.ApplicationWindow {
         }
 
         [year_view]
-        Adw.BreakpointBin {
-          width-request: 100;
-          height-request: 100;
-
-          child: $YearView year_view {
-            styling: medium;
-            month_clicked => $open_month_view(template);
-          };
-
-          Adw.Breakpoint {
-            condition ("max-width: 720sp")
-
-            setters {
-              year_view.styling: narrow;
-            }
-          }
-
-          Adw.Breakpoint {
-            condition ("min-width: 1100sp")
-
-            setters {
-              year_view.styling: wide;
-            }
-          }
+        $YearView year_view {
+          styling: medium;
+          month_clicked => $open_month_view(template);
         }
 
         [month_view]
-        Adw.BreakpointBin {
-          width-request: 100;
-          height-request: 100;
-
-          child: $MonthView month_view {
-            styling: medium;
-            // day_clicked => $open_days_view(template);
-          };
-
-          Adw.Breakpoint {
-            condition ("max-width: 720sp")
-
-            setters {
-              month_view.styling: narrow;
-            }
-          }
+        $MonthView month_view {
+          styling: medium;
+          // day_clicked => $open_days_view(template);
         }
       };
     }
@@ -492,6 +480,7 @@ template $CalendarManagerWindow: Adw.ApplicationWindow {
 
     setters {
       overlay_split_view.collapsed: false;
+      wide_view_switcher.display-mode: both;
     }
   }
 }
