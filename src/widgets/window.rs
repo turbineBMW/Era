@@ -3,10 +3,9 @@ use clepsydre::prelude::*;
 use glib::clone;
 
 use crate::{
-    application::Application,
-    utils,
+    Application, utils,
     widgets::{
-        CalendarManagerDialog, CreateEventDialog, SearchDialog,
+        CalendarManagerDialog, CreateEventDialog, SearchDialog, Sidebar,
         views::{MonthView, YearView},
     },
 };
@@ -35,13 +34,15 @@ pub mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for Window {
-        const NAME: &'static str = "CalendarManagerWindow";
+        const NAME: &'static str = "KalendasomWindow";
         type Type = super::Window;
         type ParentType = adw::ApplicationWindow;
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+
+            Sidebar::ensure_type();
 
             klass.install_action("win.search-events", None, |obj, _, _| {
                 obj.imp().search_events();

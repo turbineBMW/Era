@@ -1,0 +1,84 @@
+using Gtk 4.0;
+using Adw 1;
+using Gdk 4.0;
+using Clepsydre 0;
+
+template $Sidebar: Adw.Bin {
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    content: ScrolledWindow {
+      ListView {
+        single-click-activate: true;
+
+        model: NoSelection {
+          model: FlattenListModel {
+            model: SortListModel {
+              sorter: StringSorter {
+                expression: expr item as <Clepsydre.Collection>.name;
+              };
+
+              model: bind template
+                .root as <Window>
+                .application as <$KalendasomApplication>
+                .manager as <Clepsydre.Manager>
+                .collections-model as <Clepsydre.CollectionsModel>;
+            };
+          };
+        };
+
+        activate => $toggle_calendar_visibility();
+
+        header-factory: BuilderListItemFactory {
+          template ListHeader {
+            child: Label {
+              label: bind template.item as <Clepsydre.Calendar>.collection as <Clepsydre.Collection>.name;
+              xalign: 0;
+
+              styles [
+                "bold",
+              ]
+            };
+          }
+        };
+
+        factory: BuilderListItemFactory {
+          template ListItem {
+            child: Box {
+              spacing: 12;
+
+              styles [
+                "event-row",
+              ]
+
+              Image {
+                pixel-size: 18;
+                paintable: bind $get_circle_paintable(
+                  template.item as <Clepsydre.Calendar>.color as <Gdk.RGBA>
+                  ) as <Gdk.Paintable>;
+              }
+
+              Label {
+                label: bind template.item as <Clepsydre.Calendar>.name;
+                xalign: 0;
+                hexpand: true;
+                wrap: true;
+              }
+
+              Image {
+                icon-name: "eye-symbolic";
+                visible: bind template.item as <Clepsydre.Calendar>.visible;
+              }
+
+              Image {
+                icon-name: "eye-crossed-symbolic";
+                visible: bind $not(template.item as <Clepsydre.Calendar>.visible);
+              }
+            };
+          }
+        };
+      }
+    };
+  }
+}

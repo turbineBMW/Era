@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $CalendarManagerWindow: Adw.ApplicationWindow {
+template $KalendasomWindow: Adw.ApplicationWindow {
   default-width: 800;
   default-height: 600;
   width-request: 360;
@@ -40,14 +40,7 @@ template $CalendarManagerWindow: Adw.ApplicationWindow {
             show-sidebar: bind sidebar_toggle.active bidirectional;
             collapsed: true;
 
-            sidebar: Adw.ToolbarView {
-              [top]
-              Adw.HeaderBar {}
-
-              content: Label {
-                label: "sidebar";
-              };
-            };
+            sidebar: $Sidebar {};
 
             content: Adw.ToolbarView {
               [top]

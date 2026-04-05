@@ -50,6 +50,9 @@ blueprints = custom_target(
 
     # Shortcuts Dialog
     'ui/shortcuts_dialog.blp',
+    
+    # Sidebar
+    'ui/sidebar.blp',
 
     # Views
     # Month View

@@ -41,6 +41,9 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="search_dialog.ui">ui/search_dialog/search_dialog.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="event_row.ui">ui/search_dialog/event_row.ui</file>
 
+    <!-- Sidebar -->
+    <file compressed="true" preprocess="xml-stripblanks" alias="sidebar.ui">ui/sidebar.ui</file>
+
     <!-- Shortcuts Dialog -->
     <file compressed="true" preprocess="xml-stripblanks" alias="shortcuts-dialog.ui">ui/shortcuts_dialog.ui</file>
 
@@ -83,6 +86,8 @@
     <file preprocess="xml-stripblanks" alias="sand-watch-symbolic.svg">icons/sand-watch-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="switch-user-symbolic.svg">icons/switch-user-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="people-symbolic.svg">icons/people-symbolic.svg</file>
-    <file preprocess="xml-stripblanks" alias="dialog-error-symbolic">icons/dialog-error-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="dialog-error-symbolic.svg">icons/dialog-error-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="eye-symbolic.svg">icons/eye-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="eye-crossed-symbolic.svg">icons/eye-crossed-symbolic.svg</file>
   </gresource>
 </gresources>
