@@ -75,6 +75,17 @@ pub mod imp {
                 gdk::ModifierType::CONTROL_MASK,
                 "win.create-event",
             );
+
+            klass.install_action("win.today", None, |obj, _, _| {
+                obj.imp().today();
+            });
+            klass.add_binding_action(gdk::Key::T, gdk::ModifierType::CONTROL_MASK, "win.today");
+            klass.add_binding_action(
+                gdk::Key::Home,
+                gdk::ModifierType::NO_MODIFIER_MASK,
+                "win.today",
+            );
+            klass.add_binding_action(gdk::Key::Down, gdk::ModifierType::ALT_MASK, "win.today");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -207,22 +218,28 @@ pub mod imp {
 
     #[gtk::template_callbacks]
     impl Window {
-        #[template_callback]
         fn search_events(&self) {
             let dialog = SearchDialog::new();
             dialog.present(Some(&*self.obj()));
         }
 
-        #[template_callback]
         fn manage_calendars(&self) {
             let dialog = CalendarManagerDialog::new();
             dialog.present(Some(&*self.obj()));
         }
 
-        #[template_callback]
         fn create_event(&self) {
             let dialog = CreateEventDialog::new();
             dialog.present(Some(&*self.obj()));
+        }
+
+        fn today(&self) {
+            let today = Application::default().current_datetime();
+            let year = today.year();
+            let month = today.month();
+            let day = today.day_of_month();
+            self.month_view.set_year_month_day(year, month, day);
+            // TODO: Do the same thing for year view
         }
 
         #[template_callback(function)]

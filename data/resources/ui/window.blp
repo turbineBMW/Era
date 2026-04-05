@@ -63,7 +63,7 @@ template $KalendasomWindow: Adw.ApplicationWindow {
                 Button {
                   icon-name: "system-search-symbolic";
                   tooltip-text: _("Search");
-                  clicked => $search_events(template);
+                  action-name: "win.search-events";
 
                   styles [
                     "flat",
@@ -154,7 +154,8 @@ template $KalendasomWindow: Adw.ApplicationWindow {
               ActionBar {
                 [start]
                 Button {
-                  // action-name: "win.today";
+                  action-name: "win.today";
+
                   child: Adw.ButtonContent {
                     label: _("_Today");
                     use-underline: true;
@@ -215,7 +216,7 @@ template $KalendasomWindow: Adw.ApplicationWindow {
                   Button {
                     icon-name: "system-search-symbolic";
                     tooltip-text: _("Search");
-                    clicked => $search_events(template);
+                    action-name: "win.search-events";
 
                     styles [
                       "flat",
@@ -231,7 +232,8 @@ template $KalendasomWindow: Adw.ApplicationWindow {
                 ActionBar {
                   [start]
                   Button {
-                    // action-name: "win.today";
+                    action-name: "win.today";
+
                     child: Adw.ButtonContent {
                       label: _("_Today");
                       use-underline: true;
@@ -288,7 +290,7 @@ template $KalendasomWindow: Adw.ApplicationWindow {
                   Button {
                     icon-name: "system-search-symbolic";
                     tooltip-text: _("Search");
-                    clicked => $search_events(template);
+                    action-name: "win.search-events";
 
                     styles [
                       "flat",
@@ -304,7 +306,8 @@ template $KalendasomWindow: Adw.ApplicationWindow {
                 ActionBar {
                   [start]
                   Button {
-                    // action-name: "win.today";
+                    action-name: "win.today";
+
                     child: Adw.ButtonContent {
                       label: _("_Today");
                       use-underline: true;
@@ -357,7 +360,7 @@ template $KalendasomWindow: Adw.ApplicationWindow {
                   Button {
                     icon-name: "system-search-symbolic";
                     tooltip-text: _("Search");
-                    clicked => $search_events(template);
+                    action-name: "win.search-events";
 
                     styles [
                       "flat",
@@ -401,7 +404,8 @@ template $KalendasomWindow: Adw.ApplicationWindow {
                 ActionBar {
                   [start]
                   Button {
-                    // action-name: "win.today";
+                    action-name: "win.today";
+
                     child: Adw.ButtonContent {
                       label: _("_Today");
                       use-underline: true;

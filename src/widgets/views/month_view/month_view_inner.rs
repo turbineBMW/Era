@@ -174,6 +174,8 @@ mod imp {
     impl MonthViewInner {
         /// Sets the triplet year-month-day.
         pub(super) fn set_year_month_day(&self, year: i32, month: i32, day: i32) {
+            self.cancel_scroll_animation();
+
             if self.year.get() != year {
                 self.year.set(year);
                 self.obj().notify_year();
