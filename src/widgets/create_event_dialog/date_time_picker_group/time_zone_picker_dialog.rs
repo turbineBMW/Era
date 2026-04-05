@@ -10,7 +10,6 @@ use crate::utils::TemplateCallbacks;
 use super::object_time_zone::ObjectTimeZone;
 
 mod imp {
-
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
@@ -37,6 +36,8 @@ mod imp {
             klass.bind_template();
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
+
+            klass.set_css_name("time-zone-picker-dialog");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {

@@ -50,6 +50,19 @@ event-details-dialog {
     }
 }
 
+time-zone-picker-dialog {
+    listview {
+        background-color: transparent;
+        margin: 0 9px;
+
+        > row {
+            padding: 6px;
+            margin: 3px;
+            border-radius: 6px;
+        }
+    }
+}
+
 .loading-button-row {
     padding: 12px 40px;
 }

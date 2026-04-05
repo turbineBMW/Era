@@ -39,9 +39,7 @@ template $TimeZonePickerDialog: Adw.Dialog {
 
         child: ScrolledWindow {
           ListView {
-            show-separators: true;
-            margin-start: 12;
-            margin-end: 12;
+            single-click-activate: true;
 
             model: NoSelection {
               model: FilterListModel filter {
@@ -58,13 +56,9 @@ template $TimeZonePickerDialog: Adw.Dialog {
               };
             };
 
-            single-click-activate: true;
-
             factory: BuilderListItemFactory {
               template ListItem {
                 child: Label {
-                  margin-top: 12;
-                  margin-bottom: 12;
                   label: bind template.item as <$ObjectTimeZone>.identifier as <string>;
                   xalign: 0;
                   wrap: true;
