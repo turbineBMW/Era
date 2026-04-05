@@ -3,15 +3,11 @@ use clepsydre::{Calendar, Collection};
 use glib::clone;
 use gtk::{FilterListModel, MapListModel};
 
-mod calendar_combo_row_header;
-mod calendar_combo_row_item;
+use crate::utils::PaintableCallbacks;
+
 mod calendar_combo_row_list_item;
 
-use self::{
-    calendar_combo_row_header::CalendarComboRowHeader,
-    calendar_combo_row_item::CalendarComboRowItem,
-    calendar_combo_row_list_item::CalendarComboRowListItem,
-};
+use self::calendar_combo_row_list_item::CalendarComboRowListItem;
 
 mod imp {
     use super::*;
@@ -34,6 +30,7 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+            PaintableCallbacks::bind_template_callbacks(klass);
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -69,36 +66,6 @@ mod imp {
     #[gtk::template_callbacks]
     impl CalendarComboRow {
         #[template_callback]
-        fn calendar_item_bind(_factory: gtk::SignalListItemFactory, item: gtk::ListItem) {
-            let calendar = item
-                .item()
-                .expect("item should be bound")
-                .downcast()
-                .expect("item should be a Calendar");
-            let calendar_combo_row_item = CalendarComboRowItem::new(&calendar);
-            item.set_child(Some(&calendar_combo_row_item));
-        }
-
-        #[template_callback]
-        fn calendar_list_header_bind(
-            &self,
-            header: gtk::ListHeader,
-            _factory: gtk::SignalListItemFactory,
-        ) {
-            let start = header.start();
-            let collection = self
-                .model
-                .item(start)
-                .expect("item should exist at this position")
-                .downcast::<Calendar>()
-                .expect("item should be a Calendar")
-                .collection()
-                .unwrap();
-            let calendar_combo_row_header = CalendarComboRowHeader::new(&collection);
-            header.set_child(Some(&calendar_combo_row_header));
-        }
-
-        #[template_callback]
         fn calendar_list_item_bind(
             &self,
             item: gtk::ListItem,
@@ -129,16 +96,4 @@ glib::wrapper! {
     pub struct CalendarComboRow(ObjectSubclass<imp::CalendarComboRow>)
     @extends gtk::Widget, gtk::ListBoxRow, adw::PreferencesRow, adw::ActionRow, adw::ComboRow,
     @implements gtk::Accessible, gtk::Actionable, gtk::Buildable, gtk::ConstraintTarget;
-}
-
-impl CalendarComboRow {
-    pub fn new() -> Self {
-        glib::Object::new()
-    }
-}
-
-impl Default for CalendarComboRow {
-    fn default() -> Self {
-        Self::new()
-    }
 }

@@ -25,8 +25,6 @@ blueprints = custom_target(
 
     # Create Event Dialog
     'ui/create_event_dialog/calendar_combo_row/calendar_combo_row.blp',
-    'ui/create_event_dialog/calendar_combo_row/calendar_combo_row_header.blp',
-    'ui/create_event_dialog/calendar_combo_row/calendar_combo_row_item.blp',
     'ui/create_event_dialog/calendar_combo_row/calendar_combo_row_list_item.blp',
     'ui/create_event_dialog/create_event_dialog.blp',
     'ui/create_event_dialog/date_time_picker_group/date_picker_row.blp',
@@ -50,7 +48,7 @@ blueprints = custom_target(
 
     # Shortcuts Dialog
     'ui/shortcuts_dialog.blp',
-    
+
     # Sidebar
     'ui/sidebar.blp',
 
