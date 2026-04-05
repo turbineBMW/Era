@@ -43,6 +43,7 @@ template $EventDetailsDialog: Adw.Dialog {
                 label: bind template.event as <Clepsydre.Event>.name;
                 xalign: 0;
                 wrap: true;
+                wrap-mode: word_char;
                 use-markup: false;
 
                 styles [
@@ -54,20 +55,21 @@ template $EventDetailsDialog: Adw.Dialog {
                 label: bind $timeframe_label(
                   template.event as <Clepsydre.Event>,
                   template.root as <Window>.application as <$KalendasomApplication>.current-datetime
-                  ) as <string>;
+                  );
                 xalign: 0;
                 wrap: true;
+                wrap-mode: word_char;
                 use-markup: false;
               }
             }
 
             Adw.PreferencesGroup {
-              visible: bind $location_or_video_conference(template.event as <Clepsydre.Event>) as <bool>;
+              visible: bind $location_or_video_conference(template.event as <Clepsydre.Event>);
 
               Adw.ActionRow {
                 title: _("Location");
-                subtitle: bind template.event as <Clepsydre.Event>.location as <string>;
-                visible: bind $not($string_empty(template.event as <Clepsydre.Event>.location) as <bool>) as <bool>;
+                subtitle: bind template.event as <Clepsydre.Event>.location;
+                visible: bind $not($string_empty(template.event as <Clepsydre.Event>.location) as <bool>);
                 use-markup: false;
 
                 styles [
@@ -93,10 +95,8 @@ template $EventDetailsDialog: Adw.Dialog {
 
               Adw.ActionRow {
                 title: _("Video Conference");
-                subtitle: bind template.event as <Clepsydre.Event>.video-conference as <string>;
-                visible: bind $not(
-                  $string_empty(template.event as <Clepsydre.Event>.video-conference) as <bool>
-                ) as <bool>;
+                subtitle: bind template.event as <Clepsydre.Event>.video-conference;
+                visible: bind $not($string_empty(template.event as <Clepsydre.Event>.video-conference) as <bool>);
                 use-markup: false;
 
                 styles [
@@ -107,9 +107,7 @@ template $EventDetailsDialog: Adw.Dialog {
                 Button {
                   label: _("Join");
                   valign: center;
-                  sensitive: bind $video_conference_is_a_uri(
-                    template.event as <Clepsydre.Event>.video-conference
-                    ) as <bool>;
+                  sensitive: bind $video_conference_is_a_uri(template.event as <Clepsydre.Event>.video-conference);
                   clicked => $join(template);
                 }
               }
@@ -125,26 +123,24 @@ template $EventDetailsDialog: Adw.Dialog {
 
                   Image {
                     pixel-size: 16;
-                    paintable: bind $get_circle_paintable(
-                      template.event as <Clepsydre.Event>.calendar as <Clepsydre.Calendar>.color as <Gdk.RGBA>
-                      ) as <Gdk.Paintable>;
+                    paintable: bind $get_circle_paintable(template.event as <Clepsydre.Event>.calendar.color);
                   }
 
                   Label {
                     ellipsize: end;
                     xalign: 0.0;
-                    label: bind template.event as <Clepsydre.Event>.calendar as <Clepsydre.Calendar>.name;
+                    label: bind template.event as <Clepsydre.Event>.calendar.name;
                   }
                 }
               }
             }
 
             Adw.PreferencesGroup {
-              visible: bind $is_some(template.event as <Clepsydre.Event>.organizer as <Clepsydre.Organizer>) as <bool>;
+              visible: bind $is_some(template.event as <Clepsydre.Event>.organizer);
 
               Adw.ActionRow {
                 title: _("Organizer");
-                subtitle: bind template.event as <Clepsydre.Event>.organizer as <Clepsydre.Organizer>.name as <string>;
+                subtitle: bind template.event as <Clepsydre.Event>.organizer.name;
 
                 styles [
                   "property",
@@ -167,7 +163,7 @@ template $EventDetailsDialog: Adw.Dialog {
             }
 
             Adw.PreferencesGroup {
-              visible: bind $not($string_empty(template.event as <Clepsydre.Event>.description) as <bool>) as <bool>;
+              visible: bind $not($string_empty(template.event as <Clepsydre.Event>.description) as <bool>);
 
               Adw.ActionRow {
                 title: _("Description");
@@ -184,7 +180,7 @@ template $EventDetailsDialog: Adw.Dialog {
               visible: bind $both(
                 template.event as <Clepsydre.Event>.editable,
                 template.event as <Clepsydre.Event>.has-recurrence,
-              ) as <bool>;
+              );
 
               Label {
                 label: _("This event has recurrence properties. Such events are currently not editable in this app.");
@@ -201,33 +197,51 @@ template $EventDetailsDialog: Adw.Dialog {
             visible: bind $both(
               template.event as <Clepsydre.Event>.editable,
               $not(template.event as <Clepsydre.Event>.has-recurrence) as <bool>,
-            ) as <bool>;
+            );
 
             [center]
-            Box {
-              homogeneous: true;
-              spacing: 12;
+            Adw.Clamp {
+              // Keep 150px per button, and 12px of spacing between each
+              maximum-size: 474;
 
-              Button edit {
-                label: _("_Edit");
-                use-underline: true;
-                clicked => $edit(template);
+              Box {
+                homogeneous: true;
+                spacing: 12;
 
-                styles [
-                  "pill",
-                  "suggested-action",
-                ]
-              }
+                Button edit {
+                  label: _("_Edit");
+                  use-underline: true;
+                  hexpand: true;
+                  clicked => $edit(template);
 
-              $LoadingButton remove {
-                content-label: _("_Remove");
-                use-underline: true;
-                clicked => $remove(template);
+                  styles [
+                    "suggested-action",
+                    "event-action",
+                  ]
+                }
 
-                styles [
-                  "pill",
-                  "destructive-action",
-                ]
+                $LoadingButton remove {
+                  content-label: _("_Remove");
+                  use-underline: true;
+                  hexpand: true;
+                  clicked => $remove(template);
+
+                  styles [
+                    "destructive-action",
+                    "event-action",
+                  ]
+                }
+
+                Button {
+                  label: _("_Duplicate");
+                  use-underline: true;
+                  hexpand: true;
+                  sensitive: false;
+
+                  styles [
+                    "event-action",
+                  ]
+                }
               }
             }
           }

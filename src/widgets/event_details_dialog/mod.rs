@@ -72,6 +72,8 @@ mod imp {
             TemplateCallbacks::bind_template_callbacks(klass);
             PaintableCallbacks::bind_template_callbacks(klass);
 
+            klass.set_css_name("event-details-dialog");
+
             klass.install_action(
                 "event-details-dialog.show-error",
                 Some(&String::static_variant_type()),
