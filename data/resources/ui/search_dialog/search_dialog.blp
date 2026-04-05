@@ -1,5 +1,6 @@
 using Gtk 4.0;
 using Adw 1;
+using Clepsydre 0;
 
 template $SearchDialog: Adw.Dialog {
   title: _("Search Events");
@@ -34,15 +35,15 @@ template $SearchDialog: Adw.Dialog {
               ListView results_view {
                 single-click-activate: true;
 
-                factory: SignalListItemFactory {
-                  bind => $event_item_bind();
+                factory: BuilderListItemFactory {
+                  template ListItem {
+                    child: $SearchResultRow {
+                      event: bind template.item as <Clepsydre.Event>;
+                    };
+                  }
                 };
 
                 activate => $open_event_details(template);
-
-                styles [
-                  "events-list",
-                ]
               }
             }
           };

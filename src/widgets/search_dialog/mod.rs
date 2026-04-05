@@ -2,14 +2,14 @@ use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Event, prelude::*};
 use tracing::warn;
 
-mod event_row;
+mod search_result_row;
 
 use crate::{
     Application,
     widgets::{components::ErrorDialog, event_details_dialog::EventDetailsDialog},
 };
 
-use self::event_row::EventRow;
+use self::search_result_row::SearchResultRow;
 
 mod imp {
     use super::*;
@@ -36,6 +36,10 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+
+            klass.set_css_name("search-dialog");
+
+            SearchResultRow::ensure_type();
 
             klass.install_action("search-dialog.focus-search", None, |obj, _, _| {
                 obj.imp().search_entry.grab_focus();
@@ -100,17 +104,6 @@ mod imp {
                     self.stack.set_visible_child_name("error");
                 }
             }
-        }
-
-        #[template_callback]
-        fn event_item_bind(_factory: gtk::SignalListItemFactory, item: gtk::ListItem) {
-            let event: Event = item
-                .item()
-                .expect("item should be bound")
-                .downcast()
-                .expect("item should be an Event");
-            let event_row = EventRow::new(&event);
-            item.set_child(Some(&event_row));
         }
 
         #[template_callback]

@@ -39,7 +39,7 @@
 
     <!-- Search Dialog -->
     <file compressed="true" preprocess="xml-stripblanks" alias="search_dialog.ui">ui/search_dialog/search_dialog.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="event_row.ui">ui/search_dialog/event_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="search_result_row.ui">ui/search_dialog/search_result_row.ui</file>
 
     <!-- Sidebar -->
     <file compressed="true" preprocess="xml-stripblanks" alias="sidebar.ui">ui/sidebar.ui</file>

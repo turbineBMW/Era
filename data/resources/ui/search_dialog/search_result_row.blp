@@ -1,0 +1,62 @@
+using Gtk 4.0;
+using Clepsydre 0;
+
+template $SearchResultRow: Box {
+  Image {
+    pixel-size: 24;
+    paintable: bind $get_horizontal_bar_paintable(template.event as <Clepsydre.Event>.calendar.color, 6.0, 48.0);
+  }
+
+  Box {
+    spacing: 12;
+
+    Box {
+      orientation: vertical;
+      hexpand: true;
+
+      Label {
+        label: bind template.event as <Clepsydre.Event>.name;
+        ellipsize: end;
+        xalign: 0.0;
+        use-markup: false;
+      }
+
+      Label {
+        label: bind template.event as <Clepsydre.Event>.location;
+        ellipsize: end;
+        xalign: 0.0;
+        use-markup: false;
+
+        styles [
+          "dim-label",
+        ]
+      }
+    }
+
+    Box {
+      orientation: vertical;
+
+      Label {
+        label: bind $get_start_time(
+          template.event as <Clepsydre.Event>.timeframe.start,
+          template.event as <Clepsydre.Event>.timeframe.all-day
+          );
+        xalign: 1.0;
+        use-markup: false;
+      }
+
+      Label {
+        label: bind $get_end_time(
+          template.event as <Clepsydre.Event>.timeframe.end,
+          template.event as <Clepsydre.Event>.timeframe.all-day
+          );
+        xalign: 1.0;
+        use-markup: false;
+
+        styles [
+          "dim-label",
+        ]
+      }
+    }
+  }
+}

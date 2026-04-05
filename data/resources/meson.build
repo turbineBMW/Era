@@ -45,8 +45,8 @@ blueprints = custom_target(
     'ui/qr_code_dialog.blp',
 
     # Search Dialog
-    'ui/search_dialog/event_row.blp',
     'ui/search_dialog/search_dialog.blp',
+    'ui/search_dialog/search_result_row.blp',
 
     # Shortcuts Dialog
     'ui/shortcuts_dialog.blp',
