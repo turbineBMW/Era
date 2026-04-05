@@ -1,22 +1,24 @@
 using Gtk 4.0;
-using Gio 2.0;
 using Adw 1;
 using Clepsydre 0;
 
 template $CollectionRow: Box {
   orientation: vertical;
-  vexpand: true;
-  margin-top: 12;
-  margin-bottom: 12;
+  hexpand: true;
 
   Box {
-    hexpand: true;
-    margin-bottom: 6;
+    spacing: 12;
+
+    styles [
+      "header",
+    ]
 
     Label {
       label: bind template.collection as <Clepsydre.Collection>.name;
-      halign: start;
-      margin-bottom: 6;
+      hexpand: true;
+      xalign: 0;
+      wrap: true;
+      wrap-mode: word_char;
 
       styles [
         "heading",
@@ -25,9 +27,8 @@ template $CollectionRow: Box {
 
     Button {
       icon-name: "list-add-symbolic";
-      visible: bind template.collection as <Clepsydre.Collection>.calendar-creation-enabled as <bool>;
-      halign: end;
-      hexpand: true;
+      visible: bind template.collection as <Clepsydre.Collection>.calendar-creation-enabled;
+      valign: center;
       clicked => $open_calendar_creation_dialog(template);
 
       styles [
@@ -37,10 +38,7 @@ template $CollectionRow: Box {
   }
 
   ListBox {
-    visible: bind $is_zero(
-      template.collection as <Clepsydre.Collection>.calendars as <Gio.ListStore>.n-items
-      ) as <bool>;
-    vexpand: true;
+    visible: bind $is_zero(template.collection as <Clepsydre.Collection>.calendars.n-items);
     selection-mode: none;
 
     Adw.ActionRow {
@@ -53,10 +51,7 @@ template $CollectionRow: Box {
   }
 
   ListBox calendars_list {
-    visible: bind $not(
-      $is_zero(template.collection as <Clepsydre.Collection>.calendars as <Gio.ListStore>.n-items) as <bool>
-    ) as <bool>;
-    vexpand: true;
+    visible: bind $not($is_zero(template.collection as <Clepsydre.Collection>.calendars.n-items) as <bool>);
     selection-mode: none;
 
     styles [

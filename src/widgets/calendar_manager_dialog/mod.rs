@@ -36,6 +36,8 @@ mod imp {
             klass.bind_template();
             TemplateCallbacks::bind_template_callbacks(klass);
 
+            klass.set_css_name("calendar-manager-dialog");
+
             klass.install_action(
                 "calendar-manager.show-calendar-subpage",
                 Some(&String::static_variant_type()),

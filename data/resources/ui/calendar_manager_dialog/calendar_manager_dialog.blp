@@ -14,12 +14,12 @@ template $CalendarManagerDialog: Adw.Dialog {
           .root as <Window>
           .application as <$KalendasomApplication>
           .manager as <Clepsydre.Manager>
-          .collections-model as <Clepsydre.CollectionsModel>
+          .collections-model
           .n-items,
       ) as <bool>,
       "empty",
       "collections"
-    ) as <string>;
+    );
 
     StackPage {
       name: "empty";

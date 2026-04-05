@@ -1,5 +1,4 @@
 using Gtk 4.0;
-using Gdk 4.0;
 using Adw 1;
 using Clepsydre 0;
 
@@ -25,15 +24,13 @@ template $CalendarDetailsPage: Adw.NavigationPage {
 
             Image {
               pixel-size: 24;
-              paintable: bind $get_circle_paintable(
-                template.calendar as <Clepsydre.Calendar>.color as <Gdk.RGBA>
-                ) as <Gdk.Paintable>;
+              paintable: bind $get_circle_paintable(template.calendar as <Clepsydre.Calendar>.color);
             }
           }
         }
 
         Adw.PreferencesGroup {
-          visible: bind template.calendar as <Clepsydre.Calendar>.removable as <bool>;
+          visible: bind template.calendar as <Clepsydre.Calendar>.removable;
 
           $LoadingButtonRow remove {
             title: _("Remove Calendar");

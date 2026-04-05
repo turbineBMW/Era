@@ -26,8 +26,21 @@ search-dialog {
     }
 }
 
-.collections-list {
-    background-color: var(--window-bg-color);
+calendar-manager-dialog {
+    collections-list-page {
+        listview {
+            background-color: transparent;
+            margin: 0 9px;
+
+            collection-row {
+                margin: 12px 0;
+
+                > .header {
+                    margin-bottom: 12px;
+                }
+            }
+        }
+    }
 }
 
 .loading-button-row {

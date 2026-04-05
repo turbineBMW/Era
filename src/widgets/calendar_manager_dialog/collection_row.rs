@@ -14,7 +14,7 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/collection_row.ui")]
     #[properties(wrapper_type = super::CollectionRow)]
     pub struct CollectionRow {
-        #[property(get, construct_only)]
+        #[property(get, set = Self::set_collection, nullable)]
         collection: RefCell<Option<Collection>>,
         #[template_child]
         calendars_list: TemplateChild<gtk::ListBox>,
@@ -30,6 +30,8 @@ mod imp {
             klass.bind_template();
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
+
+            klass.set_css_name("collection-row");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -38,14 +40,28 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for CollectionRow {
-        fn constructed(&self) {
-            self.parent_constructed();
+    impl ObjectImpl for CollectionRow {}
 
-            let collection = self
-                .obj()
-                .collection()
-                .expect("collection should be initialized");
+    impl WidgetImpl for CollectionRow {}
+    impl BoxImpl for CollectionRow {}
+
+    #[gtk::template_callbacks]
+    impl CollectionRow {
+        fn set_collection(&self, collection: Option<&Collection>) {
+            if collection == self.collection.borrow().as_ref() {
+                return;
+            }
+
+            self.collection.replace(collection.cloned());
+            self.obj().notify_collection();
+
+            let Some(collection) = collection else {
+                self.calendars_list
+                    .bind_model(None::<&gio::ListModel>, |calendar| {
+                        CalendarRow::new(calendar.downcast_ref().unwrap()).upcast()
+                    });
+                return;
+            };
 
             let calendars_model = collection.calendars().unwrap();
             let sorted_calendars_model = gtk::SortListModel::new(
@@ -59,13 +75,7 @@ mod imp {
                     CalendarRow::new(calendar.downcast_ref().unwrap()).upcast()
                 });
         }
-    }
 
-    impl WidgetImpl for CollectionRow {}
-    impl BoxImpl for CollectionRow {}
-
-    #[gtk::template_callbacks]
-    impl CollectionRow {
         #[template_callback]
         fn open_calendar_creation_dialog(&self) {
             let dialog = CalendarCreationDialog::new(

@@ -13,11 +13,6 @@ template $CollectionsListPage: Adw.NavigationPage {
       content: ScrolledWindow {
         Adw.ClampScrollable {
           ListView {
-            margin-start: 6;
-            margin-top: 6;
-            margin-bottom: 6;
-            margin-end: 6;
-
             model: NoSelection {
               model: SortListModel {
                 sorter: StringSorter {
@@ -28,17 +23,20 @@ template $CollectionsListPage: Adw.NavigationPage {
                   .root as <Window>
                   .application as <$KalendasomApplication>
                   .manager as <Clepsydre.Manager>
-                  .collections-model as <Clepsydre.CollectionsModel>;
+                  .collections-model;
               };
             };
 
-            factory: SignalListItemFactory {
-              bind => $collection_item_bind();
-            };
+            factory: BuilderListItemFactory {
+              template ListItem {
+                activatable: false;
+                focusable: false;
 
-            styles [
-              "collections-list",
-            ]
+                child: $CollectionRow {
+                  collection: bind template.item as <Clepsydre.Collection>;
+                };
+              }
+            };
           }
         }
       };

@@ -14,15 +14,15 @@ template $CalendarCreationDialog: Adw.Dialog {
         show-end-title-buttons: false;
 
         Button cancel {
-          use-underline: true;
-          label: _("_Cancel");
+          icon-name: "cross-symbolic";
+          tooltip-text: _("Cancel");
           action-name: "window.close";
         }
 
         [end]
         $LoadingButton create {
-          use-underline: true;
-          content-label: _("_Create");
+          content-icon-name: "checkmark-symbolic";
+          tooltip-text: _("Create");
           clicked => $create_calendar(template);
 
           styles [

@@ -24,6 +24,10 @@ mod imp {
             klass.bind_template();
             klass.bind_template_callbacks();
 
+            klass.set_css_name("collections-list-page");
+
+            CollectionRow::ensure_type();
+
             klass.install_action(
                 "collections-list-page.show-error",
                 Some(&String::static_variant_type()),
@@ -47,21 +51,7 @@ mod imp {
     impl NavigationPageImpl for CollectionsListPage {}
 
     #[gtk::template_callbacks]
-    impl CollectionsListPage {
-        #[template_callback]
-        fn collection_item_bind(_factory: gtk::SignalListItemFactory, item: gtk::ListItem) {
-            let collection = item
-                .item()
-                .expect("item should be bound")
-                .downcast()
-                .expect("item should be a Collection");
-
-            let collection_row = CollectionRow::new(&collection);
-            item.set_child(Some(&collection_row));
-            item.set_activatable(false);
-            item.set_focusable(false);
-        }
-    }
+    impl CollectionsListPage {}
 }
 
 glib::wrapper! {
@@ -69,16 +59,4 @@ glib::wrapper! {
     @extends gtk::Widget, adw::NavigationPage,
     @implements gtk::Accessible, gtk::Actionable, gtk::Buildable, gtk::ConstraintTarget,
         gtk::Editable;
-}
-
-impl CollectionsListPage {
-    pub fn new() -> Self {
-        glib::Object::new()
-    }
-}
-
-impl Default for CollectionsListPage {
-    fn default() -> Self {
-        Self::new()
-    }
 }
