@@ -37,6 +37,8 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             TemplateCallbacks::bind_template_callbacks(klass);
+
+            klass.set_css_name("attendee-status-section");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -146,9 +148,7 @@ mod imp {
                 let label = gtk::Label::new(Some(&format!("{more} more…")));
                 label.set_xalign(0.);
                 label.set_margin_start(22);
-                label.set_margin_top(3);
                 label.add_css_class("dimmed");
-                label.add_css_class("attendee-row");
                 self.obj().append(&label);
             }
         }

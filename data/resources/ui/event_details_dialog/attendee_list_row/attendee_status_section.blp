@@ -3,4 +3,5 @@ using Gtk 4.0;
 template $AttendeeStatusSection: Box {
   orientation: vertical;
   visible: bind $not($is_zero(template.n-items) as <bool>) as <bool>;
+  spacing: 6;
 }

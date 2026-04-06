@@ -44,6 +44,41 @@ calendar-manager-dialog {
 }
 
 event-details-dialog {
+    .attendee-list-row > box {
+        margin: 12px;
+
+        attendee-status-section {
+            font-size: smaller;
+
+            attendee-row {
+                -gtk-icon-weight: 134;
+            }
+        }
+    }
+
+    .attendee-details-row > box {
+        margin: 6px 12px;
+    }
+
+    attendee-role-badge {
+        color: var(--dark-5);
+        background-color: var(--light-3);
+        border-radius: 0.4em;
+        padding: 0.1em 0.5em;
+        font-size: 0.8em;
+
+        &.chair {
+            color: var(--accent-fg-color);
+            background-color: var(--accent-bg-color);
+        }
+
+        &.optional,
+        &.non-participant {
+            color: var(--light-1);
+            background-color: var(--dark-2);
+        }
+    }
+
     .event-action {
         padding: 6px;
         margin: 3px 0;
@@ -65,37 +100,6 @@ time-zone-picker-dialog {
 
 .loading-button-row {
     padding: 12px 40px;
-}
-
-.attendees-list {
-    background-color: var(--window-bg-color);
-}
-
-.attendee-row {
-    font-size: smaller;
-}
-
-.small-participation-status-icon {
-    -gtk-icon-weight: 134;
-}
-
-attendee-role-badge {
-    color: var(--dark-5);
-    background-color: var(--light-3);
-    border-radius: 0.4em;
-    padding: 0.1em 0.5em;
-    font-size: 0.8em;
-
-    &.chair {
-        color: var(--accent-fg-color);
-        background-color: var(--accent-bg-color);
-    }
-
-    &.optional,
-    &.non-participant {
-        color: var(--light-1);
-        background-color: var(--dark-2);
-    }
 }
 
 year-view {

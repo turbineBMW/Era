@@ -2,12 +2,12 @@ using Gtk 4.0;
 using Adw 1;
 
 template $AttendeeListRow: Adw.PreferencesRow {
+  styles [
+    "attendee-list-row",
+  ]
+
   child: Box {
     spacing: 6;
-    margin-top: 12;
-    margin-bottom: 12;
-    margin-start: 12;
-    margin-end: 12;
     orientation: vertical;
 
     Box {
@@ -30,7 +30,7 @@ template $AttendeeListRow: Adw.PreferencesRow {
 
     Box {
       orientation: vertical;
-      spacing: 6;
+      spacing: 12;
 
       $AttendeeStatusSection accepted_section {
         event: bind template.event;
@@ -50,16 +50,16 @@ template $AttendeeListRow: Adw.PreferencesRow {
         participation-status-selection: declined;
       }
 
-      $AttendeeStatusSection needs_action_section {
-        event: bind template.event;
-        attendee-type-selection: bind template.attendee-type-selection;
-        participation-status-selection: needs_action;
-      }
-
       $AttendeeStatusSection delegated_section {
         event: bind template.event;
         attendee-type-selection: bind template.attendee-type-selection;
         participation-status-selection: delegated;
+      }
+
+      $AttendeeStatusSection needs_action_section {
+        event: bind template.event;
+        attendee-type-selection: bind template.attendee-type-selection;
+        participation-status-selection: needs_action;
       }
     }
   };

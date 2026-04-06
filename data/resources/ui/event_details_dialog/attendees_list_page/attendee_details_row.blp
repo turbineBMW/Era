@@ -5,14 +5,15 @@ using Clepsydre 0;
 template $AttendeeDetailsRow: Adw.PreferencesRow {
   activatable: false;
 
+  styles [
+    "attendee-details-row",
+  ]
+
   child: Box {
     spacing: 12;
-    margin-top: 6;
-    margin-bottom: 6;
-    margin-start: 12;
-    margin-end: 12;
 
     Box {
+      hexpand: true;
       orientation: vertical;
       spacing: 3;
 
@@ -22,8 +23,9 @@ template $AttendeeDetailsRow: Adw.PreferencesRow {
 
         Label {
           label: bind template.attendee as <Clepsydre.Attendee>.name;
-          xalign: 0.0;
+          xalign: 0;
           wrap: true;
+          wrap-mode: word_char;
 
           styles [
             "title",
@@ -31,6 +33,7 @@ template $AttendeeDetailsRow: Adw.PreferencesRow {
         }
 
         $AttendeeRoleBadge {
+          valign: center;
           role: bind template.attendee as <Clepsydre.Attendee>.attendee-role;
           visible: bind $not(
             $attendee_role_equals(
@@ -43,9 +46,9 @@ template $AttendeeDetailsRow: Adw.PreferencesRow {
 
       Label {
         label: bind template.attendee as <Clepsydre.Attendee>.uri;
-        hexpand: true;
-        halign: start;
+        xalign: 0;
         wrap: true;
+        wrap-mode: word_char;
 
         styles [
           "subtitle",
@@ -58,7 +61,7 @@ template $AttendeeDetailsRow: Adw.PreferencesRow {
       visible: bind $participation_status_equals(
         template.attendee as <Clepsydre.Attendee>.participation-status,
         accepted as <Clepsydre.ParticipationStatus>
-      ) as <bool>;
+      );
 
       styles [
         "success",
@@ -70,7 +73,7 @@ template $AttendeeDetailsRow: Adw.PreferencesRow {
       visible: bind $participation_status_equals(
         template.attendee as <Clepsydre.Attendee>.participation-status,
         tentative as <Clepsydre.ParticipationStatus>
-      ) as <bool>;
+      );
 
       styles [
         "warning",
@@ -82,7 +85,7 @@ template $AttendeeDetailsRow: Adw.PreferencesRow {
       visible: bind $participation_status_equals(
         template.attendee as <Clepsydre.Attendee>.participation-status,
         declined as <Clepsydre.ParticipationStatus>
-      ) as <bool>;
+      );
 
       styles [
         "error",
@@ -94,7 +97,7 @@ template $AttendeeDetailsRow: Adw.PreferencesRow {
       visible: bind $participation_status_equals(
         template.attendee as <Clepsydre.Attendee>.participation-status,
         needs_action as <Clepsydre.ParticipationStatus>
-      ) as <bool>;
+      );
     }
 
     Image {
@@ -102,7 +105,7 @@ template $AttendeeDetailsRow: Adw.PreferencesRow {
       visible: bind $participation_status_equals(
         template.attendee as <Clepsydre.Attendee>.participation-status,
         delegated as <Clepsydre.ParticipationStatus>
-      ) as <bool>;
+      );
     }
   };
 }
