@@ -23,7 +23,7 @@ template $TimeZonePickerDialog: Adw.Dialog {
     }
 
     content: Stack {
-      visible-child-name: bind $ternary($is_zero(filter.n-items) as <bool>, "empty", "time_zones") as <string>;
+      visible-child-name: bind $ternary($is_zero(filter.n-items) as <bool>, "empty", "time_zones");
 
       StackPage {
         name: "empty";
@@ -59,9 +59,10 @@ template $TimeZonePickerDialog: Adw.Dialog {
             factory: BuilderListItemFactory {
               template ListItem {
                 child: Label {
-                  label: bind template.item as <$ObjectTimeZone>.identifier as <string>;
+                  label: bind template.item as <$ObjectTimeZone>.identifier;
                   xalign: 0;
                   wrap: true;
+                  wrap-mode: word_char;
                 };
               }
             };
