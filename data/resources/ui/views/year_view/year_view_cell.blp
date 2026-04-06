@@ -1,6 +1,6 @@
 using Gtk 4.0;
 
-template $YearViewMonthCell: Widget {
+template $YearViewCell: Widget {
   Label month_label {
     label: bind $get_month_name(template.month) as <string>;
     ellipsize: end;

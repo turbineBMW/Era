@@ -53,8 +53,8 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="month_view_row.ui">ui/views/month_view/month_view_row.ui</file>
     <!-- Year View -->
     <file compressed="true" preprocess="xml-stripblanks" alias="year_view.ui">ui/views/year_view/year_view.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="year_view_month_cell.ui">ui/views/year_view/year_view_month_cell.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="year_view_year_row.ui">ui/views/year_view/year_view_year_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="year_view_cell.ui">ui/views/year_view/year_view_cell.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="year_view_row.ui">ui/views/year_view/year_view_row.ui</file>
 
     <file compressed="true" preprocess="xml-stripblanks" alias="window.ui">ui/window.ui</file>
   </gresource>

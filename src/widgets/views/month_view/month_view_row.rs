@@ -18,7 +18,7 @@ mod imp {
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/month_view_row.ui")]
-    #[properties(wrapper_type = super::MonthViewWeekRow)]
+    #[properties(wrapper_type = super::MonthViewRow)]
     pub struct MonthViewRow {
         #[property(get)]
         year: Cell<i32>,
@@ -87,7 +87,7 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for MonthViewRow {
         const NAME: &'static str = "MonthViewRow";
-        type Type = super::MonthViewWeekRow;
+        type Type = super::MonthViewRow;
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
@@ -355,12 +355,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct MonthViewWeekRow(ObjectSubclass<imp::MonthViewRow>)
+    pub struct MonthViewRow(ObjectSubclass<imp::MonthViewRow>)
         @extends gtk::Widget,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
 
-impl MonthViewWeekRow {
+impl MonthViewRow {
     pub fn new() -> Self {
         glib::Object::new()
     }

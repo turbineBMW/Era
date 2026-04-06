@@ -239,7 +239,7 @@ pub mod imp {
             let month = today.month();
             let day = today.day_of_month();
             self.month_view.set_year_month_day(year, month, day);
-            // TODO: Do the same thing for year view
+            self.year_view.set_year(year);
         }
 
         #[template_callback(function)]

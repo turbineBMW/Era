@@ -110,27 +110,31 @@ year-view {
         inset 0 -2px 4px var(--raised-shade-color-base),
         inset 0 1px var(--raised-shade-color, var(--raised-shade-color-base)),
         inset 0 2px 4px var(--raised-shade-color-base);
-}
 
-.year-view-flow-box {
-    > flowboxchild {
-        padding: 6px;
+    year-view-row {
+        margin-top: 12px;
+
+        flowbox {
+            > flowboxchild {
+                padding: 6px;
+
+                label.narrow {
+                    font-weight: 400;
+                    font-size: 57%;
+                }
+
+                label.medium {
+                    font-weight: 400;
+                    font-size: 100%;
+                }
+
+                label.wide {
+                    font-weight: 400;
+                    font-size: 130%;
+                }
+            }
+        }
     }
-}
-
-.year-view-days-grid-day-label-narrow {
-    font-weight: 400;
-    font-size: 57%;
-}
-
-.year-view-days-grid-day-label-medium {
-    font-weight: 400;
-    font-size: 100%;
-}
-
-.year-view-days-grid-day-label-wide {
-    font-weight: 400;
-    font-size: 130%;
 }
 
 month-view {

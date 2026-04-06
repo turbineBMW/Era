@@ -60,8 +60,8 @@ blueprints = custom_target(
     'ui/views/month_view/month_view_row.blp',
     # Year View
     'ui/views/year_view/year_view.blp',
-    'ui/views/year_view/year_view_month_cell.blp',
-    'ui/views/year_view/year_view_year_row.blp',
+    'ui/views/year_view/year_view_cell.blp',
+    'ui/views/year_view/year_view_row.blp',
 
     'ui/window.blp',
   ),

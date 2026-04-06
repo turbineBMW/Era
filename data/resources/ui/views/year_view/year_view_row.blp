@@ -1,8 +1,6 @@
 using Gtk 4.0;
 
-template $YearViewYearRow: Widget {
-  margin-top: 12;
-
+template $YearViewRow: Widget {
   Label year_label {
     label: bind $get_year_label_narrow(template.year) as <string>;
     xalign: 0.0;
@@ -18,9 +16,5 @@ template $YearViewYearRow: Widget {
     selection-mode: none;
     max-children-per-line: 4;
     child-activated => $month_cell_clicked(template);
-
-    styles [
-      "year-view-flow-box",
-    ]
   }
 }

@@ -13,7 +13,7 @@ use crate::{Application, system_settings::FirstDayOfWeek};
 
 use super::{
     MonthViewStyling,
-    month_view_row::{self, MonthViewWeekRow},
+    month_view_row::{self, MonthViewRow},
 };
 
 const NB_ROWS: i32 = 200;
@@ -49,7 +49,7 @@ mod imp {
         styling: Cell<MonthViewStyling>,
 
         /// Rows contained in the view.
-        rows: OnceCell<Mutex<Vec<MonthViewWeekRow>>>,
+        rows: OnceCell<Mutex<Vec<MonthViewRow>>>,
 
         /// Offset of the top of the first row. This is also the number of pixels above the
         /// view that are not visible.
@@ -75,9 +75,7 @@ mod imp {
     impl Default for MonthViewInner {
         fn default() -> Self {
             let rows = OnceCell::new();
-            rows.get_or_init(|| {
-                Mutex::new((0..NB_ROWS).map(|_i| MonthViewWeekRow::new()).collect())
-            });
+            rows.get_or_init(|| Mutex::new((0..NB_ROWS).map(|_i| MonthViewRow::new()).collect()));
 
             let now = Application::default().current_datetime();
             let year = Cell::new(now.year());
@@ -195,7 +193,7 @@ mod imp {
         }
 
         /// Gets the rows.
-        fn rows(&self) -> &Mutex<Vec<MonthViewWeekRow>> {
+        fn rows(&self) -> &Mutex<Vec<MonthViewRow>> {
             self.rows.get().expect("Rows should be initialized")
         }
 
@@ -230,11 +228,10 @@ mod imp {
         /// If necessary, rows will be recycled and the offset will get adjusted. Year/month/day
         /// properties will be updated.
         fn set_scroll_offset(&self, scroll_offset: i32) {
+            let height = self.obj().height();
             let mut rows = self.rows().lock().unwrap();
 
             let row_height = self.row_height();
-            // The offset of the bottom of the last row
-            let bottom_offset = scroll_offset + row_height * NB_ROWS;
             // The limit of the top offset before recycling happens
             let top_threshold = row_height * MINIMUM_NB_ROWS_ABOVE;
             // The limit of the bottom offset before recycling happens
@@ -266,7 +263,7 @@ mod imp {
                 );
 
                 rows.insert(0, last_row);
-            } else if bottom_offset > bottom_threshold {
+            } else if scroll_offset + height > bottom_threshold {
                 self.scroll_offset.set(scroll_offset - row_height);
 
                 let last_row = rows

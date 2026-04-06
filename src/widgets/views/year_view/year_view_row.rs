@@ -5,7 +5,7 @@ use glib::{clone, closure_local, subclass::Signal};
 
 use crate::Application;
 
-use super::{YearViewMonthCell, YearViewStyling};
+use super::{YearViewCell, YearViewStyling};
 
 const SIDE_MARGIN: i32 = 12;
 const SPACING: i32 = 6;
@@ -14,9 +14,9 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/year_view_year_row.ui")]
-    #[properties(wrapper_type = super::YearViewYearRow)]
-    pub struct YearViewYearRow {
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/year_view_row.ui")]
+    #[properties(wrapper_type = super::YearViewRow)]
+    pub struct YearViewRow {
         #[property(get, set)]
         year: Cell<i32>,
         #[property(get, set, builder(YearViewStyling::default()))]
@@ -30,14 +30,16 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for YearViewYearRow {
-        const NAME: &'static str = "YearViewYearRow";
-        type Type = super::YearViewYearRow;
+    impl ObjectSubclass for YearViewRow {
+        const NAME: &'static str = "YearViewRow";
+        type Type = super::YearViewRow;
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+
+            klass.set_css_name("year-view-row");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -46,7 +48,7 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for YearViewYearRow {
+    impl ObjectImpl for YearViewRow {
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -54,7 +56,7 @@ mod imp {
 
             let year = self.year.get();
             for month in 1..=12 {
-                let cell = YearViewMonthCell::new(year, month);
+                let cell = YearViewCell::new(year, month);
                 obj.bind_property("styling", &cell, "styling")
                     .sync_create()
                     .build();
@@ -110,7 +112,7 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for YearViewYearRow {
+    impl WidgetImpl for YearViewRow {
         fn request_mode(&self) -> gtk::SizeRequestMode {
             gtk::SizeRequestMode::HeightForWidth
         }
@@ -199,7 +201,7 @@ mod imp {
     }
 
     #[gtk::template_callbacks]
-    impl YearViewYearRow {
+    impl YearViewRow {
         fn update_styling(&self) {
             self.year_label.remove_css_class("title-3");
             self.year_label.remove_css_class("title-1");
@@ -241,7 +243,7 @@ mod imp {
             let cell = child
                 .first_child()
                 .expect("Flow box child should have a child")
-                .downcast::<YearViewMonthCell>()
+                .downcast::<YearViewCell>()
                 .expect("The child of flow box child should be a month cell");
             self.obj()
                 .emit_by_name::<()>("month-clicked", &[&cell.year(), &cell.month()]);
@@ -250,12 +252,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct YearViewYearRow(ObjectSubclass<imp::YearViewYearRow>)
+    pub struct YearViewRow(ObjectSubclass<imp::YearViewRow>)
         @extends gtk::Widget,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
 
-impl YearViewYearRow {
+impl YearViewRow {
     pub fn new(year: i32) -> Self {
         glib::Object::builder().property("year", year).build()
     }

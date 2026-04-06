@@ -11,9 +11,9 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/year_view_month_cell.ui")]
-    #[properties(wrapper_type = super::YearViewMonthCell)]
-    pub struct YearViewMonthCell {
+    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/year_view_cell.ui")]
+    #[properties(wrapper_type = super::YearViewCell)]
+    pub struct YearViewCell {
         #[property(get, set)]
         year: Cell<i32>,
         #[property(get, construct_only)]
@@ -28,14 +28,16 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for YearViewMonthCell {
-        const NAME: &'static str = "YearViewMonthCell";
-        type Type = super::YearViewMonthCell;
+    impl ObjectSubclass for YearViewCell {
+        const NAME: &'static str = "YearViewCell";
+        type Type = super::YearViewCell;
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+
+            klass.set_css_name("year-view-cell");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -44,7 +46,7 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for YearViewMonthCell {
+    impl ObjectImpl for YearViewCell {
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -131,7 +133,7 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for YearViewMonthCell {
+    impl WidgetImpl for YearViewCell {
         fn measure(&self, orientation: gtk::Orientation, for_size: i32) -> (i32, i32, i32, i32) {
             match orientation {
                 gtk::Orientation::Horizontal => {
@@ -209,7 +211,7 @@ mod imp {
     }
 
     #[gtk::template_callbacks]
-    impl YearViewMonthCell {
+    impl YearViewCell {
         /// Convert FirstDayOfWeek to a numeric offset (0 = Monday, 6 = Sunday).
         fn first_day_of_week_offset(first_day_of_week: FirstDayOfWeek) -> usize {
             match first_day_of_week {
@@ -277,9 +279,9 @@ mod imp {
             self.month_label.remove_css_class("title-4");
             for cell in 0..42 {
                 if let Some(label) = self.days_grid.child_at(cell % 7, cell / 7) {
-                    label.remove_css_class("year-view-days-grid-day-label-narrow");
-                    label.remove_css_class("year-view-days-grid-day-label-medium");
-                    label.remove_css_class("year-view-days-grid-day-label-wide");
+                    label.remove_css_class("narrow");
+                    label.remove_css_class("medium");
+                    label.remove_css_class("wide");
                 };
             }
 
@@ -291,7 +293,7 @@ mod imp {
                     self.spacing.set(6);
                     for cell in 0..42 {
                         if let Some(label) = self.days_grid.child_at(cell % 7, cell / 7) {
-                            label.add_css_class("year-view-days-grid-day-label-narrow");
+                            label.add_css_class("narrow");
                         };
                     }
                 }
@@ -302,7 +304,7 @@ mod imp {
                     self.spacing.set(12);
                     for cell in 0..42 {
                         if let Some(label) = self.days_grid.child_at(cell % 7, cell / 7) {
-                            label.add_css_class("year-view-days-grid-day-label-medium");
+                            label.add_css_class("medium");
                         };
                     }
                 }
@@ -313,7 +315,7 @@ mod imp {
                     self.spacing.set(12);
                     for cell in 0..42 {
                         if let Some(label) = self.days_grid.child_at(cell % 7, cell / 7) {
-                            label.add_css_class("year-view-days-grid-day-label-wide");
+                            label.add_css_class("wide");
                         }
                     }
                 }
@@ -371,12 +373,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct YearViewMonthCell(ObjectSubclass<imp::YearViewMonthCell>)
+    pub struct YearViewCell(ObjectSubclass<imp::YearViewCell>)
         @extends gtk::Widget,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
 
-impl YearViewMonthCell {
+impl YearViewCell {
     pub fn new(year: i32, month: i32) -> Self {
         glib::Object::builder()
             .property("year", year)
