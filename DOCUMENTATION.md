@@ -176,7 +176,7 @@ All dialogs are `adw::Dialog` subclasses. Errors from async Clepsydre calls are 
 
 `src/widgets/create_event_dialog/`
 
-Form dialog for creating a new event. Fields: name, location, video-conference URL, description, schedule type (timed or all-day), start/end date-time. The "Create" button calls `Calendar::try_create_event_future` and closes the dialog on success.
+Form dialog for creating a new event. Fields: name, location, conference URL, description, schedule type (timed or all-day), start/end date-time. The "Create" button calls `Calendar::try_create_event_future` and closes the dialog on success.
 
 Notable sub-widgets:
 
@@ -191,14 +191,14 @@ Validation logic (implemented as template callbacks) disables the create button 
 
 Displays the details of an existing event. Uses an `adw::NavigationView` with two pages:
 
-1. **Details page** — read-only view of the event name, timeframe, location, video-conference link, and description. Action buttons:
+1. **Details page** — read-only view of the event name, timeframe, location, conference link, and description. Action buttons:
    - **Share** — exports the event as an `.ics` file via the `ashpd` file-chooser portal.
    - **QR Code** — opens a `QrCodeDialog` with the event data.
    - **Map** — opens the location as a `geo:` URI through the `ashpd` open-URI portal.
-   - **Join** — opens the video-conference URL (only shown when the URL is parseable).
+   - **Join** — opens the conference URL (only shown when the URL is parseable).
    - **Edit** — pushes the editor page.
    - **Remove** — calls `Event::try_remove_future`; the dialog auto-closes via a `connect_removed` signal handler.
-2. **Editor page** — editable entry rows for name, location, video-conference, and description. (Save is not yet implemented.)
+2. **Editor page** — editable entry rows for name, location, conference, and description. (Save is not yet implemented.)
 
 #### SearchDialog
 

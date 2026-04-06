@@ -51,12 +51,6 @@ impl TemplateCallbacks {
         }
     }
 
-    /// Returns `true` when the given string is empty.
-    #[template_callback]
-    pub fn string_empty(string: &str) -> bool {
-        string.is_empty()
-    }
-
     /// Returns `true` when the given string is empty or contains only whitespace.
     #[template_callback]
     pub fn trimmed_string_empty(string: &str) -> bool {

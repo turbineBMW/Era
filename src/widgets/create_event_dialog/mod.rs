@@ -31,7 +31,7 @@ mod imp {
         #[template_child]
         location: TemplateChild<adw::EntryRow>,
         #[template_child]
-        video_conference: TemplateChild<adw::EntryRow>,
+        conference: TemplateChild<adw::EntryRow>,
         #[template_child]
         calendar_choice: TemplateChild<CalendarComboRow>,
         #[template_child]
@@ -180,7 +180,7 @@ mod imp {
             let name = self.name.text();
             let description = self.description.text();
             let location = self.location.text();
-            let video_conference = self.video_conference.text();
+            let conference = self.conference.text();
             let all_day = self
                 .schedule_type
                 .active_name()
@@ -190,13 +190,7 @@ mod imp {
             let end = self.end.date_time();
             let timeframe = Timeframe::new(all_day, &start, &end);
             match calendar
-                .try_create_event_future(
-                    &name,
-                    &description,
-                    &location,
-                    &video_conference,
-                    &timeframe,
-                )
+                .try_create_event_future(&name, &description, &location, &conference, &timeframe)
                 .await
             {
                 Ok(event) => {

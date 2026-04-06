@@ -9,7 +9,8 @@ use ashpd::{
     },
 };
 use clepsydre::Event;
-use glib::clone;
+use gettextrs::gettext;
+use glib::{DateTime, clone};
 use tracing::{debug, warn};
 
 use crate::{
@@ -51,7 +52,7 @@ mod imp {
         #[template_child]
         location_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
-        video_conference_entry: TemplateChild<adw::EntryRow>,
+        conference_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
         description_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
@@ -114,44 +115,55 @@ mod imp {
     #[gtk::template_callbacks]
     impl EventDetailsDialog {
         #[template_callback]
-        fn timeframe_label(&self) -> String {
-            let Some(event) = self.obj().event() else {
-                return String::new();
-            };
+        fn timeframe_label(
+            &self,
+            all_day: bool,
+            start: DateTime,
+            end: DateTime,
+            today: DateTime,
+        ) -> String {
+            let yesterday = today.add_days(-1).unwrap();
+            let tomorrow = today.add_days(1).unwrap();
 
-            let start = event.timeframe().unwrap().start().unwrap();
-            let end = event.timeframe().unwrap().end().unwrap();
-
-            format!(
-                "{} - {}",
-                start.format_iso8601().unwrap(),
-                end.format_iso8601().unwrap()
-            )
+            if all_day {
+                if start.add_days(1).unwrap() == end {
+                    if start.year() == yesterday.year()
+                        && start.month() == yesterday.month()
+                        && start.day_of_month() == yesterday.day_of_month()
+                    {
+                        gettext("Yesterday")
+                    } else if start.year() == today.year()
+                        && start.month() == today.month()
+                        && start.day_of_month() == today.day_of_month()
+                    {
+                        gettext("Today")
+                    } else if start.year() == tomorrow.year()
+                        && start.month() == tomorrow.month()
+                        && start.day_of_month() == tomorrow.day_of_month()
+                    {
+                        gettext("Tomorrow")
+                    } else {
+                        start.format("%Y-%m-%d").unwrap().to_string()
+                    }
+                } else {
+                    format!(
+                        "{} - {}",
+                        start.format("%Y-%m-%d").unwrap(),
+                        end.format("%Y-%m-%d").unwrap(),
+                    )
+                }
+            } else {
+                format!(
+                    "{} - {}",
+                    start.format_iso8601().unwrap(),
+                    end.format_iso8601().unwrap()
+                )
+            }
         }
 
         #[template_callback]
-        fn location_or_video_conference(&self) -> bool {
-            let Some(event) = self.obj().event() else {
-                return false;
-            };
-            let Some(location) = event.location() else {
-                return false;
-            };
-            let Some(video_conference) = event.video_conference() else {
-                return false;
-            };
-            !location.is_empty() || !video_conference.is_empty()
-        }
-
-        #[template_callback]
-        fn video_conference_is_a_uri(&self) -> bool {
-            let Some(event) = self.obj().event() else {
-                return false;
-            };
-            let Some(video_conference) = event.video_conference() else {
-                return false;
-            };
-            url::Url::parse(&video_conference).is_ok()
+        fn conference_is_a_uri(&self, conference: &str) -> bool {
+            url::Url::parse(conference).is_ok()
         }
 
         #[template_callback]
@@ -234,16 +246,16 @@ mod imp {
             let event = self.obj().event().expect("event should be initialized");
             let uri = Uri::parse(
                 &event
-                    .video_conference()
-                    .expect("join should not be callable if video_conference is not a URI"),
+                    .conference()
+                    .expect("join should not be callable if conference is not a URI"),
             )
-            .expect("join should not be callable if video_conference is not a URI");
+            .expect("join should not be callable if conference is not a URI");
             match OpenFileRequest::default().send_uri(&uri).await {
                 Ok(_) => {}
                 Err(err) => {
                     warn!("Failed to open file: {err}");
                     self.details_toast_overlay.dismiss_all();
-                    let toast = adw::Toast::new("The video conference could not be opened");
+                    let toast = adw::Toast::new("The conference could not be opened");
                     self.details_toast_overlay.add_toast(toast);
                 }
             }
@@ -265,8 +277,7 @@ mod imp {
 
             self.name_entry.set_text(&event.name().unwrap());
             self.location_entry.set_text(&event.location().unwrap());
-            self.video_conference_entry
-                .set_text(&event.video_conference().unwrap());
+            self.conference_entry.set_text(&event.conference().unwrap());
             self.description_entry
                 .set_text(&event.description().unwrap());
         }
