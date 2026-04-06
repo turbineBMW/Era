@@ -35,6 +35,8 @@ template $Sidebar: Adw.Bin {
             child: Label {
               label: bind template.item as <Clepsydre.Calendar>.collection as <Clepsydre.Collection>.name;
               xalign: 0;
+              wrap: true;
+              wrap-mode: word_char;
 
               styles [
                 "bold",
@@ -60,6 +62,7 @@ template $Sidebar: Adw.Bin {
                 xalign: 0;
                 hexpand: true;
                 wrap: true;
+                wrap-mode: word_char;
               }
 
               Image {
