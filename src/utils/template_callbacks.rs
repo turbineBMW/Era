@@ -146,6 +146,27 @@ impl TemplateCallbacks {
         }
     }
 
+    /// Returns the capitalized name of the month.
+    #[template_callback]
+    pub fn capitalized_month_name(month: i32) -> String {
+        match month {
+            1 => gettext("January"),
+            2 => gettext("February"),
+            3 => gettext("March"),
+            4 => gettext("April"),
+            5 => gettext("May"),
+            6 => gettext("June"),
+            7 => gettext("July"),
+            8 => gettext("August"),
+            9 => gettext("September"),
+            10 => gettext("October"),
+            11 => gettext("November"),
+            12 => gettext("December"),
+            // TODO: Fix the issues that stop us from panicking here.
+            _ => "invalid month".to_string(),
+        }
+    }
+
     /// Returns the abbreviation of the month.
     #[template_callback]
     pub fn month_abbreviation(month: i32) -> String {

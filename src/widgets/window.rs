@@ -3,7 +3,8 @@ use clepsydre::prelude::*;
 use glib::clone;
 
 use crate::{
-    Application, utils,
+    Application,
+    utils::TemplateCallbacks,
     widgets::{
         CalendarManagerDialog, CreateEventDialog, SearchDialog, Sidebar,
         views::{MonthView, YearView},
@@ -256,7 +257,7 @@ pub mod imp {
 
         #[template_callback(function)]
         fn get_year_month_label(year: i32, month: i32) -> String {
-            let month_name = utils::get_month_name(month);
+            let month_name = TemplateCallbacks::capitalized_month_name(month);
             format!("{month_name} {year} ")
         }
 

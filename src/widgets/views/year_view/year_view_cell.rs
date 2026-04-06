@@ -3,7 +3,7 @@ use std::{cell::Cell, cmp};
 use adw::{prelude::*, subclass::prelude::*};
 use glib::clone;
 
-use crate::{Application, system_settings::FirstDayOfWeek, utils};
+use crate::{Application, system_settings::FirstDayOfWeek, utils::TemplateCallbacks};
 
 use super::YearViewStyling;
 
@@ -36,6 +36,7 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
+            TemplateCallbacks::bind_template_callbacks(klass);
 
             klass.set_css_name("year-view-cell");
         }
@@ -362,12 +363,6 @@ mod imp {
                     .expect("Grid should be initialized");
                 current_day_label.add_css_class("accent");
             }
-        }
-
-        #[template_callback]
-        fn get_month_name(&self) -> String {
-            let month = self.obj().month();
-            utils::get_month_name(month)
         }
     }
 }

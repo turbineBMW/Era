@@ -2,7 +2,7 @@ using Gtk 4.0;
 
 template $YearViewCell: Widget {
   Label month_label {
-    label: bind $get_month_name(template.month) as <string>;
+    label: bind $capitalized_month_name(template.month) as <string>;
     ellipsize: end;
     xalign: 0.0;
   }
