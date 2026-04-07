@@ -4,7 +4,7 @@ use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Event;
 use glib::DateTime;
 
-use crate::utils::PaintableCallbacks;
+use super::color_stripe::ColorStripe;
 
 mod imp {
     use super::*;
@@ -24,9 +24,10 @@ mod imp {
         type ParentType = gtk::Box;
 
         fn class_init(klass: &mut Self::Class) {
+            ColorStripe::ensure_type();
+
             klass.bind_template();
             klass.bind_template_callbacks();
-            PaintableCallbacks::bind_template_callbacks(klass);
 
             klass.set_css_name("search-result-row");
         }

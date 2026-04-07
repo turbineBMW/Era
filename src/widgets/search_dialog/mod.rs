@@ -2,6 +2,7 @@ use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Event, prelude::*};
 use tracing::warn;
 
+mod color_stripe;
 mod search_result_row;
 
 use crate::{

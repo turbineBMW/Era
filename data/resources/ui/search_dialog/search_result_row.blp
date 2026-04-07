@@ -2,9 +2,11 @@ using Gtk 4.0;
 using Clepsydre 0;
 
 template $SearchResultRow: Box {
-  Image {
-    pixel-size: 24;
-    paintable: bind $get_horizontal_bar_paintable(template.event as <Clepsydre.Event>.calendar.color, 6.0, 48.0);
+  spacing: 6;
+
+  $ColorStripe {
+    color: bind template.event as <Clepsydre.Event>.calendar.color;
+    width-request: 6;
   }
 
   Box {

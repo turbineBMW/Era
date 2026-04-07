@@ -52,33 +52,4 @@ impl PaintableCallbacks {
         let graphene_size = graphene::Size::new(side_length, side_length);
         snapshot.to_paintable(Some(&graphene_size)).unwrap()
     }
-
-    #[template_callback]
-    pub fn get_horizontal_bar_paintable(
-        color: &gdk::RGBA,
-        width: f32,
-        height: f32,
-    ) -> gdk::Paintable {
-        let snapshot = gtk::Snapshot::new();
-
-        // Define the rectangle for the horizontal bar
-        let graphene_rect = graphene::Rect::new(0.0, 0.0, width, height);
-
-        // If you want rounded ends for the bar, you can calculate the radius based on height
-        // Otherwise, you can remove the push_rounded_clip and pop calls for sharp corners.
-        // let radius = height / 2.0; // Radius for rounded ends (if desired)
-        // let rounded_rect = gsk::RoundedRect::from_rect(graphene_rect, radius);
-
-        // Apply rounded corners if you want them.
-        // For a simple rectangle, you might not need this.
-        snapshot.push_clip(&graphene_rect);
-
-        snapshot.append_color(color, &graphene_rect);
-
-        snapshot.pop();
-
-        // The size of the resulting paintable should match the bar's dimensions
-        let graphene_size = graphene::Size::new(width, height);
-        snapshot.to_paintable(Some(&graphene_size)).unwrap()
-    }
 }
