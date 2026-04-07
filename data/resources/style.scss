@@ -17,10 +17,11 @@ sidebar {
 search-dialog {
     listview {
         background-color: transparent;
+        margin: 0 9px;
 
         > row {
             padding: 6px;
-            margin: 3px;
+            margin: 3px 0;
             border-radius: 6px;
         }
     }
