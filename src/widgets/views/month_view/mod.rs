@@ -1,4 +1,4 @@
-use std::marker::PhantomData;
+use std::{cell::Cell, marker::PhantomData};
 
 use adw::{prelude::*, subclass::prelude::*};
 use glib::clone;
@@ -35,9 +35,7 @@ mod imp {
         #[property(get = Self::day)]
         day: PhantomData<i32>,
         #[property(get = Self::styling, set = Self::set_styling, builder(MonthViewStyling::default()))]
-        styling: PhantomData<MonthViewStyling>,
-        #[template_child]
-        header: TemplateChild<gtk::Box>,
+        styling: Cell<MonthViewStyling>,
         #[template_child]
         month_view_inner: TemplateChild<MonthViewInner>,
     }
@@ -89,6 +87,11 @@ mod imp {
                     obj.notify_day();
                 }
             ));
+
+            self.obj()
+                .bind_property("styling", &*self.month_view_inner, "styling")
+                .sync_create()
+                .build();
         }
     }
 
@@ -116,12 +119,22 @@ mod imp {
 
         /// Gets the styling used for the view.
         fn styling(&self) -> MonthViewStyling {
-            self.month_view_inner.styling()
+            self.styling.get()
         }
 
         /// Sets the styling used for the view.
         fn set_styling(&self, styling: MonthViewStyling) {
-            self.month_view_inner.set_styling(styling);
+            if self.styling.get() == styling {
+                return;
+            }
+
+            self.styling.set(styling);
+            self.obj().notify_styling();
+        }
+
+        #[template_callback(function)]
+        fn month_view_styling_is_narrow(styling: MonthViewStyling) -> bool {
+            styling == MonthViewStyling::Narrow
         }
     }
 }

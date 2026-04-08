@@ -143,6 +143,14 @@ year-view {
 }
 
 month-view {
+    > box.header {
+        > label.day-name {
+            font-weight: bold;
+            margin: 6px;
+            opacity: var(--dim-opacity);
+        }
+    }
+
     > month-view-inner {
         --raised-shade-color-base: color-mix(
             in srgb,
@@ -157,14 +165,6 @@ month-view {
             inset 0 1px
                 var(--raised-shade-color, var(--raised-shade-color-base)),
             inset 0 2px 4px var(--raised-shade-color-base);
-    }
-
-    > box.header {
-        > label.day-name {
-            font-weight: bold;
-            margin: 6px;
-            opacity: var(--dim-opacity);
-        }
     }
 }
 

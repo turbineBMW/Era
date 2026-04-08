@@ -5,7 +5,8 @@ template $MonthView: Box {
   vexpand: true;
   orientation: vertical;
 
-  Box header {
+  Box narrow_header {
+    visible: bind $month_view_styling_is_narrow(template.styling);
     homogeneous: true;
 
     styles [
@@ -127,6 +128,134 @@ template $MonthView: Box {
 
       styles [
         "caption",
+        "day-name",
+      ]
+    }
+  }
+
+  Box medium_header {
+    visible: bind $not($month_view_styling_is_narrow(template.styling) as <bool>);
+    homogeneous: true;
+
+    styles [
+      "header",
+    ]
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        1
+      );
+      hexpand: true;
+      xalign: 0;
+
+      styles [
+        "day-name",
+      ]
+    }
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        2
+      );
+      hexpand: true;
+      xalign: 0;
+
+      styles [
+        "day-name",
+      ]
+    }
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        3
+      );
+      hexpand: true;
+      xalign: 0;
+
+      styles [
+        "day-name",
+      ]
+    }
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        4
+      );
+      hexpand: true;
+      xalign: 0;
+
+      styles [
+        "day-name",
+      ]
+    }
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        5
+      );
+      hexpand: true;
+      xalign: 0;
+
+      styles [
+        "day-name",
+      ]
+    }
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        6
+      );
+      hexpand: true;
+      xalign: 0;
+
+      styles [
+        "day-name",
+      ]
+    }
+
+    Label {
+      label: bind $day_abbreviation(
+        template
+          .root as <Window>
+          .application as <$KalendasomApplication>
+          .system_settings as <$SystemSettings>
+          .first_day_of_week as <$FirstDayOfWeek>,
+        7
+      );
+      hexpand: true;
+      xalign: 0;
+
+      styles [
         "day-name",
       ]
     }
