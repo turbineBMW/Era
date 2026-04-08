@@ -12,6 +12,10 @@ template $Sidebar: Adw.Bin {
       ListView {
         single-click-activate: true;
 
+        styles [
+          "navigation-sidebar",
+        ]
+
         model: NoSelection {
           model: FlattenListModel {
             model: SortListModel {
