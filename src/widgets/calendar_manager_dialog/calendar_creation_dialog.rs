@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::Collection;
+use clepsydre::{Collection, prelude::*};
 use tracing::{debug, warn};
 
 use crate::widgets::components::{ErrorDialog, LoadingButton};

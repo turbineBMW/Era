@@ -1,5 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, Timeframe};
+use clepsydre::{Calendar, Timeframe, prelude::*};
 use glib::{DateTime, clone};
 use tracing::{debug, warn};
 

@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::Calendar;
+use clepsydre::{Calendar, prelude::*};
 use glib::clone;
 use tracing::{debug, warn};
 

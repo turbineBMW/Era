@@ -1,7 +1,7 @@
 use std::cell::{Cell, RefCell};
 
 use adw::subclass::prelude::*;
-use clepsydre::{Attendee, Event};
+use clepsydre::{Attendee, Event, prelude::*};
 use gtk::{FilterListModel, SortListModel, prelude::*};
 
 use crate::utils::{

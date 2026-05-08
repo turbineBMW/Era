@@ -4,7 +4,7 @@ use std::{
 };
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::Event;
+use clepsydre::{Event, prelude::*};
 use glib::{clone, closure_local, subclass::Signal};
 
 use crate::utils::{AttendeeTypeFilter, AttendeeTypeSelection, TemplateCallbacks};

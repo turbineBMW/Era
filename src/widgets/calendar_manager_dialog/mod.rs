@@ -1,5 +1,6 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::prelude::*;
+use clepsydre::{Calendar, prelude::*};
+use glib::clone;
 use tracing::error;
 
 mod calendar_creation_dialog;
@@ -20,6 +21,8 @@ mod imp {
     #[derive(Debug, Default, gtk::CompositeTemplate)]
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_manager_dialog.ui")]
     pub struct CalendarManagerDialog {
+        #[template_child]
+        stack: TemplateChild<gtk::Stack>,
         #[template_child]
         navigation_view: TemplateChild<adw::NavigationView>,
         #[template_child]
@@ -47,7 +50,11 @@ mod imp {
                             .and_then(glib::Variant::get::<String>)
                             .and_then(|uri| {
                                 let manager = Application::default().manager();
-                                manager.calendars_model().unwrap().get(&uri)
+                                manager
+                                    .calendars_model()
+                                    .unwrap()
+                                    .get(&uri)
+                                    .and_downcast::<Calendar>()
                             })
                     else {
                         error!("Invalid resource URI");
@@ -66,7 +73,32 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for CalendarManagerDialog {}
+    impl ObjectImpl for CalendarManagerDialog {
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let manager = Application::default().manager();
+            let collections_model = manager.collections_model().unwrap();
+
+            let is_empty = collections_model.n_items() == 0;
+            self.stack
+                .set_visible_child_name(if is_empty { "empty" } else { "collections" });
+
+            collections_model.connect_items_changed(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |model, _, _, _| {
+                    let is_empty = model.n_items() == 0;
+                    imp.stack.set_visible_child_name(if is_empty {
+                        "empty"
+                    } else {
+                        "collections"
+                    });
+                }
+            ));
+        }
+    }
+
     impl WidgetImpl for CalendarManagerDialog {}
     impl AdwDialogImpl for CalendarManagerDialog {}
 }

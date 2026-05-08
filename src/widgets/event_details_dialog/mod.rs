@@ -8,7 +8,7 @@ use ashpd::{
         open_uri::OpenFileRequest,
     },
 };
-use clepsydre::Event;
+use clepsydre::{Event, prelude::*};
 use gettextrs::gettext;
 use glib::{DateTime, clone};
 use tracing::{debug, warn};

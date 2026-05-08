@@ -1,5 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::Calendar;
+use clepsydre::{Calendar, prelude::*};
 use gio::prelude::ListModelExt;
 use tracing::warn;
 
