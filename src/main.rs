@@ -1,4 +1,7 @@
-use std::{ffi::CString, ptr};
+use std::{
+    ffi::{CString, c_char},
+    ptr,
+};
 
 use gettextrs::{bind_textdomain_codeset, bindtextdomain, textdomain};
 use glib::ffi::g_log_writer_default_set_debug_domains;
@@ -40,7 +43,7 @@ fn main() -> glib::ExitCode {
         let c_strings: Vec<CString> = domains.iter().map(|&s| CString::new(s).unwrap()).collect();
 
         // 2. Create a list of raw pointers to those CStrings
-        let mut ptrs: Vec<*const i8> = c_strings.iter().map(|cs| cs.as_ptr()).collect();
+        let mut ptrs: Vec<*const c_char> = c_strings.iter().map(|cs| cs.as_ptr()).collect();
 
         // 3. Add a null terminator at the end so C knows where to stop
         ptrs.push(ptr::null());
