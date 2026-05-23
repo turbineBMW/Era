@@ -76,11 +76,11 @@ template $KalendasomWindow: Adw.ApplicationWindow {
                 height-request: 100;
 
                 Adw.Breakpoint {
-                  condition ("max-width: 720sp")
+                  condition ("min-width: 720sp")
 
                   setters {
-                    year_view.styling: narrow;
-                    month_view.styling: narrow;
+                    year_view.styling: medium;
+                    month_view.styling: medium;
                   }
                 }
 
@@ -442,13 +442,13 @@ template $KalendasomWindow: Adw.ApplicationWindow {
 
         [year_view]
         $YearView year_view {
-          styling: medium;
+          styling: narrow;
           month_clicked => $open_month_view(template);
         }
 
         [month_view]
         $MonthView month_view {
-          styling: medium;
+          styling: narrow;
           // day_clicked => $open_days_view(template);
         }
       };

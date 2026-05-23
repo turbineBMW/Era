@@ -1,12 +1,12 @@
 project(
-  'kalendasom',
-  'rust',
-  version: '0.1.0',
-  meson_version: '>= 1.8.5',
-  default_options: [
-    'warning_level=2',
-    'werror=false',
-  ],
+    'kalendasom',
+    'rust',
+    version: '0.1.0',
+    meson_version: '>= 1.8.5',
+    default_options: [
+        'warning_level=2',
+        'werror=false',
+    ],
 )
 
 i18n = import('i18n')
@@ -38,10 +38,10 @@ podir = meson.project_source_root() / 'po'
 gettext_package = meson.project_name()
 
 if get_option('buildtype') == 'release'
-  profile = 'Stable'
+    profile = 'Stable'
 else
-  profile = 'Devel'
-  application_id += '.Devel'
+    profile = 'Devel'
+    application_id += '.Devel'
 endif
 
 subdir('data')
@@ -49,7 +49,7 @@ subdir('src')
 subdir('po')
 
 gnome.post_install(
-  glib_compile_schemas: true,
-  gtk_update_icon_cache: true,
-  update_desktop_database: true,
+    glib_compile_schemas: true,
+    gtk_update_icon_cache: true,
+    update_desktop_database: true,
 )

@@ -1,6 +1,6 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::prelude::*;
-use glib::clone;
+use clepsydre::{Calendar, prelude::*};
+use glib::{clone, translate::*};
 
 use crate::{
     Application,
@@ -31,6 +31,8 @@ pub mod imp {
         year_view: TemplateChild<YearView>,
         #[template_child]
         month_view: TemplateChild<MonthView>,
+
+        colors_provider: gtk::CssProvider,
     }
 
     #[glib::object_subclass]
@@ -98,6 +100,14 @@ pub mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
+            // Setup calendar colors CSS provider
+            let display = RootExt::display(&*self.obj());
+            gtk::style_context_add_provider_for_display(
+                &display,
+                &self.colors_provider,
+                gtk::STYLE_PROVIDER_PRIORITY_APPLICATION + 1,
+            );
+
             let manager = Application::default().manager();
 
             if manager.is_backend_available() {
@@ -121,6 +131,40 @@ pub mod imp {
                         }
                     }
                 }
+            ));
+
+            // Setup calendar colors
+            let calendars_model = manager.calendars_model().unwrap();
+            self.recalculate_calendar_colors_css();
+
+            for i in 0..calendars_model.n_items() {
+                let calendar: Calendar = calendars_model.item(i).unwrap().downcast().unwrap();
+                calendar.connect_color_notify(clone!(
+                    #[weak(rename_to = imp)]
+                    self,
+                    move |_| {
+                        imp.recalculate_calendar_colors_css();
+                    }
+                ));
+            }
+
+            calendars_model.connect_items_changed(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |model, position, _removed, added| {
+                    for i in 0..added {
+                        let calendar: Calendar =
+                            model.item(position + i).unwrap().downcast().unwrap();
+                        calendar.connect_color_notify(clone!(
+                            #[weak]
+                            imp,
+                            move |_| {
+                                imp.recalculate_calendar_colors_css();
+                            }
+                        ));
+                    }
+                    imp.recalculate_calendar_colors_css();
+                },
             ));
 
             self.narrow_stack.connect_visible_child_name_notify(clone!(
@@ -241,6 +285,27 @@ pub mod imp {
             let day = today.day_of_month();
             self.month_view.set_year_month_day(year, month, day);
             self.year_view.set_year(year);
+        }
+
+        fn recalculate_calendar_colors_css(&self) {
+            let manager = Application::default().manager();
+            let calendars_model = manager.calendars_model().unwrap();
+            let mut css = String::new();
+
+            for i in 0..calendars_model.n_items() {
+                let calendar: Calendar = calendars_model.item(i).unwrap().downcast().unwrap();
+                if let Some(color) = calendar.color() {
+                    let color_str = color.to_string();
+                    let color_id = glib::Quark::from_str(&color_str);
+                    css.push_str(&format!(
+                        ".color-{} {{ --event-bg-color: {}; }}\n",
+                        color_id.into_glib(),
+                        color_str
+                    ));
+                }
+            }
+
+            self.colors_provider.load_from_string(&css);
         }
 
         #[template_callback(function)]

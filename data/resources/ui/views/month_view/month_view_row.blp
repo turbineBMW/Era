@@ -2,6 +2,10 @@ using Gtk 4.0;
 using Adw 1;
 
 template $MonthViewRow: Widget {
+  // TODO: This is only necessary during dev
+  // overflow: hidden;
+  accessible-role: row;
+
   Overlay overlay {
     Grid {
       Separator above_1 {
@@ -115,6 +119,8 @@ template $MonthViewRow: Widget {
           row: 1;
         }
 
+        focusable: true;
+        accessible-role: grid_cell;
         hexpand: true;
         vexpand: true;
 
@@ -143,6 +149,8 @@ template $MonthViewRow: Widget {
           row: 1;
         }
 
+        focusable: true;
+        accessible-role: grid_cell;
         hexpand: true;
         vexpand: true;
 
@@ -171,6 +179,8 @@ template $MonthViewRow: Widget {
           row: 1;
         }
 
+        focusable: true;
+        accessible-role: grid_cell;
         hexpand: true;
         vexpand: true;
 
@@ -199,6 +209,8 @@ template $MonthViewRow: Widget {
           row: 1;
         }
 
+        focusable: true;
+        accessible-role: grid_cell;
         hexpand: true;
         vexpand: true;
 
@@ -227,6 +239,8 @@ template $MonthViewRow: Widget {
           row: 1;
         }
 
+        focusable: true;
+        accessible-role: grid_cell;
         hexpand: true;
         vexpand: true;
 
@@ -255,6 +269,8 @@ template $MonthViewRow: Widget {
           row: 1;
         }
 
+        focusable: true;
+        accessible-role: grid_cell;
         hexpand: true;
         vexpand: true;
 
@@ -283,6 +299,8 @@ template $MonthViewRow: Widget {
           row: 1;
         }
 
+        focusable: true;
+        accessible-role: grid_cell;
         hexpand: true;
         vexpand: true;
 

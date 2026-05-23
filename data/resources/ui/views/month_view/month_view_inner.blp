@@ -2,8 +2,14 @@ using Gtk 4.0;
 
 template $MonthViewInner: Widget {
   overflow: hidden;
+  accessible-role: grid;
+  focusable: true;
   hexpand: true;
   vexpand: true;
+
+  accessibility {
+    label: _("Month view");
+  }
 
   EventControllerScroll {
     flags: vertical | kinetic;

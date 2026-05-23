@@ -169,6 +169,11 @@ month-view-row {
         background-color: var(--bg-color);
     }
 
+    .cell:focus-visible {
+        outline: 2px solid var(--accent-bg-color);
+        outline-offset: -2px;
+    }
+
     separator.month-separator {
         --bg-color: rgb(
             from rgb(from var(--border-color) r g b / calc(alpha + 7.5%)) r g
@@ -176,6 +181,44 @@ month-view-row {
         );
 
         background-color: var(--bg-color);
+    }
+
+    event-widget {
+        background-color: color-mix(
+            in srgb,
+            var(--event-bg-color) 25%,
+            var(--view-bg-color)
+        );
+        color: var(--view-fg-color);
+        border-radius: 6px;
+
+        &:focus-visible {
+            outline: 2px solid var(--accent-bg-color);
+            outline-offset: -2px;
+        }
+
+        .edge {
+            background-color: var(--event-bg-color);
+            min-width: 6px;
+            border-radius: 6px 0 0 6px;
+        }
+    }
+
+    &.narrow {
+        event-widget {
+            label {
+                font-size: 82%;
+                margin: 2px;
+            }
+        }
+    }
+
+    &.medium {
+        event-widget {
+            label {
+                margin: 3px;
+            }
+        }
     }
 }
 
@@ -194,7 +237,6 @@ month-view-header {
 
         label.month {
             padding: 0 3px 0 3px;
-            font-size: 120%;
             font-weight: 700;
         }
     }

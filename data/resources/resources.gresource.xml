@@ -47,6 +47,7 @@
 
     <!-- Views -->
     <!-- Month View -->
+    <file compressed="true" preprocess="xml-stripblanks" alias="event_widget.ui">ui/views/month_view/event_widget.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="month_view.ui">ui/views/month_view/month_view.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="month_view_header.ui">ui/views/month_view/month_view_header.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="month_view_inner.ui">ui/views/month_view/month_view_inner.ui</file>

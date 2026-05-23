@@ -68,9 +68,9 @@ impl TryFrom<zvariant::OwnedValue> for ClockFormat {
 
 /// The first day of the week setting.
 #[derive(Debug, Default, Hash, Eq, PartialEq, Clone, Copy, glib::Enum)]
-#[enum_type(name = "FirstDayOfWeek")]
+#[enum_type(name = "DayOfWeek")]
 #[repr(i32)]
-pub enum FirstDayOfWeek {
+pub enum DayOfWeek {
     #[default]
     #[enum_value(name = "Monday", nick = "monday")]
     Monday,
@@ -88,7 +88,7 @@ pub enum FirstDayOfWeek {
     Sunday,
 }
 
-impl TryFrom<&zvariant::OwnedValue> for FirstDayOfWeek {
+impl TryFrom<&zvariant::OwnedValue> for DayOfWeek {
     type Error = zvariant::Error;
 
     fn try_from(value: &zvariant::OwnedValue) -> Result<Self, Self::Error> {
@@ -113,7 +113,7 @@ impl TryFrom<&zvariant::OwnedValue> for FirstDayOfWeek {
     }
 }
 
-impl TryFrom<zvariant::OwnedValue> for FirstDayOfWeek {
+impl TryFrom<zvariant::OwnedValue> for DayOfWeek {
     type Error = zvariant::Error;
 
     fn try_from(value: zvariant::OwnedValue) -> Result<Self, Self::Error> {
@@ -131,8 +131,8 @@ mod imp {
         #[property(get, builder(ClockFormat::default()))]
         pub(super) clock_format: Cell<ClockFormat>,
         /// The first day of the week setting.
-        #[property(get, builder(FirstDayOfWeek::default()))]
-        pub(super) first_day_of_week: Cell<FirstDayOfWeek>,
+        #[property(get, builder(DayOfWeek::default()))]
+        pub(super) first_day_of_week: Cell<DayOfWeek>,
     }
 
     #[glib::object_subclass]
@@ -185,7 +185,7 @@ mod imp {
             // Read the initial first day of the week value.
             let proxy_clone = proxy.clone();
             match proxy_clone
-                .read::<FirstDayOfWeek>(GNOME_DESKTOP_CALENDAR_NAMESPACE, WEEK_START_DAY_KEY)
+                .read::<DayOfWeek>(GNOME_DESKTOP_CALENDAR_NAMESPACE, WEEK_START_DAY_KEY)
                 .await
             {
                 Ok(first_day_of_week) => obj.set_first_day_of_week(first_day_of_week),
@@ -229,7 +229,7 @@ mod imp {
                         } else if namespace == GNOME_DESKTOP_CALENDAR_NAMESPACE
                             && key == WEEK_START_DAY_KEY
                         {
-                            match FirstDayOfWeek::try_from(setting.value()) {
+                            match DayOfWeek::try_from(setting.value()) {
                                 Ok(first_day_of_week) => {
                                     obj.set_first_day_of_week(first_day_of_week)
                                 }
@@ -266,7 +266,7 @@ impl SystemSettings {
     }
 
     /// Set the first day of the week setting.
-    fn set_first_day_of_week(&self, first_day_of_week: FirstDayOfWeek) {
+    fn set_first_day_of_week(&self, first_day_of_week: DayOfWeek) {
         if self.first_day_of_week() == first_day_of_week {
             return;
         }

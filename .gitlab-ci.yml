@@ -2,106 +2,105 @@
 # TODO: Switch to GNOME OS
 
 include:
-  - project: "GNOME/citemplates"
-    file: "templates/default-rules.yml"
-  - project: "GNOME/citemplates"
-    file: "flatpak/flatpak_ci_initiative.yml"
-  - project: "GNOME/citemplates"
-    file: "templates/basic-release.yml"
+    - project: "GNOME/citemplates"
+      file: "templates/default-rules.yml"
+    - project: "GNOME/citemplates"
+      file: "flatpak/flatpak_ci_initiative.yml"
+    - project: "GNOME/citemplates"
+      file: "templates/basic-release.yml"
 
 variables:
-  MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Kalendasom.Devel.json"
-  FLATPAK_MODULE: "kalendasom"
-  APP_ID: "io.gitlab.TitouanReal.Kalendasom.Devel"
-  RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
-  BUNDLE: "kalendasom-nightly.flatpak"
+    MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Kalendasom.Devel.json"
+    FLATPAK_MODULE: "kalendasom"
+    APP_ID: "io.gitlab.TitouanReal.Kalendasom.Devel"
+    RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
+    BUNDLE: "kalendasom-nightly.flatpak"
 
 stages:
-  - check
-  - build
-  - test
-  - deploy
+    - check
+    - build
+    - test
+    - deploy
 
 .flatpak-command: &flatpak-command
-  image: "${RUNTIME_IMAGE}"
-  interruptible: true
-  tags:
-    - flatpak
-  script:
-    - flatpak-builder --user --disable-rofiles-fuse --keep-build-dirs --stop-at=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
-    - flatpak build-finish --share=network flatpak_app
-    - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
+    image: "${RUNTIME_IMAGE}"
+    interruptible: true
+    tags:
+        - flatpak
+    script:
+        - flatpak-builder --user --disable-rofiles-fuse --keep-build-dirs --stop-at=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
+        - flatpak build-finish --share=network flatpak_app
+        - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
 
 cargo-fmt:
-  stage: "check"
-  image: "rust:slim"
-  interruptible: true
-  script:
-    - rustup component add rustfmt
-    - rustc -Vv && cargo -Vv
-    - cargo fmt --version
-    - cargo fmt --check
+    stage: "check"
+    image: "rust:slim"
+    interruptible: true
+    script:
+        - rustup component add rustfmt
+        - rustc -Vv && cargo -Vv
+        - cargo fmt --version
+        - cargo fmt --check
 
 cargo-clippy:
-  <<: *flatpak-command
-  stage: check
-  variables:
-    COMMAND: "cargo clippy -- -D warnings"
-  interruptible: true
+    <<: *flatpak-command
+    stage: check
+    variables:
+        COMMAND: "cargo clippy -- -D warnings"
+    interruptible: true
 
 blueprint-format:
-  stage: check
-  image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
-  interruptible: true
-  before_script:
-    - shopt -s globstar
-  script:
-    - blueprint-compiler format **/*.blp
+    stage: check
+    image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
+    interruptible: true
+    before_script:
+        - shopt -s globstar
+    script:
+        - blueprint-compiler format **/*.blp
 
 blueprint-lint:
-  stage: check
-  image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
-  when: manual
-  interruptible: true
-  before_script:
-    - shopt -s globstar
-  script:
-    - blueprint-compiler lint **/*.blp
-  allow_failure: true
+    stage: check
+    image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
+    when: manual
+    interruptible: true
+    before_script:
+        - shopt -s globstar
+    script:
+        - blueprint-compiler lint **/*.blp
+    allow_failure: true
 
 build@x86_64:
-  extends: ".flatpak@x86_64"
-  stage: build
-  after_script:
-    # Copy the metainfo file to the current directory.
-    - cp flatpak_app/files/share/metainfo/*.metainfo.xml .
-  artifacts:
-    paths:
-      - $BUNDLE
-      - "repo.tar"
-      - ".flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-logs/"
-      # Add the metainfo file for the corresponding test.
-      - "${APP_ID}.metainfo.xml"
+    extends: ".flatpak@x86_64"
+    stage: build
+    after_script:
+        # Copy the metainfo file to the current directory.
+        - cp flatpak_app/files/share/metainfo/*.metainfo.xml .
+    artifacts:
+        paths:
+            - $BUNDLE
+            - "repo.tar"
+            - ".flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-logs/"
+            # Add the metainfo file for the corresponding test.
+            - "${APP_ID}.metainfo.xml"
 
 build@aarch64:
-  extends: ".flatpak@aarch64"
-  stage: build
-  when: manual
+    extends: ".flatpak@aarch64"
+    stage: build
 
 # Validate the metainfo with Flathub's tool.
 lint-metainfo:
-  stage: test
-  image:
-    name: "ghcr.io/flathub/flatpak-builder-lint:latest"
-    entrypoint: [""]
-  variables:
-    METAINFO: "${APP_ID}.metainfo.xml"
-  interruptible: true
-  script:
-    # This tool has extra tests on top of appstreamcli and is required to pass for Flathub.
-    - flatpak-builder-lint appstream ${METAINFO}
-    # Test also with the pedantic and strict flags.
-    - appstreamcli validate --pedantic --explain --strict ${METAINFO}
-  needs: ["build@x86_64"]
+    stage: test
+    image:
+        name: "ghcr.io/flathub/flatpak-builder-lint:latest"
+        entrypoint: [""]
+    variables:
+        METAINFO: "${APP_ID}.metainfo.xml"
+    interruptible: true
+    script:
+        # This tool has extra tests on top of appstreamcli and is required to pass for Flathub.
+        - flatpak-builder-lint appstream ${METAINFO}
+        # Test also with the pedantic and strict flags.
+        - appstreamcli validate --pedantic --explain --strict ${METAINFO}
+    needs: ["build@x86_64"]
 # TODO: Also build for stable
 # TODO: Build and host docs

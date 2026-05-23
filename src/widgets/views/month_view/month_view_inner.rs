@@ -5,20 +5,23 @@ use std::{
 };
 
 use adw::{prelude::*, subclass::prelude::*};
-use glib::clone;
+use glib::{DateTime, clone};
 use gtk::Allocation;
 use jiff::ToSpan;
 
-use crate::{Application, system_settings::FirstDayOfWeek};
+use crate::{Application, system_settings::DayOfWeek, utils};
 
 use super::{
     MonthViewStyling,
     month_view_row::{self, MonthViewRow},
 };
 
-const NB_ROWS: i32 = 200;
-const MINIMUM_NB_ROWS_ABOVE: i32 = 5;
-const MINIMUM_NB_ROWS_BELOW: i32 = 5;
+// TODO: Reduce this (requires batch recycling)
+const NB_ROWS: i32 = 50;
+const MINIMUM_NB_ROWS_ABOVE: i32 = 10;
+// const ROWS_ABOVE_AFTER_RECYCLING: i32 = 10;
+const MINIMUM_NB_ROWS_BELOW: i32 = 10;
+// const ROWS_BELOW_AFTER_RECYCLING: i32 = 10;
 
 const MINIMUM_ROW_HEIGHT: i32 = month_view_row::MINIMUM_HEIGHT;
 const NATURAL_ROW_HEIGHT: i32 = month_view_row::NATURAL_HEIGHT;
@@ -75,7 +78,6 @@ mod imp {
     impl Default for MonthViewInner {
         fn default() -> Self {
             let rows = OnceCell::new();
-            rows.get_or_init(|| Mutex::new((0..NB_ROWS).map(|_i| MonthViewRow::new()).collect()));
 
             let now = Application::default().current_datetime();
             let year = Cell::new(now.year());
@@ -88,7 +90,7 @@ mod imp {
                 day,
                 styling: Default::default(),
                 rows,
-                scroll_offset: Cell::new(2 * NATURAL_ROW_HEIGHT),
+                scroll_offset: Cell::new(MINIMUM_NB_ROWS_ABOVE * NATURAL_ROW_HEIGHT),
                 scroll_animation: Default::default(),
                 pixels_waiting: Default::default(),
                 pixels_left: Default::default(),
@@ -122,17 +124,51 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
-            // TODO: Validate year/month/row?
+            assert!(
+                DateTime::from_utc(self.year.get(), self.month.get(), self.day.get(), 0, 0, 0.)
+                    .is_ok()
+            );
 
-            for row in self.rows().lock().unwrap().iter() {
-                row.insert_before(&*self.obj(), None::<&gtk::Widget>);
-                self.obj()
-                    .bind_property("styling", row, "styling")
-                    .sync_create()
-                    .build();
-            }
+            let application = Application::default();
+            let now = application.current_datetime();
+            let first_day_of_week = application.system_settings().first_day_of_week();
 
-            self.update_view_to_stored_date();
+            let a_day_in_first_row = DateTime::new(
+                &now.timezone(),
+                now.year(),
+                now.month(),
+                now.day_of_month(),
+                0,
+                0,
+                0.,
+            )
+            .expect("DateTime should be valid")
+            .add_weeks(-MINIMUM_NB_ROWS_ABOVE)
+            .expect("DateTime should be valid");
+
+            let first_day_of_timeframe =
+                utils::get_last_occurrence_of_weekday(a_day_in_first_row, first_day_of_week);
+
+            // Setup rows
+            self.rows.get_or_init(|| {
+                Mutex::new(
+                    (0..NB_ROWS)
+                        .map(|i| {
+                            let date = first_day_of_timeframe.add_weeks(i).unwrap();
+                            let row =
+                                MonthViewRow::new(date.year(), date.month(), date.day_of_month());
+
+                            row.insert_before(&*self.obj(), None::<&gtk::Widget>);
+                            self.obj()
+                                .bind_property("styling", &row, "styling")
+                                .sync_create()
+                                .build();
+
+                            row
+                        })
+                        .collect(),
+                )
+            });
 
             Application::default()
                 .system_settings()
@@ -153,6 +189,147 @@ mod imp {
     }
 
     impl WidgetImpl for MonthViewInner {
+        // TODO: Make this clearer
+        fn focus(&self, direction: gtk::DirectionType) -> bool {
+            let obj = self.obj();
+            let root = obj.root().unwrap();
+            let focused = root.focus();
+
+            // If focus is inside us, check if the focused row is still visible.
+            // If not, redirect focus to the first/last visible row.
+            if let Some(ref focused_widget) = focused
+                && focused_widget.is_ancestor(&*obj)
+            {
+                let still_visible = focused_widget
+                    .ancestor(MonthViewRow::static_type())
+                    .and_then(|row| {
+                        let row_widget = row.downcast_ref::<MonthViewRow>().unwrap();
+                        let bounds = row_widget.compute_bounds(&*obj)?;
+                        let row_top = bounds.y() as i32;
+                        let row_bottom = row_top + bounds.height() as i32;
+                        let view_height = obj.height();
+                        // Consider visible if any part is in view
+                        Some(row_bottom > 0 && row_top < view_height)
+                    })
+                    .unwrap_or(false);
+
+                if still_visible {
+                    match direction {
+                        gtk::DirectionType::Up | gtk::DirectionType::Down => {
+                            // Move to adjacent row, same column
+                            let current_row = focused_widget
+                                .ancestor(MonthViewRow::static_type())
+                                .unwrap()
+                                .downcast::<MonthViewRow>()
+                                .unwrap();
+                            let col = current_row.focused_column().unwrap_or(0);
+                            let rows = self.rows().lock().unwrap();
+                            if let Some(idx) = rows.iter().position(|r| *r == current_row) {
+                                let target_idx = if direction == gtk::DirectionType::Up {
+                                    if idx == 0 {
+                                        return false;
+                                    }
+                                    idx - 1
+                                } else {
+                                    if idx + 1 >= rows.len() {
+                                        return false;
+                                    }
+                                    idx + 1
+                                };
+                                let target_row = rows[target_idx].clone();
+                                drop(rows);
+                                self.scroll_row_into_view(&target_row);
+                                return target_row.focus_column(col);
+                            }
+                            return false;
+                        }
+                        gtk::DirectionType::Left => {
+                            // Get current row before any focus changes
+                            let current_row = focused_widget
+                                .ancestor(MonthViewRow::static_type())
+                                .unwrap()
+                                .downcast::<MonthViewRow>()
+                                .unwrap();
+                            // Let the row handle it internally
+                            if current_row.imp().focus(direction) {
+                                return true;
+                            }
+                            // Row couldn't handle it (at col 0): wrap to previous row, last
+                            // column
+                            let rows = self.rows().lock().unwrap();
+                            if let Some(idx) = rows.iter().position(|r| *r == current_row) {
+                                if idx == 0 {
+                                    return false;
+                                }
+                                let target_row = rows[idx - 1].clone();
+                                drop(rows);
+                                self.scroll_row_into_view(&target_row);
+                                return target_row.focus_column(6);
+                            }
+                            return false;
+                        }
+                        gtk::DirectionType::Right => {
+                            // Get current row before any focus changes
+                            let current_row = focused_widget
+                                .ancestor(MonthViewRow::static_type())
+                                .unwrap()
+                                .downcast::<MonthViewRow>()
+                                .unwrap();
+                            // Let the row handle it internally
+                            if current_row.imp().focus(direction) {
+                                return true;
+                            }
+                            // Row couldn't handle it (at col 6): wrap to next row, first column
+                            let rows = self.rows().lock().unwrap();
+                            if let Some(idx) = rows.iter().position(|r| *r == current_row) {
+                                if idx + 1 >= rows.len() {
+                                    return false;
+                                }
+                                let target_row = rows[idx + 1].clone();
+                                drop(rows);
+                                self.scroll_row_into_view(&target_row);
+                                return target_row.focus_column(0);
+                            }
+                            return false;
+                        }
+                        _ => {
+                            let result = self.parent_focus(direction);
+                            if result
+                                && let Some(new_focused) = root.focus()
+                                && let Some(row) = new_focused.ancestor(MonthViewRow::static_type())
+                            {
+                                let row = row.downcast::<MonthViewRow>().unwrap();
+                                self.scroll_row_into_view(&row);
+                            }
+
+                            return result;
+                        }
+                    }
+
+                    // Focused row is no longer visible — fall through to re-enter logic
+                }
+            }
+
+            // Focus is entering the view from outside, or the focused row scrolled away
+            match direction {
+                gtk::DirectionType::TabForward => {
+                    if let Some(row) = self.first_visible_row() {
+                        self.scroll_row_into_view(&row);
+                        return row.grab_focus();
+                    }
+                    false
+                }
+                gtk::DirectionType::TabBackward => {
+                    if let Some(row) = self.last_visible_row() {
+                        self.scroll_row_into_view(&row);
+                        return row.grab_focus();
+                    }
+                    false
+                }
+                _ => self.parent_focus(direction),
+            }
+        }
+
         fn size_allocate(&self, width: i32, _height: i32, baseline: i32) {
             let row_height = self.row_height();
 
@@ -202,20 +379,80 @@ mod imp {
             (NATURAL_ROW_HEIGHT as f64 * self.dynamic_zoom_level.get()) as i32
         }
 
+        /// Returns the first row whose top edge is visible (or partially visible).
+        fn first_visible_row(&self) -> Option<MonthViewRow> {
+            let scroll_offset = self.scroll_offset.get();
+            let row_height = self.row_height();
+            let view_height = self.obj().height();
+            if row_height <= 0 || view_height <= 0 {
+                return None;
+            }
+            let rows = self.rows().lock().unwrap();
+            // First row index whose bottom is below the top of the view
+            let first_idx = (scroll_offset / row_height) as usize;
+            rows.get(first_idx).cloned()
+        }
+
+        /// Returns the last row that is at least partially visible.
+        fn last_visible_row(&self) -> Option<MonthViewRow> {
+            let scroll_offset = self.scroll_offset.get();
+            let row_height = self.row_height();
+            let view_height = self.obj().height();
+            if row_height <= 0 || view_height <= 0 {
+                return None;
+            }
+            let rows = self.rows().lock().unwrap();
+            let last_idx = ((scroll_offset + view_height - 1) / row_height) as usize;
+            let last_idx = last_idx.min(rows.len().saturating_sub(1));
+            rows.get(last_idx).cloned()
+        }
+
+        /// Adjusts scroll offset so the given row is fully visible, with animation.
+        fn scroll_row_into_view(&self, row: &MonthViewRow) {
+            let row_height = self.row_height();
+            let scroll_offset = self.scroll_offset.get();
+            let view_height = self.obj().height();
+            let rows = self.rows().lock().unwrap();
+            if let Some(idx) = rows.iter().position(|r| r == row) {
+                let row_top = idx as i32 * row_height;
+                let row_bottom = row_top + row_height;
+                if row_top < scroll_offset {
+                    // Row is above view, scroll up
+                    let dy = (row_top - scroll_offset) as f64;
+                    drop(rows);
+                    self.start_scroll_animation(dy);
+                } else if row_bottom > scroll_offset + view_height {
+                    // Row is below view, scroll down so row bottom aligns with view bottom
+                    let dy = (row_bottom - (scroll_offset + view_height)) as f64;
+                    drop(rows);
+                    self.start_scroll_animation(dy);
+                }
+            }
+        }
+
         /// Updates the view to the currently stored date.
         fn update_view_to_stored_date(&self) {
-            let base_date = jiff::civil::Date::new(
-                self.year.get() as i16,
-                self.month.get() as i8,
-                self.day.get() as i8,
+            let application = Application::default();
+            let timezone = application.current_datetime().timezone();
+
+            let a_day_in_first_row = DateTime::new(
+                &timezone,
+                self.year.get(),
+                self.month.get(),
+                self.day.get(),
+                0,
+                0,
+                0.,
             )
-            .unwrap()
-            .checked_sub(MINIMUM_NB_ROWS_ABOVE.weeks())
-            .unwrap();
+            .expect("DateTime should be valid")
+            .add_weeks(-MINIMUM_NB_ROWS_ABOVE)
+            .expect("DateTime should be valid");
 
             for (i, row) in self.rows().lock().unwrap().iter().enumerate() {
-                let date = base_date.checked_add((i as i32).weeks()).unwrap();
-                row.set_year_month_day(date.year() as i32, date.month() as i32, date.day() as i32);
+                let date = a_day_in_first_row
+                    .add_weeks(i as i32)
+                    .expect("DateTime should be valid");
+                row.set_year_month_day(date.year(), date.month(), date.day_of_month());
             }
 
             let row_height = self.row_height();
@@ -240,6 +477,7 @@ mod imp {
             // Recycle a row if necessary and set the new scroll offset
             // TODO: Recycle multiple rows if needed
             if scroll_offset < top_threshold {
+                // Take the last row and move it to the top
                 self.scroll_offset.set(scroll_offset + row_height);
 
                 let first_row = rows
@@ -264,6 +502,7 @@ mod imp {
 
                 rows.insert(0, last_row);
             } else if scroll_offset + height > bottom_threshold {
+                // Take the first row and move it to the bottom
                 self.scroll_offset.set(scroll_offset - row_height);
 
                 let last_row = rows
@@ -314,13 +553,13 @@ mod imp {
             let date = jiff::civil::Date::new(year as i16, month as i8, day as i8).unwrap();
 
             let base = match Application::default().system_settings().first_day_of_week() {
-                FirstDayOfWeek::Monday => 1,
-                FirstDayOfWeek::Tuesday => 2,
-                FirstDayOfWeek::Wednesday => 3,
-                FirstDayOfWeek::Thursday => 4,
-                FirstDayOfWeek::Friday => 5,
-                FirstDayOfWeek::Saturday => 6,
-                FirstDayOfWeek::Sunday => 7,
+                DayOfWeek::Monday => 1,
+                DayOfWeek::Tuesday => 2,
+                DayOfWeek::Wednesday => 3,
+                DayOfWeek::Thursday => 4,
+                DayOfWeek::Friday => 5,
+                DayOfWeek::Saturday => 6,
+                DayOfWeek::Sunday => 7,
             };
             let offset = match date.weekday() {
                 jiff::civil::Weekday::Monday => 1,

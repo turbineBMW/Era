@@ -4,7 +4,7 @@ use clepsydre::{AttendeeRole, AttendeeType, ParticipationStatus};
 use gettextrs::gettext;
 use glib::Object;
 
-use crate::system_settings::FirstDayOfWeek;
+use crate::system_settings::DayOfWeek;
 
 /// Struct used as a collection of template callbacks.
 pub struct TemplateCallbacks {}
@@ -110,7 +110,24 @@ impl TemplateCallbacks {
 
     /// Returns the abbreviation of the day.
     #[template_callback]
-    pub fn day_abbreviation(first_day_of_week: FirstDayOfWeek, offset: i32) -> String {
+    pub fn day_name(first_day_of_week: DayOfWeek, offset: i32) -> String {
+        let base: i32 = first_day_of_week as i32;
+        let day = (base + offset) % 7;
+        match day {
+            1 => gettext("monday"),
+            2 => gettext("tuesday"),
+            3 => gettext("wednesday"),
+            4 => gettext("thursday"),
+            5 => gettext("friday"),
+            6 => gettext("saturday"),
+            0 => gettext("sunday"),
+            _ => panic!("Invalid day number: {day}"),
+        }
+    }
+
+    /// Returns the abbreviation of the day.
+    #[template_callback]
+    pub fn day_abbreviation(first_day_of_week: DayOfWeek, offset: i32) -> String {
         let base: i32 = first_day_of_week as i32;
         let day = (base + offset) % 7;
         match day {
