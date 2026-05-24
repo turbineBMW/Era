@@ -86,6 +86,7 @@ build@x86_64:
 build@aarch64:
     extends: ".flatpak@aarch64"
     stage: build
+    when: manual
 
 # Validate the metainfo with Flathub's tool.
 lint-metainfo:
