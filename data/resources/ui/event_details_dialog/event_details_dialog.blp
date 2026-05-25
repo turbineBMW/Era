@@ -127,9 +127,10 @@ template $EventDetailsDialog: Adw.Dialog {
             }
 
             Adw.PreferencesGroup {
-              visible: bind $is_some(template.event as <Clepsydre.Event>.organizer);
+              visible: bind $not($none_of_three(organizer.visible, participants.visible, resources.visible) as <bool>);
 
-              Adw.ActionRow {
+              Adw.ActionRow organizer {
+                visible: bind $is_some(template.event as <Clepsydre.Event>.organizer);
                 title: _("Organizer");
                 subtitle: bind template.event as <Clepsydre.Event>.organizer.name;
 
@@ -138,14 +139,16 @@ template $EventDetailsDialog: Adw.Dialog {
                 ]
               }
 
-              $AttendeeListRow {
+              $AttendeeListRow participants {
+                visible: bind $not($is_zero(participants.number_of_attendees as <int>) as <bool>) as <bool>;
                 title: _("Participants");
                 event: bind template.event;
                 attendee-type-selection: individual | group | unknown;
                 activated => $open_attendees_details(template);
               }
 
-              $AttendeeListRow {
+              $AttendeeListRow resources {
+                visible: bind $not($is_zero(resources.number_of_attendees as <int>) as <bool>) as <bool>;
                 title: _("Resources");
                 event: bind template.event;
                 attendee-type-selection: resource | room;
@@ -173,8 +176,8 @@ template $EventDetailsDialog: Adw.Dialog {
                 template.event as <Clepsydre.Event>.has-recurrence,
               );
 
-              Label {
-                label: _("This event has recurrence properties. Such events are currently not editable in this app.");
+              Adw.ActionRow {
+                title: _("This event has recurrence properties. Such events are currently not editable in this app.");
 
                 styles [
                   "error",

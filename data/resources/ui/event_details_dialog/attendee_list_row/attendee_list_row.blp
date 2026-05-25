@@ -20,7 +20,7 @@ template $AttendeeListRow: Adw.PreferencesRow {
       }
 
       Label {
-        label: bind $number_of_attendees(template.event, template.attendee-type-selection);
+        label: bind template.number_of_attendees;
       }
 
       Image {

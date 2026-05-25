@@ -21,10 +21,12 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/attendee_list_row.ui")]
     #[properties(wrapper_type = super::AttendeeListRow)]
     pub struct AttendeeListRow {
-        #[property(get, set, nullable)]
+        #[property(get, set = Self::set_event)]
         event: RefCell<Option<Event>>,
         #[property(get, set)]
         attendee_type_selection: Cell<AttendeeTypeSelection>,
+        #[property(get)]
+        number_of_attendees: Cell<u32>,
     }
 
     #[glib::object_subclass]
@@ -57,7 +59,9 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
-            self.obj().connect_parent_notify(|obj| {
+            let obj = self.obj();
+
+            obj.connect_parent_notify(|obj| {
                 if let Some(listbox) = obj.parent().and_downcast_ref::<gtk::ListBox>() {
                     listbox.connect_row_activated(clone!(
                         #[weak]
@@ -79,20 +83,43 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl AttendeeListRow {
-        #[template_callback]
-        fn number_of_attendees(&self) -> String {
-            let Some(event) = self.obj().event() else {
-                return String::new();
+        fn set_event(&self, event: Option<Event>) {
+            if *self.event.borrow() == event {
+                return;
+            }
+
+            self.event.replace(event.clone());
+            self.obj().notify_event();
+
+            self.update_number_of_attendees();
+
+            if let Some(event) = event.as_ref() {
+                event.attendees().unwrap().connect_items_changed(clone!(
+                    #[weak(rename_to=imp)]
+                    self,
+                    move |_, _, _, _| {
+                        imp.update_number_of_attendees();
+                    }
+                ));
+            }
+        }
+
+        fn update_number_of_attendees(&self) {
+            let n = if let Some(event) = self.event.borrow().as_ref() {
+                let attendees = event.attendees().unwrap();
+                let filter = AttendeeTypeFilter::new(self.obj().attendee_type_selection());
+                let filtered_attendees = gtk::FilterListModel::new(Some(attendees), Some(filter));
+                filtered_attendees.n_items()
+            } else {
+                0
             };
 
-            let Some(attendees) = event.attendees() else {
-                return "0".to_string();
-            };
+            if self.number_of_attendees.get() == n {
+                return;
+            }
 
-            let filter = AttendeeTypeFilter::new(self.obj().attendee_type_selection());
-            let filtered_attendees = gtk::FilterListModel::new(Some(attendees), Some(filter));
-
-            format!("{}", filtered_attendees.n_items())
+            self.number_of_attendees.set(n);
+            self.obj().notify_number_of_attendees();
         }
     }
 }
