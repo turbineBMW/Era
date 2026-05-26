@@ -80,7 +80,6 @@ template $KalendasomWindow: Adw.ApplicationWindow {
 
                   setters {
                     year_view.styling: medium;
-                    month_view.styling: medium;
                   }
                 }
 
@@ -447,9 +446,22 @@ template $KalendasomWindow: Adw.ApplicationWindow {
         }
 
         [month_view]
-        $MonthView month_view {
-          styling: narrow;
-          // day_clicked => $open_days_view(template);
+        Adw.BreakpointBin {
+          width-request: 100;
+          height-request: 100;
+
+          Adw.Breakpoint {
+            condition ("min-width: 720sp")
+
+            setters {
+              month_view.styling: medium;
+            }
+          }
+
+          $MonthView month_view {
+            styling: narrow;
+            // day_clicked => $open_days_view(template);
+          }
         }
       };
     }
