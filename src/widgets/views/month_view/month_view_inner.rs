@@ -1,5 +1,6 @@
 use std::{
     cell::{Cell, OnceCell, RefCell},
+    cmp::max,
     mem,
     sync::Mutex,
 };
@@ -11,20 +12,21 @@ use jiff::ToSpan;
 
 use crate::{Application, system_settings::DayOfWeek, utils};
 
-use super::{
-    MonthViewStyling,
-    month_view_row::{self, MonthViewRow},
-};
+use super::{MonthViewStyling, month_view_row::MonthViewRow};
 
 // TODO: Reduce this (requires batch recycling)
 const NB_ROWS: i32 = 50;
 const MINIMUM_NB_ROWS_ABOVE: i32 = 10;
+const NB_ROWS_ABOVE_AT_STARTUP: i32 = MINIMUM_NB_ROWS_ABOVE;
 // const ROWS_ABOVE_AFTER_RECYCLING: i32 = 10;
 const MINIMUM_NB_ROWS_BELOW: i32 = 10;
 // const ROWS_BELOW_AFTER_RECYCLING: i32 = 10;
-
-const MINIMUM_ROW_HEIGHT: i32 = month_view_row::MINIMUM_HEIGHT;
-const NATURAL_ROW_HEIGHT: i32 = month_view_row::NATURAL_HEIGHT;
+/// Minimum height of a row in pixels. The row itself can return a minimum height higher than this,
+/// and size_allocate will respect it, but size_allocate will never allocate them less than this.
+const MINIMUM_ROW_HEIGHT: i32 = 10;
+/// Maximum height of a row in pixels.
+// TODO: Should we allow more only in the case the row reports a minimum higher than this?
+const MAXIMUM_ROW_HEIGHT: i32 = 300;
 
 const VELOCITY_THRESHOLD_TO_RETURN: f64 = 300.;
 const VELOCITY_THRESHOLD_TO_SNAP: f64 = 400.;
@@ -35,10 +37,21 @@ const SECOND_STAGE_DIVISOR: f64 = 2.5;
 const DISCRETE_SCROLL_DISTANCE_THRESHOLD_TO_SNAP: f64 = 100.;
 const DISCRETE_SCROLL_DISTANCE_THRESHOLD_TO_ROW: f64 = 50.;
 
+#[derive(Debug, Clone, Copy, Default)]
+enum PositionDescription {
+    /// The default value when the month view is created
+    #[default]
+    Init,
+    /// An absolute scroll offset
+    ScrollOffset(i32),
+    /// A point is fixed
+    OffsetOfFixedPoint(i32),
+}
+
 mod imp {
     use super::*;
 
-    #[derive(Debug, gtk::CompositeTemplate, glib::Properties)]
+    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
     #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/month_view_inner.ui")]
     #[properties(wrapper_type = super::MonthViewInner)]
     pub struct MonthViewInner {
@@ -54,9 +67,26 @@ mod imp {
         /// Rows contained in the view.
         rows: OnceCell<Mutex<Vec<MonthViewRow>>>,
 
-        /// Offset of the top of the first row. This is also the number of pixels above the
+        /// Last offset of the top of the first row. This is also the number of pixels above the
         /// view that are not visible.
-        scroll_offset: Cell<i32>,
+        last_scroll_offset: Cell<i32>,
+        /// Describes the next position of the view. This is first set to init. Then it can either
+        /// be an absolute scroll_offset (when scrolling happens), or a fixed point (when zoom
+        /// occurs).
+        /// This is enough information for size_allocate to do its job, but it is not enough to
+        /// know what will be the first visible row.
+        /// This value is only set in stone once size_allocate is called. Before that point, it can
+        /// be set many times.
+        next_position: Cell<PositionDescription>,
+
+        /// The height that was given to each row during the last size_allocate.
+        last_row_height: Cell<i32>,
+        /// The desired height to give in the next size_allocate. It shouldn't be set to a value
+        /// bigger than MAXIMUM_ROW_HEIGHT. size_allocate might give the rows more height than this,
+        /// to respect the rows measurements and MINIMUM_ROW_HEIGHT.
+        /// This value is only set in stone once size_allocate is called. Before that point, it can
+        /// be set many times.
+        desired_next_row_height: Cell<i32>,
 
         /// Currently running scroll animation, if any.
         scroll_animation: RefCell<Option<adw::TimedAnimation>>,
@@ -68,37 +98,9 @@ mod imp {
 
         /// Y position of the pointer to use for zooming with CTRL+scroll.
         pointer_y: Cell<Option<f64>>,
-        /// Zoom level updated dynamically during a zoom operation.
-        dynamic_zoom_level: Cell<f64>,
         /// Zoom level updated from the dynamic one when a zoom operation begins. It serves as a
         /// base reference when smooth zooming is occurring.
-        static_zoom_level: Cell<f64>,
-    }
-
-    impl Default for MonthViewInner {
-        fn default() -> Self {
-            let rows = OnceCell::new();
-
-            let now = Application::default().current_datetime();
-            let year = Cell::new(now.year());
-            let month = Cell::new(now.month());
-            let day = Cell::new(now.day_of_month());
-
-            Self {
-                year,
-                month,
-                day,
-                styling: Default::default(),
-                rows,
-                scroll_offset: Cell::new(MINIMUM_NB_ROWS_ABOVE * NATURAL_ROW_HEIGHT),
-                scroll_animation: Default::default(),
-                pixels_waiting: Default::default(),
-                pixels_left: Default::default(),
-                pointer_y: Default::default(),
-                dynamic_zoom_level: Cell::new(1.),
-                static_zoom_level: Cell::new(1.),
-            }
-        }
+        last_scale_delta: Cell<f64>,
     }
 
     #[glib::object_subclass]
@@ -124,13 +126,13 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
-            assert!(
-                DateTime::from_utc(self.year.get(), self.month.get(), self.day.get(), 0, 0, 0.)
-                    .is_ok()
-            );
-
             let application = Application::default();
             let now = application.current_datetime();
+
+            self.year.set(now.year());
+            self.month.set(now.month());
+            self.day.set(now.day_of_month());
+
             let first_day_of_week = application.system_settings().first_day_of_week();
 
             let a_day_in_first_row = DateTime::new(
@@ -143,7 +145,7 @@ mod imp {
                 0.,
             )
             .expect("DateTime should be valid")
-            .add_weeks(-MINIMUM_NB_ROWS_ABOVE)
+            .add_weeks(-NB_ROWS_ABOVE_AT_STARTUP)
             .expect("DateTime should be valid");
 
             let first_day_of_timeframe =
@@ -313,35 +315,62 @@ mod imp {
             // Focus is entering the view from outside, or the focused row scrolled away
             match direction {
                 gtk::DirectionType::TabForward => {
-                    if let Some(row) = self.first_visible_row() {
-                        self.scroll_row_into_view(&row);
-                        return row.grab_focus();
-                    }
-                    false
+                    let row = self.first_visible_row();
+                    self.scroll_row_into_view(&row);
+                    row.grab_focus()
                 }
                 gtk::DirectionType::TabBackward => {
-                    if let Some(row) = self.last_visible_row() {
-                        self.scroll_row_into_view(&row);
-                        return row.grab_focus();
-                    }
-                    false
+                    let row = self.last_visible_row();
+                    self.scroll_row_into_view(&row);
+                    row.grab_focus()
                 }
                 _ => self.parent_focus(direction),
             }
         }
 
         fn size_allocate(&self, width: i32, _height: i32, baseline: i32) {
-            let row_height = self.row_height();
+            let last_scroll_offset = self.last_scroll_offset.get();
+            let last_row_height = self.last_row_height.get();
+            let desired_next_row_height = self.desired_next_row_height.get();
+
+            // TODO: Should we use the natural one?
+            let (minimum_row_height, _natural_row_height, ..) = self
+                .rows()
+                .lock()
+                .unwrap()
+                .first()
+                .unwrap()
+                .measure(gtk::Orientation::Vertical, width);
+
+            let floored_minimum_row_height = max(minimum_row_height, MINIMUM_ROW_HEIGHT);
+
+            let row_height =
+                desired_next_row_height.clamp(floored_minimum_row_height, MAXIMUM_ROW_HEIGHT);
+
+            let scroll_offset = match self.next_position.get() {
+                PositionDescription::Init => NB_ROWS_ABOVE_AT_STARTUP * row_height,
+                PositionDescription::ScrollOffset(scroll_offset) => scroll_offset,
+                PositionDescription::OffsetOfFixedPoint(offset_of_fixed_point) => {
+                    let new_offset_of_fixed_point =
+                        (offset_of_fixed_point as f64 * row_height as f64 / last_row_height as f64)
+                            as i32;
+                    last_scroll_offset + new_offset_of_fixed_point - offset_of_fixed_point
+                }
+            };
+
+            self.last_scroll_offset.set(scroll_offset);
+            self.next_position
+                .set(PositionDescription::ScrollOffset(scroll_offset));
+            self.last_row_height.set(row_height);
+            self.desired_next_row_height.set(row_height);
 
             for (i, row) in self.rows().lock().unwrap().iter().enumerate() {
-                let allocation = Allocation::new(
-                    0,
-                    -self.scroll_offset.get() + i as i32 * row_height,
-                    width,
-                    row_height,
-                );
+                let allocation =
+                    Allocation::new(0, -scroll_offset + i as i32 * row_height, width, row_height);
                 row.size_allocate(&allocation, baseline);
             }
+
+            self.update_date();
         }
     }
 
@@ -374,59 +403,50 @@ mod imp {
             self.rows.get().expect("Rows should be initialized")
         }
 
-        /// Gets the row height. We assume all rows have the same height.
-        fn row_height(&self) -> i32 {
-            (NATURAL_ROW_HEIGHT as f64 * self.dynamic_zoom_level.get()) as i32
-        }
-
-        /// Returns the first row whose top edge is visible (or partially visible).
-        fn first_visible_row(&self) -> Option<MonthViewRow> {
-            let scroll_offset = self.scroll_offset.get();
-            let row_height = self.row_height();
-            let view_height = self.obj().height();
-            if row_height <= 0 || view_height <= 0 {
-                return None;
-            }
+        /// Returns the first row that is at least partially visible.
+        fn first_visible_row(&self) -> MonthViewRow {
+            let scroll_offset = self.last_scroll_offset.get();
+            let row_height = self.last_row_height.get();
             let rows = self.rows().lock().unwrap();
-            // First row index whose bottom is below the top of the view
             let first_idx = (scroll_offset / row_height) as usize;
-            rows.get(first_idx).cloned()
+            rows[first_idx].clone()
         }
 
         /// Returns the last row that is at least partially visible.
-        fn last_visible_row(&self) -> Option<MonthViewRow> {
-            let scroll_offset = self.scroll_offset.get();
-            let row_height = self.row_height();
+        fn last_visible_row(&self) -> MonthViewRow {
+            let scroll_offset = self.last_scroll_offset.get();
+            let row_height = self.last_row_height.get();
             let view_height = self.obj().height();
-            if row_height <= 0 || view_height <= 0 {
-                return None;
-            }
             let rows = self.rows().lock().unwrap();
             let last_idx = ((scroll_offset + view_height - 1) / row_height) as usize;
-            let last_idx = last_idx.min(rows.len().saturating_sub(1));
-            rows.get(last_idx).cloned()
+            rows[last_idx].clone()
         }
 
         /// Adjusts scroll offset so the given row is fully visible, with animation.
+        // TODO: The row might be higher than the view. In that case, we should have a function to
+        // snap to the top or to the bottom.
         fn scroll_row_into_view(&self, row: &MonthViewRow) {
-            let row_height = self.row_height();
-            let scroll_offset = self.scroll_offset.get();
+            let last_row_height = self.last_row_height.get();
+            let last_scroll_offset = self.last_scroll_offset.get();
             let view_height = self.obj().height();
             let rows = self.rows().lock().unwrap();
-            if let Some(idx) = rows.iter().position(|r| r == row) {
-                let row_top = idx as i32 * row_height;
-                let row_bottom = row_top + row_height;
-                if row_top < scroll_offset {
-                    // Row is above view, scroll up
-                    let dy = (row_top - scroll_offset) as f64;
-                    drop(rows);
-                    self.start_scroll_animation(dy);
-                } else if row_bottom > scroll_offset + view_height {
-                    // Row is below view, scroll down so row bottom aligns with view bottom
-                    let dy = (row_bottom - (scroll_offset + view_height)) as f64;
-                    drop(rows);
-                    self.start_scroll_animation(dy);
-                }
+
+            let idx = rows
+                .iter()
+                .position(|r| r == row)
+                .expect("Row should be found");
+            let row_top = idx as i32 * last_row_height;
+            let row_bottom = row_top + last_row_height;
+            if row_top < last_scroll_offset {
+                // Row is above view, scroll up
+                let dy = (row_top - last_scroll_offset) as f64;
+                drop(rows);
+                self.start_scroll_animation(dy);
+            } else if row_bottom > last_scroll_offset + view_height {
+                // Row is below view, scroll down so row bottom aligns with view bottom
+                let dy = (row_bottom - (last_scroll_offset + view_height)) as f64;
+                drop(rows);
+                self.start_scroll_animation(dy);
             }
         }
 
@@ -455,100 +475,108 @@ mod imp {
                 row.set_year_month_day(date.year(), date.month(), date.day_of_month());
             }
 
-            let row_height = self.row_height();
-            let current_offset = self.scroll_offset.get();
+            let row_height = self.last_row_height.get();
+            let current_offset = self.last_scroll_offset.get();
             self.scroll_offset_add(MINIMUM_NB_ROWS_ABOVE * row_height - current_offset);
         }
 
-        /// Changes the offset to the given one.
+        /// Sets the next position of the view.
         ///
         /// If necessary, rows will be recycled and the offset will get adjusted. Year/month/day
         /// properties will be updated.
-        fn set_scroll_offset(&self, scroll_offset: i32) {
+        fn set_next_position(&self, next_position: PositionDescription) {
             let height = self.obj().height();
             let mut rows = self.rows().lock().unwrap();
 
-            let row_height = self.row_height();
-            // The limit of the top offset before recycling happens
-            let top_threshold = row_height * MINIMUM_NB_ROWS_ABOVE;
-            // The limit of the bottom offset before recycling happens
-            let bottom_threshold = (NB_ROWS - MINIMUM_NB_ROWS_BELOW) * row_height;
+            match next_position {
+                PositionDescription::Init => panic!("Next position should not be set to init"),
+                PositionDescription::ScrollOffset(scroll_offset) => {
+                    let row_height = self.last_row_height.get();
+                    // The limit of the top offset before recycling happens
+                    let top_threshold = row_height * MINIMUM_NB_ROWS_ABOVE;
+                    // The limit of the bottom offset before recycling happens
+                    let bottom_threshold = (NB_ROWS - MINIMUM_NB_ROWS_BELOW) * row_height;
 
-            // Recycle a row if necessary and set the new scroll offset
-            // TODO: Recycle multiple rows if needed
-            if scroll_offset < top_threshold {
-                // Take the last row and move it to the top
-                self.scroll_offset.set(scroll_offset + row_height);
+                    // Recycle a row if necessary and set the new scroll offset
+                    // TODO: Recycle multiple rows if needed
+                    if scroll_offset < top_threshold {
+                        // Take the last row and move it to the top
+                        self.next_position.set(PositionDescription::ScrollOffset(
+                            scroll_offset + row_height,
+                        ));
 
-                let first_row = rows
-                    .first()
-                    .expect("There should be at least one row")
-                    .to_owned();
-                let first_row_date = jiff::civil::Date::new(
-                    first_row.year() as i16,
-                    first_row.month() as i8,
-                    first_row.day() as i8,
-                )
-                .unwrap();
-                let new_last_row_date = first_row_date.checked_sub(1.week()).unwrap();
+                        let first_row = rows
+                            .first()
+                            .expect("There should be at least one row")
+                            .to_owned();
+                        let first_row_date = jiff::civil::Date::new(
+                            first_row.year() as i16,
+                            first_row.month() as i8,
+                            first_row.day() as i8,
+                        )
+                        .unwrap();
+                        let new_last_row_date = first_row_date.checked_sub(1.week()).unwrap();
 
-                let last_row = rows.pop().unwrap();
+                        let last_row = rows.pop().unwrap();
 
-                last_row.set_year_month_day(
-                    new_last_row_date.year() as i32,
-                    new_last_row_date.month() as i32,
-                    new_last_row_date.day() as i32,
-                );
+                        last_row.set_year_month_day(
+                            new_last_row_date.year() as i32,
+                            new_last_row_date.month() as i32,
+                            new_last_row_date.day() as i32,
+                        );
 
-                rows.insert(0, last_row);
-            } else if scroll_offset + height > bottom_threshold {
-                // Take the first row and move it to the bottom
-                self.scroll_offset.set(scroll_offset - row_height);
+                        rows.insert(0, last_row);
+                    } else if scroll_offset + height > bottom_threshold {
+                        // Take the first row and move it to the bottom
+                        self.next_position.set(PositionDescription::ScrollOffset(
+                            scroll_offset - row_height,
+                        ));
 
-                let last_row = rows
-                    .last()
-                    .expect("There should be at least one row")
-                    .clone();
-                let last_row_date = jiff::civil::Date::new(
-                    last_row.year() as i16,
-                    last_row.month() as i8,
-                    last_row.day() as i8,
-                )
-                .unwrap();
-                let new_first_row_date = last_row_date.checked_add(1.week()).unwrap();
+                        let last_row = rows
+                            .last()
+                            .expect("There should be at least one row")
+                            .clone();
+                        let last_row_date = jiff::civil::Date::new(
+                            last_row.year() as i16,
+                            last_row.month() as i8,
+                            last_row.day() as i8,
+                        )
+                        .unwrap();
+                        let new_first_row_date = last_row_date.checked_add(1.week()).unwrap();
 
-                let first_row = rows.remove(0);
-                first_row.set_year_month_day(
-                    new_first_row_date.year() as i32,
-                    new_first_row_date.month() as i32,
-                    new_first_row_date.day() as i32,
-                );
+                        let first_row = rows.remove(0);
+                        first_row.set_year_month_day(
+                            new_first_row_date.year() as i32,
+                            new_first_row_date.month() as i32,
+                            new_first_row_date.day() as i32,
+                        );
 
-                rows.push(first_row);
-            } else {
-                self.scroll_offset.set(scroll_offset);
+                        rows.push(first_row);
+                    } else {
+                        self.next_position
+                            .set(PositionDescription::ScrollOffset(scroll_offset));
+                    }
+                }
+                PositionDescription::OffsetOfFixedPoint(offset_of_fixed_point) => {
+                    // TODO: Recycle if necessary
+                    self.next_position
+                        .set(PositionDescription::OffsetOfFixedPoint(
+                            offset_of_fixed_point,
+                        ))
+                }
             }
-
             mem::drop(rows);
-
-            self.update_date();
 
             self.obj().queue_allocate();
         }
 
         /// Updates the view's date to the one of the most top visible row.
         fn update_date(&self) {
-            let rows = self.rows().lock().unwrap();
-            let row_height = self.row_height();
+            let first_visible_row = self.first_visible_row();
 
-            let highest_visible_row = rows
-                .get((self.scroll_offset.get() / row_height) as usize)
-                .unwrap()
-                .clone();
-
-            let year = highest_visible_row.year();
-            let month = highest_visible_row.month();
-            let day = highest_visible_row.day();
+            let year = first_visible_row.year();
+            let month = first_visible_row.month();
+            let day = first_visible_row.day();
 
             let date = jiff::civil::Date::new(year as i16, month as i8, day as i8).unwrap();
 
@@ -599,9 +627,15 @@ mod imp {
         /// If necessary, rows will be recycled and the offset will get adjusted. Year/month/day
         /// properties will be updated.
         fn scroll_offset_add(&self, dy: i32) {
-            // The desired offset of the top of the first row
-            let top_offset = self.scroll_offset.get() + dy;
-            self.set_scroll_offset(top_offset);
+            match self.next_position.get() {
+                PositionDescription::Init => panic!("Next position should not be set to init"),
+                PositionDescription::ScrollOffset(scroll_offset) => {
+                    self.set_next_position(PositionDescription::ScrollOffset(scroll_offset + dy))
+                }
+                PositionDescription::OffsetOfFixedPoint(_offset_of_fixed_point) => {
+                    // TODO: Define priorities
+                }
+            }
         }
 
         /// Starts a scroll animation.
@@ -664,21 +698,24 @@ mod imp {
             self.scroll_animation.replace(None);
         }
 
+        /// Zoom cancels the ongoing scroll animation, and overrides next_position to have a fixed
+        /// point.
         fn update_zoom(&self, y_center: f64, scale: f64) {
-            let current_offset_of_gesture_center = self.scroll_offset.get() + y_center as i32;
-            let current_zoom = self.dynamic_zoom_level.get();
+            self.cancel_scroll_animation();
 
-            let max_ratio = NATURAL_ROW_HEIGHT as f64 / MINIMUM_ROW_HEIGHT as f64;
-            let new_zoom =
-                (self.static_zoom_level.get() + scale - 1.).clamp(1. / max_ratio, max_ratio);
+            // If a zoom already happened since last size_allocate, add this zoom on top.
+            let desired_next_row_height = self.desired_next_row_height.get();
+            let new_desired_next_row_height = ((desired_next_row_height as f64 * scale) as i32)
+                .clamp(MINIMUM_ROW_HEIGHT, MAXIMUM_ROW_HEIGHT);
+            self.desired_next_row_height
+                .set(new_desired_next_row_height);
 
-            let ratio_of_zoom_difference = new_zoom / current_zoom;
-            let new_offset_of_pointer =
-                (current_offset_of_gesture_center as f64 * ratio_of_zoom_difference) as i32;
-            let new_offset = new_offset_of_pointer - y_center as i32;
-
-            self.set_scroll_offset(new_offset);
-            self.dynamic_zoom_level.set(new_zoom);
+            // Set the fixed point of this zoom as the one to use in size_allocate. If a zoom
+            // already happened since last size_allocate, override it.
+            let current_offset_of_gesture_center = self.last_scroll_offset.get() + y_center as i32;
+            self.set_next_position(PositionDescription::OffsetOfFixedPoint(
+                current_offset_of_gesture_center,
+            ));
 
             self.obj().queue_allocate();
         }
@@ -737,8 +774,8 @@ mod imp {
                 dy / FIRST_STAGE_DIVISOR
             };
 
-            let row_height = self.row_height();
-            let scroll_offset = self.scroll_offset.get();
+            let row_height = self.last_row_height.get();
+            let scroll_offset = self.last_scroll_offset.get();
             let offset_from_a_row = scroll_offset % row_height;
 
             // Adjust the scroll to snap to the start of a row if close enough
@@ -778,8 +815,6 @@ mod imp {
                             .get()
                             .unwrap_or(self.obj().height() as f64 / 2.);
 
-                        self.static_zoom_level.set(self.dynamic_zoom_level.get());
-
                         let scale = dy / 10.0 + 1.0;
                         self.update_zoom(y_center, scale);
 
@@ -815,8 +850,8 @@ mod imp {
             }
 
             let height = self.obj().height();
-            let row_height = self.row_height();
-            let scroll_offset = self.scroll_offset.get();
+            let row_height = self.last_row_height.get();
+            let scroll_offset = self.last_scroll_offset.get();
             let number_of_scroll_steps = dy;
             let distance_to_previous_row_start = scroll_offset % row_height;
             let distance_to_next_row_start = row_height - distance_to_previous_row_start;
@@ -879,7 +914,8 @@ mod imp {
 
         #[template_callback]
         fn zoom_begin(&self) {
-            self.static_zoom_level.set(self.dynamic_zoom_level.get());
+            // Resets the last scale delta.
+            self.last_scale_delta.set(1.);
         }
 
         #[template_callback]
@@ -887,7 +923,9 @@ mod imp {
             let Some((_x_center, y_center)) = gesture.bounding_box_center() else {
                 return;
             };
-            self.update_zoom(y_center, scale);
+            let last_scale_delta = self.last_scale_delta.get();
+            self.update_zoom(y_center, scale / last_scale_delta);
+            self.last_scale_delta.set(scale);
         }
 
         #[template_callback]

@@ -11,6 +11,7 @@ template $MonthViewInner: Widget {
     label: _("Month view");
   }
 
+  // Continuous scroll (touchpad or smooth mouse wheel) followed by kinetic deceleration
   EventControllerScroll {
     flags: vertical | kinetic;
     scroll-begin => $kinetic_scroll_begin(template);
@@ -18,21 +19,25 @@ template $MonthViewInner: Widget {
     decelerate => $kinetic_scroll_decelerate(template);
   }
 
+  // Discrete scroll (discrete mouse wheel), and zoom when Ctrl is pressed too
   EventControllerScroll {
     flags: vertical | discrete;
     scroll => $discrete_scroll(template);
   }
 
+  // Kinetic deceleration after drag on touchscreen
   GestureSwipe {
     touch-only: true;
     swipe => $swipe(template);
   }
 
+  // Pinch to zoom (trackpad or touchscreen)
   GestureZoom {
     begin => $zoom_begin(template);
     scale-changed => $zoom_scale_changed(template);
   }
 
+  // Pointer placement tracking to center Ctrl+wheel zoom
   EventControllerMotion {
     enter => $motion_enter(template);
     motion => $motion(template);

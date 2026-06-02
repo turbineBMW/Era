@@ -15,12 +15,7 @@ use super::{MonthViewStyling, event_widget::EventWidget, month_view_header::Mont
 
 pub const MINIMUM_WIDTH: i32 = 0;
 pub const NATURAL_WIDTH: i32 = 0;
-pub const MINIMUM_HEIGHT: i32 = 92;
-pub const NATURAL_HEIGHT: i32 = MINIMUM_HEIGHT * 3;
 
-const HEADER_HEIGHT: i32 = 30;
-const EVENT_HEIGHT: i32 = 30;
-const MORE_BUTTON_HEIGHT: i32 = 30;
 const EVENT_GAP: i32 = 2;
 
 struct SpannedEvent {
@@ -140,6 +135,9 @@ mod imp {
         pub(super) cell_6: TemplateChild<adw::Bin>,
         #[template_child]
         pub(super) cell_7: TemplateChild<adw::Bin>,
+
+        // TODO: Use mock header, mock event widget, mock overflow button
+        mock_label: gtk::Label,
     }
 
     #[glib::object_subclass]
@@ -274,6 +272,8 @@ mod imp {
                     }
                 },
             ));
+
+            self.mock_label.set_text("Mock latin text");
         }
 
         fn dispose(&self) {
@@ -390,10 +390,25 @@ mod imp {
             gtk::SizeRequestMode::ConstantSize
         }
 
-        fn measure(&self, orientation: gtk::Orientation, _for_size: i32) -> (i32, i32, i32, i32) {
+        fn measure(&self, orientation: gtk::Orientation, for_size: i32) -> (i32, i32, i32, i32) {
             match orientation {
                 gtk::Orientation::Horizontal => (MINIMUM_WIDTH, NATURAL_WIDTH, -1, -1),
-                gtk::Orientation::Vertical => (MINIMUM_HEIGHT, NATURAL_HEIGHT, -1, -1),
+                gtk::Orientation::Vertical => {
+                    let (minimum_header_height, natural_header_height, ..) =
+                        self.header_1.measure(orientation, for_size);
+                    let (minimum_label_height, natural_label_height, ..) =
+                        self.mock_label.measure(orientation, for_size);
+
+                    // Reserve space for 3 labels: the header, one event, and a second event or an
+                    // overflow button.
+                    // TODO: Actually we need to measure an event widget, and an overflow button
+                    (
+                        minimum_header_height + minimum_label_height * 2 + EVENT_GAP * 2,
+                        natural_header_height + natural_label_height * 2 + EVENT_GAP * 2,
+                        -1,
+                        -1,
+                    )
+                }
                 _ => unreachable!(),
             }
         }
@@ -404,6 +419,9 @@ mod imp {
             self.overlay.size_allocate(&allocation, baseline);
 
             let obj = self.obj();
+
+            let (label_height, ..) = self.mock_label.measure(gtk::Orientation::Vertical, width);
+            let (header_height, ..) = self.header_1.measure(gtk::Orientation::Vertical, width);
 
             // Compute exact bounds of each cell
             let cells = [
@@ -427,14 +445,19 @@ mod imp {
 
             let event_layouts = self.event_layouts.get().unwrap().lock().unwrap();
 
-            // Calculate how many event rows fit, reserving space for the "more" button
-            let available_height = height - HEADER_HEIGHT;
+            // Calculate how many event rows fit, reserving space for the header
+            let available_height_for_events = height - header_height;
             // Max rows that fit without needing a "more" button
-            let max_rows_full = if available_height <= 0 {
+            let max_events = if available_height_for_events <= 0 {
                 0usize
             } else {
-                ((available_height + EVENT_GAP) / (EVENT_HEIGHT + EVENT_GAP)) as usize
+                ((available_height_for_events + EVENT_GAP) / (label_height + EVENT_GAP)) as usize
             };
+            if max_events <= 1 {
+                tracing::warn!(
+                    "Available height for events is {available_height_for_events}, but the label height is {label_height}, so less than two events will fit"
+                );
+            }
 
             // Determine per-column: how many events total, and max row index
             let mut column_max_row: [usize; 7] = [0; 7];
@@ -448,20 +471,17 @@ mod imp {
                 }
             }
 
-            // For columns that overflow, we need to reserve one row for the "more" button,
+            // For columns that overflow, we need to reserve one row for the overflow button,
             // so max visible row index becomes max_rows_full - 1 (the last visible slot is the
             // button).
             let mut column_needs_more = [false; 7];
-            let mut column_max_visible_row: [usize; 7] = [max_rows_full; 7];
+            let mut column_max_visible_row: [usize; 7] = [max_events; 7];
             for column in 0..7 {
-                if column_max_row[column] > max_rows_full {
+                if column_max_row[column] > max_events {
                     column_needs_more[column] = true;
                     // Reserve last row for button
-                    column_max_visible_row[column] = if max_rows_full > 0 {
-                        max_rows_full - 1
-                    } else {
-                        0
-                    };
+                    column_max_visible_row[column] =
+                        if max_events > 0 { max_events - 1 } else { 0 };
                 }
             }
 
@@ -486,9 +506,9 @@ mod imp {
                     let x_start = bounds[first_cell].0;
                     let x_end = bounds[last_cell].1;
                     let w = x_end - x_start;
-                    let y = HEADER_HEIGHT + layout.row as i32 * (EVENT_HEIGHT + EVENT_GAP);
+                    let y = header_height + layout.row as i32 * (label_height + EVENT_GAP);
 
-                    let alloc = gtk::Allocation::new(x_start, y, w, EVENT_HEIGHT);
+                    let alloc = gtk::Allocation::new(x_start, y, w, label_height);
                     layout.event_widget.size_allocate(&alloc, baseline);
                 }
             }
@@ -502,10 +522,10 @@ mod imp {
 
                     let x_start = bounds[column].0;
                     let w = bounds[column].1 - x_start;
-                    let y = HEADER_HEIGHT
-                        + column_max_visible_row[column] as i32 * (EVENT_HEIGHT + EVENT_GAP);
+                    let y = header_height
+                        + column_max_visible_row[column] as i32 * (label_height + EVENT_GAP);
 
-                    let alloc = gtk::Allocation::new(x_start, y, w, MORE_BUTTON_HEIGHT);
+                    let alloc = gtk::Allocation::new(x_start, y, w, label_height);
                     button.size_allocate(&alloc, baseline);
                 } else {
                     button.set_visible(false);
