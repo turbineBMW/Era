@@ -11,7 +11,10 @@ use jiff::ToSpan;
 
 use crate::{Application, system_settings::DayOfWeek, utils};
 
-use super::{MonthViewStyling, event_widget::EventWidget, month_view_header::MonthViewHeader};
+use super::{
+    MonthViewStyling, event_widget::EventWidget, month_view_header::MonthViewHeader,
+    overflow_button::OverflowButton,
+};
 
 pub const MINIMUM_WIDTH: i32 = 0;
 pub const NATURAL_WIDTH: i32 = 0;
@@ -50,25 +53,8 @@ mod imp {
         #[property(get)]
         subscription: OnceCell<Subscription>,
 
-        /// Event widgets used to display events in this row.
-        event_widgets: OnceCell<Mutex<Vec<EventWidget>>>,
-        event_layouts: OnceCell<Mutex<Vec<EventLayout>>>,
-
-        /// Cached day boundaries for the current week (8 boundaries for 7 columns).
-        /// Timezone-aware boundaries for timed events.
-        day_boundaries: RefCell<Option<[DateTime; 8]>>,
-        /// UTC boundaries for all-day event comparisons.
-        day_boundaries_utc: RefCell<Option<[DateTime; 8]>>,
-        /// "N more..." buttons, one per column (7 total).
-        pub(super) more_buttons: OnceCell<[gtk::Button; 7]>,
-
-        /// Tracks the current focus position as an index into the focus order.
-        /// This is needed because multi-day events appear in multiple columns
-        /// and we need to remember which column context the focus came from.
-        pub(super) focus_index: Cell<Option<usize>>,
-
         #[template_child]
-        overlay: TemplateChild<gtk::Overlay>,
+        grid: TemplateChild<gtk::Grid>,
         #[template_child]
         header_1: TemplateChild<MonthViewHeader>,
         #[template_child]
@@ -122,22 +108,42 @@ mod imp {
         #[template_child]
         corner_between_6_and_7: TemplateChild<gtk::Separator>,
         #[template_child]
-        pub(super) cell_1: TemplateChild<adw::Bin>,
+        cell_1: TemplateChild<adw::Bin>,
         #[template_child]
-        pub(super) cell_2: TemplateChild<adw::Bin>,
+        cell_2: TemplateChild<adw::Bin>,
         #[template_child]
-        pub(super) cell_3: TemplateChild<adw::Bin>,
+        cell_3: TemplateChild<adw::Bin>,
         #[template_child]
-        pub(super) cell_4: TemplateChild<adw::Bin>,
+        cell_4: TemplateChild<adw::Bin>,
         #[template_child]
-        pub(super) cell_5: TemplateChild<adw::Bin>,
+        cell_5: TemplateChild<adw::Bin>,
         #[template_child]
-        pub(super) cell_6: TemplateChild<adw::Bin>,
+        cell_6: TemplateChild<adw::Bin>,
         #[template_child]
-        pub(super) cell_7: TemplateChild<adw::Bin>,
+        cell_7: TemplateChild<adw::Bin>,
 
-        // TODO: Use mock header, mock event widget, mock overflow button
-        mock_label: gtk::Label,
+        /// Event widgets used to display events in this row.
+        event_widgets: OnceCell<Mutex<Vec<EventWidget>>>,
+        event_layouts: OnceCell<Mutex<Vec<EventLayout>>>,
+
+        /// Cached day boundaries for the current week (8 boundaries for 7 columns).
+        /// Timezone-aware boundaries for timed events.
+        day_boundaries: RefCell<Option<[DateTime; 8]>>,
+        /// UTC boundaries for all-day event comparisons.
+        day_boundaries_utc: RefCell<Option<[DateTime; 8]>>,
+
+        /// Cells, that show where days are.
+        cells: OnceCell<[adw::Bin; 7]>,
+        /// Overflow buttons, to show when events can't be shown because there is not enough height.
+        overflow_buttons: OnceCell<[OverflowButton; 7]>,
+
+        /// Tracks the current focus position as an index into the focus order.
+        /// This is needed because multi-day events appear in multiple columns
+        /// and we need to remember which column context the focus came from.
+        focus_index: Cell<Option<usize>>,
+
+        // Mock event widget to compute minimum height and natural height
+        mock_event_widget: EventWidget,
     }
 
     #[glib::object_subclass]
@@ -177,13 +183,24 @@ mod imp {
             self.event_widgets.get_or_init(|| Mutex::new(Vec::new()));
             self.event_layouts.get_or_init(|| Mutex::new(Vec::new()));
 
-            // Create "more" buttons for each column
-            let more_buttons: [gtk::Button; 7] = std::array::from_fn(|_column| {
-                let button = gtk::Button::new();
+            self.cells
+                .set([
+                    self.cell_1.get(),
+                    self.cell_2.get(),
+                    self.cell_3.get(),
+                    self.cell_4.get(),
+                    self.cell_5.get(),
+                    self.cell_6.get(),
+                    self.cell_7.get(),
+                ])
+                .expect("Cells should not be initialized");
+
+            // Create overflow buttons for each column
+            // TODO: Put this in the blueprint file
+            let overflow_buttons: [OverflowButton; 7] = std::array::from_fn(|_column| {
+                let button = OverflowButton::new();
+                button.set_child_visible(false);
                 button.set_parent(&*obj);
-                button.set_visible(false);
-                button.add_css_class("flat");
-                button.add_css_class("month-view-more-button");
                 button.connect_clicked(clone!(
                     #[weak]
                     obj,
@@ -194,7 +211,7 @@ mod imp {
                 ));
                 button
             });
-            self.more_buttons.get_or_init(|| more_buttons);
+            self.overflow_buttons.get_or_init(|| overflow_buttons);
 
             // Setup subscription
             let (first_day, last_day) = self.row_date_range();
@@ -273,7 +290,9 @@ mod imp {
                 },
             ));
 
-            self.mock_label.set_text("Mock latin text");
+            // Hide the mock event widget and set its parent for it to return correct measurements
+            self.mock_event_widget.set_child_visible(false);
+            self.mock_event_widget.set_parent(&*obj);
         }
 
         fn dispose(&self) {
@@ -282,11 +301,13 @@ mod imp {
                 widget.unparent();
             }
 
-            for button in self.more_buttons.get().unwrap() {
+            for button in self.overflow_buttons.get().unwrap() {
                 button.unparent();
             }
 
-            self.overlay.unparent();
+            self.mock_event_widget.unparent();
+
+            self.grid.unparent();
         }
     }
 
@@ -296,39 +317,30 @@ mod imp {
             self.obj().child_focus(gtk::DirectionType::TabForward)
         }
 
-        // TODO: Make this clearer
         fn focus(&self, direction: gtk::DirectionType) -> bool {
             let obj = self.obj();
-            let root = match obj.root() {
-                Some(r) => r,
-                None => return false,
+
+            let Some(root) = obj.root() else {
+                return false;
             };
             let focused = root.focus();
+            // TODO: Make this clearer
+            // -----------------------------------------------------------------------------
 
-            // Build the focus order: for each column, cell then visible events then more button
             let focus_order = self.build_focus_order();
 
-            if focus_order.is_empty() {
-                return false;
-            }
-
-            let cells: [&adw::Bin; 7] = [
-                &self.cell_1,
-                &self.cell_2,
-                &self.cell_3,
-                &self.cell_4,
-                &self.cell_5,
-                &self.cell_6,
-                &self.cell_7,
-            ];
+            let cells = self.cells.get().unwrap();
 
             // If focus is already inside this row
-            if let Some(ref focused_widget) = focused
+            if let Some(focused_widget) = focused
                 && focused_widget.is_ancestor(&*obj)
             {
                 match direction {
                     gtk::DirectionType::TabForward => {
-                        let current_idx = self.focus_index.get().unwrap_or(0);
+                        let current_idx = self
+                            .focus_index
+                            .get()
+                            .expect("focus is inside this row, so the index should be set");
                         let next_idx = current_idx + 1;
                         if next_idx < focus_order.len() {
                             self.focus_index.set(Some(next_idx));
@@ -348,20 +360,20 @@ mod imp {
                         return false;
                     }
                     gtk::DirectionType::Left => {
-                        let col = self.current_focus_column(focused_widget, &cells);
+                        let col = self.current_focus_column(&focused_widget, cells);
                         if col == 0 {
                             // Wrap to previous row, last column
                             return false;
                         }
-                        return self.focus_cell(col - 1, &cells, &focus_order);
+                        return self.focus_cell(col - 1, cells, &focus_order);
                     }
                     gtk::DirectionType::Right => {
-                        let col = self.current_focus_column(focused_widget, &cells);
+                        let col = self.current_focus_column(&focused_widget, cells);
                         if col == 6 {
                             // Wrap to next row, first column
                             return false;
                         }
-                        return self.focus_cell(col + 1, &cells, &focus_order);
+                        return self.focus_cell(col + 1, cells, &focus_order);
                     }
                     gtk::DirectionType::Up | gtk::DirectionType::Down => {
                         // Let the parent (MonthViewInner) handle vertical navigation
@@ -384,9 +396,13 @@ mod imp {
                 }
                 _ => self.parent_focus(direction),
             }
+
+            // -----------------------------------------------------------------------------
+            // TODO: Make this clearer
         }
 
         fn request_mode(&self) -> gtk::SizeRequestMode {
+            // TODO: Does this make sense?
             gtk::SizeRequestMode::ConstantSize
         }
 
@@ -396,15 +412,28 @@ mod imp {
                 gtk::Orientation::Vertical => {
                     let (minimum_header_height, natural_header_height, ..) =
                         self.header_1.measure(orientation, for_size);
-                    let (minimum_label_height, natural_label_height, ..) =
-                        self.mock_label.measure(orientation, for_size);
+                    let (minimum_event_height, natural_event_height, ..) =
+                        self.mock_event_widget.measure(orientation, for_size);
+                    let (minimum_overflow_button_height, ..) = self
+                        .overflow_buttons
+                        .get()
+                        .expect("Overflow buttons should be initialized")[0]
+                        .measure(orientation, for_size);
 
-                    // Reserve space for 3 labels: the header, one event, and a second event or an
-                    // overflow button.
-                    // TODO: Actually we need to measure an event widget, and an overflow button
+                    // Reserve space for the header, one event, and an overflow button.
+                    // We might not need the overflow button, but it's necessary to count it in case
+                    // it needs to appear at any point.
                     (
-                        minimum_header_height + minimum_label_height * 2 + EVENT_GAP * 2,
-                        natural_header_height + natural_label_height * 2 + EVENT_GAP * 2,
+                        minimum_header_height
+                            + EVENT_GAP
+                            + minimum_event_height
+                            + EVENT_GAP
+                            + minimum_overflow_button_height,
+                        natural_header_height
+                            + EVENT_GAP
+                            + natural_event_height
+                            + EVENT_GAP
+                            + minimum_overflow_button_height,
                         -1,
                         -1,
                     )
@@ -413,27 +442,42 @@ mod imp {
             }
         }
 
-        // TODO: Make this clearer
         fn size_allocate(&self, width: i32, height: i32, baseline: i32) {
-            let allocation = gtk::Allocation::new(0, 0, width, height);
-            self.overlay.size_allocate(&allocation, baseline);
-
             let obj = self.obj();
 
-            let (label_height, ..) = self.mock_label.measure(gtk::Orientation::Vertical, width);
+            // Give full allocation to the overlay
+            let full_allocation = gtk::Allocation::new(0, 0, width, height);
+            self.grid.size_allocate(&full_allocation, baseline);
+
+            let (_minimum_row_height, natural_row_height, ..) =
+                obj.measure(gtk::Orientation::Vertical, width);
+
             let (header_height, ..) = self.header_1.measure(gtk::Orientation::Vertical, width);
+            // Minimum event height is the height of the line-only event widget, and
+            // natural_event_height is the height with one line of label
+            let (minimum_event_height, natural_event_height, ..) = self
+                .mock_event_widget
+                .measure(gtk::Orientation::Vertical, width);
+            let (minimum_overflow_button_height, ..) = self
+                .overflow_buttons
+                .get()
+                .expect("Overflow buttons should be initialized")[0]
+                .measure(gtk::Orientation::Vertical, width);
+
+            let use_dense_allocation = height < natural_row_height;
+
+            // Depending on row height, use either line-only or label event widget.
+            let event_height = if use_dense_allocation {
+                minimum_event_height
+            } else {
+                natural_event_height
+            };
 
             // Compute exact bounds of each cell
-            let cells = [
-                &self.cell_1,
-                &self.cell_2,
-                &self.cell_3,
-                &self.cell_4,
-                &self.cell_5,
-                &self.cell_6,
-                &self.cell_7,
-            ];
-            let bounds: Vec<(i32, i32)> = cells
+            let bounds: Vec<(i32, i32)> = self
+                .cells
+                .get()
+                .unwrap()
                 .iter()
                 .map(|cell| {
                     let bounds = cell.compute_bounds(&*obj).unwrap();
@@ -443,28 +487,27 @@ mod imp {
                 })
                 .collect();
 
-            let event_layouts = self.event_layouts.get().unwrap().lock().unwrap();
-
             // Calculate how many event rows fit, reserving space for the header
             let available_height_for_events = height - header_height;
-            // Max rows that fit without needing a "more" button
-            let max_events = if available_height_for_events <= 0 {
-                0usize
-            } else {
-                ((available_height_for_events + EVENT_GAP) / (label_height + EVENT_GAP)) as usize
-            };
-            if max_events <= 1 {
-                tracing::warn!(
-                    "Available height for events is {available_height_for_events}, but the label height is {label_height}, so less than two events will fit"
-                );
-            }
 
-            // Determine per-column: how many events total, and max row index
+            // TODO: Make this clearer
+            // -----------------------------------------------------------------------------
+
+            assert!(available_height_for_events >= 0);
+            // Max rows that fit without needing an overflow button
+            let max_events =
+                ((available_height_for_events + EVENT_GAP) / (event_height + EVENT_GAP)) as usize;
+            assert!(max_events >= 2);
+
+            let event_layouts = self.event_layouts.get().unwrap().lock().unwrap();
+
+            // For each column, determine the number of events they contain, and the maximum row
+            // index at which they have to place an event.
             let mut column_max_row: [usize; 7] = [0; 7];
-            let mut column_event_count: [usize; 7] = [0; 7];
+            let mut nb_events_in_column: [usize; 7] = [0; 7];
             for layout in event_layouts.iter() {
-                for column in layout.column_start..=layout.column_end.min(6) {
-                    column_event_count[column] += 1;
+                for column in layout.column_start..=layout.column_end {
+                    nb_events_in_column[column] += 1;
                     if layout.row + 1 > column_max_row[column] {
                         column_max_row[column] = layout.row + 1;
                     }
@@ -474,14 +517,16 @@ mod imp {
             // For columns that overflow, we need to reserve one row for the overflow button,
             // so max visible row index becomes max_rows_full - 1 (the last visible slot is the
             // button).
+            // TODO: If an event could be shown in a cell but isn't shown because there is no space
+            // in another cell, then the column is not marked as overflow even though it should.
             let mut column_needs_more = [false; 7];
             let mut column_max_visible_row: [usize; 7] = [max_events; 7];
             for column in 0..7 {
                 if column_max_row[column] > max_events {
                     column_needs_more[column] = true;
-                    // Reserve last row for button
                     column_max_visible_row[column] =
-                        if max_events > 0 { max_events - 1 } else { 0 };
+                        ((available_height_for_events - natural_event_height + EVENT_GAP)
+                            / (event_height + EVENT_GAP)) as usize;
                 }
             }
 
@@ -489,163 +534,58 @@ mod imp {
             let mut column_hidden_count: [usize; 7] = [0; 7];
             for layout in event_layouts.iter() {
                 // Check if this event is hidden in any of its columns
-                let hidden = (layout.column_start..=layout.column_end.min(6))
+                let hidden = (layout.column_start..=layout.column_end)
                     .any(|col| layout.row >= column_max_visible_row[col] && column_needs_more[col]);
 
                 if hidden {
-                    layout.event_widget.set_visible(false);
-                    for col in layout.column_start..=layout.column_end.min(6) {
+                    layout.event_widget.set_child_visible(false);
+                    for col in layout.column_start..=layout.column_end {
                         if column_needs_more[col] {
                             column_hidden_count[col] += 1;
                         }
                     }
                 } else {
-                    layout.event_widget.set_visible(true);
-                    let first_cell = layout.column_start.min(6);
-                    let last_cell = layout.column_end.min(6);
+                    layout.event_widget.set_child_visible(true);
+                    let first_cell = layout.column_start;
+                    let last_cell = layout.column_end;
                     let x_start = bounds[first_cell].0;
                     let x_end = bounds[last_cell].1;
                     let w = x_end - x_start;
-                    let y = header_height + layout.row as i32 * (label_height + EVENT_GAP);
+                    let y = header_height + layout.row as i32 * (event_height + EVENT_GAP);
 
-                    let alloc = gtk::Allocation::new(x_start, y, w, label_height);
+                    let alloc = gtk::Allocation::new(x_start, y, w, event_height);
                     layout.event_widget.size_allocate(&alloc, baseline);
                 }
             }
 
-            // Position "more" buttons
-            for (column, button) in self.more_buttons.get().unwrap().iter().enumerate() {
+            // Position overflow buttons
+            // TODO: Use overflow button height to make this correct
+            for (column, button) in self.overflow_buttons.get().unwrap().iter().enumerate() {
                 if column_needs_more[column] && column_hidden_count[column] > 0 {
                     let count = column_hidden_count[column];
                     button.set_label(&format!("+{count}"));
-                    button.set_visible(true);
+                    button.set_child_visible(true);
 
                     let x_start = bounds[column].0;
                     let w = bounds[column].1 - x_start;
                     let y = header_height
-                        + column_max_visible_row[column] as i32 * (label_height + EVENT_GAP);
+                        + column_max_visible_row[column] as i32 * (event_height + EVENT_GAP);
 
-                    let alloc = gtk::Allocation::new(x_start, y, w, label_height);
-                    button.size_allocate(&alloc, baseline);
+                    let allocation =
+                        gtk::Allocation::new(x_start, y, w, minimum_overflow_button_height);
+                    button.size_allocate(&allocation, baseline);
                 } else {
-                    button.set_visible(false);
+                    button.set_child_visible(false);
                 }
             }
+
+            // -----------------------------------------------------------------------------
+            // TODO: Make this clearer
         }
     }
 
     #[gtk::template_callbacks]
     impl MonthViewRow {
-        // TODO: Make this clearer
-        /// Builds the focus order for this row:
-        /// For each column: cell, then visible event widgets in that column (sorted by row),
-        /// then the "more" button if visible.
-        pub(super) fn build_focus_order(&self) -> Vec<gtk::Widget> {
-            let cells: [&adw::Bin; 7] = [
-                &self.cell_1,
-                &self.cell_2,
-                &self.cell_3,
-                &self.cell_4,
-                &self.cell_5,
-                &self.cell_6,
-                &self.cell_7,
-            ];
-
-            let event_layouts = self.event_layouts.get().unwrap().lock().unwrap();
-            let more_buttons = self.more_buttons.get();
-
-            let mut order: Vec<gtk::Widget> = Vec::new();
-
-            for col in 0..7 {
-                // Add the cell
-                order.push(cells[col].clone().upcast::<gtk::Widget>());
-
-                // Add visible event widgets in this column, sorted by row
-                let mut col_events: Vec<(usize, gtk::Widget)> = event_layouts
-                    .iter()
-                    .filter(|layout| {
-                        layout.column_start <= col
-                            && layout.column_end >= col
-                            && layout.event_widget.is_visible()
-                    })
-                    .map(|layout| {
-                        (
-                            layout.row,
-                            layout.event_widget.clone().upcast::<gtk::Widget>(),
-                        )
-                    })
-                    .collect();
-                col_events.sort_by_key(|(row, _)| *row);
-                for (_, widget) in col_events {
-                    order.push(widget);
-                }
-
-                // Add the "more" button if visible
-                let buttons = more_buttons.unwrap();
-                if buttons[col].is_visible() {
-                    order.push(buttons[col].clone().upcast::<gtk::Widget>());
-                }
-            }
-
-            order
-        }
-
-        // TODO: Make this clearer
-        /// Determines which column the currently focused widget belongs to.
-        pub(super) fn current_focus_column(
-            &self,
-            focused: &gtk::Widget,
-            cells: &[&adw::Bin; 7],
-        ) -> usize {
-            // Check if focused widget is a cell directly
-            for (col, cell) in cells.iter().enumerate() {
-                let cell_widget: &gtk::Widget = cell.upcast_ref();
-                if focused == cell_widget || focused.is_ancestor(cell_widget) {
-                    return col;
-                }
-            }
-
-            // Check if it's a "more" button
-            if let Some(buttons) = self.more_buttons.get() {
-                for (col, button) in buttons.iter().enumerate() {
-                    let btn_widget: &gtk::Widget = button.upcast_ref();
-                    if focused == btn_widget || focused.is_ancestor(btn_widget) {
-                        return col;
-                    }
-                }
-            }
-
-            // It's an event widget — use the stored focus_index to determine column
-            if let Some(idx) = self.focus_index.get() {
-                let focus_order = self.build_focus_order();
-                // Walk backwards from idx to find which cell it belongs to
-                for i in (0..=idx).rev() {
-                    for (col, cell) in cells.iter().enumerate() {
-                        if focus_order.get(i) == Some(cell.upcast_ref::<gtk::Widget>()) {
-                            return col;
-                        }
-                    }
-                }
-            }
-
-            0
-        }
-
-        // TODO: Make this clearer
-        /// Focuses the cell at the given column and updates focus_index.
-        fn focus_cell(
-            &self,
-            col: usize,
-            cells: &[&adw::Bin; 7],
-            focus_order: &[gtk::Widget],
-        ) -> bool {
-            let target = cells[col].clone().upcast::<gtk::Widget>();
-            if let Some(idx) = focus_order.iter().position(|w| *w == target) {
-                self.focus_index.set(Some(idx));
-            }
-            cells[col].grab_focus()
-        }
-
         /// Sets the triplet year-month-day.
         pub(super) fn set_year_month_day(&self, year: i32, month: i32, day: i32) {
             assert!(jiff::civil::Date::new(year as i16, month as i8, day as i8).is_ok());
@@ -900,15 +840,7 @@ mod imp {
             }
 
             let dates = [date_1, date_2, date_3, date_4, date_5, date_6, date_7];
-            let cells: [&adw::Bin; 7] = [
-                &self.cell_1,
-                &self.cell_2,
-                &self.cell_3,
-                &self.cell_4,
-                &self.cell_5,
-                &self.cell_6,
-                &self.cell_7,
-            ];
+            let cells = self.cells.get().unwrap();
             for (cell, date) in cells.iter().zip(dates.iter()) {
                 let label = format!(
                     "{} {} {} {}",
@@ -943,8 +875,8 @@ mod imp {
                 DateTime::from_utc(day.year(), day.month(), day.day_of_month(), 0, 0, 0.).unwrap()
             });
 
-            *self.day_boundaries.borrow_mut() = Some(boundaries);
-            *self.day_boundaries_utc.borrow_mut() = Some(boundaries_utc);
+            self.day_boundaries.replace(Some(boundaries));
+            self.day_boundaries_utc.replace(Some(boundaries_utc));
         }
 
         fn listen_to_event_timeframe_changes(&self) {
@@ -984,7 +916,11 @@ mod imp {
                     }
                 ));
 
-                let event_widget = EventWidget::new(&event);
+                let event_widget = EventWidget::new(Some(&event));
+                self.obj()
+                    .bind_property("styling", &event_widget, "styling")
+                    .sync_create()
+                    .build();
                 event_widget.set_parent(&*obj);
 
                 event_widgets.push(event_widget);
@@ -1147,6 +1083,127 @@ mod imp {
 
             self.obj().queue_allocate();
         }
+
+        /// Builds the focus order for this row:
+        /// For each column: cell, then visible event widgets in that column (sorted by row),
+        /// then the "more" button if visible.
+        fn build_focus_order(&self) -> Vec<gtk::Widget> {
+            let cells = self.cells.get().unwrap();
+
+            let event_layouts = self.event_layouts.get().unwrap().lock().unwrap();
+            let more_buttons = self.overflow_buttons.get();
+
+            let mut order: Vec<gtk::Widget> = Vec::new();
+
+            for col in 0..7 {
+                // Add the cell
+                order.push(cells[col].clone().upcast::<gtk::Widget>());
+
+                // Add visible event widgets in this column, sorted by row
+                let mut col_events: Vec<(usize, gtk::Widget)> = event_layouts
+                    .iter()
+                    .filter(|layout| {
+                        layout.column_start <= col
+                            && layout.column_end >= col
+                            && layout.event_widget.is_visible()
+                            && layout.event_widget.is_child_visible()
+                    })
+                    .map(|layout| {
+                        (
+                            layout.row,
+                            layout.event_widget.clone().upcast::<gtk::Widget>(),
+                        )
+                    })
+                    .collect();
+                col_events.sort_by_key(|(row, _)| *row);
+                for (_, widget) in col_events {
+                    order.push(widget);
+                }
+
+                // Add the "more" button if visible
+                let buttons = more_buttons.unwrap();
+                if buttons[col].is_visible() && buttons[col].is_child_visible() {
+                    order.push(buttons[col].clone().upcast::<gtk::Widget>());
+                }
+            }
+
+            order
+        }
+
+        // TODO: Make this clearer
+        /// Determines which column the currently focused widget belongs to.
+        fn current_focus_column(&self, focused: &gtk::Widget, cells: &[adw::Bin; 7]) -> usize {
+            // Check if focused widget is a cell directly
+            for (col, cell) in cells.iter().enumerate() {
+                let cell_widget: &gtk::Widget = cell.upcast_ref();
+                if focused == cell_widget || focused.is_ancestor(cell_widget) {
+                    return col;
+                }
+            }
+
+            // Check if it's a "more" button
+            if let Some(buttons) = self.overflow_buttons.get() {
+                for (col, button) in buttons.iter().enumerate() {
+                    let btn_widget: &gtk::Widget = button.upcast_ref();
+                    if focused == btn_widget || focused.is_ancestor(btn_widget) {
+                        return col;
+                    }
+                }
+            }
+
+            // It's an event widget — use the stored focus_index to determine column
+            if let Some(idx) = self.focus_index.get() {
+                let focus_order = self.build_focus_order();
+                // Walk backwards from idx to find which cell it belongs to
+                for i in (0..=idx).rev() {
+                    for (col, cell) in cells.iter().enumerate() {
+                        if focus_order.get(i) == Some(cell.upcast_ref::<gtk::Widget>()) {
+                            return col;
+                        }
+                    }
+                }
+            }
+
+            0
+        }
+
+        // TODO: Make this clearer
+        /// Focuses the cell at the given column and updates focus_index.
+        fn focus_cell(
+            &self,
+            col: usize,
+            cells: &[adw::Bin; 7],
+            focus_order: &[gtk::Widget],
+        ) -> bool {
+            let target = cells[col].clone().upcast::<gtk::Widget>();
+            if let Some(idx) = focus_order.iter().position(|w| *w == target) {
+                self.focus_index.set(Some(idx));
+            }
+            cells[col].grab_focus()
+        }
+
+        /// Focuses the cell at the given column (0-6).
+        pub(super) fn focus_column(&self, column: usize) -> bool {
+            assert!(column < 7);
+            let cells = self.cells.get().unwrap();
+            let focus_order = self.build_focus_order();
+            let target = cells[column].clone().upcast::<gtk::Widget>();
+            if let Some(idx) = focus_order.iter().position(|w| *w == target) {
+                self.focus_index.set(Some(idx));
+            }
+            cells[column].grab_focus()
+        }
+
+        /// Returns the currently focused column (0-6), or None.
+        pub(super) fn focused_column(&self) -> Option<usize> {
+            let root = self.obj().root()?;
+            let focused = root.focus()?;
+            if !focused.is_ancestor(&*self.obj()) {
+                return None;
+            }
+            let cells = self.cells.get().unwrap();
+            Some(self.current_focus_column(&focused, cells))
+        }
     }
 }
 
@@ -1170,45 +1227,13 @@ impl MonthViewRow {
         self.imp().set_year_month_day(year, month, day);
     }
 
-    // TODO: Make this clearer
     /// Focuses the cell at the given column (0-6).
-    pub fn focus_column(&self, col: usize) -> bool {
-        let imp = self.imp();
-        let cells: [&adw::Bin; 7] = [
-            &imp.cell_1,
-            &imp.cell_2,
-            &imp.cell_3,
-            &imp.cell_4,
-            &imp.cell_5,
-            &imp.cell_6,
-            &imp.cell_7,
-        ];
-        let focus_order = imp.build_focus_order();
-        let col = col.min(6);
-        let target = cells[col].clone().upcast::<gtk::Widget>();
-        if let Some(idx) = focus_order.iter().position(|w| *w == target) {
-            imp.focus_index.set(Some(idx));
-        }
-        cells[col].grab_focus()
+    pub fn focus_column(&self, column: usize) -> bool {
+        self.imp().focus_column(column)
     }
 
     /// Returns the currently focused column (0-6), or None.
     pub fn focused_column(&self) -> Option<usize> {
-        let imp = self.imp();
-        let root = self.root()?;
-        let focused = root.focus()?;
-        if !focused.is_ancestor(self) {
-            return None;
-        }
-        let cells: [&adw::Bin; 7] = [
-            &imp.cell_1,
-            &imp.cell_2,
-            &imp.cell_3,
-            &imp.cell_4,
-            &imp.cell_5,
-            &imp.cell_6,
-            &imp.cell_7,
-        ];
-        Some(imp.current_focus_column(&focused, &cells))
+        self.imp().focused_column()
     }
 }

@@ -152,25 +152,37 @@ mod imp {
                 utils::get_last_occurrence_of_weekday(a_day_in_first_row, first_day_of_week);
 
             // Setup rows
-            self.rows.get_or_init(|| {
-                Mutex::new(
-                    (0..NB_ROWS)
-                        .map(|i| {
-                            let date = first_day_of_timeframe.add_weeks(i).unwrap();
-                            let row =
-                                MonthViewRow::new(date.year(), date.month(), date.day_of_month());
+            self.rows
+                .set({
+                    Mutex::new(
+                        (0..NB_ROWS)
+                            .map(|i| {
+                                let date = first_day_of_timeframe.add_weeks(i).unwrap();
+                                let row = MonthViewRow::new(
+                                    date.year(),
+                                    date.month(),
+                                    date.day_of_month(),
+                                );
 
-                            row.insert_before(&*self.obj(), None::<&gtk::Widget>);
-                            self.obj()
-                                .bind_property("styling", &row, "styling")
-                                .sync_create()
-                                .build();
+                                row.insert_before(&*self.obj(), None::<&gtk::Widget>);
+                                self.obj()
+                                    .bind_property("styling", &row, "styling")
+                                    .sync_create()
+                                    .build();
 
-                            row
-                        })
-                        .collect(),
-                )
-            });
+                                if self.last_row_height.get() == 0 {
+                                    let (_minimum_row_height, natural_row_height, ..) =
+                                        row.measure(gtk::Orientation::Vertical, 50);
+                                    self.last_row_height.set(natural_row_height);
+                                    self.desired_next_row_height.set(natural_row_height);
+                                }
+
+                                row
+                            })
+                            .collect(),
+                    )
+                })
+                .unwrap();
 
             Application::default()
                 .system_settings()
@@ -628,7 +640,9 @@ mod imp {
         /// properties will be updated.
         fn scroll_offset_add(&self, dy: i32) {
             match self.next_position.get() {
-                PositionDescription::Init => panic!("Next position should not be set to init"),
+                PositionDescription::Init => {
+                    // Let size_allocate handle the initial position
+                }
                 PositionDescription::ScrollOffset(scroll_offset) => {
                     self.set_next_position(PositionDescription::ScrollOffset(scroll_offset + dy))
                 }

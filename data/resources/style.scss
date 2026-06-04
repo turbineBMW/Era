@@ -184,6 +184,7 @@ month-view-row {
     }
 
     event-widget {
+        min-height: 8px;
         background-color: color-mix(
             in srgb,
             var(--event-bg-color) 25%,
@@ -200,21 +201,32 @@ month-view-row {
         .edge {
             background-color: var(--event-bg-color);
             min-width: 6px;
-            border-radius: 6px 0 0 6px;
+        }
+
+        label {
+            padding-top: 3px;
+            padding-bottom: 3px;
         }
     }
 
     &.narrow {
-        event-widget {
+        event-widget,
+        .overflow-button {
             label {
                 font-size: 82%;
+            }
+        }
+
+        event-widget {
+            label {
                 margin: 2px;
             }
         }
     }
 
     &.medium {
-        event-widget {
+        event-widget,
+        .overflow-button {
             label {
                 margin: 3px;
             }

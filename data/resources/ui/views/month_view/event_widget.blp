@@ -2,10 +2,11 @@ using Gtk 4.0;
 using Adw 1;
 using Clepsydre 0;
 
-template $EventWidget: Box {
+template $EventWidget: Widget {
+  overflow: hidden;
   focusable: true;
 
-  Adw.Bin {
+  Adw.Bin edge {
     styles [
       "edge",
     ]
@@ -21,6 +22,10 @@ template $EventWidget: Box {
   Label time {
     visible: bind $not(template.event as <Clepsydre.Event>.timeframe as <Clepsydre.Timeframe>.all-day);
     label: bind $start_label(template.event as <Clepsydre.Event>.timeframe);
+
+    styles [
+      "dimmed",
+    ]
   }
 
   GestureClick {

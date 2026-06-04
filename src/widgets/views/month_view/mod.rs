@@ -9,6 +9,7 @@ mod event_widget;
 mod month_view_header;
 mod month_view_inner;
 mod month_view_row;
+mod overflow_button;
 
 use self::month_view_inner::MonthViewInner;
 
