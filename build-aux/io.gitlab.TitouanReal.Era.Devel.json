@@ -1,10 +1,10 @@
 {
-  "id": "io.gitlab.TitouanReal.Kalendasom.Devel",
+  "id": "io.gitlab.TitouanReal.Era.Devel",
   "runtime": "org.gnome.Platform",
   "runtime-version": "master",
   "sdk": "org.gnome.Sdk",
   "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
-  "command": "kalendasom",
+  "command": "era",
   "finish-args": [
     "--share=ipc",
     "--device=dri",
@@ -18,7 +18,7 @@
     "build-args": ["--share=network"],
     "env": {
       "RUST_BACKTRACE": "1",
-      "RUST_LOG": "kalendasom=debug"
+      "RUST_LOG": "era=debug"
     }
   },
   "cleanup": [
@@ -117,7 +117,7 @@
       "config-opts": ["-Dlibclepsydre=true", "-Dlibclepsydre-eds=true"]
     },
     {
-      "name": "kalendasom",
+      "name": "era",
       "builddir": true,
       "buildsystem": "meson",
       "sources": [

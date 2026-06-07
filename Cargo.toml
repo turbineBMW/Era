@@ -1,5 +1,5 @@
 [package]
-name = "kalendasom"
+name = "era"
 version = "0.1.0"
 authors = ["Titouan Real <titouan.real@gmail.com>"]
 edition = "2024"

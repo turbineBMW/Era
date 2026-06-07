@@ -1,8 +1,8 @@
-# Contributing to Kalendasom
+# Contributing to Era
 
 This document was generated with Claude Opus 4.6.
 
-This document describes the internal architecture of Kalendasom for contributors who want to understand the codebase without having to reverse-engineer it. It is intentionally concise — when you need details, read the code.
+This document describes the internal architecture of Era for contributors who want to understand the codebase without having to reverse-engineer it. It is intentionally concise — when you need details, read the code.
 
 ---
 
@@ -37,9 +37,9 @@ This document describes the internal architecture of Kalendasom for contributors
 
 ## Overview
 
-Kalendasom is a GTK 4 / libadwaita calendar application written in Rust. It is **backend-agnostic**: all calendar data access goes through [Clepsydre](https://gitlab.gnome.org/TitouanReal/clepsydre), a GObject-based abstraction layer. The application currently uses the EDS (Evolution Data Server) backend, but switching to another Clepsydre implementation (e.g. [ccmd](https://gitlab.gnome.org/TitouanReal/ccmd)) is a one-line change in `application.rs`.
+Era is a GTK 4 / libadwaita calendar application written in Rust. It is **backend-agnostic**: all calendar data access goes through [Clepsydre](https://gitlab.gnome.org/TitouanReal/clepsydre), a GObject-based abstraction layer. The application currently uses the EDS (Evolution Data Server) backend, but switching to another Clepsydre implementation (e.g. [ccmd](https://gitlab.gnome.org/TitouanReal/ccmd)) is a one-line change in `application.rs`.
 
-Kalendasom uses Clepsydre as a **view-model**. The UI is reactive on the data Clepsydre exposes (GObject properties, list models, signals). User actions (creating events, managing calendars, searching…) are forwarded to Clepsydre which talks to the actual backend.
+Era uses Clepsydre as a **view-model**. The UI is reactive on the data Clepsydre exposes (GObject properties, list models, signals). User actions (creating events, managing calendars, searching…) are forwarded to Clepsydre which talks to the actual backend.
 
 ## Tech Stack
 
@@ -65,11 +65,11 @@ For native (non-Flatpak) development you need the Clepsydre C libraries installe
 just install-clepsydre
 ```
 
-This reads the exact commit pinned in the Flatpak manifest (`build-aux/io.gitlab.TitouanReal.Kalendasom.Devel.json`), clones the Clepsydre repo, builds `libclepsydre` and `libclepsydre-eds` with Meson, and installs them under `/usr`.
+This reads the exact commit pinned in the Flatpak manifest (`build-aux/io.gitlab.TitouanReal.Era.Devel.json`), clones the Clepsydre repo, builds `libclepsydre` and `libclepsydre-eds` with Meson, and installs them under `/usr`.
 
 ### Flatpak (development)
 
-The Flatpak manifest lives at `build-aux/io.gitlab.TitouanReal.Kalendasom.Devel.json`. It pulls libical, Evolution Data Server, and Clepsydre as module dependencies before building Kalendasom itself. Use GNOME Builder or `flatpak-builder` as usual.
+The Flatpak manifest lives at `build-aux/io.gitlab.TitouanReal.Era.Devel.json`. It pulls libical, Evolution Data Server, and Clepsydre as module dependencies before building Era itself. Use GNOME Builder or `flatpak-builder` as usual.
 
 ### Native build
 
@@ -262,7 +262,7 @@ It exposes these as GObject properties and keeps them updated by listening to po
 
 ### UI definitions
 
-Blueprint files under `data/resources/ui/` mirror the widget tree in `src/widgets/`. They are compiled to GTK XML at build time and bundled as GResources. The resource prefix is `/io/gitlab/TitouanReal/Kalendasom`.
+Blueprint files under `data/resources/ui/` mirror the widget tree in `src/widgets/`. They are compiled to GTK XML at build time and bundled as GResources. The resource prefix is `/io/gitlab/TitouanReal/Era`.
 
 ## Patterns & conventions
 

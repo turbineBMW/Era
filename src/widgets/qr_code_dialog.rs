@@ -8,7 +8,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/qr_code_dialog.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/qr_code_dialog.ui")]
     #[properties(wrapper_type = super::QrCodeDialog)]
     pub struct QrCodeDialog {
         #[property(get, set = Self::set_url, explicit_notify)]

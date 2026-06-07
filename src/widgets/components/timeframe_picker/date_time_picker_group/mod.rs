@@ -14,7 +14,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/date_time_picker_group.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/date_time_picker_group.ui")]
     #[properties(wrapper_type = super::DateTimePickerGroup)]
     pub struct DateTimePickerGroup {
         #[property(get, set)]

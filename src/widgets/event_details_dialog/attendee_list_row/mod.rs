@@ -18,7 +18,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/attendee_list_row.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/attendee_list_row.ui")]
     #[properties(wrapper_type = super::AttendeeListRow)]
     pub struct AttendeeListRow {
         #[property(get, set = Self::set_event)]

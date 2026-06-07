@@ -9,7 +9,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_combo_row_list_item.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/calendar_combo_row_list_item.ui")]
     #[properties(wrapper_type = super::CalendarComboRowListItem)]
     pub struct CalendarComboRowListItem {
         #[property(get, set)]

@@ -4,19 +4,19 @@
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
 
-    <name>Kalendasom</name>
+    <name>Era</name>
     <summary>Manage your time</summary>
     <description>
-        <p>Kalendasom is a time management application designed to help you stay organized and productive.</p>
+        <p>Era is a time management application designed to help you stay organized and productive.</p>
     </description>
 
     <developer id="io.gitlab.titouanreal">
         <name translatable="no">Titouan Real</name>
     </developer>
 
-    <url type="homepage">https://gitlab.gnome.org/TitouanReal/kalendasom</url>
-    <url type="vcs-browser">https://gitlab.gnome.org/TitouanReal/kalendasom</url>
-    <url type="bugtracker">https://gitlab.gnome.org/TitouanReal/kalendasom/issues</url>
+    <url type="homepage">https://gitlab.gnome.org/TitouanReal/era</url>
+    <url type="vcs-browser">https://gitlab.gnome.org/TitouanReal/era</url>
+    <url type="bugtracker">https://gitlab.gnome.org/TitouanReal/era/-/work_items</url>
     <!-- Should link a FAQ page for this software, to answer some of the most-asked questions in detail -->
     <!-- URLs of this type should point to a webpage where users can submit or modify translations of the upstream project -->
     <!-- <url type="translate">https://example.org/translate</url> -->

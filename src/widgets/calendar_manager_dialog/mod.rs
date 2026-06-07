@@ -19,7 +19,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_manager_dialog.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/calendar_manager_dialog.ui")]
     pub struct CalendarManagerDialog {
         #[template_child]
         stack: TemplateChild<gtk::Stack>,

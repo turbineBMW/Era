@@ -11,7 +11,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/month_view_header.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/month_view_header.ui")]
     #[properties(wrapper_type = super::MonthViewHeader)]
     pub struct MonthViewHeader {
         #[property(get)]

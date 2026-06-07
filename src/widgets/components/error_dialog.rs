@@ -6,7 +6,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/error_dialog.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/error_dialog.ui")]
     #[properties(wrapper_type = super::ErrorDialog)]
     pub struct ErrorDialog {
         #[property(get, construct_only)]

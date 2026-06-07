@@ -8,7 +8,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/collections_list_page.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/collections_list_page.ui")]
     pub struct CollectionsListPage {
         #[template_child]
         toast_overlay: TemplateChild<adw::ToastOverlay>,

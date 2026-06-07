@@ -13,7 +13,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_combo_row.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/calendar_combo_row.ui")]
     pub struct CalendarComboRow {
         #[template_child]
         model: TemplateChild<FilterListModel>,

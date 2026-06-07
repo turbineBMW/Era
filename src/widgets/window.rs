@@ -15,7 +15,7 @@ pub mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/window.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/window.ui")]
     pub struct Window {
         #[template_child]
         stack: TemplateChild<gtk::Stack>,
@@ -37,7 +37,7 @@ pub mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for Window {
-        const NAME: &'static str = "KalendasomWindow";
+        const NAME: &'static str = "EraWindow";
         type Type = super::Window;
         type ParentType = adw::ApplicationWindow;
 

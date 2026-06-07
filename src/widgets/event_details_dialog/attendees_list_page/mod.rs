@@ -14,7 +14,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/attendees_list_page.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/attendees_list_page.ui")]
     #[properties(wrapper_type = super::AttendeeListPage)]
     pub struct AttendeesListPage {
         #[property(get, set, nullable)]

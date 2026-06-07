@@ -10,7 +10,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/calendar_creation_dialog.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/calendar_creation_dialog.ui")]
     #[properties(wrapper_type = super::CalendarCreationDialog)]
     pub struct CalendarCreationDialog {
         #[property(get, set, construct_only)]

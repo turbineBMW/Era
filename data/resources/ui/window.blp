@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $KalendasomWindow: Adw.ApplicationWindow {
+template $EraWindow: Adw.ApplicationWindow {
   default-width: 800;
   default-height: 600;
   width-request: 360;
@@ -17,7 +17,7 @@ template $KalendasomWindow: Adw.ApplicationWindow {
           [end]
           Button {
             icon-name: "info-outline-symbolic";
-            tooltip-text: _("About Kalendasom");
+            tooltip-text: _("About Era");
             action-name: "app.about";
           }
         }
@@ -502,7 +502,7 @@ menu primary_menu {
     }
 
     item {
-      label: _("_About Kalendasom");
+      label: _("_About Era");
       action: "app.about";
     }
   }

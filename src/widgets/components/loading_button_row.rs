@@ -14,7 +14,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/loading_button_row.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/loading_button_row.ui")]
     #[properties(wrapper_type = super::LoadingButtonRow)]
     pub struct LoadingButtonRow {
         #[template_child]

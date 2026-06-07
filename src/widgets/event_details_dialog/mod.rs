@@ -31,7 +31,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/event_details_dialog.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/event_details_dialog.ui")]
     #[properties(wrapper_type = super::EventDetailsDialog)]
     pub struct EventDetailsDialog {
         #[property(get, construct_only)]

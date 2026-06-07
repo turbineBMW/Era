@@ -1,5 +1,5 @@
 project(
-    'kalendasom',
+    'era',
     'rust',
     version: '0.1.0',
     meson_version: '>= 1.8.5',
@@ -21,7 +21,7 @@ appstreamcli = find_program('appstreamcli', required: true)
 compile_schemas = find_program('glib-compile-schemas', required: true)
 desktop_file_validate = find_program('desktop-file-validate', required: true)
 
-application_name = 'Kalendasom'
+application_name = 'Era'
 base_resource_path = '/io/gitlab/TitouanReal/' + application_name
 base_id = 'io.gitlab.TitouanReal.' + application_name
 application_id = base_id

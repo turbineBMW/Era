@@ -9,7 +9,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/loading_bin.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/loading_bin.ui")]
     #[properties(wrapper_type = super::LoadingBin)]
     pub struct LoadingBin {
         #[template_child]

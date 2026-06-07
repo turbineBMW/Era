@@ -6,7 +6,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/overflow_button.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/overflow_button.ui")]
     #[properties(wrapper_type = super::OverflowButton)]
     pub struct OverflowButton {}
 

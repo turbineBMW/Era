@@ -9,7 +9,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/sidebar.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/sidebar.ui")]
     #[properties(wrapper_type = super::Sidebar)]
     pub struct Sidebar {}
 

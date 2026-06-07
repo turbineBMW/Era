@@ -12,7 +12,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/event_widget.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/event_widget.ui")]
     #[properties(wrapper_type = super::EventWidget)]
     pub struct EventWidget {
         #[property(get, set = Self::set_event, nullable, construct)]

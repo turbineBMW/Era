@@ -9,7 +9,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/attendee_row.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/attendee_row.ui")]
     #[properties(wrapper_type = super::AttendeeRow)]
     pub struct AttendeeRow {
         #[property(get, construct_only)]

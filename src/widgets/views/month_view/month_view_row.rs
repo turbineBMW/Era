@@ -39,7 +39,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/month_view_row.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/month_view_row.ui")]
     #[properties(wrapper_type = super::MonthViewRow)]
     pub struct MonthViewRow {
         #[property(get, set, construct_only)]

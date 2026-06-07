@@ -10,7 +10,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/search_result_row.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/search_result_row.ui")]
     #[properties(wrapper_type = super::SearchResultRow)]
     pub struct SearchResultRow {
         #[property(get, set)]

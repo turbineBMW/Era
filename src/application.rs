@@ -45,7 +45,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for Application {
-        const NAME: &'static str = "KalendasomApplication";
+        const NAME: &'static str = "EraApplication";
         type Type = super::Application;
         type ParentType = adw::Application;
     }
@@ -206,8 +206,8 @@ impl Application {
             // Translators: Replace "translator-credits" with your name/username, and optionally an
             // email or URL.
             .translator_credits(gettext("translator-credits"))
-            .website("https://gitlab.gnome.org/TitouanReal/kalendasom")
-            .issue_url("https://gitlab.gnome.org/TitouanReal/kalendasom/-/issues")
+            .website("https://gitlab.gnome.org/TitouanReal/era")
+            .issue_url("https://gitlab.gnome.org/TitouanReal/era/-/issues")
             .license_type(gtk::License::Gpl30)
             .copyright("© 2026 Titouan Real")
             .build();

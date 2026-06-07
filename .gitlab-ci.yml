@@ -10,11 +10,11 @@ include:
       file: "templates/basic-release.yml"
 
 variables:
-    MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Kalendasom.Devel.json"
-    FLATPAK_MODULE: "kalendasom"
-    APP_ID: "io.gitlab.TitouanReal.Kalendasom.Devel"
+    MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Devel.json"
+    FLATPAK_MODULE: "era"
+    APP_ID: "io.gitlab.TitouanReal.Era.Devel"
     RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
-    BUNDLE: "kalendasom-nightly.flatpak"
+    BUNDLE: "era-nightly.flatpak"
 
 stages:
     - check

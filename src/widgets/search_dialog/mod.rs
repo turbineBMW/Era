@@ -16,7 +16,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/search_dialog.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/search_dialog.ui")]
     pub struct SearchDialog {
         #[template_child]
         toast_overlay: TemplateChild<adw::ToastOverlay>,
