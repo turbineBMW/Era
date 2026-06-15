@@ -22,14 +22,16 @@ blueprints = custom_target(
         'ui/components/error_dialog.blp',
         'ui/components/loading_bin.blp',
         'ui/components/loading_button_row.blp',
+        # Timeframe Picker
+        'ui/components/timeframe_picker/date_picker_row.blp',
+        'ui/components/timeframe_picker/date_time_picker_group.blp',
+        'ui/components/timeframe_picker/time_zone_picker_dialog.blp',
+        'ui/components/timeframe_picker/timeframe_picker.blp',
 
         # Create Event Dialog
         'ui/create_event_dialog/calendar_combo_row/calendar_combo_row.blp',
         'ui/create_event_dialog/calendar_combo_row/calendar_combo_row_list_item.blp',
         'ui/create_event_dialog/create_event_dialog.blp',
-        'ui/create_event_dialog/date_time_picker_group/date_picker_row.blp',
-        'ui/create_event_dialog/date_time_picker_group/date_time_picker_group.blp',
-        'ui/create_event_dialog/date_time_picker_group/time_zone_picker_dialog.blp',
         'ui/event_details_dialog/attendee_list_row/attendee_list_row.blp',
         'ui/event_details_dialog/attendee_list_row/attendee_row.blp',
         'ui/event_details_dialog/attendee_list_row/attendee_status_section.blp',

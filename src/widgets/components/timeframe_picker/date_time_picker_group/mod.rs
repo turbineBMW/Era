@@ -18,12 +18,12 @@ mod imp {
     #[properties(wrapper_type = super::DateTimePickerGroup)]
     pub struct DateTimePickerGroup {
         #[property(get, set)]
-        date_title: RefCell<Option<String>>,
+        date_title: RefCell<String>,
         #[property(get, set)]
-        time_title: RefCell<Option<String>>,
+        time_title: RefCell<String>,
         #[property(get, set)]
         date_only: Cell<bool>,
-        #[property(get, set)]
+        #[property(get, set = Self::set_date_time)]
         date_time: RefCell<DateTime>,
         #[template_child]
         date: TemplateChild<DatePickerRow>,
@@ -86,22 +86,6 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
-            let date = self.date.date().expect("Date should be initialized");
-            let timezone = TimeZone::local();
-
-            self.obj().set_date_time(
-                DateTime::new(
-                    &timezone,
-                    date.year(),
-                    date.month(),
-                    date.day_of_month(),
-                    0,
-                    0,
-                    0.,
-                )
-                .unwrap(),
-            );
-
             self.date.connect_date_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
@@ -130,6 +114,17 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl DateTimePickerGroup {
+        fn set_date_time(&self, date_time: DateTime) {
+            if self.date_time.borrow().clone() == date_time {
+                return;
+            }
+
+            self.date.set_date(&date_time);
+            self.date_time.replace(date_time);
+
+            self.obj().notify_date_time();
+        }
+
         #[template_callback]
         fn format(&self) -> String {
             let date_time = self.obj().date_time();
@@ -271,16 +266,4 @@ glib::wrapper! {
     pub struct DateTimePickerGroup(ObjectSubclass<imp::DateTimePickerGroup>)
         @extends gtk::Widget, adw::PreferencesGroup,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
-}
-
-impl DateTimePickerGroup {
-    pub fn new() -> Self {
-        glib::Object::new()
-    }
-}
-
-impl Default for DateTimePickerGroup {
-    fn default() -> Self {
-        Self::new()
-    }
 }

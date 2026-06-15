@@ -1,4 +1,4 @@
-use std::cell::{OnceCell, RefCell};
+use std::cell::{Cell, OnceCell, RefCell};
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Manager;
@@ -24,6 +24,8 @@ mod imp {
         current_datetime: RefCell<DateTime>,
         #[property(get, set)]
         manager: OnceCell<Manager>,
+        #[property(get, set)]
+        debug: Cell<bool>,
         system_bus: OnceCell<DBusConnection>,
     }
 
@@ -35,6 +37,7 @@ mod imp {
                     DateTime::new(&TimeZone::utc(), 1, 1, 1, 0, 0, 0.).unwrap(),
                 ),
                 manager: OnceCell::default(),
+                debug: Cell::new(false),
                 system_bus: OnceCell::default(),
             }
         }

@@ -14,10 +14,11 @@ use glib::{DateTime, clone};
 use tracing::{debug, warn};
 
 use crate::{
+    spawn,
     utils::{PaintableCallbacks, TemplateCallbacks},
     widgets::{
         QrCodeDialog,
-        components::{ErrorDialog, LoadingButton},
+        components::{ErrorDialog, LoadingButton, TimeframePicker},
     },
 };
 
@@ -46,6 +47,8 @@ mod imp {
         #[template_child]
         editor_toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
+        cancel: TemplateChild<gtk::Button>,
+        #[template_child]
         save: TemplateChild<LoadingButton>,
         #[template_child]
         name_entry: TemplateChild<adw::EntryRow>,
@@ -53,6 +56,8 @@ mod imp {
         location_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
         conference_entry: TemplateChild<adw::EntryRow>,
+        #[template_child]
+        timeframe_picker: TemplateChild<TimeframePicker>,
         #[template_child]
         description_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
@@ -74,6 +79,22 @@ mod imp {
             PaintableCallbacks::bind_template_callbacks(klass);
 
             klass.set_css_name("event-details-dialog");
+
+            klass.install_action("event-details-dialog.save", None, |obj, _, _| {
+                let imp = obj.imp();
+                spawn!(clone!(
+                    #[weak]
+                    imp,
+                    async move {
+                        imp.update_event().await;
+                    }
+                ));
+            });
+            klass.add_binding_action(
+                gdk::Key::S,
+                gdk::ModifierType::CONTROL_MASK,
+                "event-details-dialog.save",
+            );
 
             klass.install_action(
                 "event-details-dialog.show-error",
@@ -278,13 +299,60 @@ mod imp {
             self.name_entry.set_text(&event.name().unwrap());
             self.location_entry.set_text(&event.location().unwrap());
             self.conference_entry.set_text(&event.conference().unwrap());
+            self.timeframe_picker
+                .set_timeframe(event.timeframe().unwrap());
             self.description_entry
                 .set_text(&event.description().unwrap());
         }
 
-        #[template_callback]
-        async fn save(&self) {
-            dbg!("todo");
+        async fn update_event(&self) {
+            self.cancel.set_sensitive(false);
+            self.save.set_is_loading(true);
+            self.name_entry.set_sensitive(false);
+            self.location_entry.set_sensitive(false);
+            self.conference_entry.set_sensitive(false);
+            self.description_entry.set_sensitive(false);
+
+            let event = self.obj().event().expect("event should be initialized");
+
+            let name = self.name_entry.text();
+            let description = self.description_entry.text();
+            let location = self.location_entry.text();
+            let conference = self.conference_entry.text();
+            let timeframe = self.timeframe_picker.timeframe().expect(
+                "A timeframe should be set if the user was able to activate the event update",
+            );
+
+            match event
+                .try_update_future(
+                    Some(&name),
+                    Some(&description),
+                    Some(&location),
+                    Some(&conference),
+                    Some(&timeframe),
+                )
+                .await
+            {
+                Ok(()) => {
+                    debug!("Event updated: {}", event.uri().unwrap());
+                }
+                Err(error) => {
+                    warn!("Failed to create event: {error}");
+                    self.editor_toast_overlay.dismiss_all();
+                    let toast = adw::Toast::new("An error occurred");
+                    toast.set_button_label(Some("Details"));
+                    toast.set_action_name(Some("event-details-dialog.show-error"));
+                    toast.set_action_target(Some(&error.message()));
+                    self.editor_toast_overlay.add_toast(toast);
+                }
+            }
+
+            self.cancel.set_sensitive(true);
+            self.save.set_is_loading(false);
+            self.name_entry.set_sensitive(true);
+            self.location_entry.set_sensitive(true);
+            self.conference_entry.set_sensitive(true);
+            self.description_entry.set_sensitive(true);
         }
 
         #[template_callback]

@@ -1,0 +1,52 @@
+using Gtk 4.0;
+using Adw 1;
+using Clepsydre 0;
+
+template $TimeframePicker: Adw.PreferencesGroup {
+  Box {
+    orientation: vertical;
+    spacing: 12;
+
+    Adw.ToggleGroup schedule_type {
+      active-name: "all-day";
+      homogeneous: true;
+
+      Adw.Toggle {
+        label: _("_All Day");
+        use-underline: true;
+        name: "all-day";
+      }
+
+      Adw.Toggle {
+        label: _("_Time Slot");
+        use-underline: true;
+        name: "time-slot";
+      }
+    }
+
+    $DateTimePickerGroup start {
+      date-title: _("Start Date");
+      time-title: _("Start Time");
+      date-only: bind $string_equals(schedule_type.active-name, "all-day") as <bool>;
+    }
+
+    $DateTimePickerGroup end {
+      date-title: _("End Date");
+      time-title: _("End Time");
+      date-only: bind $string_equals(schedule_type.active-name, "all-day") as <bool>;
+    }
+
+    Adw.PreferencesGroup {
+      visible: bind template.root as <Window>.application as <$KalendasomApplication>.debug;
+
+      Adw.ActionRow {
+        title: _("Debug - timeframe:");
+        subtitle: bind template.timeframe as <Clepsydre.Timeframe>.representation;
+
+        styles [
+          "property",
+        ]
+      }
+    }
+  }
+}

@@ -1,18 +1,17 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, Timeframe, prelude::*};
+use clepsydre::{Calendar, prelude::*};
 use glib::{DateTime, clone};
 use tracing::{debug, warn};
 
 mod calendar_combo_row;
-mod date_time_picker_group;
 
 use crate::{
     spawn,
     utils::TemplateCallbacks,
-    widgets::components::{ErrorDialog, LoadingButton},
+    widgets::components::{ErrorDialog, LoadingButton, TimeframePicker},
 };
 
-use self::{calendar_combo_row::CalendarComboRow, date_time_picker_group::DateTimePickerGroup};
+use self::calendar_combo_row::CalendarComboRow;
 
 mod imp {
     use super::*;
@@ -35,11 +34,7 @@ mod imp {
         #[template_child]
         calendar_choice: TemplateChild<CalendarComboRow>,
         #[template_child]
-        schedule_type: TemplateChild<adw::ToggleGroup>,
-        #[template_child]
-        start: TemplateChild<DateTimePickerGroup>,
-        #[template_child]
-        end: TemplateChild<DateTimePickerGroup>,
+        timeframe_picker: TemplateChild<TimeframePicker>,
         #[template_child]
         description: TemplateChild<adw::EntryRow>,
     }
@@ -98,15 +93,8 @@ mod imp {
                 self,
                 move || {
                     let name = imp.name.text();
-                    let schedule_type = imp
-                        .schedule_type
-                        .active_name()
-                        .map(|s| s.to_string())
-                        .unwrap_or_default();
-                    let start = imp.start.date_time();
-                    let end = imp.end.date_time();
-                    let is_invalid = name.trim().is_empty()
-                        || Self::invalid_schedule(&schedule_type, start, end);
+                    let timeframe = imp.timeframe_picker.timeframe();
+                    let is_invalid = name.trim().is_empty() || timeframe.is_none();
                     let enabled = !is_invalid;
                     imp.obj()
                         .action_set_enabled("create-event-dialog.save", enabled);
@@ -118,17 +106,12 @@ mod imp {
                 update_save_action,
                 move |_| update_save_action()
             ));
-            self.schedule_type.connect_active_name_notify(clone!(
+            self.timeframe_picker.connect_timeframe_notify(clone!(
                 #[strong]
                 update_save_action,
                 move |_| update_save_action()
             ));
-            self.start.connect_date_time_notify(clone!(
-                #[strong]
-                update_save_action,
-                move |_| update_save_action()
-            ));
-            self.end.connect_date_time_notify(clone!(
+            self.description.connect_changed(clone!(
                 #[strong]
                 update_save_action,
                 move |_| update_save_action()
@@ -181,14 +164,10 @@ mod imp {
             let description = self.description.text();
             let location = self.location.text();
             let conference = self.conference.text();
-            let all_day = self
-                .schedule_type
-                .active_name()
-                .expect("A schedule type should be set")
-                == "all-day";
-            let start = self.start.date_time();
-            let end = self.end.date_time();
-            let timeframe = Timeframe::new(all_day, &start, &end);
+            let timeframe = self.timeframe_picker.timeframe().expect(
+                "A timeframe should be set if the user was able to activate the event creation",
+            );
+
             match calendar
                 .try_create_event_future(&name, &description, &location, &conference, &timeframe)
                 .await

@@ -256,7 +256,7 @@ template $EventDetailsDialog: Adw.Dialog {
             show-back-button: false;
 
             [start]
-            Button {
+            Button cancel {
               icon-name: "cross-symbolic";
               tooltip-text: _("Cancel");
               action-name: "navigation.pop";
@@ -266,8 +266,7 @@ template $EventDetailsDialog: Adw.Dialog {
             $LoadingButton save {
               icon-name: "checkmark-symbolic";
               tooltip-text: _("Save");
-              sensitive: false;
-              clicked => $save(template);
+              action-name: "event-details-dialog.save";
 
               styles [
                 "suggested-action",
@@ -300,6 +299,8 @@ template $EventDetailsDialog: Adw.Dialog {
                 }
               }
             }
+
+            $TimeframePicker timeframe_picker {}
 
             Adw.PreferencesGroup {
               Adw.EntryRow description_entry {
