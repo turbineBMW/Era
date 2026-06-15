@@ -80,6 +80,22 @@ mod imp {
 
             klass.set_css_name("event-details-dialog");
 
+            klass.install_action("event-details-dialog.export", None, |obj, _, _| {
+                let imp = obj.imp();
+                spawn!(clone!(
+                    #[weak]
+                    imp,
+                    async move {
+                        imp.export().await;
+                    }
+                ));
+            });
+
+            klass.install_action("event-details-dialog.show-qr-code", None, |obj, _, _| {
+                let imp = obj.imp();
+                imp.show_qr_code();
+            });
+
             klass.install_action("event-details-dialog.save", None, |obj, _, _| {
                 let imp = obj.imp();
                 spawn!(clone!(
@@ -187,8 +203,7 @@ mod imp {
             url::Url::parse(conference).is_ok()
         }
 
-        #[template_callback]
-        async fn share(&self) {
+        async fn export(&self) {
             let event = self.obj().event().expect("event should be initialized");
             let ics_content = event.to_string_for_ics().unwrap();
 
@@ -225,7 +240,6 @@ mod imp {
             }
         }
 
-        #[template_callback]
         fn show_qr_code(&self) {
             let event = self.obj().event().expect("event should be initialized");
             let url = event.to_string_for_qr_code().unwrap();

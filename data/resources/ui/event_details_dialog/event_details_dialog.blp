@@ -16,17 +16,14 @@ template $EventDetailsDialog: Adw.Dialog {
           [top]
           Adw.HeaderBar {
             [start]
-            Button {
+            MenuButton {
               icon-name: "share-symbolic";
-              tooltip-text: _("Export to File");
-              clicked => $share(template);
-            }
+              tooltip-text: _("Share");
 
-            [start]
-            Button {
-              icon-name: "qr-code-symbolic";
-              tooltip-text: _("Show QR Code");
-              clicked => $show_qr_code(template);
+              menu-model: menu {
+                item (_("Export"), "event-details-dialog.export")
+                item (_("Show QR code"), "event-details-dialog.show-qr-code")
+              };
             }
           }
 
