@@ -88,36 +88,18 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
-            let update_save_action = clone!(
+            self.name.connect_changed(clone!(
                 #[weak(rename_to = imp)]
                 self,
-                move || {
-                    let name = imp.name.text();
-                    let timeframe = imp.timeframe_picker.timeframe();
-                    let is_invalid = name.trim().is_empty() || timeframe.is_none();
-                    let enabled = !is_invalid;
-                    imp.obj()
-                        .action_set_enabled("create-event-dialog.save", enabled);
-                }
-            );
-
-            self.name.connect_changed(clone!(
-                #[strong]
-                update_save_action,
-                move |_| update_save_action()
+                move |_| imp.update_save_action()
             ));
             self.timeframe_picker.connect_timeframe_notify(clone!(
-                #[strong]
-                update_save_action,
-                move |_| update_save_action()
-            ));
-            self.description.connect_changed(clone!(
-                #[strong]
-                update_save_action,
-                move |_| update_save_action()
+                #[weak(rename_to = imp)]
+                self,
+                move |_| imp.update_save_action()
             ));
 
-            update_save_action();
+            self.update_save_action();
         }
     }
 
@@ -126,6 +108,15 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl CreateEventDialog {
+        fn update_save_action(&self) {
+            let name = self.name.text();
+            let timeframe = self.timeframe_picker.timeframe();
+            let is_invalid = name.trim().is_empty() || timeframe.is_none();
+            let enabled = !is_invalid;
+            self.obj()
+                .action_set_enabled("create-event-dialog.save", enabled);
+        }
+
         #[template_callback]
         fn focus_name(&self) {
             self.name.grab_focus();

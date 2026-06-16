@@ -282,7 +282,8 @@ mod imp {
 
             // Setup subscription
             let (first_day, last_day) = self.row_date_range();
-            let timeframe = Timeframe::new(true, &first_day, &last_day);
+            let timeframe =
+                Timeframe::new(true, &first_day, &last_day).expect("start should be before end");
             let subscription = manager.new_subscription(&timeframe).unwrap().unwrap();
             self.subscription
                 .set(subscription.clone())
@@ -943,7 +944,8 @@ mod imp {
 
         fn update_timeframe(&self) {
             let (first_day, last_day) = self.row_date_range();
-            let timeframe = Timeframe::new(true, &first_day, &last_day);
+            let timeframe =
+                Timeframe::new(true, &first_day, &last_day).expect("start should be before end");
             self.subscription
                 .get()
                 .unwrap()

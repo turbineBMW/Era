@@ -76,12 +76,12 @@
     <file preprocess="xml-stripblanks" alias="share-symbolic.svg">icons/share-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="qr-code-symbolic.svg">icons/qr-code-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="map-symbolic.svg">icons/map-symbolic.svg</file>
-    <file preprocess="xml-stripblanks" alias="cross-symbolic.svg">icons/cross-symbolic.svg</file>
-    <file preprocess="xml-stripblanks" alias="checkmark-symbolic.svg">icons/checkmark-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="clock-symbolic.svg">icons/clock-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="globe-symbolic.svg">icons/globe-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="loupe-symbolic.svg">icons/loupe-symbolic.svg</file>
     <!-- New icons -->
+    <file preprocess="xml-stripblanks" alias="object-select-symbolic.svg">icons/object-select-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="cross-symbolic.svg">icons/cross-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="circle-check-symbolic.svg">icons/circle-check-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="questionmark-symbolic.svg">icons/questionmark-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="stop-sign-one-way-symbolic.svg">icons/stop-sign-one-way-symbolic.svg</file>

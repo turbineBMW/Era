@@ -22,7 +22,7 @@ template $CreateEventDialog: Adw.Dialog {
 
         [end]
         $LoadingButton create {
-          content-icon-name: "checkmark-symbolic";
+          content-icon-name: "object-select-symbolic";
           tooltip-text: _("Create");
           action-name: "create-event-dialog.save";
 
@@ -74,7 +74,6 @@ template $CreateEventDialog: Adw.Dialog {
 
           Adw.ActionRow timeframe_error {
             visible: bind $is_none(timeframe_picker.timeframe) as <bool>;
-            // TODO: Show a custom error message coming from the timeframe picker
             title: _("The timeframe should be valid");
 
             styles [

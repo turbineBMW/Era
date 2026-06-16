@@ -1,5 +1,5 @@
 <svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:ns0="http://www.w3.org/2000/svg" xmlns:ns1="https://www.gtk.org/grappa" xmlns:ns3="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns1:version="1" ns1:state="outline" ns1:state-names="outline empty" viewBox="0 0 16 16" preserveAspectRatio="xMidYMid meet" gpa:state="outline" ns0:state="outline" xmlns="http://www.w3.org/2000/svg">
-<title>cross</title><path d="M 3 13 L 13 3 M 3 3 L 13 13" id="path0" stroke-width="2.000" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(0,0,0)" fill="none" class="foreground-stroke transparent-fill foreground-stroke" ns1:states="outline" ns1:stroke-minwidth="25%" ns1:stroke-maxwidth="150%" data-stroke-mid="2.0" data-stroke-min="0.5" data-stroke-max="3.0">
+  <title>object-select</title><path id="path0" fill="none" stroke="url(&quot;#gpa:foreground&quot;) rgb(0,0,0)" stroke-width="2.000" stroke-linecap="round" stroke-linejoin="round" d="M 3 9 L 6 12 L 13 4" class="transparent-fill foreground-stroke foreground-stroke transparent-fill" ns1:states="outline" ns1:stroke-minwidth="25%" ns1:stroke-maxwidth="150%" data-stroke-mid="2.0" data-stroke-min="0.5" data-stroke-max="3.0">
     </path>
   <metadata>
     <rdf:rdf>
@@ -7,7 +7,7 @@
         <license rdf:resource="https://creativecommons.org/publicdomain/zero/1.0/"/>
         <dc:subject>
           <rdf:bag>
-            <rdf:li>process-stop x cross</rdf:li>
+            <rdf:li>object-select checkmark check select object adw-entry-apply</rdf:li>
           </rdf:bag>
         </dc:subject>
         <dc:creator>

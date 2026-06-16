@@ -14,7 +14,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Kalendasom/timeframe_picker.ui")]
+    #[template(resource = "/io/gitlab/TitouanReal/Era/timeframe_picker.ui")]
     #[properties(wrapper_type = super::TimeframePicker)]
     pub struct TimeframePicker {
         #[property(get, set = Self::set_timeframe)]
@@ -88,16 +88,21 @@ mod imp {
 
             self.timeframe.replace(Some(timeframe.clone()));
 
+            let all_day = timeframe.is_all_day();
+
             self.schedule_type
-                .set_active_name(Some(if timeframe.is_all_day() {
-                    "all-day"
-                } else {
-                    "time-slot"
-                }));
+                .set_active_name(Some(if all_day { "all-day" } else { "time-slot" }));
             self.start.set_date_only(timeframe.is_all_day());
             self.end.set_date_only(timeframe.is_all_day());
             self.start.set_date_time(timeframe.start().unwrap());
-            self.end.set_date_time(timeframe.end().unwrap());
+
+            self.end.set_date_time(
+                timeframe
+                    .end()
+                    .unwrap()
+                    .add_days(if all_day { -1 } else { 0 })
+                    .expect("Datetime should exist"),
+            );
 
             self.obj().notify_timeframe();
         }
@@ -105,13 +110,12 @@ mod imp {
         fn update_timeframe(&self) {
             let all_day = self.schedule_type.active_name().as_deref() == Some("all-day");
             let start_date_time = self.start.date_time();
-            let end_date_time = self.end.date_time();
-            // if (valid)
-            self.timeframe.replace(Some(Timeframe::new(
-                all_day,
-                &start_date_time,
-                &end_date_time,
-            )));
+            let mut end_date_time = self.end.date_time();
+            if all_day {
+                end_date_time = end_date_time.add_days(1).expect("Datetime should exist");
+            }
+            let timeframe = Timeframe::new(all_day, &start_date_time, &end_date_time).ok();
+            self.timeframe.replace(timeframe);
             self.obj().notify_timeframe();
         }
     }

@@ -261,7 +261,7 @@ template $EventDetailsDialog: Adw.Dialog {
 
             [end]
             $LoadingButton save {
-              icon-name: "checkmark-symbolic";
+              icon-name: "object-select-symbolic";
               tooltip-text: _("Save");
               action-name: "event-details-dialog.save";
 
@@ -302,6 +302,28 @@ template $EventDetailsDialog: Adw.Dialog {
             Adw.PreferencesGroup {
               Adw.EntryRow description_entry {
                 title: _("Description");
+              }
+            }
+
+            Adw.PreferencesGroup {
+              visible: bind $either(name_error.visible, timeframe_error.visible) as <bool>;
+
+              Adw.ActionRow name_error {
+                visible: bind $trimmed_string_empty(name_entry.text) as <bool>;
+                title: _("The name should not be empty");
+
+                styles [
+                  "error",
+                ]
+              }
+
+              Adw.ActionRow timeframe_error {
+                visible: bind $is_none(timeframe_picker.timeframe) as <bool>;
+                title: _("The timeframe should be valid");
+
+                styles [
+                  "error",
+                ]
               }
             }
           };

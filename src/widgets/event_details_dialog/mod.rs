@@ -8,7 +8,7 @@ use ashpd::{
         open_uri::OpenFileRequest,
     },
 };
-use clepsydre::{Event, prelude::*};
+use clepsydre::{Calendar, Event, prelude::*};
 use gettextrs::gettext;
 use glib::{DateTime, clone};
 use tracing::{debug, warn};
@@ -143,6 +143,19 @@ mod imp {
                     let _ = imp.obj().activate_action("window.close", None);
                 }
             ));
+
+            self.name_entry.connect_changed(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |_| imp.update_save_action()
+            ));
+            self.timeframe_picker.connect_timeframe_notify(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |_| imp.update_save_action()
+            ));
+
+            self.update_save_action();
         }
     }
 
@@ -304,6 +317,15 @@ mod imp {
             self.navigation_view.push(&attendees_list_page);
         }
 
+        fn update_save_action(&self) {
+            let name = self.name_entry.text();
+            let timeframe = self.timeframe_picker.timeframe();
+            let is_invalid = name.trim().is_empty() || timeframe.is_none();
+            let enabled = !is_invalid;
+            self.obj()
+                .action_set_enabled("event-details-dialog.save", enabled);
+        }
+
         #[template_callback]
         fn edit(&self) {
             let event = self.obj().event().expect("event should be initialized");
@@ -320,6 +342,7 @@ mod imp {
         }
 
         async fn update_event(&self) {
+            self.save.grab_focus();
             self.cancel.set_sensitive(false);
             self.save.set_is_loading(true);
             self.name_entry.set_sensitive(false);
@@ -339,6 +362,7 @@ mod imp {
 
             match event
                 .try_update_future(
+                    None::<&Calendar>,
                     Some(&name),
                     Some(&description),
                     Some(&location),
@@ -349,6 +373,7 @@ mod imp {
             {
                 Ok(()) => {
                     debug!("Event updated: {}", event.uri().unwrap());
+                    let _ = self.navigation_view.pop();
                 }
                 Err(error) => {
                     warn!("Failed to create event: {error}");
