@@ -21,18 +21,83 @@ pub const NATURAL_WIDTH: i32 = 0;
 
 const EVENT_GAP: i32 = 2;
 
+mod column {
+    use std::ops::{Add, AddAssign, Sub};
+
+    #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
+    pub struct Column {
+        index: usize,
+    }
+
+    impl Column {
+        pub fn new(index: usize) -> Self {
+            if index < 7 {
+                Self { index }
+            } else {
+                panic!("invalid column number: {}", index)
+            }
+        }
+
+        pub fn index(&self) -> usize {
+            self.index
+        }
+    }
+
+    impl Add<usize> for Column {
+        type Output = Column;
+        fn add(self, rhs: usize) -> Column {
+            Column::new(self.index + rhs)
+        }
+    }
+
+    impl Add<Column> for Column {
+        type Output = Column;
+        fn add(self, rhs: Column) -> Column {
+            Column::new(self.index + rhs.index)
+        }
+    }
+
+    impl AddAssign<usize> for Column {
+        fn add_assign(&mut self, rhs: usize) {
+            self.index += rhs;
+        }
+    }
+
+    impl AddAssign<Column> for Column {
+        fn add_assign(&mut self, rhs: Column) {
+            self.index += rhs.index;
+        }
+    }
+
+    impl Sub<usize> for Column {
+        type Output = usize;
+        fn sub(self, rhs: usize) -> usize {
+            self.index - rhs
+        }
+    }
+
+    impl Sub<Column> for Column {
+        type Output = usize;
+        fn sub(self, rhs: Column) -> usize {
+            self.index - rhs.index
+        }
+    }
+}
+
+use column::Column;
+
 struct SpannedEvent {
     event_widget: EventWidget,
-    column_start: usize,
-    column_end: usize,
+    column_start: Column,
+    column_end: Column,
 }
 
 #[derive(Debug)]
 struct EventLayout {
     event_widget: EventWidget,
     row: usize,
-    column_start: usize,
-    column_end: usize,
+    column_start: Column,
+    column_end: Column,
 }
 
 mod imp {
@@ -121,6 +186,8 @@ mod imp {
         cell_6: TemplateChild<adw::Bin>,
         #[template_child]
         cell_7: TemplateChild<adw::Bin>,
+        #[template_child]
+        debug: TemplateChild<gtk::Box>,
 
         /// Event widgets used to display events in this row.
         event_widgets: OnceCell<Mutex<Vec<EventWidget>>>,
@@ -308,6 +375,7 @@ mod imp {
             self.mock_event_widget.unparent();
 
             self.grid.unparent();
+            self.debug.unparent();
         }
     }
 
@@ -410,6 +478,7 @@ mod imp {
             match orientation {
                 gtk::Orientation::Horizontal => (MINIMUM_WIDTH, NATURAL_WIDTH, -1, -1),
                 gtk::Orientation::Vertical => {
+                    let (separator_height, ..) = self.above_1.measure(orientation, for_size);
                     let (minimum_header_height, natural_header_height, ..) =
                         self.header_1.measure(orientation, for_size);
                     let (minimum_event_height, natural_event_height, ..) =
@@ -419,21 +488,26 @@ mod imp {
                         .get()
                         .expect("Overflow buttons should be initialized")[0]
                         .measure(orientation, for_size);
+                    let (minimum_debug_height, ..) = self.debug.measure(orientation, for_size);
 
                     // Reserve space for the header, one event, and an overflow button.
                     // We might not need the overflow button, but it's necessary to count it in case
                     // it needs to appear at any point.
                     (
-                        minimum_header_height
+                        separator_height
+                            + minimum_header_height
                             + EVENT_GAP
                             + minimum_event_height
                             + EVENT_GAP
-                            + minimum_overflow_button_height,
-                        natural_header_height
+                            + minimum_overflow_button_height
+                            + minimum_debug_height,
+                        separator_height
+                            + natural_header_height
                             + EVENT_GAP
                             + natural_event_height
                             + EVENT_GAP
-                            + minimum_overflow_button_height,
+                            + minimum_overflow_button_height
+                            + minimum_debug_height,
                         -1,
                         -1,
                     )
@@ -445,7 +519,16 @@ mod imp {
         fn size_allocate(&self, width: i32, height: i32, baseline: i32) {
             let obj = self.obj();
 
-            // Give full allocation to the overlay
+            // Give bottom space to the debug widget
+            let (debug_height, ..) = self.debug.measure(gtk::Orientation::Vertical, width);
+            let debug_allocation =
+                gtk::Allocation::new(0, height - debug_height, width, debug_height);
+            self.debug.size_allocate(&debug_allocation, baseline);
+
+            // Set the height left for the actual content
+            let height = height - debug_height;
+
+            // Give all the rest of the space to the grid
             let full_allocation = gtk::Allocation::new(0, 0, width, height);
             self.grid.size_allocate(&full_allocation, baseline);
 
@@ -506,7 +589,7 @@ mod imp {
             let mut column_max_row: [usize; 7] = [0; 7];
             let mut nb_events_in_column: [usize; 7] = [0; 7];
             for layout in event_layouts.iter() {
-                for column in layout.column_start..=layout.column_end {
+                for column in layout.column_start.index()..=layout.column_end.index() {
                     nb_events_in_column[column] += 1;
                     if layout.row + 1 > column_max_row[column] {
                         column_max_row[column] = layout.row + 1;
@@ -534,20 +617,22 @@ mod imp {
             let mut column_hidden_count: [usize; 7] = [0; 7];
             for layout in event_layouts.iter() {
                 // Check if this event is hidden in any of its columns
-                let hidden = (layout.column_start..=layout.column_end)
-                    .any(|col| layout.row >= column_max_visible_row[col] && column_needs_more[col]);
+                let hidden =
+                    (layout.column_start.index()..=layout.column_end.index()).any(|column| {
+                        layout.row >= column_max_visible_row[column] && column_needs_more[column]
+                    });
 
                 if hidden {
                     layout.event_widget.set_child_visible(false);
-                    for col in layout.column_start..=layout.column_end {
-                        if column_needs_more[col] {
-                            column_hidden_count[col] += 1;
+                    for column in layout.column_start.index()..=layout.column_end.index() {
+                        if column_needs_more[column] {
+                            column_hidden_count[column] += 1;
                         }
                     }
                 } else {
                     layout.event_widget.set_child_visible(true);
-                    let first_cell = layout.column_start;
-                    let last_cell = layout.column_end;
+                    let first_cell = layout.column_start.index();
+                    let last_cell = layout.column_end.index();
                     let x_start = bounds[first_cell].0;
                     let x_end = bounds[last_cell].1;
                     let w = x_end - x_start;
@@ -877,6 +962,8 @@ mod imp {
 
             self.day_boundaries.replace(Some(boundaries));
             self.day_boundaries_utc.replace(Some(boundaries_utc));
+
+            self.update_event_widgets();
         }
 
         fn listen_to_event_timeframe_changes(&self) {
@@ -895,6 +982,7 @@ mod imp {
             }
         }
 
+        #[template_callback]
         fn update_event_widgets(&self) {
             let obj = self.obj();
             let subscription = self.subscription.get().unwrap();
@@ -932,6 +1020,7 @@ mod imp {
         }
 
         // TODO: Make this clearer
+        #[template_callback]
         fn invalidate_event_widgets_layout(&self) {
             let event_widgets = self.event_widgets.get().unwrap().lock().unwrap();
             let mut event_layouts = self.event_layouts.get().unwrap().lock().unwrap();
@@ -942,37 +1031,6 @@ mod imp {
             let day_boundaries = day_boundaries_ref.as_ref().unwrap();
             let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
             let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
-
-            // Find which column a datetime falls into given a set of boundaries.
-            // Returns the index of the last boundary that is <= dt (clamped to 0..=6).
-            let column_for = |datetime: &DateTime, boundaries: &[DateTime]| -> usize {
-                let mut column = 0;
-                for (i, boundary) in boundaries.iter().enumerate() {
-                    if *datetime >= *boundary {
-                        column = i;
-                    } else {
-                        break;
-                    }
-                }
-                column
-            };
-
-            // Find the last column a datetime occupies (exclusive end).
-            // Returns the index of the last boundary that is < dt (clamped to 0..=6).
-            let column_for_exclusive_end =
-                |datetime: &DateTime, boundaries: &[DateTime]| -> usize {
-                    let mut column = 0;
-                    for (i, boundary) in boundaries.iter().enumerate() {
-                        if *datetime > *boundary {
-                            // dt is past the start of column i, so it at least occupies column i
-                            column = i;
-                        } else {
-                            break;
-                        }
-                    }
-                    // If dt is exactly on a boundary, the event doesn't occupy that column
-                    column.min(6)
-                };
 
             let mut spanned_events: Vec<SpannedEvent> = Vec::new();
 
@@ -999,39 +1057,73 @@ mod imp {
                 let (column_start, column_end) = if is_all_day {
                     // All-day events: UTC dates, end is exclusive.
                     // Clamp to row UTC boundaries.
-                    let clamped_start = if start < day_boundaries_utc[0] {
-                        day_boundaries_utc[0].clone()
+                    let column_start = if start < day_boundaries_utc[1] {
+                        Column::new(0)
+                    } else if start < day_boundaries_utc[2] {
+                        Column::new(1)
+                    } else if start < day_boundaries_utc[3] {
+                        Column::new(2)
+                    } else if start < day_boundaries_utc[4] {
+                        Column::new(3)
+                    } else if start < day_boundaries_utc[5] {
+                        Column::new(4)
+                    } else if start < day_boundaries_utc[6] {
+                        Column::new(5)
                     } else {
-                        start
-                    };
-                    let clamped_end = if end > day_boundaries_utc[7] {
-                        day_boundaries_utc[7].clone()
-                    } else {
-                        end
+                        Column::new(6)
                     };
 
-                    let column_start = column_for(&clamped_start, day_boundaries_utc);
-                    // End is exclusive: last occupied column is the one before the end boundary
-                    let column_end = column_for_exclusive_end(&clamped_end, day_boundaries_utc);
-                    (column_start, column_end.max(column_start))
+                    let column_end = if end <= day_boundaries_utc[1] {
+                        Column::new(0)
+                    } else if end <= day_boundaries_utc[2] {
+                        Column::new(1)
+                    } else if end <= day_boundaries_utc[3] {
+                        Column::new(2)
+                    } else if end <= day_boundaries_utc[4] {
+                        Column::new(3)
+                    } else if end <= day_boundaries_utc[5] {
+                        Column::new(4)
+                    } else if end <= day_boundaries_utc[6] {
+                        Column::new(5)
+                    } else {
+                        Column::new(6)
+                    };
+
+                    (column_start, column_end)
                 } else {
                     // Timed events: timezone-aware, end is inclusive of the instant.
-                    let clamped_start = if start < day_boundaries[0] {
-                        day_boundaries[0].clone()
+                    let column_start = if start < day_boundaries[1] {
+                        Column::new(0)
+                    } else if start < day_boundaries[2] {
+                        Column::new(1)
+                    } else if start < day_boundaries[3] {
+                        Column::new(2)
+                    } else if start < day_boundaries[4] {
+                        Column::new(3)
+                    } else if start < day_boundaries[5] {
+                        Column::new(4)
+                    } else if start < day_boundaries[6] {
+                        Column::new(5)
                     } else {
-                        start
+                        Column::new(6)
                     };
-                    let clamped_end = if end > day_boundaries[7] {
-                        day_boundaries[7].clone()
+                    let column_end = if end < day_boundaries[1] {
+                        Column::new(0)
+                    } else if end < day_boundaries[2] {
+                        Column::new(1)
+                    } else if end < day_boundaries[3] {
+                        Column::new(2)
+                    } else if end < day_boundaries[4] {
+                        Column::new(3)
+                    } else if end < day_boundaries[5] {
+                        Column::new(4)
+                    } else if end < day_boundaries[6] {
+                        Column::new(5)
                     } else {
-                        end
+                        Column::new(6)
                     };
 
-                    let column_start = column_for(&clamped_start, day_boundaries);
-                    // For timed events ending exactly on a day boundary, they don't
-                    // spill into the next day
-                    let column_end = column_for_exclusive_end(&clamped_end, day_boundaries);
-                    (column_start, column_end.max(column_start))
+                    (column_start, column_end)
                 };
 
                 spanned_events.push(SpannedEvent {
@@ -1054,8 +1146,8 @@ mod imp {
             let mut row_occupancy: Vec<Vec<(usize, usize)>> = Vec::new();
 
             for spanned in &spanned_events {
-                let start_column = spanned.column_start;
-                let end_column = spanned.column_end + 1; // half-open
+                let start_column = spanned.column_start.index();
+                let end_column = spanned.column_end.index() + 1; // half-open
 
                 let mut assigned_row = None;
                 for (row_idx, occupied) in row_occupancy.iter_mut().enumerate() {
@@ -1103,8 +1195,8 @@ mod imp {
                 let mut col_events: Vec<(usize, gtk::Widget)> = event_layouts
                     .iter()
                     .filter(|layout| {
-                        layout.column_start <= col
-                            && layout.column_end >= col
+                        layout.column_start.index() <= col
+                            && layout.column_end.index() >= col
                             && layout.event_widget.is_visible()
                             && layout.event_widget.is_child_visible()
                     })

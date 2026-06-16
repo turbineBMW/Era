@@ -311,6 +311,21 @@ template $MonthViewRow: Widget {
       }
     }
   }
+
+  Box debug {
+    orientation: horizontal;
+    visible: bind template.root as <Window>.application as <$KalendasomApplication>.debug;
+
+    Button {
+      label: "Update widgets";
+      clicked => $update_event_widgets(template);
+    }
+
+    Button {
+      label: "Invalidate layout";
+      clicked => $invalidate_event_widgets_layout(template);
+    }
+  }
 }
 
 SizeGroup {
