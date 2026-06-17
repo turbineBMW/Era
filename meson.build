@@ -9,13 +9,18 @@ project(
     ],
 )
 
+backend = get_option('calendar-backend')
+
 i18n = import('i18n')
 gnome = import('gnome')
 
 dependency('gtk4', version: '>= 4.21')
 dependency('libadwaita-1', version: '>= 1.8')
 dependency('clepsydre-0', version: '>= 0.1')
-dependency('clepsydre-eds-0', version: '>= 0.1')
+
+if backend == 'eds'
+    dependency('clepsydre-eds-0', version: '>= 0.1')
+endif
 
 appstreamcli = find_program('appstreamcli', required: true)
 compile_schemas = find_program('glib-compile-schemas', required: true)
@@ -23,8 +28,17 @@ desktop_file_validate = find_program('desktop-file-validate', required: true)
 
 application_name = 'Era'
 base_resource_path = '/io/gitlab/TitouanReal/' + application_name
+
+if backend == 'eds'
+    backend_name = 'Eds'
+elif backend == 'mock'
+    backend_name = 'Mock'
+elif backend == 'p2panda'
+    backend_name = 'P2panda'
+endif
+
 base_id = 'io.gitlab.TitouanReal.' + application_name
-application_id = base_id
+application_id = base_id + '.' + backend_name
 version = meson.project_version()
 
 prefix = get_option('prefix')

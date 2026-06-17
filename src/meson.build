@@ -14,6 +14,14 @@ else
     rust_target = 'release'
 endif
 
+if backend == 'eds'
+    cargo_options += ['--no-default-features', '--features', 'clepsydre-eds']
+elif backend == 'mock'
+    cargo_options += ['--no-default-features', '--features', 'clepsydre-mock']
+elif backend == 'p2panda'
+    cargo_options += ['--no-default-features', '--features', 'clepsydre-p2panda']
+endif
+
 conf = configuration_data()
 conf.set_quoted('APP_ID', application_id)
 conf.set_quoted('APP_NAME', application_name)

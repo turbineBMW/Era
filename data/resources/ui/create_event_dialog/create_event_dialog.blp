@@ -1,63 +1,90 @@
 using Gtk 4.0;
 using Adw 1;
+using Clepsydre 0;
 
 template $CreateEventDialog: Adw.Dialog {
   title: _("Create Event");
   content-height: 1000;
   content-width: 600;
-  realize => $focus_name(template);
 
-  Adw.ToastOverlay toast_overlay {
-    Adw.ToolbarView {
-      [top]
-      Adw.HeaderBar {
-        show-start-title-buttons: false;
-        show-end-title-buttons: false;
+  Stack stack {
+    visible-child-name: bind $ternary(
+      $is_zero(
+        template.root as <Window>.application as <$EraApplication>.manager as <Clepsydre.Manager>.calendars-model.n-items,
+      ) as <bool>,
+      "no_calendar",
+      "event_creation"
+    );
 
-        Button cancel {
-          icon-name: "cross-symbolic";
-          tooltip-text: _("Cancel");
-          action-name: "window.close";
-        }
+    StackPage {
+      name: "no_calendar";
 
-        [end]
-        $LoadingButton create {
-          content-icon-name: "object-select-symbolic";
-          tooltip-text: _("Create");
-          action-name: "create-event-dialog.save";
+      child: Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar {}
 
-          styles [
-            "suggested-action",
-          ]
-        }
-      }
+        content: Adw.StatusPage {
+          title: _("No Calendar");
+          description: _("There is no calendar to add an event to.");
+        };
+      };
+    }
 
-      // TODO: Add a status page when no calendar exists
-      content: Adw.PreferencesPage {
-        Adw.PreferencesGroup {
-          Adw.EntryRow name {
-            title: _("Name");
+    StackPage {
+      name: "event_creation";
+
+      child: Adw.ToastOverlay toast_overlay {
+        Adw.ToolbarView {
+          [top]
+          Adw.HeaderBar {
+            show-start-title-buttons: false;
+            show-end-title-buttons: false;
+
+            Button cancel {
+              icon-name: "cross-symbolic";
+              tooltip-text: _("Cancel");
+              action-name: "window.close";
+            }
+
+            [end]
+            $LoadingButton create {
+              content-icon-name: "object-select-symbolic";
+              tooltip-text: _("Create");
+              action-name: "create-event-dialog.save";
+
+              styles [
+                "suggested-action",
+              ]
+            }
           }
 
-          Adw.EntryRow location {
-            title: _("Location");
-          }
+          content: Adw.PreferencesPage {
+            Adw.PreferencesGroup {
+              Adw.EntryRow name {
+                title: _("Name");
+              }
 
-          Adw.EntryRow conference {
-            title: _("Conference");
-          }
-        }
+              Adw.EntryRow location {
+                title: _("Location");
+              }
 
-        Adw.PreferencesGroup {
-          $CalendarComboRow calendar_choice {}
-        }
+              Adw.EntryRow conference {
+                title: _("Conference");
+              }
+            }
 
-        $TimeframePicker timeframe_picker {}
+            Adw.PreferencesGroup {
+              $CalendarComboRow calendar_choice {}
+            }
 
-        Adw.PreferencesGroup {
-          Adw.EntryRow description {
-            title: _("Description");
-          }
+            $TimeframePicker timeframe_picker {}
+
+            Adw.PreferencesGroup {
+              Adw.EntryRow description {
+                title: _("Description");
+              }
+            }
+          };
         }
       };
     }

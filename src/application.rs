@@ -60,11 +60,18 @@ mod imp {
             obj.setup_gactions();
             obj.set_accels_for_action("app.quit", &["<primary>q"]);
 
+            #[cfg(feature = "clepsydre-eds")]
+            let manager = clepsydre_eds::Manager::new().upcast();
+            #[cfg(feature = "clepsydre-mock")]
+            let manager = clepsydre_mock::MockManager::new().upcast();
+            #[cfg(feature = "clepsydre-p2panda")]
+            let manager = clepsydre_p2panda::P2pandaManager::new().upcast();
+
             self.system_settings
                 .set(SystemSettings::new())
                 .expect("System settings should not already be initialized");
             self.manager
-                .set(clepsydre_eds::Manager::new().upcast())
+                .set(manager)
                 .expect("Manager should not already be initialized");
 
             let conn = gio::bus_get_sync(gio::BusType::System, gio::Cancellable::NONE)

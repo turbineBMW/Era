@@ -27,7 +27,7 @@ fn main() -> glib::ExitCode {
     }
     let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| {
         EnvFilter::new(format!(
-            "{PROJECT_NAME}=trace,clepsydre=trace,clepsydre-eds=trace,warn"
+            "{PROJECT_NAME}=trace,clepsydre=trace,clepsydre-eds=trace,clepsydre-mock=trace,warn"
         ))
     });
 
@@ -37,7 +37,7 @@ fn main() -> glib::ExitCode {
 
     {
         // Inside your init function:
-        let domains = [PROJECT_NAME, "clepsydre", "clepsydre-eds"];
+        let domains = [PROJECT_NAME, "clepsydre", "clepsydre-eds", "clepsydre-mock"];
 
         // 1. Convert &str to CString (adds \0)
         let c_strings: Vec<CString> = domains.iter().map(|&s| CString::new(s).unwrap()).collect();

@@ -1,0 +1,1 @@
+option('calendar-backend', type: 'combo', choices: ['eds', 'mock', 'p2panda'])

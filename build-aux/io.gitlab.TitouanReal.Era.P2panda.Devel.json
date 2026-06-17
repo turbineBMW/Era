@@ -1,0 +1,83 @@
+{
+  "id": "io.gitlab.TitouanReal.Era.P2panda.Devel",
+  "runtime": "org.gnome.Platform",
+  "runtime-version": "master",
+  "sdk": "org.gnome.Sdk",
+  "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
+  "command": "era",
+  "finish-args": [
+    "--share=ipc",
+    "--device=dri",
+    "--socket=wayland",
+    "--system-talk-name=org.freedesktop.timedate1"
+  ],
+  "build-options": {
+    "append-path": "/usr/lib/sdk/rust-stable/bin",
+    "build-args": ["--share=network"],
+    "env": {
+      "RUST_BACKTRACE": "1",
+      "RUST_LOG": "era=debug"
+    }
+  },
+  "cleanup": [
+    "/include",
+    "/lib/pkgconfig",
+    "/man",
+    "/share/doc",
+    "/share/gtk-doc",
+    "/share/man",
+    "/share/pkgconfig",
+    "*.la",
+    "*.a"
+  ],
+  "modules": [
+    {
+      "name": "grass",
+      "buildsystem": "simple",
+      "build-options": {
+        "env": {
+          "CARGO_HOME": "/run/build/grass/cargo"
+        }
+      },
+      "build-commands": [
+        "cargo build --release --locked",
+        "mkdir -p /app/bin",
+        "install -D ./target/release/grass /app/bin/"
+      ],
+      "cleanup": ["*"],
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/connorskees/grass",
+          "tag": "0.13.4",
+          "commit": "e0bb9e2eabfc3a58e42b03089cd7b22c68d09d0b",
+          "disable-submodules": true
+        }
+      ]
+    },
+    {
+      "name": "libclepsydre",
+      "buildsystem": "meson",
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
+          "commit": "7c440e9632889843f9ed2616cf24f3dc788356a9"
+        }
+      ],
+      "config-opts": ["-Dlibclepsydre=true", "-Dlibclepsydre-eds=false"]
+    },
+    {
+      "name": "era",
+      "builddir": true,
+      "buildsystem": "meson",
+      "sources": [
+        {
+          "type": "dir",
+          "path": "../"
+        }
+      ],
+      "config-opts": ["-Dcalendar-backend=p2panda"]
+    }
+  ]
+}

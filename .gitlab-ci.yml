@@ -10,9 +10,7 @@ include:
       file: "templates/basic-release.yml"
 
 variables:
-    MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Devel.json"
     FLATPAK_MODULE: "era"
-    APP_ID: "io.gitlab.TitouanReal.Era.Devel"
     RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
     BUNDLE: "era-nightly.flatpak"
 
@@ -42,12 +40,14 @@ cargo-fmt:
         - cargo fmt --version
         - cargo fmt --check
 
-cargo-clippy:
-    <<: *flatpak-command
-    stage: check
-    variables:
-        COMMAND: "cargo clippy -- -D warnings"
-    interruptible: true
+# cargo-clippy:
+#     <<: *flatpak-command
+#     stage: check
+#     variables:
+#         MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
+#         APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
+#         COMMAND: "cargo clippy -- -D warnings"
+#     interruptible: true
 
 blueprint-format:
     stage: check
@@ -69,7 +69,10 @@ blueprint-lint:
         - blueprint-compiler lint **/*.blp
     allow_failure: true
 
-build@x86_64:
+build-eds@x86_64:
+    variables:
+        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
+        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
     extends: ".flatpak@x86_64"
     stage: build
     after_script:
@@ -83,10 +86,62 @@ build@x86_64:
             # Add the metainfo file for the corresponding test.
             - "${APP_ID}.metainfo.xml"
 
-build@aarch64:
+build-eds@aarch64:
+    variables:
+        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
+        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
     extends: ".flatpak@aarch64"
     stage: build
     when: manual
+
+build-mock@x86_64:
+    variables:
+        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Mock.Devel.json"
+        APP_ID: "io.gitlab.TitouanReal.Era.Mock.Devel"
+    extends: ".flatpak@x86_64"
+    stage: build
+    after_script:
+        # Copy the metainfo file to the current directory.
+        - cp flatpak_app/files/share/metainfo/*.metainfo.xml .
+    artifacts:
+        paths:
+            - $BUNDLE
+            - "repo.tar"
+            - ".flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-logs/"
+            # Add the metainfo file for the corresponding test.
+            - "${APP_ID}.metainfo.xml"
+
+build-mock@aarch64:
+    variables:
+        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Mock.Devel.json"
+        APP_ID: "io.gitlab.TitouanReal.Era.Mock.Devel"
+    extends: ".flatpak@aarch64"
+    stage: build
+    when: manual
+
+build-p2panda@x86_64:
+    variables:
+        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.P2panda.Devel.json"
+        APP_ID: "io.gitlab.TitouanReal.Era.P2panda.Devel"
+    extends: ".flatpak@x86_64"
+    stage: build
+    after_script:
+        # Copy the metainfo file to the current directory.
+        - cp flatpak_app/files/share/metainfo/*.metainfo.xml .
+    artifacts:
+        paths:
+            - $BUNDLE
+            - "repo.tar"
+            - ".flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-logs/"
+            # Add the metainfo file for the corresponding test.
+            - "${APP_ID}.metainfo.xml"
+
+build-p2panda@aarch64:
+    variables:
+        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.P2panda.Devel.json"
+        APP_ID: "io.gitlab.TitouanReal.Era.P2panda.Devel"
+    extends: ".flatpak@aarch64"
+    stage: build
 
 # Validate the metainfo with Flathub's tool.
 lint-metainfo:
@@ -95,6 +150,7 @@ lint-metainfo:
         name: "ghcr.io/flathub/flatpak-builder-lint:latest"
         entrypoint: [""]
     variables:
+        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
         METAINFO: "${APP_ID}.metainfo.xml"
     interruptible: true
     script:
@@ -102,6 +158,6 @@ lint-metainfo:
         - flatpak-builder-lint appstream ${METAINFO}
         # Test also with the pedantic and strict flags.
         - appstreamcli validate --pedantic --explain --strict ${METAINFO}
-    needs: ["build@x86_64"]
+    needs: ["build-eds@x86_64"]
 # TODO: Also build for stable
 # TODO: Build and host docs

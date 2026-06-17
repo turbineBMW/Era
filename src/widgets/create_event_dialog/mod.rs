@@ -121,11 +121,6 @@ mod imp {
                 .action_set_enabled("create-event-dialog.save", enabled);
         }
 
-        #[template_callback]
-        fn focus_name(&self) {
-            self.name.grab_focus();
-        }
-
         #[template_callback(function)]
         fn invalid_schedule(schedule_type: &str, start: DateTime, end: DateTime) -> bool {
             if schedule_type == "all-day" {

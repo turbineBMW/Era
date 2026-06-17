@@ -1,5 +1,5 @@
 {
-  "id": "io.gitlab.TitouanReal.Era.Devel",
+  "id": "io.gitlab.TitouanReal.Era.Eds.Devel",
   "runtime": "org.gnome.Platform",
   "runtime-version": "master",
   "sdk": "org.gnome.Sdk",
@@ -105,13 +105,13 @@
       ]
     },
     {
-      "name": "libclepsydre-eds",
+      "name": "libclepsydre",
       "buildsystem": "meson",
       "sources": [
         {
           "type": "git",
           "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-          "commit": "c9c09376248ae5b29fd755b210550185ead53c69"
+          "commit": "7c440e9632889843f9ed2616cf24f3dc788356a9"
         }
       ],
       "config-opts": ["-Dlibclepsydre=true", "-Dlibclepsydre-eds=true"]
@@ -125,7 +125,8 @@
           "type": "dir",
           "path": "../"
         }
-      ]
+      ],
+      "config-opts": ["-Dcalendar-backend=eds"]
     }
   ]
 }

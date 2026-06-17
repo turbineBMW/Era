@@ -13,7 +13,9 @@ adw = { package = "libadwaita", version = "0.9.1", features = ["v1_9"] }
 ashpd = { version = "0.13.5", default-features = false, features = ["async-io", "settings", "file_chooser", "open_uri"] }
 futures-util = "0.3.32"
 clepsydre = { package = "clepsydre-rebind", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git" }
-clepsydre-eds = { package = "clepsydre-eds", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git" }
+clepsydre-eds = { package = "clepsydre-eds", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git", optional = true }
+clepsydre-mock = { package = "clepsydre-mock", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git", optional = true }
+clepsydre-p2panda = { package = "clepsydre-p2panda", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git", optional = true }
 gettext-rs = { version = "0.7.7", features = ["gettext-system"] }
 gio = { version = "0.22.2", features = ["v2_86"] }
 glib = { version = "0.22.2", features = ["v2_86"] }
@@ -24,3 +26,6 @@ qrcode = "0.14.1"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 url = "2.5.8"
+
+[features]
+default = ["clepsydre-eds"]

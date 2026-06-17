@@ -1,8 +1,8 @@
-pub const APP_ID: &str = "io.gitlab.TitouanReal.Kalendasom.Devel";
-pub const APP_NAME: &str = "Kalendasom";
-pub const BASE_RESOURCE_PATH: &str = "/io/gitlab/TitouanReal/Kalendasom";
-pub const GETTEXT_PACKAGE: &str = "kalendasom";
+pub const APP_ID: &str = "io.gitlab.TitouanReal.Era.Mock.Devel";
+pub const APP_NAME: &str = "Era";
+pub const BASE_RESOURCE_PATH: &str = "/io/gitlab/TitouanReal/Era";
+pub const GETTEXT_PACKAGE: &str = "era";
 pub const LOCALEDIR: &str = "/app/share/locale";
-pub const PROJECT_NAME: &str = "kalendasom";
-pub const RESOURCES_FILE: &str = concat!("/app/share/kalendasom", "/", "kalendasom", ".gresource");
+pub const PROJECT_NAME: &str = "era";
+pub const RESOURCES_FILE: &str = concat!("/app/share/era", "/", "era", ".gresource");
 pub const VERSION: &str = "mock";
