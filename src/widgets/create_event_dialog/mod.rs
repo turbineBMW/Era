@@ -111,7 +111,11 @@ mod imp {
         fn update_save_action(&self) {
             let name = self.name.text();
             let timeframe = self.timeframe_picker.timeframe();
-            let is_invalid = name.trim().is_empty() || timeframe.is_none();
+
+            let name_is_empty = name.trim().is_empty();
+            let timeframe_is_invalid = timeframe.is_none();
+
+            let is_invalid = name_is_empty || timeframe_is_invalid;
             let enabled = !is_invalid;
             self.obj()
                 .action_set_enabled("create-event-dialog.save", enabled);

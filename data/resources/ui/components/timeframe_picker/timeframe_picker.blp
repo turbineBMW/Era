@@ -34,6 +34,7 @@ template $TimeframePicker: Adw.PreferencesGroup {
       date-title: _("End Date");
       time-title: _("End Time");
       date-only: bind $string_equals(schedule_type.active-name, "all-day") as <bool>;
+      error: bind $is_none(template.timeframe) as <bool>;
     }
 
     Adw.PreferencesGroup {

@@ -59,28 +59,6 @@ template $CreateEventDialog: Adw.Dialog {
             title: _("Description");
           }
         }
-
-        Adw.PreferencesGroup {
-          visible: bind $either(name_error.visible, timeframe_error.visible) as <bool>;
-
-          Adw.ActionRow name_error {
-            visible: bind $trimmed_string_empty(name.text) as <bool>;
-            title: _("The name should not be empty");
-
-            styles [
-              "error",
-            ]
-          }
-
-          Adw.ActionRow timeframe_error {
-            visible: bind $is_none(timeframe_picker.timeframe) as <bool>;
-            title: _("The timeframe should be valid");
-
-            styles [
-              "error",
-            ]
-          }
-        }
       };
     }
   }

@@ -25,6 +25,8 @@ mod imp {
         date_only: Cell<bool>,
         #[property(get, set = Self::set_date_time)]
         date_time: RefCell<DateTime>,
+        #[property(get, set = Self::set_error)]
+        error: Cell<bool>,
         #[template_child]
         date: TemplateChild<DatePickerRow>,
         #[template_child]
@@ -54,6 +56,7 @@ mod imp {
                         .and_then(|d| d.to_timezone(&timezone))
                         .expect("Date should be valid"),
                 ),
+                error: Cell::default(),
                 date: TemplateChild::default(),
                 time: TemplateChild::default(),
                 hour: TemplateChild::default(),
@@ -123,6 +126,23 @@ mod imp {
             self.date_time.replace(date_time);
 
             self.obj().notify_date_time();
+        }
+
+        fn set_error(&self, error: bool) {
+            if error == self.error.get() {
+                return;
+            }
+
+            if error {
+                self.date.add_css_class("error");
+                self.time.add_css_class("error");
+            } else {
+                self.date.remove_css_class("error");
+                self.time.remove_css_class("error");
+            }
+
+            self.error.set(error);
+            self.obj().notify_error();
         }
 
         #[template_callback]
