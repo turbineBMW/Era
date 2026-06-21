@@ -92,8 +92,7 @@ mod imp {
             });
 
             klass.install_action("event-details-dialog.show-qr-code", None, |obj, _, _| {
-                let imp = obj.imp();
-                imp.show_qr_code();
+                obj.imp().qr_code_dialog.present(Some(obj));
             });
 
             klass.install_action("event-details-dialog.save", None, |obj, _, _| {
@@ -199,7 +198,7 @@ mod imp {
                     format!(
                         "{} - {}",
                         start.format("%Y-%m-%d").unwrap(),
-                        end.format("%Y-%m-%d").unwrap(),
+                        end.add_days(-1).unwrap().format("%Y-%m-%d").unwrap(),
                     )
                 }
             } else {
@@ -251,14 +250,6 @@ mod imp {
                 .await
                 .unwrap();
             }
-        }
-
-        fn show_qr_code(&self) {
-            let event = self.obj().event().expect("event should be initialized");
-            let url = event.to_string_for_qr_code().unwrap();
-
-            self.qr_code_dialog.set_url(url);
-            self.qr_code_dialog.present(Some(&*self.obj()));
         }
 
         #[template_callback]
