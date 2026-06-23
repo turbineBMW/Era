@@ -3,15 +3,11 @@ use clepsydre::{Calendar, prelude::*};
 use glib::{DateTime, clone};
 use tracing::{debug, warn};
 
-mod calendar_combo_row;
-
 use crate::{
     spawn,
     utils::TemplateCallbacks,
-    widgets::components::{ErrorDialog, LoadingButton, TimeframePicker},
+    widgets::components::{CalendarComboRow, ErrorDialog, LoadingButton, TimeframePicker},
 };
-
-use self::calendar_combo_row::CalendarComboRow;
 
 mod imp {
     use super::*;

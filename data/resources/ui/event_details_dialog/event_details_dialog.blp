@@ -286,15 +286,19 @@ template $EventDetailsDialog: Adw.Dialog {
               }
             }
 
+            // TODO: Improve the logic to accept calendar changes more often.
+            // A calendar change does not require editing ; instead it requires event removal right,
+            // and event creation right in the new calendar.
             Adw.PreferencesGroup {
-              Adw.ActionRow {
-                title: _("Calendar");
+              visible: bind $both(
+                $both(
+                  template.event as <Clepsydre.Event>.editable,
+                  template.event as <Clepsydre.Event>.removable,
+                ) as <bool>,
+                template.event as <Clepsydre.Event>.calendar.event-creation-enabled,
+              );
 
-                [suffix]
-                Label {
-                  label: "TODO";
-                }
-              }
+              $CalendarComboRow calendar_choice {}
             }
 
             $TimeframePicker timeframe_picker {}

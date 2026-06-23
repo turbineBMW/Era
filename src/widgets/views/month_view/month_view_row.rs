@@ -201,7 +201,8 @@ mod imp {
 
         /// Cells, that show where days are.
         cells: OnceCell<[adw::Bin; 7]>,
-        /// Overflow buttons, to show when events can't be shown because there is not enough height.
+        /// Overflow buttons, to show when events can't be shown because there is not enough
+        /// height.
         overflow_buttons: OnceCell<[OverflowButton; 7]>,
 
         /// Tracks the current focus position as an index into the focus order.

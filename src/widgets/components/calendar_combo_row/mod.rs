@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Calendar, Collection};
 use glib::clone;
@@ -12,9 +14,12 @@ use self::calendar_combo_row_list_item::CalendarComboRowListItem;
 mod imp {
     use super::*;
 
-    #[derive(Default, gtk::CompositeTemplate)]
+    #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
     #[template(resource = "/io/gitlab/TitouanReal/Era/calendar_combo_row.ui")]
+    #[properties(wrapper_type = super::CalendarComboRow)]
     pub struct CalendarComboRow {
+        #[property(get, set)]
+        filter: RefCell<Option<gtk::Filter>>,
         #[template_child]
         model: TemplateChild<FilterListModel>,
         #[template_child]
@@ -38,9 +43,15 @@ mod imp {
         }
     }
 
+    #[glib::derived_properties]
     impl ObjectImpl for CalendarComboRow {
         fn constructed(&self) {
             self.parent_constructed();
+
+            self.obj()
+                .set_filter(gtk::BoolFilter::new(Some(Calendar::this_expression(
+                    "event-creation-enabled",
+                ))));
 
             self.map.set_map_func(|object| {
                 let collection = object
@@ -96,4 +107,28 @@ glib::wrapper! {
     pub struct CalendarComboRow(ObjectSubclass<imp::CalendarComboRow>)
     @extends gtk::Widget, gtk::ListBoxRow, adw::PreferencesRow, adw::ActionRow, adw::ComboRow,
     @implements gtk::Accessible, gtk::Actionable, gtk::Buildable, gtk::ConstraintTarget;
+}
+
+impl CalendarComboRow {
+    pub fn set_selected_calendar(&self, calendar: &Calendar) {
+        let model = self.model().unwrap();
+
+        for index in 0..model.n_items() {
+            let item = model.item(index).unwrap();
+            if item.downcast_ref::<Calendar>() == Some(calendar) {
+                self.set_selected(index);
+                return;
+            }
+        }
+    }
+
+    pub fn selected_calendar(&self) -> Calendar {
+        let model = self.model().unwrap();
+        let selected_index = self.selected();
+        model
+            .item(selected_index)
+            .unwrap()
+            .downcast::<Calendar>()
+            .unwrap()
+    }
 }

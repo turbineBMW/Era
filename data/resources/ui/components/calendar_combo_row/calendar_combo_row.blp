@@ -6,9 +6,7 @@ template $CalendarComboRow: Adw.ComboRow {
   title: _("Calendar");
 
   model: FilterListModel model {
-    filter: BoolFilter {
-      expression: expr item as <Clepsydre.Calendar>.event-creation-enabled;
-    };
+    filter: bind template.filter;
 
     model: FlattenListModel {
       model: MapListModel map {

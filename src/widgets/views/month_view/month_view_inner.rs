@@ -82,8 +82,8 @@ mod imp {
         /// The height that was given to each row during the last size_allocate.
         last_row_height: Cell<i32>,
         /// The desired height to give in the next size_allocate. It shouldn't be set to a value
-        /// bigger than MAXIMUM_ROW_HEIGHT. size_allocate might give the rows more height than this,
-        /// to respect the rows measurements and MINIMUM_ROW_HEIGHT.
+        /// bigger than MAXIMUM_ROW_HEIGHT. size_allocate might give the rows more height than
+        /// this, to respect the rows measurements and MINIMUM_ROW_HEIGHT.
         /// This value is only set in stone once size_allocate is called. Before that point, it can
         /// be set many times.
         desired_next_row_height: Cell<i32>,

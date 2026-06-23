@@ -8,7 +8,7 @@ use ashpd::{
         open_uri::OpenFileRequest,
     },
 };
-use clepsydre::{Calendar, Event, prelude::*};
+use clepsydre::{Event, prelude::*};
 use gettextrs::gettext;
 use glib::{DateTime, clone};
 use tracing::{debug, warn};
@@ -18,7 +18,7 @@ use crate::{
     utils::{PaintableCallbacks, TemplateCallbacks},
     widgets::{
         QrCodeDialog,
-        components::{ErrorDialog, LoadingButton, TimeframePicker},
+        components::{CalendarComboRow, ErrorDialog, LoadingButton, TimeframePicker},
     },
 };
 
@@ -56,6 +56,8 @@ mod imp {
         location_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
         conference_entry: TemplateChild<adw::EntryRow>,
+        #[template_child]
+        calendar_choice: TemplateChild<CalendarComboRow>,
         #[template_child]
         timeframe_picker: TemplateChild<TimeframePicker>,
         #[template_child]
@@ -332,6 +334,8 @@ mod imp {
             self.conference_entry.set_text(&event.conference().unwrap());
             self.timeframe_picker
                 .set_timeframe(event.timeframe().unwrap());
+            self.calendar_choice
+                .set_selected_calendar(&event.calendar().unwrap());
             self.description_entry
                 .set_text(&event.description().unwrap());
         }
@@ -347,6 +351,11 @@ mod imp {
 
             let event = self.obj().event().expect("event should be initialized");
 
+            let calendar = if self.calendar_choice.is_visible() {
+                Some(self.calendar_choice.selected_calendar())
+            } else {
+                None
+            };
             let name = self.name_entry.text();
             let description = self.description_entry.text();
             let location = self.location_entry.text();
@@ -357,7 +366,7 @@ mod imp {
 
             match event
                 .try_update_future(
-                    None::<&Calendar>,
+                    calendar.as_ref(),
                     Some(&name),
                     Some(&description),
                     Some(&location),

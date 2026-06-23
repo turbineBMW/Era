@@ -19,8 +19,14 @@ blueprints = custom_target(
         'ui/calendar_manager_dialog/collections_list_page.blp',
 
         # Components
+        # Calendar Combo Row
+        'ui/components/calendar_combo_row/calendar_combo_row.blp',
+        'ui/components/calendar_combo_row/calendar_combo_row_list_item.blp',
+        # Error Dialog
         'ui/components/error_dialog.blp',
+        # Loading Bin
         'ui/components/loading_bin.blp',
+        # Loading Button Row
         'ui/components/loading_button_row.blp',
         # Timeframe Picker
         'ui/components/timeframe_picker/date_picker_row.blp',
@@ -29,14 +35,12 @@ blueprints = custom_target(
         'ui/components/timeframe_picker/timeframe_picker.blp',
 
         # Create Event Dialog
-        'ui/create_event_dialog/calendar_combo_row/calendar_combo_row.blp',
-        'ui/create_event_dialog/calendar_combo_row/calendar_combo_row_list_item.blp',
-        'ui/create_event_dialog/create_event_dialog.blp',
+        'ui/create_event_dialog.blp',
+
+        # Event Details Dialog
         'ui/event_details_dialog/attendee_list_row/attendee_list_row.blp',
         'ui/event_details_dialog/attendee_list_row/attendee_row.blp',
         'ui/event_details_dialog/attendee_list_row/attendee_status_section.blp',
-
-        # Event Details Dialog
         'ui/event_details_dialog/attendees_list_page/attendee_details_row.blp',
         'ui/event_details_dialog/attendees_list_page/attendees_list_page.blp',
         'ui/event_details_dialog/event_details_dialog.blp',
