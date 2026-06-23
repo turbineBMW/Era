@@ -15,7 +15,14 @@ template $QrCodeDialog: Adw.Dialog {
           orientation: vertical;
           spacing: 12;
 
-          Picture qr_code {}
+          Picture qr_code {
+            halign: center;
+
+            styles [
+              "card",
+              "qr-image",
+            ]
+          }
 
           Label {
             label: _("Scan to Import");
