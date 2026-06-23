@@ -491,9 +491,9 @@ checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
 
 [[package]]
 name = "chacha20"
-version = "0.10.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f8d983286843e49675a4b7a2d174efe136dc93a18d69130dd18198a6c167601"
+checksum = "d524456ba66e72eb8b115ff89e01e497f8e6d11d78b70b1aa13c0fbd97540a81"
 dependencies = [
  "cfg-if",
  "cpufeatures 0.3.0",
@@ -552,7 +552,7 @@ dependencies = [
 [[package]]
 name = "clepsydre-eds"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#7f2f7146ef0c14f3eaa4294fcbf36c7e6fc757a3"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#abf1b5dcca74d287e4661f68df9da60d9adfb44a"
 dependencies = [
  "bitflags 2.13.0",
  "clepsydre-eds-sys",
@@ -564,7 +564,7 @@ dependencies = [
 [[package]]
 name = "clepsydre-eds-sys"
 version = "0.0.1"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#7f2f7146ef0c14f3eaa4294fcbf36c7e6fc757a3"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#abf1b5dcca74d287e4661f68df9da60d9adfb44a"
 dependencies = [
  "clepsydre-sys",
  "glib-sys",
@@ -575,7 +575,7 @@ dependencies = [
 [[package]]
 name = "clepsydre-mock"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#7f2f7146ef0c14f3eaa4294fcbf36c7e6fc757a3"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#abf1b5dcca74d287e4661f68df9da60d9adfb44a"
 dependencies = [
  "clepsydre-rebind",
  "gdk4",
@@ -589,19 +589,24 @@ dependencies = [
 [[package]]
 name = "clepsydre-p2panda"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#7f2f7146ef0c14f3eaa4294fcbf36c7e6fc757a3"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#abf1b5dcca74d287e4661f68df9da60d9adfb44a"
 dependencies = [
  "clepsydre-rebind",
+ "futures",
  "gdk4",
  "gio",
  "glib",
  "p2panda",
+ "serde",
+ "tokio",
+ "tracing",
+ "uuid",
 ]
 
 [[package]]
 name = "clepsydre-rebind"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#7f2f7146ef0c14f3eaa4294fcbf36c7e6fc757a3"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#abf1b5dcca74d287e4661f68df9da60d9adfb44a"
 dependencies = [
  "bitflags 2.13.0",
  "clepsydre-sys",
@@ -613,7 +618,7 @@ dependencies = [
 [[package]]
 name = "clepsydre-sys"
 version = "0.0.1"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#7f2f7146ef0c14f3eaa4294fcbf36c7e6fc757a3"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#abf1b5dcca74d287e4661f68df9da60d9adfb44a"
 dependencies = [
  "gdk4-sys",
  "gio-sys",
@@ -5388,6 +5393,7 @@ checksum = "144d6b123cef80b301b8f72a9e2ca4370ddec21950d0a103dd22c437006d2db7"
 dependencies = [
  "getrandom 0.4.3",
  "js-sys",
+ "rand 0.10.1",
  "serde_core",
  "wasm-bindgen",
 ]
