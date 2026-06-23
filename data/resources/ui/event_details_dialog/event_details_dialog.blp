@@ -200,13 +200,13 @@ template $EventDetailsDialog: Adw.Dialog {
 
                 Adw.Clamp {
                   maximum-size: 150;
+                  visible: bind $both(
+                    template.event as <Clepsydre.Event>.editable,
+                    $not(template.event as <Clepsydre.Event>.has-recurrence) as <bool>,
+                  );
 
                   Button edit {
                     label: _("_Edit");
-                    visible: bind $both(
-                      template.event as <Clepsydre.Event>.editable,
-                      $not(template.event as <Clepsydre.Event>.has-recurrence) as <bool>,
-                    );
                     use-underline: true;
                     hexpand: true;
                     clicked => $edit(template);
@@ -220,13 +220,13 @@ template $EventDetailsDialog: Adw.Dialog {
 
                 Adw.Clamp {
                   maximum-size: 150;
+                  visible: bind $both(
+                    template.event as <Clepsydre.Event>.removable,
+                    $not(template.event as <Clepsydre.Event>.has-recurrence) as <bool>,
+                  ) as <bool>;
 
                   $LoadingButton remove {
                     content-label: _("_Remove");
-                    visible: bind $both(
-                      template.event as <Clepsydre.Event>.removable,
-                      $not(template.event as <Clepsydre.Event>.has-recurrence) as <bool>,
-                    ) as <bool>;
                     use-underline: true;
                     hexpand: true;
                     clicked => $remove(template);
