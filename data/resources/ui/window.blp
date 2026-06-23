@@ -174,7 +174,7 @@ template $EraWindow: Adw.ApplicationWindow {
                 Button {
                   icon-name: "list-add-symbolic";
                   tooltip-text: _("Create Event");
-                  action-name: "win.create-event";
+                  clicked => $create_event(template);
                 }
 
                 [end]
@@ -246,7 +246,7 @@ template $EraWindow: Adw.ApplicationWindow {
                   Button {
                     icon-name: "list-add-symbolic";
                     tooltip-text: _("Create Event");
-                    action-name: "win.create-event";
+                    clicked => $create_event(template);
                   }
 
                   [end]
@@ -320,7 +320,7 @@ template $EraWindow: Adw.ApplicationWindow {
                   Button {
                     icon-name: "list-add-symbolic";
                     tooltip-text: _("Create Event");
-                    action-name: "win.create-event";
+                    clicked => $create_event(template);
                   }
 
                   [end]
@@ -424,7 +424,7 @@ template $EraWindow: Adw.ApplicationWindow {
                   Button {
                     icon-name: "list-add-symbolic";
                     tooltip-text: _("Create Event");
-                    action-name: "win.create-event";
+                    clicked => $create_event(template);
                   }
 
                   [end]

@@ -4,7 +4,7 @@ use glib::{clone, translate::*};
 
 use crate::{
     Application,
-    utils::TemplateCallbacks,
+    utils::{EventPropertiesPreset, TemplateCallbacks},
     widgets::{
         CalendarManagerDialog, CreateEventDialog, SearchDialog, Sidebar,
         views::{MonthView, YearView},
@@ -70,14 +70,23 @@ pub mod imp {
                 "win.manage-calendars",
             );
 
-            klass.install_action("win.create-event", None, |obj, _, _| {
-                obj.imp().create_event();
-            });
-            klass.add_binding_action(
-                gdk::Key::N,
-                gdk::ModifierType::CONTROL_MASK,
+            klass.install_action(
                 "win.create-event",
+                Some(&EventPropertiesPreset::static_variant_type()),
+                |obj, _action_name, parameter| {
+                    let preset = parameter
+                        .unwrap()
+                        .get::<EventPropertiesPreset>()
+                        .expect("Parameter should be of type EventPropertiesPreset");
+
+                    let dialog = CreateEventDialog::new(preset);
+                    dialog.present(Some(obj));
+                },
             );
+            klass.add_binding(gdk::Key::N, gdk::ModifierType::CONTROL_MASK, |obj| {
+                obj.imp().create_event();
+                glib::Propagation::Stop
+            });
 
             klass.install_action("win.today", None, |obj, _, _| {
                 obj.imp().today();
@@ -273,11 +282,6 @@ pub mod imp {
             dialog.present(Some(&*self.obj()));
         }
 
-        fn create_event(&self) {
-            let dialog = CreateEventDialog::new();
-            dialog.present(Some(&*self.obj()));
-        }
-
         fn today(&self) {
             let today = Application::default().current_datetime();
             let year = today.year();
@@ -358,6 +362,28 @@ pub mod imp {
                 "narrow" => self.narrow_stack.set_visible_child_name("month"),
                 _ => (),
             }
+        }
+
+        #[template_callback]
+        fn create_event(&self) {
+            let today = Application::default().current_datetime();
+            let tomorrow = today.add_days(1).unwrap();
+
+            let start = today.format_iso8601().unwrap().to_string();
+            let end = tomorrow.format_iso8601().unwrap().to_string();
+
+            let preset = EventPropertiesPreset {
+                all_day: true,
+                start,
+                end,
+                ..Default::default()
+            };
+
+            let _ = WidgetExt::activate_action(
+                &*self.obj(),
+                "win.create-event",
+                Some(&preset.to_variant()),
+            );
         }
     }
 }

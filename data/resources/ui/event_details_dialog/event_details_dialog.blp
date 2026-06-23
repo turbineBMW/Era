@@ -184,13 +184,12 @@ template $EventDetailsDialog: Adw.Dialog {
           };
 
           [bottom]
-          ActionBar {
-            visible: bind $both(
-              template.event as <Clepsydre.Event>.editable,
-              $not(template.event as <Clepsydre.Event>.has-recurrence) as <bool>,
-            );
+          Adw.Bin {
+            styles [
+              "toolbar",
+              "event-actions-toolbar",
+            ]
 
-            [center]
             Adw.Clamp {
               // Keep 150px per button, and 12px of spacing between each
               maximum-size: 474;
@@ -199,39 +198,59 @@ template $EventDetailsDialog: Adw.Dialog {
                 homogeneous: true;
                 spacing: 12;
 
-                Button edit {
-                  label: _("_Edit");
-                  use-underline: true;
-                  hexpand: true;
-                  clicked => $edit(template);
+                Adw.Clamp {
+                  maximum-size: 150;
 
-                  styles [
-                    "suggested-action",
-                    "event-action",
-                  ]
+                  Button edit {
+                    label: _("_Edit");
+                    visible: bind $both(
+                      template.event as <Clepsydre.Event>.editable,
+                      $not(template.event as <Clepsydre.Event>.has-recurrence) as <bool>,
+                    );
+                    use-underline: true;
+                    hexpand: true;
+                    clicked => $edit(template);
+
+                    styles [
+                      "suggested-action",
+                      "event-action",
+                    ]
+                  }
                 }
 
-                $LoadingButton remove {
-                  content-label: _("_Remove");
-                  use-underline: true;
-                  hexpand: true;
-                  clicked => $remove(template);
+                Adw.Clamp {
+                  maximum-size: 150;
 
-                  styles [
-                    "destructive-action",
-                    "event-action",
-                  ]
+                  $LoadingButton remove {
+                    content-label: _("_Remove");
+                    visible: bind $both(
+                      template.event as <Clepsydre.Event>.removable,
+                      $not(template.event as <Clepsydre.Event>.has-recurrence) as <bool>,
+                    ) as <bool>;
+                    use-underline: true;
+                    hexpand: true;
+                    clicked => $remove(template);
+
+                    styles [
+                      "destructive-action",
+                      "event-action",
+                    ]
+                  }
                 }
 
-                Button {
-                  label: _("_Duplicate");
-                  use-underline: true;
-                  hexpand: true;
-                  sensitive: false;
+                Adw.Clamp {
+                  maximum-size: 150;
 
-                  styles [
-                    "event-action",
-                  ]
+                  Button duplicate {
+                    label: _("_Duplicate");
+                    use-underline: true;
+                    hexpand: true;
+                    clicked => $duplicate(template);
+
+                    styles [
+                      "event-action",
+                    ]
+                  }
                 }
               }
             }

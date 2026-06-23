@@ -15,7 +15,7 @@ use tracing::{debug, warn};
 
 use crate::{
     spawn,
-    utils::{PaintableCallbacks, TemplateCallbacks},
+    utils::{EventPropertiesPreset, PaintableCallbacks, TemplateCallbacks},
     widgets::{
         QrCodeDialog,
         components::{CalendarComboRow, ErrorDialog, LoadingButton, TimeframePicker},
@@ -44,6 +44,8 @@ mod imp {
         edit: TemplateChild<gtk::Button>,
         #[template_child]
         remove: TemplateChild<LoadingButton>,
+        #[template_child]
+        duplicate: TemplateChild<gtk::Button>,
         #[template_child]
         editor_toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
@@ -402,6 +404,7 @@ mod imp {
         async fn remove(&self) {
             self.remove.set_is_loading(true);
             self.edit.set_sensitive(false);
+            self.duplicate.set_sensitive(false);
             let event = self.obj().event().expect("event should be initialized");
             match event.try_remove_future().await {
                 Ok(()) => {
@@ -417,8 +420,51 @@ mod imp {
                     self.editor_toast_overlay.add_toast(toast);
 
                     self.remove.set_is_loading(false);
+                    self.edit.set_sensitive(true);
+                    self.duplicate.set_sensitive(true);
                 }
             }
+        }
+
+        #[template_callback]
+        fn duplicate(&self) {
+            let event = self.obj().event().expect("event should be initialized");
+
+            let name = event.name().unwrap().to_string();
+            let description = event.description().unwrap().to_string();
+            let location = event.location().unwrap().to_string();
+            let conference = event.conference().unwrap().to_string();
+            let all_day = event.timeframe().unwrap().is_all_day();
+            let start = event
+                .timeframe()
+                .unwrap()
+                .start()
+                .unwrap()
+                .format_iso8601()
+                .unwrap()
+                .to_string();
+            let end = event
+                .timeframe()
+                .unwrap()
+                .end()
+                .unwrap()
+                .format_iso8601()
+                .unwrap()
+                .to_string();
+
+            let preset = EventPropertiesPreset {
+                name,
+                description,
+                location,
+                conference,
+                all_day,
+                start,
+                end,
+            };
+
+            let _ = self
+                .obj()
+                .activate_action("win.create-event", Some(&preset.to_variant()));
         }
     }
 }

@@ -5,11 +5,13 @@ use tracing::{debug, warn};
 
 use crate::{
     spawn,
-    utils::TemplateCallbacks,
+    utils::{EventPropertiesPreset, TemplateCallbacks},
     widgets::components::{CalendarComboRow, ErrorDialog, LoadingButton, TimeframePicker},
 };
 
 mod imp {
+    use clepsydre::Timeframe;
+
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
@@ -104,6 +106,21 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl CreateEventDialog {
+        pub(super) fn set_data(&self, preset: EventPropertiesPreset) {
+            self.name.set_text(&preset.name);
+            self.description.set_text(&preset.description);
+            self.location.set_text(&preset.location);
+            self.conference.set_text(&preset.conference);
+
+            let timeframe = Timeframe::new(
+                preset.all_day,
+                &DateTime::from_iso8601(&preset.start, None).unwrap(),
+                &DateTime::from_iso8601(&preset.end, None).unwrap(),
+            )
+            .unwrap();
+            self.timeframe_picker.set_timeframe(timeframe);
+        }
+
         fn update_save_action(&self) {
             let name = self.name.text();
             let timeframe = self.timeframe_picker.timeframe();
@@ -189,13 +206,9 @@ glib::wrapper! {
 }
 
 impl CreateEventDialog {
-    pub fn new() -> Self {
-        glib::Object::new()
-    }
-}
-
-impl Default for CreateEventDialog {
-    fn default() -> Self {
-        Self::new()
+    pub fn new(preset: EventPropertiesPreset) -> Self {
+        let dialog: Self = glib::Object::new();
+        dialog.imp().set_data(preset);
+        dialog
     }
 }

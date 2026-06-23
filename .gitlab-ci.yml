@@ -31,14 +31,13 @@ stages:
         - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
 
 cargo-fmt:
-    stage: "check"
-    image: "rust:slim"
+    <<: *flatpak-command
+    stage: check
+    variables:
+        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
+        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
+        COMMAND: "cargo fmt"
     interruptible: true
-    script:
-        - rustup component add rustfmt
-        - rustc -Vv && cargo -Vv
-        - cargo fmt --version
-        - cargo fmt --check
 
 cargo-clippy:
     <<: *flatpak-command
