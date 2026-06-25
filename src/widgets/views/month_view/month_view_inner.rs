@@ -64,6 +64,11 @@ mod imp {
         #[property(get, set, builder(MonthViewStyling::default()))]
         styling: Cell<MonthViewStyling>,
 
+        #[template_child]
+        scroll_drag: TemplateChild<gtk::GestureDrag>,
+        #[template_child]
+        scroll_swipe: TemplateChild<gtk::GestureSwipe>,
+
         /// Rows contained in the view.
         rows: OnceCell<Mutex<Vec<MonthViewRow>>>,
 
@@ -95,6 +100,9 @@ mod imp {
         pixels_waiting: Cell<f64>,
         /// Number of pixels to move by still to go.
         pixels_left: Cell<f64>,
+
+        /// TODO: this is for drag
+        last_drag_offset_y: Cell<f64>,
 
         /// Y position of the pointer to use for zooming with CTRL+scroll.
         pointer_y: Cell<Option<f64>>,
@@ -193,6 +201,8 @@ mod imp {
                         imp.update_date();
                     }
                 ));
+
+            self.scroll_swipe.group_with(&self.scroll_drag.get());
         }
 
         fn dispose(&self) {
@@ -921,8 +931,59 @@ mod imp {
         }
 
         #[template_callback]
+        fn scroll_drag_begin(&self, _start_x: f64, _start_y: f64, _gesture_drag: gtk::GestureDrag) {
+            self.cancel_scroll_animation();
+            self.last_drag_offset_y.set(0.);
+        }
+
+        #[template_callback]
+        fn scroll_drag_update(
+            &self,
+            _offset_x: f64,
+            offset_y: f64,
+            gesture_drag: gtk::GestureDrag,
+        ) {
+            if self.obj().drag_check_threshold(0, 0, 0, offset_y as i32) {
+                gesture_drag.set_state(gtk::EventSequenceState::Claimed);
+
+                self.scroll_offset_add((self.last_drag_offset_y.get() - offset_y) as i32);
+                self.last_drag_offset_y.set(offset_y);
+            }
+        }
+
+        #[template_callback]
         fn swipe(&self, _dx: f64, dy: f64) {
-            let pixels = -dy;
+            let dy = -dy;
+
+            if dy.abs() < VELOCITY_THRESHOLD_TO_RETURN {
+                return;
+            }
+
+            // Apply a function to the speed so that the animation feels more natural
+            let dy = if dy > FIRST_TO_SECOND_STAGE_THRESHOLD {
+                FIRST_TO_SECOND_STAGE_THRESHOLD / FIRST_STAGE_DIVISOR
+                    + (dy - FIRST_TO_SECOND_STAGE_THRESHOLD) / SECOND_STAGE_DIVISOR
+            } else if dy < -FIRST_TO_SECOND_STAGE_THRESHOLD {
+                -FIRST_TO_SECOND_STAGE_THRESHOLD / FIRST_STAGE_DIVISOR
+                    + (dy + FIRST_TO_SECOND_STAGE_THRESHOLD) / SECOND_STAGE_DIVISOR
+            } else {
+                dy / FIRST_STAGE_DIVISOR
+            };
+
+            let row_height = self.last_row_height.get();
+            let scroll_offset = self.last_scroll_offset.get();
+            let offset_from_a_row = scroll_offset % row_height;
+
+            // Adjust the scroll to snap to the start of a row if close enough
+            let pixels = if dy > VELOCITY_THRESHOLD_TO_SNAP {
+                (dy / row_height as f64).floor() * row_height as f64 + row_height as f64
+                    - offset_from_a_row as f64
+            } else if dy < -VELOCITY_THRESHOLD_TO_SNAP {
+                (dy / row_height as f64).ceil() * row_height as f64 - offset_from_a_row as f64
+            } else {
+                dy
+            };
+
             self.start_scroll_animation(pixels);
         }
 

@@ -25,14 +25,22 @@ template $MonthViewInner: Widget {
     scroll => $discrete_scroll(template);
   }
 
+  // Continuous scroll (drag on touchscreen)
+  GestureDrag scroll_drag {
+    touch-only: true;
+    drag-begin => $scroll_drag_begin(template);
+    drag-update => $scroll_drag_update(template);
+  }
+
   // Kinetic deceleration after drag on touchscreen
-  GestureSwipe {
+  GestureSwipe scroll_swipe {
     touch-only: true;
     swipe => $swipe(template);
   }
 
   // Pinch to zoom (trackpad or touchscreen)
   GestureZoom {
+    // TODO: begin might not be needed
     begin => $zoom_begin(template);
     scale-changed => $zoom_scale_changed(template);
   }
