@@ -1,4 +1,4 @@
-commit := `jq -r '.modules[] | select(.name == "libclepsydre-eds") | .sources[] | select(.type == "git") | .commit' build-aux/io.gitlab.TitouanReal.Era.Devel.json`
+commit := `jq -r '.modules[] | select(.name == "libclepsydre-eds") | .sources[] | select(.type == "git") | .commit' build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json`
 build_dir := "/tmp/clepsydre-build"
 
 install-clepsydre:

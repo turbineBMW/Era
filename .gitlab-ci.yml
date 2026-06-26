@@ -1,6 +1,3 @@
-# TODO: Deduplicate many jobs
-# TODO: Switch to GNOME OS
-
 include:
     - project: "GNOME/citemplates"
       file: "templates/default-rules.yml"
@@ -12,13 +9,24 @@ include:
 variables:
     FLATPAK_MODULE: "era"
     RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
-    BUNDLE: "era-nightly.flatpak"
 
-stages:
-    - check
-    - build
-    - test
-    - deploy
+.eds: &eds
+    variables:
+        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
+        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
+        BUNDLE: "era-eds-nightly.flatpak"
+
+.mock: &mock
+    variables:
+        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Mock.Devel.json"
+        APP_ID: "io.gitlab.TitouanReal.Era.Mock.Devel"
+        BUNDLE: "era-mock-nightly.flatpak"
+
+.p2panda: &p2panda
+    variables:
+        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.P2panda.Devel.json"
+        APP_ID: "io.gitlab.TitouanReal.Era.P2panda.Devel"
+        BUNDLE: "era-p2panda-nightly.flatpak"
 
 .flatpak-command: &flatpak-command
     image: "${RUNTIME_IMAGE}"
@@ -29,6 +37,25 @@ stages:
         - flatpak-builder --user --disable-rofiles-fuse --keep-build-dirs --stop-at=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
         - flatpak build-finish --share=network flatpak_app
         - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
+
+.flatpak: &flatpak
+    stage: build
+    after_script:
+        # Copy the metainfo file to the current directory.
+        - cp flatpak_app/files/share/metainfo/*.metainfo.xml .
+    artifacts:
+        paths:
+            - $BUNDLE
+            - "repo.tar"
+            - ".flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-logs/"
+            # Add the metainfo file for the corresponding test.
+            - "${APP_ID}.metainfo.xml"
+
+stages:
+    - check
+    - build
+    - test
+    - deploy
 
 cargo-fmt:
     <<: *flatpak-command
@@ -51,96 +78,49 @@ cargo-clippy:
 blueprint-format:
     stage: check
     image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
-    interruptible: true
     before_script:
         - shopt -s globstar
     script:
         - blueprint-compiler format **/*.blp
+    interruptible: true
 
 blueprint-lint:
     stage: check
     image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
     when: manual
-    interruptible: true
     before_script:
         - shopt -s globstar
     script:
         - blueprint-compiler lint **/*.blp
     allow_failure: true
+    interruptible: true
 
-build-eds@x86_64:
-    variables:
-        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
-        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
+flatpak-eds@x86_64:
+    <<: [*eds, *flatpak]
     extends: ".flatpak@x86_64"
-    stage: build
-    after_script:
-        # Copy the metainfo file to the current directory.
-        - cp flatpak_app/files/share/metainfo/*.metainfo.xml .
-    artifacts:
-        paths:
-            - $BUNDLE
-            - "repo.tar"
-            - ".flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-logs/"
-            # Add the metainfo file for the corresponding test.
-            - "${APP_ID}.metainfo.xml"
 
-build-eds@aarch64:
-    variables:
-        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
-        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
+flatpak-eds@aarch64:
+    <<: [*eds, *flatpak]
     extends: ".flatpak@aarch64"
-    stage: build
     when: manual
 
-build-mock@x86_64:
-    variables:
-        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Mock.Devel.json"
-        APP_ID: "io.gitlab.TitouanReal.Era.Mock.Devel"
+flatpak-mock@x86_64:
+    <<: [*mock, *flatpak]
     extends: ".flatpak@x86_64"
-    stage: build
-    after_script:
-        # Copy the metainfo file to the current directory.
-        - cp flatpak_app/files/share/metainfo/*.metainfo.xml .
-    artifacts:
-        paths:
-            - $BUNDLE
-            - "repo.tar"
-            - ".flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-logs/"
-            # Add the metainfo file for the corresponding test.
-            - "${APP_ID}.metainfo.xml"
 
-build-mock@aarch64:
-    variables:
-        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Mock.Devel.json"
-        APP_ID: "io.gitlab.TitouanReal.Era.Mock.Devel"
+flatpak-mock@aarch64:
+    <<: [*mock, *flatpak]
     extends: ".flatpak@aarch64"
-    stage: build
     when: manual
 
-build-p2panda@x86_64:
-    variables:
-        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.P2panda.Devel.json"
-        APP_ID: "io.gitlab.TitouanReal.Era.P2panda.Devel"
+flatpak-p2panda@x86_64:
+    <<: [*p2panda, *flatpak]
     extends: ".flatpak@x86_64"
-    stage: build
-    after_script:
-        # Copy the metainfo file to the current directory.
-        - cp flatpak_app/files/share/metainfo/*.metainfo.xml .
-    artifacts:
-        paths:
-            - $BUNDLE
-            - "repo.tar"
-            - ".flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-logs/"
-            # Add the metainfo file for the corresponding test.
-            - "${APP_ID}.metainfo.xml"
 
-build-p2panda@aarch64:
-    variables:
-        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.P2panda.Devel.json"
-        APP_ID: "io.gitlab.TitouanReal.Era.P2panda.Devel"
+flatpak-p2panda@aarch64:
+    <<: [*p2panda, *flatpak]
     extends: ".flatpak@aarch64"
-    stage: build
+    when: manual
 
 # Validate the metainfo with Flathub's tool.
 lint-metainfo:
@@ -157,6 +137,4 @@ lint-metainfo:
         - flatpak-builder-lint appstream ${METAINFO}
         # Test also with the pedantic and strict flags.
         - appstreamcli validate --pedantic --explain --strict ${METAINFO}
-    needs: ["build-eds@x86_64"]
-# TODO: Also build for stable
-# TODO: Build and host docs
+    needs: ["flatpak-eds@x86_64"]
