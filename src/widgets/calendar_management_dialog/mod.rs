@@ -1,11 +1,10 @@
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Calendar, prelude::*};
-use glib::clone;
 use tracing::error;
 
 mod calendar_creation_dialog;
 mod calendar_details_page;
-mod calendar_row;
+mod calendar_management_calendar_row;
 mod collection_row;
 mod collections_list_page;
 
@@ -19,8 +18,8 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/calendar_manager_dialog.ui")]
-    pub struct CalendarManagerDialog {
+    #[template(resource = "/io/gitlab/TitouanReal/Era/calendar_management_dialog.ui")]
+    pub struct CalendarManagementDialog {
         #[template_child]
         stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -30,9 +29,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for CalendarManagerDialog {
-        const NAME: &'static str = "CalendarManagerDialog";
-        type Type = super::CalendarManagerDialog;
+    impl ObjectSubclass for CalendarManagementDialog {
+        const NAME: &'static str = "CalendarManagementDialog";
+        type Type = super::CalendarManagementDialog;
         type ParentType = adw::Dialog;
 
         fn class_init(klass: &mut Self::Class) {
@@ -73,49 +72,24 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for CalendarManagerDialog {
-        fn constructed(&self) {
-            self.parent_constructed();
-
-            let manager = Application::default().manager();
-            let collections_model = manager.collections_model().unwrap();
-
-            let is_empty = collections_model.n_items() == 0;
-            self.stack
-                .set_visible_child_name(if is_empty { "empty" } else { "collections" });
-
-            collections_model.connect_items_changed(clone!(
-                #[weak(rename_to = imp)]
-                self,
-                move |model, _, _, _| {
-                    let is_empty = model.n_items() == 0;
-                    imp.stack.set_visible_child_name(if is_empty {
-                        "empty"
-                    } else {
-                        "collections"
-                    });
-                }
-            ));
-        }
-    }
-
-    impl WidgetImpl for CalendarManagerDialog {}
-    impl AdwDialogImpl for CalendarManagerDialog {}
+    impl ObjectImpl for CalendarManagementDialog {}
+    impl WidgetImpl for CalendarManagementDialog {}
+    impl AdwDialogImpl for CalendarManagementDialog {}
 }
 
 glib::wrapper! {
-    pub struct CalendarManagerDialog(ObjectSubclass<imp::CalendarManagerDialog>)
+    pub struct CalendarManagementDialog(ObjectSubclass<imp::CalendarManagementDialog>)
         @extends gtk::Widget, adw::Dialog,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::ShortcutManager;
 }
 
-impl CalendarManagerDialog {
+impl CalendarManagementDialog {
     pub fn new() -> Self {
         glib::Object::new()
     }
 }
 
-impl Default for CalendarManagerDialog {
+impl Default for CalendarManagementDialog {
     fn default() -> Self {
         Self::new()
     }

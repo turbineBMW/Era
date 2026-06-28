@@ -1,6 +1,5 @@
 using Gtk 4.0;
 using Adw 1;
-using Gdk 4.0;
 using Clepsydre 0;
 
 template $Sidebar: Adw.Bin {
@@ -51,33 +50,8 @@ template $Sidebar: Adw.Bin {
 
         factory: BuilderListItemFactory {
           template ListItem {
-            child: Box {
-              spacing: 12;
-
-              Image {
-                pixel-size: 18;
-                paintable: bind $get_circle_paintable(
-                  template.item as <Clepsydre.Calendar>.color as <Gdk.RGBA>
-                  ) as <Gdk.Paintable>;
-              }
-
-              Label {
-                label: bind template.item as <Clepsydre.Calendar>.name;
-                xalign: 0;
-                hexpand: true;
-                wrap: true;
-                wrap-mode: word_char;
-              }
-
-              Image {
-                icon-name: "eye-symbolic";
-                visible: bind template.item as <Clepsydre.Calendar>.visible;
-              }
-
-              Image {
-                icon-name: "eye-crossed-symbolic";
-                visible: bind $not(template.item as <Clepsydre.Calendar>.visible);
-              }
+            child: $SidebarCalendarRow {
+              calendar: bind template.item as <Clepsydre.Calendar>;
             };
           }
         };

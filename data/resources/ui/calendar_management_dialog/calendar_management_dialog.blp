@@ -1,26 +1,21 @@
 using Gtk 4.0;
 using Adw 1;
-// using Clepsydre 0;
-template $CalendarManagerDialog: Adw.Dialog {
+using Clepsydre 0;
+
+template $CalendarManagementDialog: Adw.Dialog {
   title: _("Calendars");
   content-height: 500;
   content-width: 500;
 
   Stack stack {
-    // TODO: Fix this
-    // visible-child-name: bind $ternary(
-    //   $is_zero(
-    //     template
-    //       .root as <Window>
-    //       .application as <$EraApplication>
-    //       .manager as <Clepsydre.Manager>
-    //       .collections-model
-    //       .n-items,
-    //   ) as <bool>,
-    //   "empty",
-    //   "collections"
-    // );
-    // visible-child-name: "collections";
+    visible-child-name: bind $ternary(
+      $is_zero(
+        template.root as <Window>.application as <$EraApplication>.manager as <Clepsydre.Manager>.collections-model.n-items,
+      ) as <bool>,
+      "empty",
+      "collections"
+    );
+
     StackPage {
       name: "empty";
 

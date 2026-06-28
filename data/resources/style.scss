@@ -8,6 +8,18 @@ sidebar {
     }
 }
 
+.calendar-row {
+    checkbutton:checked {
+        check {
+            background-color: color-mix(
+                in srgb,
+                var(--calendar-bg-color) 75%,
+                var(--view-bg-color)
+            );
+        }
+    }
+}
+
 search-dialog {
     listview {
         background-color: transparent;
@@ -27,7 +39,7 @@ calendar-manager-dialog {
             background-color: transparent;
             margin: 0 9px;
 
-            collection-row {
+            .collection-row {
                 margin: 12px 0;
 
                 > .header {
@@ -195,7 +207,7 @@ month-view-row {
         min-height: 8px;
         background-color: color-mix(
             in srgb,
-            var(--event-bg-color) 25%,
+            var(--calendar-bg-color) 25%,
             var(--view-bg-color)
         );
         color: var(--view-fg-color);
@@ -207,7 +219,7 @@ month-view-row {
         }
 
         .edge {
-            background-color: var(--event-bg-color);
+            background-color: var(--calendar-bg-color);
             min-width: 6px;
         }
 

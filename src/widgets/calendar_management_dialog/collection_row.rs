@@ -5,7 +5,10 @@ use clepsydre::{Calendar, Collection};
 
 use crate::utils::TemplateCallbacks;
 
-use super::{calendar_creation_dialog::CalendarCreationDialog, calendar_row::CalendarRow};
+use super::{
+    calendar_creation_dialog::CalendarCreationDialog,
+    calendar_management_calendar_row::CalendarManagementCalendarRow,
+};
 
 mod imp {
     use super::*;
@@ -30,8 +33,6 @@ mod imp {
             klass.bind_template();
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
-
-            klass.set_css_name("collection-row");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -58,7 +59,8 @@ mod imp {
             let Some(collection) = collection else {
                 self.calendars_list
                     .bind_model(None::<&gio::ListModel>, |calendar| {
-                        CalendarRow::new(calendar.downcast_ref().unwrap()).upcast()
+                        CalendarManagementCalendarRow::new(calendar.downcast_ref().unwrap())
+                            .upcast()
                     });
                 return;
             };
@@ -72,7 +74,7 @@ mod imp {
             );
             self.calendars_list
                 .bind_model(Some(&sorted_calendars_model), |calendar| {
-                    CalendarRow::new(calendar.downcast_ref().unwrap()).upcast()
+                    CalendarManagementCalendarRow::new(calendar.downcast_ref().unwrap()).upcast()
                 });
         }
 

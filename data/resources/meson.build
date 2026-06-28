@@ -10,13 +10,13 @@ stylesheet = custom_target(
 blueprints = custom_target(
     'blueprints',
     input: files(
-        # Calendar Manager Dialog
-        'ui/calendar_manager_dialog/calendar_creation_dialog.blp',
-        'ui/calendar_manager_dialog/calendar_details_page.blp',
-        'ui/calendar_manager_dialog/calendar_manager_dialog.blp',
-        'ui/calendar_manager_dialog/calendar_row.blp',
-        'ui/calendar_manager_dialog/collection_row.blp',
-        'ui/calendar_manager_dialog/collections_list_page.blp',
+        # Calendar Management Dialog
+        'ui/calendar_management_dialog/calendar_creation_dialog.blp',
+        'ui/calendar_management_dialog/calendar_details_page.blp',
+        'ui/calendar_management_dialog/calendar_management_calendar_row.blp',
+        'ui/calendar_management_dialog/calendar_management_dialog.blp',
+        'ui/calendar_management_dialog/collection_row.blp',
+        'ui/calendar_management_dialog/collections_list_page.blp',
 
         # Components
         # Calendar Combo Row
@@ -56,7 +56,8 @@ blueprints = custom_target(
         'ui/shortcuts_dialog.blp',
 
         # Sidebar
-        'ui/sidebar.blp',
+        'ui/sidebar/sidebar.blp',
+        'ui/sidebar/sidebar_calendar_row.blp',
 
         # Views
         # Month View

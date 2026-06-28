@@ -2,32 +2,23 @@ using Gtk 4.0;
 using Adw 1;
 using Clepsydre 0;
 
-template $CalendarRow: Adw.ActionRow {
+template $CalendarManagementCalendarRow: Adw.ActionRow {
+  styles [
+    "calendar-row",
+  ]
+
   [prefix]
   Stack circle_loading {
     StackPage {
       name: "circle";
 
-      child: Box {
-        Image {
-          visible: bind $not(template.calendar as <Clepsydre.Calendar>.visible);
-          pixel-size: 24;
-          paintable: bind $get_circle_paintable_empty(template.calendar as <Clepsydre.Calendar>.color);
+      child: CheckButton check {
+        active: bind template.calendar as <Clepsydre.Calendar>.visible;
+        can-focus: false;
 
-          accessibility {
-            label: _("hidden");
-          }
-        }
-
-        Image {
-          visible: bind template.calendar as <Clepsydre.Calendar>.visible;
-          pixel-size: 24;
-          paintable: bind $get_circle_paintable(template.calendar as <Clepsydre.Calendar>.color);
-
-          accessibility {
-            label: _("visible");
-          }
-        }
+        styles [
+          "selection-mode",
+        ]
       };
     }
 

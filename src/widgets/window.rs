@@ -6,7 +6,7 @@ use crate::{
     Application,
     utils::{EventPropertiesPreset, TemplateCallbacks},
     widgets::{
-        CalendarManagerDialog, CreateEventDialog, SearchDialog, Sidebar,
+        CalendarManagementDialog, CreateEventDialog, SearchDialog, Sidebar,
         views::{MonthView, YearView},
     },
 };
@@ -48,7 +48,8 @@ pub mod imp {
             Sidebar::ensure_type();
 
             klass.install_action("win.search-events", None, |obj, _, _| {
-                obj.imp().search_events();
+                let dialog = SearchDialog::new();
+                dialog.present(Some(obj));
             });
             klass.add_binding_action(
                 gdk::Key::F,
@@ -57,7 +58,8 @@ pub mod imp {
             );
 
             klass.install_action("win.manage-calendars", None, |obj, _, _| {
-                obj.imp().manage_calendars();
+                let dialog = CalendarManagementDialog::new();
+                dialog.present(Some(obj));
             });
             klass.add_binding_action(
                 gdk::Key::F8,
@@ -272,16 +274,6 @@ pub mod imp {
 
     #[gtk::template_callbacks]
     impl Window {
-        fn search_events(&self) {
-            let dialog = SearchDialog::new();
-            dialog.present(Some(&*self.obj()));
-        }
-
-        fn manage_calendars(&self) {
-            let dialog = CalendarManagerDialog::new();
-            dialog.present(Some(&*self.obj()));
-        }
-
         fn today(&self) {
             let today = Application::default().current_datetime();
             let year = today.year();
@@ -302,7 +294,7 @@ pub mod imp {
                     let color_str = color.to_string();
                     let color_id = glib::Quark::from_str(&color_str);
                     css.push_str(&format!(
-                        ".color-{} {{ --event-bg-color: {}; }}\n",
+                        ".color-{} {{ --calendar-bg-color: {}; }}\n",
                         color_id.into_glib(),
                         color_str
                     ));

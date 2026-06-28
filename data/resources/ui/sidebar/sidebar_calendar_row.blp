@@ -1,0 +1,25 @@
+using Gtk 4.0;
+using Clepsydre 0;
+
+template $SidebarCalendarRow: Box {
+  styles [
+    "calendar-row",
+  ]
+
+  CheckButton check {
+    active: bind template.calendar as <Clepsydre.Calendar>.visible;
+    can-focus: false;
+
+    styles [
+      "selection-mode",
+    ]
+  }
+
+  Label {
+    label: bind template.calendar as <Clepsydre.Calendar>.name;
+    xalign: 0;
+    hexpand: true;
+    wrap: true;
+    wrap-mode: word_char;
+  }
+}

@@ -2,6 +2,7 @@ use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Calendar, prelude::*};
+use glib::{clone, translate::*};
 use tracing::{debug, warn};
 
 use crate::utils::{PaintableCallbacks, TemplateCallbacks};
@@ -10,19 +11,23 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/calendar_row.ui")]
-    #[properties(wrapper_type = super::CalendarRow)]
-    pub struct CalendarRow {
+    #[template(resource = "/io/gitlab/TitouanReal/Era/calendar_management_calendar_row.ui")]
+    #[properties(wrapper_type = super::CalendarManagementCalendarRow)]
+    pub struct CalendarManagementCalendarRow {
         #[property(get, set, construct_only)]
         calendar: RefCell<Option<Calendar>>,
         #[template_child]
         circle_loading: TemplateChild<gtk::Stack>,
+        #[template_child]
+        check: TemplateChild<gtk::CheckButton>,
+
+        css_class: RefCell<Option<String>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for CalendarRow {
-        const NAME: &'static str = "CalendarRow";
-        type Type = super::CalendarRow;
+    impl ObjectSubclass for CalendarManagementCalendarRow {
+        const NAME: &'static str = "CalendarManagementCalendarRow";
+        type Type = super::CalendarManagementCalendarRow;
         type ParentType = adw::ActionRow;
 
         fn class_init(klass: &mut Self::Class) {
@@ -38,14 +43,49 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for CalendarRow {}
-    impl WidgetImpl for CalendarRow {}
-    impl ListBoxRowImpl for CalendarRow {}
-    impl PreferencesRowImpl for CalendarRow {}
-    impl ActionRowImpl for CalendarRow {}
+    impl ObjectImpl for CalendarManagementCalendarRow {
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            let calendar = self.obj().calendar().unwrap();
+
+            self.update_check_color();
+
+            calendar.connect_color_notify(clone!(
+                #[weak(rename_to=imp)]
+                self,
+                move |_| {
+                    imp.update_check_color();
+                }
+            ));
+        }
+    }
+
+    impl WidgetImpl for CalendarManagementCalendarRow {}
+    impl ListBoxRowImpl for CalendarManagementCalendarRow {}
+    impl PreferencesRowImpl for CalendarManagementCalendarRow {}
+    impl ActionRowImpl for CalendarManagementCalendarRow {}
 
     #[gtk::template_callbacks]
-    impl CalendarRow {
+    impl CalendarManagementCalendarRow {
+        fn update_check_color(&self) {
+            let obj = self.obj();
+
+            if let Some(old_class) = self.css_class.borrow_mut().take() {
+                self.check.remove_css_class(&old_class);
+            }
+
+            let calendar = obj.calendar().unwrap();
+            let color = calendar.color().unwrap();
+
+            let color_str = color.to_string();
+            let color_id = glib::Quark::from_str(&color_str);
+            let css_class = format!("color-{}", color_id.into_glib());
+
+            self.check.add_css_class(&css_class);
+            self.css_class.replace(Some(css_class));
+        }
+
         /// Show the session subpage.
         #[template_callback]
         fn show_calendar_subpage(&self) {
@@ -107,12 +147,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct CalendarRow(ObjectSubclass<imp::CalendarRow>)
+    pub struct CalendarManagementCalendarRow(ObjectSubclass<imp::CalendarManagementCalendarRow>)
     @extends gtk::Widget, gtk::ListBoxRow, adw::PreferencesRow, adw::ActionRow,
     @implements gtk::Accessible, gtk::Actionable, gtk::Buildable, gtk::ConstraintTarget;
 }
 
-impl CalendarRow {
+impl CalendarManagementCalendarRow {
     pub fn new(calendar: &Calendar) -> Self {
         glib::Object::builder()
             .property("calendar", calendar)

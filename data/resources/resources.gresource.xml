@@ -4,12 +4,12 @@
     <file compressed="true" alias="style.css">style.css</file>
 
     <!-- Calendar Manager Dialog -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_row.ui">ui/calendar_manager_dialog/calendar_row.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="collection_row.ui">ui/calendar_manager_dialog/collection_row.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="collections_list_page.ui">ui/calendar_manager_dialog/collections_list_page.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_creation_dialog.ui">ui/calendar_manager_dialog/calendar_creation_dialog.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_manager_dialog.ui">ui/calendar_manager_dialog/calendar_manager_dialog.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_details_page.ui">ui/calendar_manager_dialog/calendar_details_page.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_management_calendar_row.ui">ui/calendar_management_dialog/calendar_management_calendar_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="collection_row.ui">ui/calendar_management_dialog/collection_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="collections_list_page.ui">ui/calendar_management_dialog/collections_list_page.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_creation_dialog.ui">ui/calendar_management_dialog/calendar_creation_dialog.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_management_dialog.ui">ui/calendar_management_dialog/calendar_management_dialog.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_details_page.ui">ui/calendar_management_dialog/calendar_details_page.ui</file>
 
     <!-- Components -->
     <file compressed="true" preprocess="xml-stripblanks" alias="error_dialog.ui">ui/components/error_dialog.ui</file>
@@ -43,7 +43,8 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="search_result_row.ui">ui/search_dialog/search_result_row.ui</file>
 
     <!-- Sidebar -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="sidebar.ui">ui/sidebar.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="sidebar.ui">ui/sidebar/sidebar.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="sidebar_calendar_row.ui">ui/sidebar/sidebar_calendar_row.ui</file>
 
     <!-- Shortcuts Dialog -->
     <file compressed="true" preprocess="xml-stripblanks" alias="shortcuts-dialog.ui">ui/shortcuts_dialog.ui</file>

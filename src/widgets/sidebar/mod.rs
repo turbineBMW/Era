@@ -3,7 +3,11 @@ use clepsydre::{Calendar, prelude::*};
 use gio::prelude::ListModelExt;
 use tracing::warn;
 
+mod sidebar_calendar_row;
+
 use crate::utils::{PaintableCallbacks, TemplateCallbacks};
+
+use self::sidebar_calendar_row::SidebarCalendarRow;
 
 mod imp {
     use super::*;
@@ -20,6 +24,8 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
+            SidebarCalendarRow::ensure_type();
+
             klass.bind_template();
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
