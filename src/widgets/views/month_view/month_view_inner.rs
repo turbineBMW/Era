@@ -263,7 +263,7 @@ mod imp {
                                 let target_row = rows[target_idx].clone();
                                 drop(rows);
                                 self.scroll_row_into_view(&target_row);
-                                return target_row.focus_column(col);
+                                return target_row.set_focused_column(col);
                             }
                             return false;
                         }
@@ -288,7 +288,7 @@ mod imp {
                                 let target_row = rows[idx - 1].clone();
                                 drop(rows);
                                 self.scroll_row_into_view(&target_row);
-                                return target_row.focus_column(6);
+                                return target_row.set_focused_column(6);
                             }
                             return false;
                         }
@@ -312,7 +312,7 @@ mod imp {
                                 let target_row = rows[idx + 1].clone();
                                 drop(rows);
                                 self.scroll_row_into_view(&target_row);
-                                return target_row.focus_column(0);
+                                return target_row.set_focused_column(0);
                             }
                             return false;
                         }

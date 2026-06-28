@@ -21,84 +21,103 @@ pub const NATURAL_WIDTH: i32 = 0;
 
 const EVENT_GAP: i32 = 2;
 
-mod column {
-    use std::ops::{Add, AddAssign, Sub};
+mod private {
+    use super::*;
 
-    #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
-    pub struct Column {
-        index: usize,
+    #[derive(Debug)]
+    pub enum SpannedEventError {
+        #[allow(dead_code)]
+        StartAfterEnd(usize, usize, String),
+        #[allow(dead_code)]
+        InvalidStart(usize),
+        #[allow(dead_code)]
+        InvalidEnd(usize),
     }
 
-    impl Column {
-        pub fn new(index: usize) -> Self {
-            if index < 7 {
-                Self { index }
-            } else {
-                panic!("invalid column number: {}", index)
+    #[derive(Debug, Clone)]
+    pub struct SpannedEvent {
+        event_widget: EventWidget,
+        column_start: usize,
+        column_end: usize,
+    }
+
+    impl SpannedEvent {
+        pub fn new(
+            event_widget: EventWidget,
+            column_start: usize,
+            column_end: usize,
+        ) -> Result<Self, SpannedEventError> {
+            if column_start > column_end {
+                let event = &event_widget.event().unwrap();
+                let timeframe = event.timeframe().unwrap();
+
+                return Err(SpannedEventError::StartAfterEnd(
+                    column_start,
+                    column_end,
+                    timeframe.representation().unwrap().to_string(),
+                ));
+            }
+            if column_start >= 7 {
+                return Err(SpannedEventError::InvalidStart(column_start));
+            }
+            if column_end >= 7 {
+                return Err(SpannedEventError::InvalidEnd(column_end));
+            }
+            Ok(Self {
+                event_widget,
+                column_start,
+                column_end,
+            })
+        }
+    }
+
+    impl SpannedEvent {
+        pub fn column_start(&self) -> usize {
+            self.column_start
+        }
+
+        pub fn column_end(&self) -> usize {
+            self.column_end
+        }
+    }
+
+    #[derive(Debug)]
+    pub struct EventLayout {
+        event_widget: EventWidget,
+        column_start: usize,
+        column_end: usize,
+        row: usize,
+    }
+
+    impl EventLayout {
+        pub fn new(spanned_event: SpannedEvent, row: usize) -> Self {
+            Self {
+                event_widget: spanned_event.event_widget,
+                column_start: spanned_event.column_start,
+                column_end: spanned_event.column_end,
+                row,
             }
         }
 
-        pub fn index(&self) -> usize {
-            self.index
+        pub fn event_widget(&self) -> &EventWidget {
+            &self.event_widget
         }
-    }
 
-    impl Add<usize> for Column {
-        type Output = Column;
-        fn add(self, rhs: usize) -> Column {
-            Column::new(self.index + rhs)
+        pub fn column_start(&self) -> usize {
+            self.column_start
         }
-    }
 
-    impl Add<Column> for Column {
-        type Output = Column;
-        fn add(self, rhs: Column) -> Column {
-            Column::new(self.index + rhs.index)
+        pub fn column_end(&self) -> usize {
+            self.column_end
         }
-    }
 
-    impl AddAssign<usize> for Column {
-        fn add_assign(&mut self, rhs: usize) {
-            self.index += rhs;
-        }
-    }
-
-    impl AddAssign<Column> for Column {
-        fn add_assign(&mut self, rhs: Column) {
-            self.index += rhs.index;
-        }
-    }
-
-    impl Sub<usize> for Column {
-        type Output = usize;
-        fn sub(self, rhs: usize) -> usize {
-            self.index - rhs
-        }
-    }
-
-    impl Sub<Column> for Column {
-        type Output = usize;
-        fn sub(self, rhs: Column) -> usize {
-            self.index - rhs.index
+        pub fn row(&self) -> usize {
+            self.row
         }
     }
 }
 
-use column::Column;
-
-struct SpannedEvent {
-    event_widget: EventWidget,
-    column_start: Column,
-    column_end: Column,
-}
-
-#[derive(Debug)]
-struct EventLayout {
-    event_widget: EventWidget,
-    row: usize,
-    column_start: Column,
-    column_end: Column,
-}
+use private::{EventLayout, SpannedEvent};
 
 mod imp {
     use super::*;
@@ -591,10 +610,10 @@ mod imp {
             let mut column_max_row: [usize; 7] = [0; 7];
             let mut nb_events_in_column: [usize; 7] = [0; 7];
             for layout in event_layouts.iter() {
-                for column in layout.column_start.index()..=layout.column_end.index() {
+                for column in layout.column_start()..=layout.column_end() {
                     nb_events_in_column[column] += 1;
-                    if layout.row + 1 > column_max_row[column] {
-                        column_max_row[column] = layout.row + 1;
+                    if layout.row() + 1 > column_max_row[column] {
+                        column_max_row[column] = layout.row() + 1;
                     }
                 }
             }
@@ -619,29 +638,28 @@ mod imp {
             let mut column_hidden_count: [usize; 7] = [0; 7];
             for layout in event_layouts.iter() {
                 // Check if this event is hidden in any of its columns
-                let hidden =
-                    (layout.column_start.index()..=layout.column_end.index()).any(|column| {
-                        layout.row >= column_max_visible_row[column] && column_needs_more[column]
-                    });
+                let hidden = (layout.column_start()..=layout.column_end()).any(|column| {
+                    layout.row() >= column_max_visible_row[column] && column_needs_more[column]
+                });
 
                 if hidden {
-                    layout.event_widget.set_child_visible(false);
-                    for column in layout.column_start.index()..=layout.column_end.index() {
+                    layout.event_widget().set_child_visible(false);
+                    for column in layout.column_start()..=layout.column_end() {
                         if column_needs_more[column] {
                             column_hidden_count[column] += 1;
                         }
                     }
                 } else {
-                    layout.event_widget.set_child_visible(true);
-                    let first_cell = layout.column_start.index();
-                    let last_cell = layout.column_end.index();
+                    layout.event_widget().set_child_visible(true);
+                    let first_cell = layout.column_start();
+                    let last_cell = layout.column_end();
                     let x_start = bounds[first_cell].0;
                     let x_end = bounds[last_cell].1;
                     let w = x_end - x_start;
-                    let y = header_height + layout.row as i32 * (event_height + EVENT_GAP);
+                    let y = header_height + layout.row() as i32 * (event_height + EVENT_GAP);
 
                     let alloc = gtk::Allocation::new(x_start, y, w, event_height);
-                    layout.event_widget.size_allocate(&alloc, baseline);
+                    layout.event_widget().size_allocate(&alloc, baseline);
                 }
             }
 
@@ -1061,96 +1079,94 @@ mod imp {
                     // All-day events: UTC dates, end is exclusive.
                     // Clamp to row UTC boundaries.
                     let column_start = if start < day_boundaries_utc[1] {
-                        Column::new(0)
+                        0
                     } else if start < day_boundaries_utc[2] {
-                        Column::new(1)
+                        1
                     } else if start < day_boundaries_utc[3] {
-                        Column::new(2)
+                        2
                     } else if start < day_boundaries_utc[4] {
-                        Column::new(3)
+                        3
                     } else if start < day_boundaries_utc[5] {
-                        Column::new(4)
+                        4
                     } else if start < day_boundaries_utc[6] {
-                        Column::new(5)
+                        5
                     } else {
-                        Column::new(6)
+                        6
                     };
 
                     let column_end = if end <= day_boundaries_utc[1] {
-                        Column::new(0)
+                        0
                     } else if end <= day_boundaries_utc[2] {
-                        Column::new(1)
+                        1
                     } else if end <= day_boundaries_utc[3] {
-                        Column::new(2)
+                        2
                     } else if end <= day_boundaries_utc[4] {
-                        Column::new(3)
+                        3
                     } else if end <= day_boundaries_utc[5] {
-                        Column::new(4)
+                        4
                     } else if end <= day_boundaries_utc[6] {
-                        Column::new(5)
+                        5
                     } else {
-                        Column::new(6)
+                        6
                     };
 
                     (column_start, column_end)
                 } else {
                     // Timed events: timezone-aware, end is inclusive of the instant.
                     let column_start = if start < day_boundaries[1] {
-                        Column::new(0)
+                        0
                     } else if start < day_boundaries[2] {
-                        Column::new(1)
+                        1
                     } else if start < day_boundaries[3] {
-                        Column::new(2)
+                        2
                     } else if start < day_boundaries[4] {
-                        Column::new(3)
+                        3
                     } else if start < day_boundaries[5] {
-                        Column::new(4)
+                        4
                     } else if start < day_boundaries[6] {
-                        Column::new(5)
+                        5
                     } else {
-                        Column::new(6)
+                        6
                     };
                     let column_end = if end < day_boundaries[1] {
-                        Column::new(0)
+                        0
                     } else if end < day_boundaries[2] {
-                        Column::new(1)
+                        1
                     } else if end < day_boundaries[3] {
-                        Column::new(2)
+                        2
                     } else if end < day_boundaries[4] {
-                        Column::new(3)
+                        3
                     } else if end < day_boundaries[5] {
-                        Column::new(4)
+                        4
                     } else if end < day_boundaries[6] {
-                        Column::new(5)
+                        5
                     } else {
-                        Column::new(6)
+                        6
                     };
 
                     (column_start, column_end)
                 };
 
-                spanned_events.push(SpannedEvent {
-                    event_widget: event_widget.clone(),
-                    column_start,
-                    column_end,
-                });
+                spanned_events.push(
+                    SpannedEvent::new(event_widget.clone(), column_start, column_end).unwrap(),
+                );
             }
 
             // Sort widest-first, then by start column
             spanned_events.sort_by(|a, b| {
-                let span_a = a.column_end - a.column_start;
-                let span_b = b.column_end - b.column_start;
+                let span_a = a.column_end() - a.column_start();
+                let span_b = b.column_end() - b.column_start();
                 span_b
                     .cmp(&span_a)
-                    .then_with(|| a.column_start.cmp(&b.column_start))
+                    .then_with(|| a.column_start().cmp(&b.column_start()))
             });
 
             // First-fit row packing: each row tracks occupied half-open intervals
             let mut row_occupancy: Vec<Vec<(usize, usize)>> = Vec::new();
 
             for spanned in &spanned_events {
-                let start_column = spanned.column_start.index();
-                let end_column = spanned.column_end.index() + 1; // half-open
+                let start_column = spanned.column_start();
+                let end_column = spanned.column_end() + 1; // half-open
 
                 let mut assigned_row = None;
                 for (row_idx, occupied) in row_occupancy.iter_mut().enumerate() {
@@ -1168,12 +1184,7 @@ mod imp {
                     row_occupancy.push(vec![(start_column, end_column)]);
                 }
 
-                event_layouts.push(EventLayout {
-                    event_widget: spanned.event_widget.clone(),
-                    row: assigned_row.unwrap(),
-                    column_start: spanned.column_start,
-                    column_end: spanned.column_end,
-                });
+                event_layouts.push(EventLayout::new(spanned.clone(), assigned_row.unwrap()));
             }
 
             self.obj().queue_allocate();
@@ -1198,15 +1209,15 @@ mod imp {
                 let mut col_events: Vec<(usize, gtk::Widget)> = event_layouts
                     .iter()
                     .filter(|layout| {
-                        layout.column_start.index() <= col
-                            && layout.column_end.index() >= col
-                            && layout.event_widget.is_visible()
-                            && layout.event_widget.is_child_visible()
+                        layout.column_start() <= col
+                            && layout.column_end() >= col
+                            && layout.event_widget().is_visible()
+                            && layout.event_widget().is_child_visible()
                     })
                     .map(|layout| {
                         (
-                            layout.row,
-                            layout.event_widget.clone().upcast::<gtk::Widget>(),
+                            layout.row(),
+                            layout.event_widget().clone().upcast::<gtk::Widget>(),
                         )
                     })
                     .collect();
@@ -1278,7 +1289,7 @@ mod imp {
         }
 
         /// Focuses the cell at the given column (0-6).
-        pub(super) fn focus_column(&self, column: usize) -> bool {
+        pub(super) fn set_focused_column(&self, column: usize) -> bool {
             assert!(column < 7);
             let cells = self.cells.get().unwrap();
             let focus_order = self.build_focus_order();
@@ -1323,8 +1334,8 @@ impl MonthViewRow {
     }
 
     /// Focuses the cell at the given column (0-6).
-    pub fn focus_column(&self, column: usize) -> bool {
-        self.imp().focus_column(column)
+    pub fn set_focused_column(&self, column: usize) -> bool {
+        self.imp().set_focused_column(column)
     }
 
     /// Returns the currently focused column (0-6), or None.
