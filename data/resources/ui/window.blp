@@ -115,6 +115,7 @@ template $EraWindow: Adw.ApplicationWindow {
                   }
 
                   Adw.ViewStackPage {
+                    visible: false;
                     name: "week";
                     title: _("_Week");
                     use-underline: true;
@@ -126,6 +127,7 @@ template $EraWindow: Adw.ApplicationWindow {
                   }
 
                   Adw.ViewStackPage {
+                    visible: false;
                     name: "days";
                     title: _("_Days");
                     use-underline: true;
@@ -137,6 +139,7 @@ template $EraWindow: Adw.ApplicationWindow {
                   }
 
                   Adw.ViewStackPage {
+                    visible: false;
                     name: "agenda";
                     title: _("_Agenda");
                     use-underline: true;
@@ -167,7 +170,7 @@ template $EraWindow: Adw.ApplicationWindow {
                 [center]
                 Adw.InlineViewSwitcher wide_view_switcher {
                   stack: wide_view_stack;
-                  display-mode: icons;
+                  display-mode: both;
                 }
 
                 [end]
@@ -479,9 +482,7 @@ template $EraWindow: Adw.ApplicationWindow {
   Adw.Breakpoint {
     condition ("min-width: 900sp")
 
-    setters {
-      wide_view_switcher.display-mode: both;
-    }
+    setters {}
   }
 
   Adw.Breakpoint {
@@ -489,7 +490,6 @@ template $EraWindow: Adw.ApplicationWindow {
 
     setters {
       overlay_split_view.collapsed: false;
-      wide_view_switcher.display-mode: both;
     }
   }
 }
