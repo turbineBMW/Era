@@ -82,8 +82,6 @@ mod imp {
             TemplateCallbacks::bind_template_callbacks(klass);
             PaintableCallbacks::bind_template_callbacks(klass);
 
-            klass.set_css_name("event-details-dialog");
-
             klass.install_action("event-details-dialog.export", None, |obj, _, _| {
                 let imp = obj.imp();
                 spawn!(clone!(
@@ -175,43 +173,73 @@ mod imp {
             end: DateTime,
             today: DateTime,
         ) -> String {
-            let yesterday = today.add_days(-1).unwrap();
-            let tomorrow = today.add_days(1).unwrap();
+            let today = jiff::civil::Date::new(
+                today.year() as i16,
+                today.month() as i8,
+                today.day_of_month() as i8,
+            )
+            .unwrap();
+            let yesterday = today.yesterday().unwrap();
+            let tomorrow = today.tomorrow().unwrap();
 
             if all_day {
-                if start.add_days(1).unwrap() == end {
-                    if start.year() == yesterday.year()
-                        && start.month() == yesterday.month()
-                        && start.day_of_month() == yesterday.day_of_month()
-                    {
-                        gettext("Yesterday")
-                    } else if start.year() == today.year()
-                        && start.month() == today.month()
-                        && start.day_of_month() == today.day_of_month()
-                    {
-                        gettext("Today")
-                    } else if start.year() == tomorrow.year()
-                        && start.month() == tomorrow.month()
-                        && start.day_of_month() == tomorrow.day_of_month()
-                    {
-                        gettext("Tomorrow")
-                    } else {
-                        start.format("%Y-%m-%d").unwrap().to_string()
-                    }
-                } else {
-                    format!(
-                        "{} - {}",
-                        start.format("%Y-%m-%d").unwrap(),
-                        end.add_days(-1).unwrap().format("%Y-%m-%d").unwrap(),
-                    )
-                }
-            } else {
-                format!(
-                    "{} - {}",
-                    start.format_iso8601().unwrap(),
-                    end.format_iso8601().unwrap()
+                let start = jiff::civil::Date::new(
+                    start.year() as i16,
+                    start.month() as i8,
+                    start.day_of_month() as i8,
                 )
+                .unwrap();
+                let end = jiff::civil::Date::new(
+                    end.year() as i16,
+                    end.month() as i8,
+                    end.day_of_month() as i8,
+                )
+                .unwrap()
+                .yesterday()
+                .unwrap();
+
+                let is_single_day = start == end;
+
+                if is_single_day {
+                    if start == yesterday {
+                        return gettext("Yesterday");
+                    } else if start == today {
+                        return gettext("Today");
+                    } else if start == tomorrow {
+                        return gettext("Tomorrow");
+                    } else {
+                        return start.strftime("%d %B %Y").to_string();
+                    }
+                }
+
+                let start_str = if start == yesterday {
+                    gettext("Yesterday")
+                } else if start == today {
+                    gettext("Today")
+                } else if start == tomorrow {
+                    gettext("Tomorrow")
+                } else {
+                    start.strftime("%d %B %Y").to_string()
+                };
+
+                let end_str = if end == yesterday {
+                    gettext("Yesterday")
+                } else if end == today {
+                    gettext("Today")
+                } else if end == tomorrow {
+                    gettext("Tomorrow")
+                } else {
+                    end.strftime("%d %B %Y").to_string()
+                };
+
+                return format!("{} - {}", start_str, end_str);
             }
+
+            format!(
+                "{} - {}",
+                start.format_iso8601().unwrap(),
+                end.format_iso8601().unwrap()
+            )
         }
 
         #[template_callback]
