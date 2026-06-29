@@ -9,7 +9,11 @@ use clepsydre::{Calendar, Event, Subscription, Timeframe, prelude::*};
 use glib::{DateTime, clone};
 use jiff::ToSpan;
 
-use crate::{Application, system_settings::DayOfWeek, utils};
+use crate::{
+    Application,
+    system_settings::DayOfWeek,
+    utils::{self, EventPropertiesPreset},
+};
 
 use super::{
     MonthViewStyling, event_widget::EventWidget, month_view_header::MonthViewHeader,
@@ -1188,6 +1192,92 @@ mod imp {
             }
 
             self.obj().queue_allocate();
+        }
+
+        #[template_callback]
+        fn create_event_1(&self) {
+            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
+            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
+            let start = day_boundaries_utc[0].format_iso8601().unwrap().to_string();
+            let end = day_boundaries_utc[1].format_iso8601().unwrap().to_string();
+
+            self.create_event(start, end);
+        }
+
+        #[template_callback]
+        fn create_event_2(&self) {
+            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
+            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
+            let start = day_boundaries_utc[1].format_iso8601().unwrap().to_string();
+            let end = day_boundaries_utc[2].format_iso8601().unwrap().to_string();
+
+            self.create_event(start, end);
+        }
+
+        #[template_callback]
+        fn create_event_3(&self) {
+            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
+            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
+            let start = day_boundaries_utc[2].format_iso8601().unwrap().to_string();
+            let end = day_boundaries_utc[3].format_iso8601().unwrap().to_string();
+
+            self.create_event(start, end);
+        }
+
+        #[template_callback]
+        fn create_event_4(&self) {
+            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
+            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
+            let start = day_boundaries_utc[3].format_iso8601().unwrap().to_string();
+            let end = day_boundaries_utc[4].format_iso8601().unwrap().to_string();
+
+            self.create_event(start, end);
+        }
+
+        #[template_callback]
+        fn create_event_5(&self) {
+            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
+            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
+            let start = day_boundaries_utc[4].format_iso8601().unwrap().to_string();
+            let end = day_boundaries_utc[5].format_iso8601().unwrap().to_string();
+
+            self.create_event(start, end);
+        }
+
+        #[template_callback]
+        fn create_event_6(&self) {
+            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
+            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
+            let start = day_boundaries_utc[5].format_iso8601().unwrap().to_string();
+            let end = day_boundaries_utc[6].format_iso8601().unwrap().to_string();
+
+            self.create_event(start, end);
+        }
+
+        #[template_callback]
+        fn create_event_7(&self) {
+            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
+            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
+            let start = day_boundaries_utc[6].format_iso8601().unwrap().to_string();
+            let end = day_boundaries_utc[7].format_iso8601().unwrap().to_string();
+
+            self.create_event(start, end);
+        }
+
+        fn create_event(&self, start: String, end: String) {
+            let preset = EventPropertiesPreset {
+                name: String::new(),
+                description: String::new(),
+                location: String::new(),
+                conference: String::new(),
+                all_day: true,
+                start,
+                end,
+            };
+
+            let _ = self
+                .obj()
+                .activate_action("win.create-event", Some(&preset.to_variant()));
         }
 
         /// Builds the focus order for this row:

@@ -189,6 +189,12 @@ month-view-row {
         background-color: var(--bg-color);
     }
 
+    .cell:active {
+        --bg-color: rgb(from var(--window-fg-color) r g b / 7.5%);
+
+        background-color: var(--bg-color);
+    }
+
     .cell:focus-visible {
         outline: 2px solid var(--accent-bg-color);
         outline-offset: -2px;
