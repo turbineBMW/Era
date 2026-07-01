@@ -81,6 +81,7 @@
     <file preprocess="xml-stripblanks" alias="clock-symbolic.svg">icons/clock-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="globe-symbolic.svg">icons/globe-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="loupe-symbolic.svg">icons/loupe-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="calendar-symbolic.svg">icons/calendar-symbolic.svg</file>
     <!-- New icons -->
     <file preprocess="xml-stripblanks" alias="object-select-symbolic.svg">icons/object-select-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="cross-symbolic.svg">icons/cross-symbolic.svg</file>
