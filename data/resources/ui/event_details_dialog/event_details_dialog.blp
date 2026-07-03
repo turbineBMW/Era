@@ -50,7 +50,12 @@ template $EventDetailsDialog: Adw.Dialog {
                   template.event as <Clepsydre.Event>.timeframe.all-day,
                   template.event as <Clepsydre.Event>.timeframe.start,
                   template.event as <Clepsydre.Event>.timeframe.end,
-                  template.root as <Window>.application as <$EraApplication>.current-datetime
+                  template.root as <Window>.application as <$EraApplication>.current-datetime,
+                  template
+                    .root as <Window>
+                    .application as <$EraApplication>
+                    .system-settings as <$SystemSettings>
+                    .clock-format as <$ClockFormat>
                   );
                 xalign: 0;
                 wrap: true;

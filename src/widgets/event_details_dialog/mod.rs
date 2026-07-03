@@ -9,13 +9,13 @@ use ashpd::{
     },
 };
 use clepsydre::{Event, prelude::*};
-use gettextrs::gettext;
 use glib::{DateTime, clone};
 use tracing::{debug, warn};
 
 use crate::{
     spawn,
-    utils::{EventPropertiesPreset, PaintableCallbacks, TemplateCallbacks},
+    system_settings::ClockFormat,
+    utils::{self, EventPropertiesPreset, PaintableCallbacks, TemplateCallbacks},
     widgets::{
         QrCodeDialog,
         components::{CalendarComboRow, ErrorDialog, LoadingButton, TimeframePicker},
@@ -172,17 +172,15 @@ mod imp {
             start: DateTime,
             end: DateTime,
             today: DateTime,
+            clock_format: ClockFormat,
         ) -> String {
-            let today = jiff::civil::Date::new(
-                today.year() as i16,
-                today.month() as i8,
-                today.day_of_month() as i8,
-            )
-            .unwrap();
-            let yesterday = today.yesterday().unwrap();
-            let tomorrow = today.tomorrow().unwrap();
-
             if all_day {
+                let today = jiff::civil::Date::new(
+                    today.year() as i16,
+                    today.month() as i8,
+                    today.day_of_month() as i8,
+                )
+                .unwrap();
                 let start = jiff::civil::Date::new(
                     start.year() as i16,
                     start.month() as i8,
@@ -197,49 +195,55 @@ mod imp {
                 .unwrap()
                 .yesterday()
                 .unwrap();
-
-                let is_single_day = start == end;
-
-                if is_single_day {
-                    if start == yesterday {
-                        return gettext("Yesterday");
-                    } else if start == today {
-                        return gettext("Today");
-                    } else if start == tomorrow {
-                        return gettext("Tomorrow");
-                    } else {
-                        return start.strftime("%d %B %Y").to_string();
-                    }
-                }
-
-                let start_str = if start == yesterday {
-                    gettext("Yesterday")
-                } else if start == today {
-                    gettext("Today")
-                } else if start == tomorrow {
-                    gettext("Tomorrow")
-                } else {
-                    start.strftime("%d %B %Y").to_string()
-                };
-
-                let end_str = if end == yesterday {
-                    gettext("Yesterday")
-                } else if end == today {
-                    gettext("Today")
-                } else if end == tomorrow {
-                    gettext("Tomorrow")
-                } else {
-                    end.strftime("%d %B %Y").to_string()
-                };
-
-                return format!("{} - {}", start_str, end_str);
+                utils::all_day_timeframe_label(start, end, today)
+            } else {
+                let today_iana = today.timezone().identifier();
+                let today_tz =
+                    jiff::tz::TimeZone::get(today_iana.as_str()).unwrap_or(jiff::tz::TimeZone::UTC);
+                let today = jiff::civil::DateTime::new(
+                    today.year() as i16,
+                    today.month() as i8,
+                    today.day_of_month() as i8,
+                    today.hour() as i8,
+                    today.minute() as i8,
+                    0,
+                    0,
+                )
+                .unwrap()
+                .to_zoned(today_tz)
+                .unwrap();
+                let start_iana = start.timezone().identifier();
+                let start_tz =
+                    jiff::tz::TimeZone::get(start_iana.as_str()).unwrap_or(jiff::tz::TimeZone::UTC);
+                let start = jiff::civil::DateTime::new(
+                    start.year() as i16,
+                    start.month() as i8,
+                    start.day_of_month() as i8,
+                    start.hour() as i8,
+                    start.minute() as i8,
+                    0,
+                    0,
+                )
+                .unwrap()
+                .to_zoned(start_tz)
+                .unwrap();
+                let end_iana = end.timezone().identifier();
+                let end_tz =
+                    jiff::tz::TimeZone::get(end_iana.as_str()).unwrap_or(jiff::tz::TimeZone::UTC);
+                let end = jiff::civil::DateTime::new(
+                    end.year() as i16,
+                    end.month() as i8,
+                    end.day_of_month() as i8,
+                    end.hour() as i8,
+                    end.minute() as i8,
+                    0,
+                    0,
+                )
+                .unwrap()
+                .to_zoned(end_tz)
+                .unwrap();
+                utils::timeslot_timeframe_label(start, end, today, clock_format)
             }
-
-            format!(
-                "{} - {}",
-                start.format_iso8601().unwrap(),
-                end.format_iso8601().unwrap()
-            )
         }
 
         #[template_callback]
