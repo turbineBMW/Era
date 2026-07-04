@@ -210,19 +210,12 @@ month-view-row {
     }
 
     event-widget {
-        min-height: 8px;
         background-color: color-mix(
             in srgb,
             var(--calendar-bg-color) 25%,
             var(--view-bg-color)
         );
         color: var(--view-fg-color);
-        border-radius: 6px;
-
-        &:focus-visible {
-            outline: 2px solid var(--accent-bg-color);
-            outline-offset: -2px;
-        }
 
         .edge {
             background-color: var(--calendar-bg-color);
@@ -235,9 +228,26 @@ month-view-row {
         }
     }
 
+    overflow-button {
+        &:hover {
+            background-color: #88888888;
+        }
+    }
+
+    event-widget,
+    overflow-button {
+        min-height: 8px;
+        border-radius: 6px;
+
+        &:focus-visible {
+            outline: 2px solid var(--accent-bg-color);
+            outline-offset: -2px;
+        }
+    }
+
     &.narrow {
         event-widget,
-        .overflow-button {
+        overflow-button {
             label {
                 font-size: 82%;
             }
@@ -252,7 +262,7 @@ month-view-row {
 
     &.medium {
         event-widget,
-        .overflow-button {
+        overflow-button {
             label {
                 margin: 3px;
             }

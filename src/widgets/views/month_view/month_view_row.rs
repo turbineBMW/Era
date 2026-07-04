@@ -292,14 +292,6 @@ mod imp {
                 let button = OverflowButton::new();
                 button.set_child_visible(false);
                 button.set_parent(&*obj);
-                button.connect_clicked(clone!(
-                    #[weak]
-                    obj,
-                    move |_btn| {
-                        let dialog = adw::Dialog::builder().title("Events").build();
-                        dialog.present(Some(&obj));
-                    }
-                ));
                 button
             });
             self.overflow_buttons.get_or_init(|| overflow_buttons);
@@ -430,10 +422,7 @@ mod imp {
             {
                 match direction {
                     gtk::DirectionType::TabForward => {
-                        let current_idx = self
-                            .focus_index
-                            .get()
-                            .expect("focus is inside this row, so the index should be set");
+                        let current_idx = self.focus_index.get().unwrap_or(0);
                         let next_idx = current_idx + 1;
                         if next_idx < focus_order.len() {
                             self.focus_index.set(Some(next_idx));
@@ -504,15 +493,9 @@ mod imp {
                 gtk::Orientation::Horizontal => (MINIMUM_WIDTH, NATURAL_WIDTH, -1, -1),
                 gtk::Orientation::Vertical => {
                     let (separator_height, ..) = self.above_1.measure(orientation, for_size);
-                    let (minimum_header_height, natural_header_height, ..) =
-                        self.header_1.measure(orientation, for_size);
+                    let (minimum_header_height, ..) = self.header_1.measure(orientation, for_size);
                     let (minimum_event_height, natural_event_height, ..) =
                         self.mock_event_widget.measure(orientation, for_size);
-                    let (minimum_overflow_button_height, ..) = self
-                        .overflow_buttons
-                        .get()
-                        .expect("Overflow buttons should be initialized")[0]
-                        .measure(orientation, for_size);
                     let (minimum_debug_height, ..) = self.debug.measure(orientation, for_size);
 
                     // Reserve space for the header, one event, and an overflow button.
@@ -524,14 +507,14 @@ mod imp {
                             + EVENT_GAP
                             + minimum_event_height
                             + EVENT_GAP
-                            + minimum_overflow_button_height
+                            + minimum_event_height
                             + minimum_debug_height,
                         separator_height
-                            + natural_header_height
+                            + minimum_header_height
                             + EVENT_GAP
                             + natural_event_height
                             + EVENT_GAP
-                            + minimum_overflow_button_height
+                            + natural_event_height
                             + minimum_debug_height,
                         -1,
                         -1,
@@ -560,16 +543,12 @@ mod imp {
             let (_minimum_row_height, natural_row_height, ..) =
                 obj.measure(gtk::Orientation::Vertical, width);
 
+            let (separator_height, ..) = self.above_1.measure(gtk::Orientation::Vertical, width);
             let (header_height, ..) = self.header_1.measure(gtk::Orientation::Vertical, width);
             // Minimum event height is the height of the line-only event widget, and
             // natural_event_height is the height with one line of label
             let (minimum_event_height, natural_event_height, ..) = self
                 .mock_event_widget
-                .measure(gtk::Orientation::Vertical, width);
-            let (minimum_overflow_button_height, ..) = self
-                .overflow_buttons
-                .get()
-                .expect("Overflow buttons should be initialized")[0]
                 .measure(gtk::Orientation::Vertical, width);
 
             let use_dense_allocation = height < natural_row_height;
@@ -596,7 +575,7 @@ mod imp {
                 .collect();
 
             // Calculate how many event rows fit, reserving space for the header
-            let available_height_for_events = height - header_height;
+            let available_height_for_events = height - header_height - separator_height;
 
             // TODO: Make this clearer
             // -----------------------------------------------------------------------------
@@ -632,9 +611,7 @@ mod imp {
             for column in 0..7 {
                 if column_max_row[column] > max_events {
                     column_needs_more[column] = true;
-                    column_max_visible_row[column] =
-                        ((available_height_for_events - natural_event_height + EVENT_GAP)
-                            / (event_height + EVENT_GAP)) as usize;
+                    column_max_visible_row[column] = max_events - 1;
                 }
             }
 
@@ -672,16 +649,20 @@ mod imp {
             for (column, button) in self.overflow_buttons.get().unwrap().iter().enumerate() {
                 if column_needs_more[column] && column_hidden_count[column] > 0 {
                     let count = column_hidden_count[column];
-                    button.set_label(&format!("+{count}"));
+                    if use_dense_allocation {
+                        button.set_small_mode(true);
+                    } else {
+                        button.set_small_mode(false);
+                        button.set_text(format!("+{count}"));
+                    }
                     button.set_child_visible(true);
 
-                    let x_start = bounds[column].0;
-                    let w = bounds[column].1 - x_start;
+                    let x = bounds[column].0;
+                    let width = bounds[column].1 - x;
                     let y = header_height
                         + column_max_visible_row[column] as i32 * (event_height + EVENT_GAP);
 
-                    let allocation =
-                        gtk::Allocation::new(x_start, y, w, minimum_overflow_button_height);
+                    let allocation = gtk::Allocation::new(x, y, width, event_height);
                     button.size_allocate(&allocation, baseline);
                 } else {
                     button.set_child_visible(false);

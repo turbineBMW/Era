@@ -1,9 +1,22 @@
 using Gtk 4.0;
 
-template $OverflowButton: Button {
+template $OverflowButton: Widget {
+  focusable: true;
+
   styles [
-    "flat",
     "dimmed",
-    "overflow-button",
   ]
+
+  Inscription inscription {
+    text: bind template.text;
+    xalign: 0.5;
+  }
+
+  Image image {
+    icon-name: "view-more-horizontal-symbolic";
+  }
+
+  GestureClick {
+    released => $open_day_list(template);
+  }
 }

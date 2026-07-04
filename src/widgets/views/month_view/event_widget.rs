@@ -38,6 +38,7 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.set_css_name("event-widget");
+
             klass.bind_template();
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
@@ -277,6 +278,8 @@ mod imp {
 
         #[template_callback]
         fn open_details(&self) {
+            self.obj().grab_focus();
+
             let Some(event) = self.obj().event() else {
                 return;
             };
