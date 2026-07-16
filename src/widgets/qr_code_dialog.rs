@@ -11,7 +11,7 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Era/qr_code_dialog.ui")]
     #[properties(wrapper_type = super::QrCodeDialog)]
     pub struct QrCodeDialog {
-        #[property(get, set = Self::set_url, explicit_notify)]
+        #[property(get, set = Self::set_url, nullable, explicit_notify)]
         url: RefCell<String>,
         #[template_child]
         qr_code: TemplateChild<gtk::Picture>,

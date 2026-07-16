@@ -206,9 +206,7 @@ glib::wrapper! {
 }
 
 impl CreateEventDialog {
-    pub fn new(preset: EventPropertiesPreset) -> Self {
-        let dialog: Self = glib::Object::new();
-        dialog.imp().set_data(preset);
-        dialog
+    pub fn set_data(&self, preset: EventPropertiesPreset) {
+        self.imp().set_data(preset);
     }
 }

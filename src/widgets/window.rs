@@ -31,6 +31,12 @@ pub mod imp {
         year_view: TemplateChild<YearView>,
         #[template_child]
         month_view: TemplateChild<MonthView>,
+        #[template_child]
+        create_event_dialog: TemplateChild<CreateEventDialog>,
+        #[template_child]
+        calendar_management_dialog: TemplateChild<CalendarManagementDialog>,
+        #[template_child]
+        search_dialog: TemplateChild<SearchDialog>,
 
         colors_provider: gtk::CssProvider,
     }
@@ -48,8 +54,8 @@ pub mod imp {
             Sidebar::ensure_type();
 
             klass.install_action("win.search-events", None, |obj, _, _| {
-                let dialog = SearchDialog::new();
-                dialog.present(Some(obj));
+                obj.imp().search_dialog.present(Some(obj));
+                obj.imp().search_dialog.grab_focus();
             });
             klass.add_binding_action(
                 gdk::Key::F,
@@ -58,8 +64,8 @@ pub mod imp {
             );
 
             klass.install_action("win.manage-calendars", None, |obj, _, _| {
-                let dialog = CalendarManagementDialog::new();
-                dialog.present(Some(obj));
+                obj.imp().calendar_management_dialog.present(Some(obj));
+                obj.imp().calendar_management_dialog.grab_focus();
             });
             klass.add_binding_action(
                 gdk::Key::F8,
@@ -81,8 +87,9 @@ pub mod imp {
                         .get::<EventPropertiesPreset>()
                         .expect("Parameter should be of type EventPropertiesPreset");
 
-                    let dialog = CreateEventDialog::new(preset);
-                    dialog.present(Some(obj));
+                    obj.imp().create_event_dialog.set_data(preset);
+                    obj.imp().create_event_dialog.present(Some(obj));
+                    obj.imp().create_event_dialog.grab_focus();
                 },
             );
             klass.add_binding(gdk::Key::N, gdk::ModifierType::CONTROL_MASK, |obj| {

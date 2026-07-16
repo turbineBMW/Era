@@ -34,7 +34,7 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Era/event_details_dialog.ui")]
     #[properties(wrapper_type = super::EventDetailsDialog)]
     pub struct EventDetailsDialog {
-        #[property(get, construct_only)]
+        #[property(get, set = Self::set_event, nullable)]
         event: RefCell<Option<Event>>,
         #[template_child]
         navigation_view: TemplateChild<adw::NavigationView>,
@@ -132,9 +132,15 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for EventDetailsDialog {
-        fn constructed(&self) {
-            let event = self.obj().event().unwrap();
+    impl ObjectImpl for EventDetailsDialog {}
+
+    impl WidgetImpl for EventDetailsDialog {}
+    impl AdwDialogImpl for EventDetailsDialog {}
+
+    #[gtk::template_callbacks]
+    impl EventDetailsDialog {
+        fn set_event(&self, event: Event) {
+            self.event.replace(Some(event.clone()));
 
             // TODO: Doesn't work if a subdialog is shown
             event.connect_removed(clone!(
@@ -158,13 +164,7 @@ mod imp {
 
             self.update_save_action();
         }
-    }
 
-    impl WidgetImpl for EventDetailsDialog {}
-    impl AdwDialogImpl for EventDetailsDialog {}
-
-    #[gtk::template_callbacks]
-    impl EventDetailsDialog {
         #[template_callback]
         fn timeframe_label(
             &self,

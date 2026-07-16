@@ -129,15 +129,3 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Dialog,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::ShortcutManager;
 }
-
-impl SearchDialog {
-    pub fn new() -> Self {
-        glib::Object::new()
-    }
-}
-
-impl Default for SearchDialog {
-    fn default() -> Self {
-        Self::new()
-    }
-}
