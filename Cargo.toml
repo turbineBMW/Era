@@ -11,11 +11,11 @@ codegen-units = 1
 [dependencies]
 adw = { package = "libadwaita", version = "0.9.1", features = ["v1_9", "gtk_v4_22", "gio_v2_80"] }
 ashpd = { version = "0.13.5", default-features = false, features = ["async-io", "settings", "file_chooser", "open_uri"] }
-futures-util = "0.3.32"
 clepsydre = { package = "clepsydre-rebind", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git" }
 clepsydre-eds = { package = "clepsydre-eds", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git", optional = true }
 clepsydre-mock = { package = "clepsydre-mock", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git", optional = true }
 clepsydre-p2panda = { package = "clepsydre-p2panda", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git", optional = true }
+futures-util = "0.3.32"
 gettext-rs = { version = "0.7.7", features = ["gettext-system"] }
 gio = { version = "0.22.2", features = ["v2_86"] }
 glib = { version = "0.22.2", features = ["v2_86"] }
