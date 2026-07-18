@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, Collection};
+use clepsydre::{Calendar, Collection, prelude::*};
 
 use crate::utils::TemplateCallbacks;
 

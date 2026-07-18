@@ -9,7 +9,7 @@ lto = true
 codegen-units = 1
 
 [dependencies]
-adw = { package = "libadwaita", version = "0.9.1", features = ["v1_9"] }
+adw = { package = "libadwaita", version = "0.9.1", features = ["v1_9", "gtk_v4_22", "gio_v2_80"] }
 ashpd = { version = "0.13.5", default-features = false, features = ["async-io", "settings", "file_chooser", "open_uri"] }
 futures-util = "0.3.32"
 clepsydre = { package = "clepsydre-rebind", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git" }
