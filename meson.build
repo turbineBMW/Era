@@ -14,8 +14,8 @@ backend = get_option('calendar-backend')
 i18n = import('i18n')
 gnome = import('gnome')
 
-dependency('gtk4', version: '>= 4.21')
-dependency('libadwaita-1', version: '>= 1.8')
+dependency('gtk4', version: '>= 4.22')
+dependency('libadwaita-1', version: '>= 1.9')
 dependency('clepsydre-0', version: '>= 0.1')
 
 if backend == 'eds'

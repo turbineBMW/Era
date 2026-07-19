@@ -6,52 +6,58 @@ template $CalendarCreationDialog: Adw.Dialog {
   content-height: 500;
   content-width: 500;
 
-  Adw.ToastOverlay toast_overlay {
-    Adw.ToolbarView {
-      [top]
-      Adw.HeaderBar {
-        show-start-title-buttons: false;
-        show-end-title-buttons: false;
+  Adw.NavigationView navigation_view {
+    Adw.NavigationPage {
+      tag: "flows";
+      title: _("Create Calendar");
 
-        Button cancel {
-          icon-name: "cross-symbolic";
-          tooltip-text: _("Cancel");
-          action-name: "window.close";
-        }
+      Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar {}
 
-        [end]
-        $LoadingButton create {
-          content-icon-name: "object-select-symbolic";
-          tooltip-text: _("Create");
-          clicked => $create_calendar(template);
-
-          styles [
-            "suggested-action",
-          ]
-        }
-      }
-
-      content: Adw.PreferencesPage {
-        Adw.PreferencesGroup {
-          Adw.EntryRow name {
-            title: _("Name");
+        content: Adw.PreferencesPage {
+          Adw.PreferencesGroup flows_group {
+            title: _("Creation Method");
+            description: _("Choose how to create the calendar.");
           }
+        };
+      }
+    }
 
-          Adw.ActionRow {
-            title: _("Color");
-            activatable-widget: color;
+    Adw.NavigationPage {
+      tag: "flow-details";
+      title: _("Flow Details");
 
-            ColorDialogButton color {
-              valign: center;
+      Adw.ToastOverlay toast_overlay {
+        Adw.ToolbarView {
+          [top]
+          Adw.HeaderBar {
+            show-start-title-buttons: false;
+            show-end-title-buttons: false;
+            show-back-button: false;
 
-              dialog: ColorDialog {
-                modal: true;
-                with-alpha: false;
-              };
+            [start]
+            Button cancel {
+              icon-name: "cross-symbolic";
+              tooltip-text: _("Cancel");
+              action-name: "navigation.pop";
+            }
+
+            [end]
+            $LoadingButton create {
+              icon-name: "object-select-symbolic";
+              tooltip-text: _("Create");
+              action-name: "calendar-creation-dialog.create";
+
+              styles [
+                "suggested-action",
+              ]
             }
           }
+
+          content: Adw.PreferencesPage flow_page {};
         }
-      };
+      }
     }
   }
 }
