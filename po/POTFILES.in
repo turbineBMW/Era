@@ -16,7 +16,7 @@ data/resources/ui/event_details_dialog/event_details_dialog.blp
 data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp
 data/resources/ui/search_dialog/search_dialog.blp
 data/resources/ui/views/month_view/month_view_inner.blp
-data/resources/ui/create_event_dialog.blp
+data/resources/ui/event_creation_dialog.blp
 data/resources/ui/qr_code_dialog.blp
 data/resources/ui/shortcuts_dialog.blp
 data/resources/ui/window.blp

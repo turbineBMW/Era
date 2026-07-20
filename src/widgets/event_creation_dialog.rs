@@ -13,8 +13,8 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/create_event_dialog.ui")]
-    pub struct CreateEventDialog {
+    #[template(resource = "/io/gitlab/TitouanReal/Era/event_creation_dialog.ui")]
+    pub struct EventCreationDialog {
         #[template_child]
         toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
@@ -36,9 +36,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for CreateEventDialog {
-        const NAME: &'static str = "CreateEventDialog";
-        type Type = super::CreateEventDialog;
+    impl ObjectSubclass for EventCreationDialog {
+        const NAME: &'static str = "EventCreationDialog";
+        type Type = super::EventCreationDialog;
         type ParentType = adw::Dialog;
 
         fn class_init(klass: &mut Self::Class) {
@@ -80,7 +80,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for CreateEventDialog {
+    impl ObjectImpl for EventCreationDialog {
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -99,11 +99,11 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for CreateEventDialog {}
-    impl AdwDialogImpl for CreateEventDialog {}
+    impl WidgetImpl for EventCreationDialog {}
+    impl AdwDialogImpl for EventCreationDialog {}
 
     #[gtk::template_callbacks]
-    impl CreateEventDialog {
+    impl EventCreationDialog {
         pub(super) fn set_data(&self, preset: EventPropertiesPreset) {
             self.name.set_text(&preset.name);
             self.description.set_text(&preset.description);
@@ -201,12 +201,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct CreateEventDialog(ObjectSubclass<imp::CreateEventDialog>)
+    pub struct EventCreationDialog(ObjectSubclass<imp::EventCreationDialog>)
         @extends gtk::Widget, adw::Dialog,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::ShortcutManager;
 }
 
-impl CreateEventDialog {
+impl EventCreationDialog {
     pub fn set_data(&self, preset: EventPropertiesPreset) {
         self.imp().set_data(preset);
     }

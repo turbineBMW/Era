@@ -6,7 +6,7 @@ use crate::{
     Application,
     utils::{EventPropertiesPreset, TemplateCallbacks},
     widgets::{
-        CalendarManagementDialog, CreateEventDialog, SearchDialog, Sidebar,
+        CalendarManagementDialog, EventCreationDialog, SearchDialog, Sidebar,
         views::{MonthView, YearView},
     },
 };
@@ -32,7 +32,7 @@ pub mod imp {
         #[template_child]
         month_view: TemplateChild<MonthView>,
         #[template_child]
-        create_event_dialog: TemplateChild<CreateEventDialog>,
+        event_creation_dialog: TemplateChild<EventCreationDialog>,
         #[template_child]
         calendar_management_dialog: TemplateChild<CalendarManagementDialog>,
         #[template_child]
@@ -87,9 +87,9 @@ pub mod imp {
                         .get::<EventPropertiesPreset>()
                         .expect("Parameter should be of type EventPropertiesPreset");
 
-                    obj.imp().create_event_dialog.set_data(preset);
-                    obj.imp().create_event_dialog.present(Some(obj));
-                    obj.imp().create_event_dialog.grab_focus();
+                    obj.imp().event_creation_dialog.set_data(preset);
+                    obj.imp().event_creation_dialog.present(Some(obj));
+                    obj.imp().event_creation_dialog.grab_focus();
                 },
             );
             klass.add_binding(gdk::Key::N, gdk::ModifierType::CONTROL_MASK, |obj| {

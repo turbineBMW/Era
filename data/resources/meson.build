@@ -34,8 +34,8 @@ blueprints = custom_target(
         'ui/components/timeframe_picker/time_zone_picker_dialog.blp',
         'ui/components/timeframe_picker/timeframe_picker.blp',
 
-        # Create Event Dialog
-        'ui/create_event_dialog.blp',
+        # Event Creation Dialog
+        'ui/event_creation_dialog.blp',
 
         # Event Details Dialog
         'ui/event_details_dialog/attendee_list_row/attendee_list_row.blp',
