@@ -289,7 +289,7 @@ pub fn timeslot_timeframe_label(
         }
         (
             DayCase::MultiDay,
-            MonthCase::DifferentMonth,
+            MonthCase::DifferentMonth | MonthCase::SameMonth,
             YearCase::SameYear(SameYearCase::OtherYear),
             TzCase::BothSystem,
         ) => {
@@ -308,7 +308,7 @@ pub fn timeslot_timeframe_label(
         }
         (
             DayCase::MultiDay,
-            MonthCase::DifferentMonth,
+            MonthCase::DifferentMonth | MonthCase::SameMonth,
             YearCase::SameYear(SameYearCase::OtherYear),
             TzCase::AtLeastOneNotSystem,
         ) => {
@@ -360,6 +360,5 @@ pub fn timeslot_timeframe_label(
                 .replace("{time_end}", &time_end)
                 .replace("{tz_end}", tz_end)
         }
-        _ => unreachable!(),
     }
 }
