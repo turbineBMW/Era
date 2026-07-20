@@ -1,5 +1,5 @@
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, prelude::*};
+use clepsydre::{Calendar, Timeframe, prelude::*};
 use glib::{DateTime, clone};
 use tracing::{debug, warn};
 
@@ -10,8 +10,6 @@ use crate::{
 };
 
 mod imp {
-    use clepsydre::Timeframe;
-
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
@@ -153,6 +151,8 @@ mod imp {
             self.cancel.set_sensitive(false);
             self.create.set_is_loading(true);
             self.name.set_sensitive(false);
+            self.location.set_sensitive(false);
+            self.conference.set_sensitive(false);
             self.calendar_choice.set_sensitive(false);
             self.description.set_sensitive(false);
 
@@ -180,12 +180,6 @@ mod imp {
                     self.obj().close();
                 }
                 Err(error) => {
-                    self.cancel.set_sensitive(true);
-                    self.create.set_is_loading(false);
-                    self.description.set_sensitive(true);
-                    self.calendar_choice.set_sensitive(true);
-                    self.name.set_sensitive(true);
-
                     warn!("Failed to create event: {error}");
                     self.toast_overlay.dismiss_all();
                     let toast = adw::Toast::new("An error occurred");
@@ -195,6 +189,13 @@ mod imp {
                     self.toast_overlay.add_toast(toast);
                 }
             }
+            self.cancel.set_sensitive(true);
+            self.create.set_is_loading(false);
+            self.name.set_sensitive(true);
+            self.location.set_sensitive(true);
+            self.conference.set_sensitive(true);
+            self.calendar_choice.set_sensitive(true);
+            self.description.set_sensitive(true);
         }
     }
 }
