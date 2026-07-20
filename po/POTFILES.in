@@ -1,6 +1,6 @@
-data/io.gitlab.TitouanReal.Era.desktop.in
-data/io.gitlab.TitouanReal.Era.metainfo.xml.in
-data/io.gitlab.TitouanReal.Era.gschema.xml
+data/io.gitlab.TitouanReal.Era.desktop.in.in
+data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in
+data/io.gitlab.TitouanReal.Era.gschema.xml.in
 data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp
 data/resources/ui/calendar_management_dialog/calendar_details_page.blp
 data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp
