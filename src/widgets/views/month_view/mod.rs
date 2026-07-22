@@ -3,7 +3,7 @@ use std::{cell::Cell, marker::PhantomData};
 use adw::{prelude::*, subclass::prelude::*};
 use glib::clone;
 
-use crate::utils::TemplateCallbacks;
+use crate::{utils::TemplateCallbacks, widgets::window::Styling};
 
 mod event_widget;
 mod month_view_header;
@@ -12,16 +12,6 @@ mod month_view_row;
 mod overflow_button;
 
 use self::month_view_inner::MonthViewInner;
-
-#[derive(Debug, Default, Hash, Eq, PartialEq, Clone, Copy, glib::Enum)]
-#[enum_type(name = "MonthViewStyling")]
-pub enum MonthViewStyling {
-    #[enum_value(name = "Narrow", nick = "narrow")]
-    Narrow,
-    #[default]
-    #[enum_value(name = "Medium", nick = "medium")]
-    Medium,
-}
 
 mod imp {
     use super::*;
@@ -36,8 +26,9 @@ mod imp {
         month: PhantomData<i32>,
         #[property(get = Self::day)]
         day: PhantomData<i32>,
-        #[property(get = Self::styling, set = Self::set_styling, builder(MonthViewStyling::default()))]
-        styling: Cell<MonthViewStyling>,
+        #[property(get = Self::styling, set = Self::set_styling, construct, builder(Styling::default()))]
+        styling: Cell<Styling>,
+
         #[template_child]
         month_view_inner: TemplateChild<MonthViewInner>,
     }
@@ -120,12 +111,12 @@ mod imp {
         }
 
         /// Gets the styling used for the view.
-        fn styling(&self) -> MonthViewStyling {
+        fn styling(&self) -> Styling {
             self.styling.get()
         }
 
         /// Sets the styling used for the view.
-        fn set_styling(&self, styling: MonthViewStyling) {
+        fn set_styling(&self, styling: Styling) {
             if self.styling.get() == styling {
                 return;
             }
@@ -135,8 +126,8 @@ mod imp {
         }
 
         #[template_callback(function)]
-        fn month_view_styling_is_narrow(styling: MonthViewStyling) -> bool {
-            styling == MonthViewStyling::Narrow
+        fn month_view_styling_is_narrow(styling: Styling) -> bool {
+            styling == Styling::Narrow
         }
     }
 }

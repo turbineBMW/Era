@@ -13,11 +13,11 @@ use crate::{
     Application,
     system_settings::DayOfWeek,
     utils::{self, EventPropertiesPreset},
+    widgets::window::Styling,
 };
 
 use super::{
-    MonthViewStyling, event_widget::EventWidget, month_view_header::MonthViewHeader,
-    overflow_button::OverflowButton,
+    event_widget::EventWidget, month_view_header::MonthViewHeader, overflow_button::OverflowButton,
 };
 
 pub const MINIMUM_WIDTH: i32 = 0;
@@ -136,8 +136,8 @@ mod imp {
         month: Cell<i32>,
         #[property(get, set, construct_only)]
         day: Cell<i32>,
-        #[property(get, set = Self::set_styling, builder(MonthViewStyling::default()))]
-        styling: Cell<MonthViewStyling>,
+        #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]
+        styling: Cell<Styling>,
         #[property(get)]
         subscription: OnceCell<Subscription>,
 
@@ -699,7 +699,7 @@ mod imp {
             self.update_timeframe();
         }
 
-        fn set_styling(&self, styling: MonthViewStyling) {
+        fn set_styling(&self, styling: Styling) {
             if self.styling.get() == styling {
                 return;
             }
@@ -713,11 +713,11 @@ mod imp {
         /// Updates the styling class.
         fn update_styling(&self) {
             match self.styling.get() {
-                MonthViewStyling::Narrow => {
+                Styling::Narrow => {
                     self.obj().remove_css_class("medium");
                     self.obj().add_css_class("narrow");
                 }
-                MonthViewStyling::Medium => {
+                Styling::Medium | Styling::Wide => {
                     self.obj().add_css_class("medium");
                     self.obj().remove_css_class("narrow");
                 }

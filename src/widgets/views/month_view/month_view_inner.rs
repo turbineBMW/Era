@@ -10,9 +10,9 @@ use glib::{DateTime, clone};
 use gtk::Allocation;
 use jiff::ToSpan;
 
-use crate::{Application, system_settings::DayOfWeek, utils};
+use crate::{Application, system_settings::DayOfWeek, utils, widgets::window::Styling};
 
-use super::{MonthViewStyling, month_view_row::MonthViewRow};
+use super::month_view_row::MonthViewRow;
 
 // TODO: Reduce this (requires batch recycling)
 const NB_ROWS: i32 = 50;
@@ -61,8 +61,8 @@ mod imp {
         month: Cell<i32>,
         #[property(get)]
         day: Cell<i32>,
-        #[property(get, set, builder(MonthViewStyling::default()))]
-        styling: Cell<MonthViewStyling>,
+        #[property(get, set, construct, builder(Styling::default()))]
+        styling: Cell<Styling>,
 
         #[template_child]
         scroll_drag: TemplateChild<gtk::GestureDrag>,

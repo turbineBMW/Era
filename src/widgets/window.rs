@@ -1,3 +1,5 @@
+use std::cell::Cell;
+
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Calendar, prelude::*};
 use glib::{clone, translate::*};
@@ -11,12 +13,28 @@ use crate::{
     },
 };
 
+#[derive(Debug, Default, Hash, Eq, PartialEq, Clone, Copy, glib::Enum)]
+#[enum_type(name = "Styling")]
+pub enum Styling {
+    #[enum_value(name = "Narrow", nick = "narrow")]
+    Narrow,
+    #[default]
+    #[enum_value(name = "Medium", nick = "medium")]
+    Medium,
+    #[enum_value(name = "Wide", nick = "wide")]
+    Wide,
+}
+
 pub mod imp {
     use super::*;
 
-    #[derive(Debug, Default, gtk::CompositeTemplate)]
+    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
     #[template(resource = "/io/gitlab/TitouanReal/Era/window.ui")]
+    #[properties(wrapper_type = super::Window)]
     pub struct Window {
+        #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]
+        styling: Cell<Styling>,
+
         #[template_child]
         stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -25,8 +43,6 @@ pub mod imp {
         wide_view_stack: TemplateChild<adw::ViewStack>,
         #[template_child]
         narrow_stack: TemplateChild<gtk::Stack>,
-        #[template_child]
-        narrow_view_stack: TemplateChild<adw::ViewStack>,
         #[template_child]
         year_view: TemplateChild<YearView>,
         #[template_child]
@@ -98,7 +114,12 @@ pub mod imp {
             });
 
             klass.install_action("win.today", None, |obj, _, _| {
-                obj.imp().today();
+                let today = Application::default().current_datetime();
+                let year = today.year();
+                let month = today.month();
+                let day = today.day_of_month();
+                obj.imp().month_view.set_year_month_day(year, month, day);
+                obj.imp().year_view.set_year(year);
             });
             klass.add_binding_action(gdk::Key::T, gdk::ModifierType::CONTROL_MASK, "win.today");
             klass.add_binding_action(
@@ -114,6 +135,7 @@ pub mod imp {
         }
     }
 
+    #[glib::derived_properties]
     impl ObjectImpl for Window {
         fn constructed(&self) {
             self.parent_constructed();
@@ -129,9 +151,9 @@ pub mod imp {
             let manager = Application::default().manager();
 
             if manager.is_backend_available() {
-                self.stack.set_visible_child_name("calendar_view");
+                self.stack.set_visible_child_name("backend-available");
             } else {
-                self.stack.set_visible_child_name("no_backend");
+                self.stack.set_visible_child_name("backend-unavailable");
             }
 
             manager.connect_backend_available_notify(clone!(
@@ -139,9 +161,9 @@ pub mod imp {
                 self,
                 move |manager| {
                     if manager.is_backend_available() {
-                        imp.stack.set_visible_child_name("calendar_view");
+                        imp.stack.set_visible_child_name("backend-available");
                     } else {
-                        imp.stack.set_visible_child_name("no_backend");
+                        imp.stack.set_visible_child_name("backend-unavailable");
                         let dialogs = imp.obj().dialogs().iter().collect::<Vec<_>>();
                         for maybe_dialog in dialogs {
                             let dialog: adw::Dialog = maybe_dialog.unwrap();
@@ -197,50 +219,10 @@ pub mod imp {
                     {
                         "year" => imp.wide_view_stack.set_visible_child_name("year"),
                         "month" => imp.wide_view_stack.set_visible_child_name("month"),
-                        "days" => match imp
-                            .narrow_view_stack
-                            .visible_child_name()
-                            .expect("Narrow stack should have a visible child")
-                            .as_str()
-                        {
-                            "days" => imp.wide_view_stack.set_visible_child_name("week"),
-                            "day" => imp.wide_view_stack.set_visible_child_name("days"),
-                            "agenda" => imp.wide_view_stack.set_visible_child_name("agenda"),
-                            name => panic!("Unknown narrow stack child name: {name}"),
-                        },
                         name => panic!("Unknown narrow stack child name: {name}"),
                     }
                 }
             ));
-
-            self.narrow_view_stack
-                .connect_visible_child_name_notify(clone!(
-                    #[weak(rename_to = imp)]
-                    self,
-                    move |_| {
-                        match imp
-                            .narrow_stack
-                            .visible_child_name()
-                            .expect("Narrow stack should have a visible child")
-                            .as_str()
-                        {
-                            "year" => imp.wide_view_stack.set_visible_child_name("year"),
-                            "month" => imp.wide_view_stack.set_visible_child_name("month"),
-                            "days" => match imp
-                                .narrow_view_stack
-                                .visible_child_name()
-                                .expect("Narrow stack should have a visible child")
-                                .as_str()
-                            {
-                                "days" => imp.wide_view_stack.set_visible_child_name("week"),
-                                "day" => imp.wide_view_stack.set_visible_child_name("days"),
-                                "agenda" => imp.wide_view_stack.set_visible_child_name("agenda"),
-                                name => panic!("Unknown narrow view stack child name: {name}"),
-                            },
-                            name => panic!("Unknown narrow stack child name: {name}"),
-                        }
-                    }
-                ));
 
             self.wide_view_stack
                 .connect_visible_child_name_notify(clone!(
@@ -255,18 +237,6 @@ pub mod imp {
                         {
                             "year" => imp.narrow_stack.set_visible_child_name("year"),
                             "month" => imp.narrow_stack.set_visible_child_name("month"),
-                            "week" => {
-                                imp.narrow_stack.set_visible_child_name("days");
-                                imp.narrow_view_stack.set_visible_child_name("days");
-                            }
-                            "days" => {
-                                imp.narrow_stack.set_visible_child_name("days");
-                                imp.narrow_view_stack.set_visible_child_name("day");
-                            }
-                            "agenda" => {
-                                imp.narrow_stack.set_visible_child_name("days");
-                                imp.narrow_view_stack.set_visible_child_name("agenda");
-                            }
                             name => panic!("Unknown wide view stack child name: {name}"),
                         }
                     }
@@ -281,13 +251,22 @@ pub mod imp {
 
     #[gtk::template_callbacks]
     impl Window {
-        fn today(&self) {
-            let today = Application::default().current_datetime();
-            let year = today.year();
-            let month = today.month();
-            let day = today.day_of_month();
-            self.month_view.set_year_month_day(year, month, day);
-            self.year_view.set_year(year);
+        fn set_styling(&self, styling: Styling) {
+            self.styling.set(styling);
+
+            match styling {
+                Styling::Narrow => {
+                    self.main_view.set_layout_name("narrow");
+                }
+                Styling::Medium => {
+                    self.main_view.set_layout_name("medium");
+                }
+                Styling::Wide => {
+                    panic!("No wide mode for window");
+                }
+            }
+
+            self.obj().notify_styling();
         }
 
         fn recalculate_calendar_colors_css(&self) {

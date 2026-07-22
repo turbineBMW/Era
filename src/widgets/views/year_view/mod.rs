@@ -8,7 +8,7 @@ use adw::{prelude::*, subclass::prelude::*};
 use glib::{clone, subclass::Signal};
 use gtk::Allocation;
 
-use crate::Application;
+use crate::{Application, widgets::window::Styling};
 
 mod year_view_cell;
 mod year_view_row;
@@ -28,18 +28,6 @@ const SECOND_STAGE_DIVISOR: f64 = 2.5;
 const DISCRETE_SCROLL_DISTANCE_THRESHOLD_TO_SNAP: f64 = 100.;
 const DISCRETE_SCROLL_DISTANCE_THRESHOLD_TO_ROW: f64 = 50.;
 
-#[derive(Debug, Default, Hash, Eq, PartialEq, Clone, Copy, glib::Enum)]
-#[enum_type(name = "YearViewStyling")]
-pub enum YearViewStyling {
-    #[enum_value(name = "Narrow", nick = "narrow")]
-    Narrow,
-    #[default]
-    #[enum_value(name = "Medium", nick = "medium")]
-    Medium,
-    #[enum_value(name = "Wide", nick = "wide")]
-    Wide,
-}
-
 mod imp {
     use super::*;
 
@@ -49,8 +37,8 @@ mod imp {
     pub struct YearView {
         #[property(get, set = Self::set_year)]
         year: Cell<i32>,
-        #[property(get, set, builder(YearViewStyling::default()))]
-        styling: Cell<YearViewStyling>,
+        #[property(get, set, construct, builder(Styling::default()))]
+        styling: Cell<Styling>,
 
         /// Rows contained in the view.
         rows: OnceCell<Mutex<Vec<YearViewRow>>>,

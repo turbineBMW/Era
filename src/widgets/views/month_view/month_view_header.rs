@@ -3,9 +3,7 @@ use std::cell::Cell;
 use adw::{prelude::*, subclass::prelude::*};
 use glib::clone;
 
-use crate::{Application, utils::TemplateCallbacks};
-
-use super::MonthViewStyling;
+use crate::{Application, utils::TemplateCallbacks, widgets::window::Styling};
 
 mod imp {
     use super::*;
@@ -20,8 +18,9 @@ mod imp {
         month: Cell<i32>,
         #[property(get)]
         day: Cell<i32>,
-        #[property(get, set = Self::set_styling, builder(MonthViewStyling::default()))]
-        styling: Cell<MonthViewStyling>,
+        #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]
+        styling: Cell<Styling>,
+
         #[template_child]
         day_number: TemplateChild<gtk::Label>,
         #[template_child]
@@ -100,7 +99,7 @@ mod imp {
             }
         }
 
-        fn set_styling(&self, styling: MonthViewStyling) {
+        fn set_styling(&self, styling: Styling) {
             if self.styling.get() == styling {
                 return;
             }
@@ -116,10 +115,10 @@ mod imp {
         fn update_displayed_label(&self) {
             if self.day.get() == 1 {
                 match self.styling.get() {
-                    MonthViewStyling::Narrow => {
+                    Styling::Narrow => {
                         self.obj().set_child(Some(&*self.month_abbreviation));
                     }
-                    MonthViewStyling::Medium => {
+                    Styling::Medium | Styling::Wide => {
                         self.obj().set_child(Some(&*self.month_name));
                     }
                 }
@@ -145,12 +144,12 @@ mod imp {
         /// Updates the styling class.
         fn update_styling(&self) {
             match self.styling.get() {
-                MonthViewStyling::Narrow => {
+                Styling::Narrow => {
                     self.obj().remove_css_class("medium");
                     self.obj().add_css_class("narrow");
                     self.obj().set_halign(gtk::Align::Center);
                 }
-                MonthViewStyling::Medium => {
+                Styling::Medium | Styling::Wide => {
                     self.obj().set_halign(gtk::Align::Start);
                     self.obj().add_css_class("medium");
                     self.obj().remove_css_class("narrow");

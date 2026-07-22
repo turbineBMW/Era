@@ -4,9 +4,10 @@ use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Event, Timeframe, prelude::*};
 use glib::{clone, translate::*};
 
-use super::MonthViewStyling;
-
-use crate::{utils::TemplateCallbacks, widgets::event_details_dialog::EventDetailsDialog};
+use crate::{
+    utils::TemplateCallbacks, widgets::event_details_dialog::EventDetailsDialog,
+    widgets::window::Styling,
+};
 
 mod imp {
     use super::*;
@@ -17,8 +18,8 @@ mod imp {
     pub struct EventWidget {
         #[property(get, set = Self::set_event, nullable, construct)]
         event: RefCell<Option<Event>>,
-        #[property(get, set = Self::set_styling, builder(MonthViewStyling::default()))]
-        styling: Cell<MonthViewStyling>,
+        #[property(get, set = Self::set_styling, builder(Styling::default()))]
+        styling: Cell<Styling>,
 
         #[template_child]
         edge: TemplateChild<adw::Bin>,
@@ -134,7 +135,7 @@ mod imp {
             let (minimum_time_height, ..) = self.time.measure(gtk::Orientation::Vertical, -1);
 
             // In medium mode, show the time and allocate the remaining width to the name
-            if obj.styling() != MonthViewStyling::Narrow {
+            if obj.styling() != Styling::Narrow {
                 self.time.set_child_visible(true);
                 let time_allocation =
                     gtk::Allocation::new(width - minimum_time_width, 0, minimum_time_width, height);
@@ -209,7 +210,7 @@ mod imp {
             }
         }
 
-        fn set_styling(&self, styling: MonthViewStyling) {
+        fn set_styling(&self, styling: Styling) {
             if self.styling.get() == styling {
                 return;
             }
@@ -223,11 +224,11 @@ mod imp {
         /// Updates the styling class.
         fn update_styling(&self) {
             match self.styling.get() {
-                MonthViewStyling::Narrow => {
+                Styling::Narrow => {
                     self.obj().remove_css_class("medium");
                     self.obj().add_css_class("narrow");
                 }
-                MonthViewStyling::Medium => {
+                Styling::Medium | Styling::Wide => {
                     self.obj().add_css_class("medium");
                     self.obj().remove_css_class("narrow");
                 }

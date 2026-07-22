@@ -3,9 +3,9 @@ use std::{cell::Cell, cmp};
 use adw::{prelude::*, subclass::prelude::*};
 use glib::clone;
 
-use crate::{Application, system_settings::DayOfWeek, utils::TemplateCallbacks};
-
-use super::YearViewStyling;
+use crate::{
+    Application, system_settings::DayOfWeek, utils::TemplateCallbacks, widgets::window::Styling,
+};
 
 mod imp {
     use super::*;
@@ -18,12 +18,14 @@ mod imp {
         year: Cell<i32>,
         #[property(get, construct_only)]
         month: Cell<i32>,
-        #[property(get, set, builder(YearViewStyling::default()))]
-        styling: Cell<YearViewStyling>,
+        #[property(get, set, construct, builder(Styling::default()))]
+        styling: Cell<Styling>,
+
         #[template_child]
         month_label: TemplateChild<gtk::Label>,
         #[template_child]
         days_grid: TemplateChild<gtk::Grid>,
+
         spacing: Cell<i32>,
     }
 
@@ -287,7 +289,7 @@ mod imp {
             }
 
             match self.styling.get() {
-                YearViewStyling::Narrow => {
+                Styling::Narrow => {
                     self.month_label.add_css_class("caption-heading");
                     self.days_grid.set_column_spacing(3);
                     self.days_grid.set_row_spacing(3);
@@ -298,7 +300,7 @@ mod imp {
                         };
                     }
                 }
-                YearViewStyling::Medium => {
+                Styling::Medium => {
                     self.month_label.add_css_class("title-4");
                     self.days_grid.set_column_spacing(12);
                     self.days_grid.set_row_spacing(12);
@@ -309,7 +311,7 @@ mod imp {
                         };
                     }
                 }
-                YearViewStyling::Wide => {
+                Styling::Wide => {
                     self.month_label.add_css_class("title-4");
                     self.days_grid.set_column_spacing(12);
                     self.days_grid.set_row_spacing(12);

@@ -3,9 +3,9 @@ use std::{cell::Cell, cmp, sync::LazyLock};
 use adw::{prelude::*, subclass::prelude::*};
 use glib::{clone, closure_local, subclass::Signal};
 
-use crate::Application;
+use crate::{Application, widgets::window::Styling};
 
-use super::{YearViewCell, YearViewStyling};
+use super::YearViewCell;
 
 const SIDE_MARGIN: i32 = 12;
 const SPACING: i32 = 6;
@@ -19,8 +19,9 @@ mod imp {
     pub struct YearViewRow {
         #[property(get, set)]
         year: Cell<i32>,
-        #[property(get, set, builder(YearViewStyling::default()))]
-        styling: Cell<YearViewStyling>,
+        #[property(get, set, construct, builder(Styling::default()))]
+        styling: Cell<Styling>,
+
         #[template_child]
         year_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -207,17 +208,17 @@ mod imp {
             self.year_label.remove_css_class("title-1");
 
             match self.styling.get() {
-                YearViewStyling::Narrow => {
+                Styling::Narrow => {
                     self.year_label.add_css_class("title-3");
                     self.month_flow_box.set_column_spacing(6);
                     self.month_flow_box.set_row_spacing(6);
                 }
-                YearViewStyling::Medium => {
+                Styling::Medium => {
                     self.year_label.add_css_class("title-1");
                     self.month_flow_box.set_column_spacing(12);
                     self.month_flow_box.set_row_spacing(12);
                 }
-                YearViewStyling::Wide => {
+                Styling::Wide => {
                     self.year_label.add_css_class("title-1");
                     self.month_flow_box.set_column_spacing(12);
                     self.month_flow_box.set_row_spacing(12);

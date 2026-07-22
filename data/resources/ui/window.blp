@@ -9,7 +9,7 @@ template $EraWindow: Adw.ApplicationWindow {
 
   content: Stack stack {
     StackPage {
-      name: "no_backend";
+      name: "backend-unavailable";
 
       child: Adw.ToolbarView {
         [top]
@@ -30,167 +30,9 @@ template $EraWindow: Adw.ApplicationWindow {
     }
 
     StackPage {
-      name: "calendar_view";
+      name: "backend-available";
 
       child: Adw.MultiLayoutView main_view {
-        Adw.Layout {
-          name: "wide";
-
-          content: Adw.OverlaySplitView overlay_split_view {
-            show-sidebar: bind sidebar_toggle.active bidirectional;
-            collapsed: true;
-
-            sidebar: $Sidebar {};
-
-            content: Adw.ToolbarView {
-              [top]
-              Adw.HeaderBar {
-                [start]
-                ToggleButton sidebar_toggle {
-                  icon-name: "sidebar-show-symbolic";
-                  tooltip-text: _("Toggle Sidebar");
-                }
-
-                [end]
-                MenuButton {
-                  primary: true;
-                  icon-name: "open-menu-symbolic";
-                  tooltip-text: _("Main Menu");
-                  menu-model: primary_menu;
-                }
-
-                [end]
-                Button {
-                  icon-name: "system-search-symbolic";
-                  tooltip-text: _("Search");
-                  action-name: "win.search-events";
-
-                  styles [
-                    "flat",
-                  ]
-                }
-              }
-
-              content: Adw.BreakpointBin {
-                width-request: 100;
-                height-request: 100;
-
-                Adw.Breakpoint {
-                  condition ("min-width: 720sp")
-
-                  setters {
-                    year_view.styling: medium;
-                  }
-                }
-
-                Adw.Breakpoint {
-                  condition ("min-width: 1100sp")
-
-                  setters {
-                    year_view.styling: wide;
-                  }
-                }
-
-                child: Adw.ViewStack wide_view_stack {
-                  Adw.ViewStackPage {
-                    name: "year";
-                    title: _("_Year");
-                    use-underline: true;
-                    icon-name: "year-symbolic";
-
-                    child: Adw.LayoutSlot {
-                      id: "year_view";
-                    };
-                  }
-
-                  Adw.ViewStackPage {
-                    name: "month";
-                    title: _("_Month");
-                    use-underline: true;
-                    icon-name: "month-symbolic";
-
-                    child: Adw.LayoutSlot {
-                      id: "month_view";
-                    };
-                  }
-
-                  Adw.ViewStackPage {
-                    visible: false;
-                    name: "week";
-                    title: _("_Week");
-                    use-underline: true;
-                    icon-name: "week-symbolic";
-
-                    child: Label {
-                      label: "Week";
-                    };
-                  }
-
-                  Adw.ViewStackPage {
-                    visible: false;
-                    name: "days";
-                    title: _("_Days");
-                    use-underline: true;
-                    icon-name: "days-symbolic";
-
-                    child: Label {
-                      label: "Days";
-                    };
-                  }
-
-                  Adw.ViewStackPage {
-                    visible: false;
-                    name: "agenda";
-                    title: _("_Agenda");
-                    use-underline: true;
-                    icon-name: "view-list-symbolic";
-
-                    child: Label {
-                      label: "Agenda";
-                    };
-                  }
-                };
-              };
-
-              [bottom]
-              ActionBar {
-                [start]
-                Button {
-                  action-name: "win.today";
-
-                  child: Adw.ButtonContent {
-                    label: _("_Today");
-                    use-underline: true;
-                    icon-name: "today-symbolic";
-                    can-shrink: true;
-                    tooltip-text: _("Go to Today");
-                  };
-                }
-
-                [center]
-                Adw.InlineViewSwitcher wide_view_switcher {
-                  stack: wide_view_stack;
-                  display-mode: both;
-                }
-
-                [end]
-                Button {
-                  icon-name: "list-add-symbolic";
-                  tooltip-text: _("Create Event");
-                  clicked => $create_event(template);
-                }
-
-                [end]
-                Button {
-                  icon-name: "x-office-calendar-symbolic";
-                  tooltip-text: _("Manage Calendars");
-                  action-name: "win.manage-calendars";
-                }
-              }
-            };
-          };
-        }
-
         Adw.Layout {
           name: "narrow";
 
@@ -335,117 +177,134 @@ template $EraWindow: Adw.ApplicationWindow {
                 }
               };
             }
+          };
+        }
 
-            StackPage {
-              name: "days";
-              title: _("Days");
+        Adw.Layout {
+          name: "medium";
 
-              child: Adw.ToolbarView {
-                [top]
-                Adw.HeaderBar {
-                  [start]
-                  Button {
-                    icon-name: "go-previous-symbolic";
-                    tooltip-text: _("Month View");
-                    clicked => $go_back_to_month_view(template);
-                  }
+          content: Adw.OverlaySplitView overlay_split_view {
+            show-sidebar: bind sidebar_toggle.active bidirectional;
+            collapsed: true;
 
-                  [end]
-                  MenuButton {
-                    primary: true;
-                    icon-name: "open-menu-symbolic";
-                    tooltip-text: _("Main Menu");
-                    menu-model: primary_menu;
-                  }
+            sidebar: $Sidebar {};
 
-                  [end]
-                  Button {
-                    icon-name: "system-search-symbolic";
-                    tooltip-text: _("Search");
-                    action-name: "win.search-events";
-
-                    styles [
-                      "flat",
-                    ]
-                  }
+            content: Adw.ToolbarView {
+              [top]
+              Adw.HeaderBar {
+                [start]
+                ToggleButton sidebar_toggle {
+                  icon-name: "sidebar-show-symbolic";
+                  tooltip-text: _("Toggle Sidebar");
                 }
 
-                content: Adw.ViewStack narrow_view_stack {
-                  Adw.ViewStackPage {
-                    name: "days";
-                    title: _("Days");
-                    icon-name: "days-symbolic";
+                [end]
+                MenuButton {
+                  primary: true;
+                  icon-name: "open-menu-symbolic";
+                  tooltip-text: _("Main Menu");
+                  menu-model: primary_menu;
+                }
 
-                    child: Label {
-                      label: "Days";
-                    };
-                  }
+                [end]
+                Button {
+                  icon-name: "system-search-symbolic";
+                  tooltip-text: _("Search");
+                  action-name: "win.search-events";
 
-                  Adw.ViewStackPage {
-                    name: "day";
-                    title: _("Day");
-                    icon-name: "day-symbolic";
+                  styles [
+                    "flat",
+                  ]
+                }
+              }
 
-                    child: Label {
-                      label: "Day";
-                    };
-                  }
+              content: Adw.ViewStack wide_view_stack {
+                Adw.ViewStackPage {
+                  name: "year";
+                  title: _("_Year");
+                  use-underline: true;
+                  icon-name: "year-symbolic";
 
-                  Adw.ViewStackPage {
-                    name: "agenda";
-                    title: _("Agenda");
-                    icon-name: "view-list-symbolic";
+                  child: Adw.LayoutSlot {
+                    id: "year_view";
+                  };
+                }
 
-                    child: Label {
-                      label: "Agenda";
-                    };
-                  }
-                };
+                Adw.ViewStackPage {
+                  name: "month";
+                  title: _("_Month");
+                  use-underline: true;
+                  icon-name: "month-symbolic";
 
-                [bottom]
-                ActionBar {
-                  [start]
-                  Button {
-                    action-name: "win.today";
-
-                    child: Adw.ButtonContent {
-                      label: _("_Today");
-                      use-underline: true;
-                      icon-name: "today-symbolic";
-                      can-shrink: true;
-                      tooltip-text: _("Go to Today");
-                    };
-                  }
-
-                  [center]
-                  Adw.InlineViewSwitcher narrow_view_switcher {
-                    stack: narrow_view_stack;
-                    display-mode: icons;
-                  }
-
-                  [end]
-                  Button {
-                    icon-name: "list-add-symbolic";
-                    tooltip-text: _("Create Event");
-                    clicked => $create_event(template);
-                  }
-
-                  [end]
-                  Button {
-                    icon-name: "x-office-calendar-symbolic";
-                    tooltip-text: _("Manage Calendars");
-                    action-name: "win.manage-calendars";
-                  }
+                  child: Adw.LayoutSlot {
+                    id: "month_view";
+                  };
                 }
               };
-            }
+
+              [bottom]
+              ActionBar {
+                [start]
+                Button {
+                  action-name: "win.today";
+
+                  child: Adw.ButtonContent {
+                    label: _("_Today");
+                    use-underline: true;
+                    icon-name: "today-symbolic";
+                    can-shrink: true;
+                    tooltip-text: _("Go to Today");
+                  };
+                }
+
+                [center]
+                Adw.InlineViewSwitcher wide_view_switcher {
+                  stack: wide_view_stack;
+                  display-mode: both;
+                }
+
+                [end]
+                Button {
+                  icon-name: "list-add-symbolic";
+                  tooltip-text: _("Create Event");
+                  clicked => $create_event(template);
+                }
+
+                [end]
+                Button {
+                  icon-name: "x-office-calendar-symbolic";
+                  tooltip-text: _("Manage Calendars");
+                  action-name: "win.manage-calendars";
+                }
+              }
+            };
           };
         }
 
         [year_view]
-        $YearView year_view {
-          styling: narrow;
-          month_clicked => $open_month_view(template);
+        Adw.BreakpointBin {
+          width-request: 100;
+          height-request: 100;
+
+          $YearView year_view {
+            month_clicked => $open_month_view(template);
+          }
+
+          Adw.Breakpoint {
+            condition ("max-width: 720sp")
+
+            setters {
+              year_view.styling: narrow;
+            }
+          }
+
+          Adw.Breakpoint {
+            condition ("min-width: 1100sp")
+
+            setters {
+              year_view.styling: wide;
+            }
+          }
         }
 
         [month_view]
@@ -453,17 +312,14 @@ template $EraWindow: Adw.ApplicationWindow {
           width-request: 100;
           height-request: 100;
 
+          $MonthView month_view {}
+
           Adw.Breakpoint {
-            condition ("min-width: 720sp")
+            condition ("max-width: 720sp")
 
             setters {
-              month_view.styling: medium;
+              month_view.styling: narrow;
             }
-          }
-
-          $MonthView month_view {
-            styling: narrow;
-            // day_clicked => $open_days_view(template);
           }
         }
       };
@@ -474,19 +330,12 @@ template $EraWindow: Adw.ApplicationWindow {
     condition ("max-width: 720sp")
 
     setters {
-      main_view.layout-name: "narrow";
-      sidebar_toggle.active: false;
+      template.styling: narrow;
     }
   }
 
   Adw.Breakpoint {
-    condition ("min-width: 900sp")
-
-    setters {}
-  }
-
-  Adw.Breakpoint {
-    condition ("min-width: 1100sp")
+    condition ("min-width: 1000sp")
 
     setters {
       overlay_split_view.collapsed: false;
