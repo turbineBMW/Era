@@ -17,9 +17,9 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Era/year_view_row.ui")]
     #[properties(wrapper_type = super::YearViewRow)]
     pub struct YearViewRow {
-        #[property(get, set)]
+        #[property(get, set = Self::set_year)]
         year: Cell<i32>,
-        #[property(get, set, construct, builder(Styling::default()))]
+        #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]
         styling: Cell<Styling>,
 
         #[template_child]
@@ -67,22 +67,9 @@ mod imp {
                 self.month_flow_box.append(&cell);
             }
 
-            obj.connect_styling_notify(|obj| {
-                obj.imp().update_styling();
-            });
-
             let application = Application::default();
             let current_year = application.current_datetime().year();
             self.update_year_label_color(current_year);
-
-            obj.connect_year_notify(clone!(
-                #[weak]
-                application,
-                move |obj| {
-                    let current_year = application.current_datetime().year();
-                    obj.imp().update_year_label_color(current_year);
-                }
-            ));
 
             application.connect_current_datetime_notify(clone!(
                 #[weak(rename_to = imp)]
@@ -203,7 +190,27 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl YearViewRow {
-        fn update_styling(&self) {
+        fn set_year(&self, year: i32) {
+            if year == self.year.get() {
+                return;
+            }
+
+            self.year.set(year);
+
+            let application = Application::default();
+            let current_year = application.current_datetime().year();
+            self.update_year_label_color(current_year);
+
+            self.obj().notify_year();
+        }
+
+        fn set_styling(&self, styling: Styling) {
+            if styling == self.styling.get() {
+                return;
+            }
+
+            self.styling.set(styling);
+
             self.year_label.remove_css_class("title-3");
             self.year_label.remove_css_class("title-1");
 
@@ -212,18 +219,23 @@ mod imp {
                     self.year_label.add_css_class("title-3");
                     self.month_flow_box.set_column_spacing(6);
                     self.month_flow_box.set_row_spacing(6);
+                    self.month_flow_box.set_max_children_per_line(2);
                 }
                 Styling::Medium => {
                     self.year_label.add_css_class("title-1");
                     self.month_flow_box.set_column_spacing(12);
                     self.month_flow_box.set_row_spacing(12);
+                    self.month_flow_box.set_max_children_per_line(3);
                 }
                 Styling::Wide => {
                     self.year_label.add_css_class("title-1");
                     self.month_flow_box.set_column_spacing(12);
                     self.month_flow_box.set_row_spacing(12);
+                    self.month_flow_box.set_max_children_per_line(4);
                 }
             }
+
+            self.obj().notify_styling();
         }
 
         fn update_year_label_color(&self, current_year: i32) {
