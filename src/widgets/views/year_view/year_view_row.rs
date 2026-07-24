@@ -67,6 +67,8 @@ mod imp {
                 self.month_flow_box.append(&cell);
             }
 
+            self.update_styling();
+
             let application = Application::default();
             let current_year = application.current_datetime().year();
             self.update_year_label_color(current_year);
@@ -211,6 +213,12 @@ mod imp {
 
             self.styling.set(styling);
 
+            self.update_styling();
+
+            self.obj().notify_styling();
+        }
+
+        fn update_styling(&self) {
             self.year_label.remove_css_class("title-3");
             self.year_label.remove_css_class("title-1");
 
@@ -234,8 +242,6 @@ mod imp {
                     self.month_flow_box.set_max_children_per_line(4);
                 }
             }
-
-            self.obj().notify_styling();
         }
 
         fn update_year_label_color(&self, current_year: i32) {
