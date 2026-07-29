@@ -995,6 +995,8 @@ mod imp {
 
         #[template_callback]
         fn zoom_scale_changed(&self, scale: f64, gesture: gtk::GestureZoom) {
+            gesture.set_state(gtk::EventSequenceState::Claimed);
+
             let Some((_x_center, y_center)) = gesture.bounding_box_center() else {
                 return;
             };
