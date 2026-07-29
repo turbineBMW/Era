@@ -1,6 +1,8 @@
+use std::str::FromStr;
+
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Calendar, Timeframe, prelude::*};
-use glib::{DateTime, clone};
+use glib::{DateTime, TimeZone, clone};
 use tracing::{debug, warn};
 
 use crate::{
@@ -110,12 +112,36 @@ mod imp {
             self.location.set_text(&preset.location);
             self.conference.set_text(&preset.conference);
 
-            let timeframe = Timeframe::new(
-                preset.all_day,
-                &DateTime::from_iso8601(&preset.start, None).unwrap(),
-                &DateTime::from_iso8601(&preset.end, None).unwrap(),
+            let start = jiff::Zoned::from_str(&preset.start).unwrap();
+            let end = jiff::Zoned::from_str(&preset.end).unwrap();
+
+            let start_tz_id = start.time_zone().iana_name().unwrap();
+            let start_tz = TimeZone::from_identifier(Some(start_tz_id)).unwrap();
+            let glib_start = DateTime::new(
+                &start_tz,
+                start.year() as i32,
+                start.month() as i32,
+                start.day() as i32,
+                start.hour() as i32,
+                start.minute() as i32,
+                0.,
             )
-            .unwrap();
+            .expect("Failed to create glib::DateTime");
+
+            let end_tz_id = end.time_zone().iana_name().unwrap();
+            let end_tz = TimeZone::from_identifier(Some(end_tz_id)).unwrap();
+            let glib_end = DateTime::new(
+                &end_tz,
+                end.year() as i32,
+                end.month() as i32,
+                end.day() as i32,
+                end.hour() as i32,
+                end.minute() as i32,
+                0.,
+            )
+            .expect("Failed to create glib::DateTime");
+
+            let timeframe = Timeframe::new(preset.all_day, &glib_start, &glib_end).unwrap();
             self.timeframe_picker.set_timeframe(timeframe);
         }
 

@@ -344,11 +344,22 @@ pub mod imp {
 
         #[template_callback]
         fn create_event(&self) {
-            let today = Application::default().current_datetime();
-            let tomorrow = today.add_days(1).unwrap();
+            let now = Application::default().current_datetime();
 
-            let start = today.format_iso8601().unwrap().to_string();
-            let end = tomorrow.format_iso8601().unwrap().to_string();
+            let tzid = now.timezone().identifier();
+            let jiff_tz = jiff::tz::TimeZone::get(&tzid).unwrap();
+
+            let today = jiff::civil::Date::new(
+                now.year() as i16,
+                now.month() as i8,
+                now.day_of_month() as i8,
+            )
+            .unwrap();
+
+            let tomorrow = today.tomorrow().unwrap();
+
+            let start = today.to_zoned(jiff_tz.clone()).unwrap().to_string();
+            let end = tomorrow.to_zoned(jiff_tz).unwrap().to_string();
 
             let preset = EventPropertiesPreset {
                 all_day: true,

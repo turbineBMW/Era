@@ -467,22 +467,32 @@ mod imp {
             let location = event.location().unwrap().to_string();
             let conference = event.conference().unwrap().to_string();
             let all_day = event.timeframe().unwrap().is_all_day();
-            let start = event
-                .timeframe()
-                .unwrap()
-                .start()
-                .unwrap()
-                .format_iso8601()
-                .unwrap()
-                .to_string();
-            let end = event
-                .timeframe()
-                .unwrap()
-                .end()
-                .unwrap()
-                .format_iso8601()
-                .unwrap()
-                .to_string();
+            let start = event.timeframe().unwrap().start().unwrap();
+            let end = event.timeframe().unwrap().end().unwrap();
+
+            let start_tzid = start.timezone().identifier();
+            let start_jiff_tz = jiff::tz::TimeZone::get(&start_tzid).unwrap();
+            let start = jiff::civil::Date::new(
+                start.year() as i16,
+                start.month() as i8,
+                start.day_of_month() as i8,
+            )
+            .unwrap()
+            .to_zoned(start_jiff_tz)
+            .unwrap()
+            .to_string();
+
+            let end_tzid = end.timezone().identifier();
+            let end_jiff_tz = jiff::tz::TimeZone::get(&end_tzid).unwrap();
+            let end = jiff::civil::Date::new(
+                end.year() as i16,
+                end.month() as i8,
+                end.day_of_month() as i8,
+            )
+            .unwrap()
+            .to_zoned(end_jiff_tz)
+            .unwrap()
+            .to_string();
 
             let preset = EventPropertiesPreset {
                 name,

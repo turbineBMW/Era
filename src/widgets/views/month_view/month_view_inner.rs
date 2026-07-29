@@ -10,7 +10,15 @@ use glib::{DateTime, clone};
 use gtk::Allocation;
 use jiff::ToSpan;
 
-use crate::{Application, system_settings::DayOfWeek, utils, widgets::window::Styling};
+use crate::{
+    Application,
+    system_settings::DayOfWeek,
+    utils::{self, EventPropertiesPreset},
+    widgets::{
+        views::month_view::{event_widget::EventWidget, overflow_button::OverflowButton},
+        window::Styling,
+    },
+};
 
 use super::month_view_row::MonthViewRow;
 
@@ -109,6 +117,11 @@ mod imp {
         /// Zoom level updated from the dynamic one when a zoom operation begins. It serves as a
         /// base reference when smooth zooming is occurring.
         last_scale_delta: Cell<f64>,
+
+        /// The date range for the ongoing create drag, if any. The first value is the date at which
+        /// the drag operation started and should not be modified when the drag is in progress.
+        /// As a consequence, the two dates might be (start, end) or (end, start).
+        create_drag_range: Cell<Option<(jiff::civil::Date, jiff::civil::Date)>>,
     }
 
     #[glib::object_subclass]
@@ -744,6 +757,17 @@ mod imp {
             self.obj().queue_allocate();
         }
 
+        fn date_at_coords(&self, x: f64, y: f64) -> jiff::civil::Date {
+            let row_height = self.last_row_height.get();
+            let scroll_offset = self.last_scroll_offset.get();
+            let virtual_y = y as i32 + scroll_offset;
+            let row_index = (virtual_y / row_height) as usize;
+
+            let row = self.rows().lock().unwrap()[row_index].clone();
+
+            row.date_at_coord(x)
+        }
+
         #[template_callback]
         fn kinetic_scroll_begin(&self) {
             // TODO: Don't cancel if scrolling should not be handled?
@@ -949,6 +973,116 @@ mod imp {
                 self.scroll_offset_add((self.last_drag_offset_y.get() - offset_y) as i32);
                 self.last_drag_offset_y.set(offset_y);
             }
+        }
+
+        #[template_callback]
+        fn create_drag_begin(&self, start_x: f64, start_y: f64, gesture_drag: gtk::GestureDrag) {
+            let Some(last_event) = gesture_drag.last_event(None) else {
+                return;
+            };
+
+            // Deny touchscreen presses. Creation of events on touchscreen should only happen after
+            // a long press.
+            if last_event.device().unwrap().source() == gdk::InputSource::Touchscreen {
+                gesture_drag.set_state(gtk::EventSequenceState::Denied);
+                return;
+            }
+
+            // Deny presses that land on an event widget or an overflow button.
+            let picked = self
+                .obj()
+                .pick(start_x, start_y, gtk::PickFlags::DEFAULT)
+                .expect("A widget should be picked");
+            let on_event_widget = picked.ancestor(EventWidget::static_type()).is_some();
+            let on_overflow_button = picked.ancestor(OverflowButton::static_type()).is_some();
+            if on_event_widget || on_overflow_button {
+                gesture_drag.set_state(gtk::EventSequenceState::Denied);
+                return;
+            }
+
+            let anchor = self.date_at_coords(start_x, start_y);
+            self.create_drag_range.set(Some((anchor, anchor)));
+
+            for row in self.rows().lock().unwrap().iter() {
+                row.apply_highlight_for_range(Some((anchor, anchor)));
+            }
+        }
+
+        #[template_callback]
+        fn create_drag_update(&self, offset_x: f64, offset_y: f64, gesture_drag: gtk::GestureDrag) {
+            let Some(last_event) = gesture_drag.last_event(None) else {
+                return;
+            };
+
+            // Deny touchscreen presses. Creation of events on touchscreen should only happen after
+            // a long press.
+            if last_event.device().unwrap().source() == gdk::InputSource::Touchscreen {
+                gesture_drag.set_state(gtk::EventSequenceState::Denied);
+                return;
+            }
+
+            if self.obj().drag_check_threshold(0, 0, 0, offset_y as i32) {
+                gesture_drag.set_state(gtk::EventSequenceState::Claimed);
+            }
+
+            let anchor = self
+                .create_drag_range
+                .get()
+                .expect("drag range should be set in update")
+                .0;
+
+            let (start_x, start_y) = gesture_drag.start_point().unwrap();
+            let x = start_x + offset_x;
+            let y = start_y + offset_y;
+
+            let hover = self.date_at_coords(x, y);
+
+            self.create_drag_range.set(Some((anchor, hover)));
+
+            for row in self.rows().lock().unwrap().iter() {
+                row.apply_highlight_for_range(Some((anchor, hover)));
+            }
+        }
+
+        #[template_callback]
+        fn create_drag_end(&self, _offset_x: f64, _offset_y: f64, _gesture_drag: gtk::GestureDrag) {
+            for row in self.rows().lock().unwrap().iter() {
+                row.apply_highlight_for_range(None);
+            }
+
+            let Some((anchor, hover)) = self.create_drag_range.get() else {
+                return;
+            };
+
+            let (start, end) = if anchor < hover {
+                (anchor, hover)
+            } else {
+                (hover, anchor)
+            };
+
+            self.create_drag_range.set(None);
+
+            let tzid = Application::default()
+                .current_datetime()
+                .timezone()
+                .identifier();
+            let jiff_tz = jiff::tz::TimeZone::get(&tzid).unwrap();
+
+            let preset = EventPropertiesPreset {
+                all_day: true,
+                start: start.to_zoned(jiff_tz.clone()).unwrap().to_string(),
+                end: end
+                    .tomorrow()
+                    .unwrap()
+                    .to_zoned(jiff_tz)
+                    .unwrap()
+                    .to_string(),
+                ..Default::default()
+            };
+
+            let _ = self
+                .obj()
+                .activate_action("win.create-event", Some(&preset.to_variant()));
         }
 
         #[template_callback]

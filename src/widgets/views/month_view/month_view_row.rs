@@ -9,12 +9,7 @@ use clepsydre::{Calendar, Event, Subscription, Timeframe, prelude::*};
 use glib::{DateTime, clone};
 use jiff::ToSpan;
 
-use crate::{
-    Application,
-    system_settings::DayOfWeek,
-    utils::{self, EventPropertiesPreset},
-    widgets::window::Styling,
-};
+use crate::{Application, system_settings::DayOfWeek, utils, widgets::window::Styling};
 
 use super::{
     event_widget::EventWidget, month_view_header::MonthViewHeader, overflow_button::OverflowButton,
@@ -699,6 +694,131 @@ mod imp {
             self.update_timeframe();
         }
 
+        pub(super) fn date_at_coord(&self, x: f64) -> jiff::civil::Date {
+            let obj = self.obj();
+
+            let year = obj.year() as i16;
+            let month = obj.month() as i8;
+            let day = obj.day() as i8;
+
+            let Ok(date) = jiff::civil::Date::new(year, month, day) else {
+                panic!("Invalid date: year={year}, month={month}, day={day}");
+            };
+
+            let first_day_of_week = Application::default().system_settings().first_day_of_week();
+
+            let base = match first_day_of_week {
+                DayOfWeek::Monday => 1,
+                DayOfWeek::Tuesday => 2,
+                DayOfWeek::Wednesday => 3,
+                DayOfWeek::Thursday => 4,
+                DayOfWeek::Friday => 5,
+                DayOfWeek::Saturday => 6,
+                DayOfWeek::Sunday => 7,
+            };
+            let offset = match date.weekday() {
+                jiff::civil::Weekday::Monday => 1,
+                jiff::civil::Weekday::Tuesday => 2,
+                jiff::civil::Weekday::Wednesday => 3,
+                jiff::civil::Weekday::Thursday => 4,
+                jiff::civil::Weekday::Friday => 5,
+                jiff::civil::Weekday::Saturday => 6,
+                jiff::civil::Weekday::Sunday => 7,
+            };
+
+            let go_back_by = offset - base;
+
+            let date_1 = date.checked_sub(go_back_by.days()).unwrap();
+            let date_2 = date_1.checked_add(1.day()).unwrap();
+            let date_3 = date_1.checked_add(2.days()).unwrap();
+            let date_4 = date_1.checked_add(3.days()).unwrap();
+            let date_5 = date_1.checked_add(4.days()).unwrap();
+            let date_6 = date_1.checked_add(5.days()).unwrap();
+            let date_7 = date_1.checked_add(6.days()).unwrap();
+
+            let dates = [date_1, date_2, date_3, date_4, date_5, date_6, date_7];
+
+            let cells = self.cells.get().unwrap();
+            for (i, cell) in cells.iter().enumerate() {
+                let bounds = cell.compute_bounds(&*obj).unwrap();
+                if x < (bounds.x() + bounds.width()) as f64 {
+                    return dates[i];
+                }
+            }
+            unreachable!()
+        }
+
+        pub fn apply_highlight_for_range(
+            &self,
+            range: Option<(jiff::civil::Date, jiff::civil::Date)>,
+        ) {
+            let obj = self.obj();
+
+            let cells = self.cells.get().unwrap();
+
+            let Some((anchor, hover)) = range else {
+                for cell in cells {
+                    cell.unset_state_flags(gtk::StateFlags::ACTIVE);
+                }
+                return;
+            };
+
+            let year = obj.year() as i16;
+            let month = obj.month() as i8;
+            let day = obj.day() as i8;
+
+            let Ok(date) = jiff::civil::Date::new(year, month, day) else {
+                panic!("Invalid date: year={year}, month={month}, day={day}");
+            };
+
+            let first_day_of_week = Application::default().system_settings().first_day_of_week();
+
+            let base = match first_day_of_week {
+                DayOfWeek::Monday => 1,
+                DayOfWeek::Tuesday => 2,
+                DayOfWeek::Wednesday => 3,
+                DayOfWeek::Thursday => 4,
+                DayOfWeek::Friday => 5,
+                DayOfWeek::Saturday => 6,
+                DayOfWeek::Sunday => 7,
+            };
+            let offset = match date.weekday() {
+                jiff::civil::Weekday::Monday => 1,
+                jiff::civil::Weekday::Tuesday => 2,
+                jiff::civil::Weekday::Wednesday => 3,
+                jiff::civil::Weekday::Thursday => 4,
+                jiff::civil::Weekday::Friday => 5,
+                jiff::civil::Weekday::Saturday => 6,
+                jiff::civil::Weekday::Sunday => 7,
+            };
+
+            let go_back_by = offset - base;
+
+            let date_1 = date.checked_sub(go_back_by.days()).unwrap();
+            let date_2 = date_1.checked_add(1.day()).unwrap();
+            let date_3 = date_1.checked_add(2.days()).unwrap();
+            let date_4 = date_1.checked_add(3.days()).unwrap();
+            let date_5 = date_1.checked_add(4.days()).unwrap();
+            let date_6 = date_1.checked_add(5.days()).unwrap();
+            let date_7 = date_1.checked_add(6.days()).unwrap();
+
+            let dates = [date_1, date_2, date_3, date_4, date_5, date_6, date_7];
+
+            let (start, end) = if anchor < hover {
+                (anchor, hover)
+            } else {
+                (hover, anchor)
+            };
+
+            for (i, cell) in cells.iter().enumerate() {
+                if (start..=end).contains(&dates[i]) {
+                    cell.set_state_flags(gtk::StateFlags::ACTIVE, false);
+                } else {
+                    cell.unset_state_flags(gtk::StateFlags::ACTIVE);
+                }
+            }
+        }
+
         fn set_styling(&self, styling: Styling) {
             if self.styling.get() == styling {
                 return;
@@ -1175,92 +1295,6 @@ mod imp {
             self.obj().queue_allocate();
         }
 
-        #[template_callback]
-        fn create_event_1(&self) {
-            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
-            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
-            let start = day_boundaries_utc[0].format_iso8601().unwrap().to_string();
-            let end = day_boundaries_utc[1].format_iso8601().unwrap().to_string();
-
-            self.create_event(start, end);
-        }
-
-        #[template_callback]
-        fn create_event_2(&self) {
-            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
-            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
-            let start = day_boundaries_utc[1].format_iso8601().unwrap().to_string();
-            let end = day_boundaries_utc[2].format_iso8601().unwrap().to_string();
-
-            self.create_event(start, end);
-        }
-
-        #[template_callback]
-        fn create_event_3(&self) {
-            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
-            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
-            let start = day_boundaries_utc[2].format_iso8601().unwrap().to_string();
-            let end = day_boundaries_utc[3].format_iso8601().unwrap().to_string();
-
-            self.create_event(start, end);
-        }
-
-        #[template_callback]
-        fn create_event_4(&self) {
-            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
-            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
-            let start = day_boundaries_utc[3].format_iso8601().unwrap().to_string();
-            let end = day_boundaries_utc[4].format_iso8601().unwrap().to_string();
-
-            self.create_event(start, end);
-        }
-
-        #[template_callback]
-        fn create_event_5(&self) {
-            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
-            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
-            let start = day_boundaries_utc[4].format_iso8601().unwrap().to_string();
-            let end = day_boundaries_utc[5].format_iso8601().unwrap().to_string();
-
-            self.create_event(start, end);
-        }
-
-        #[template_callback]
-        fn create_event_6(&self) {
-            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
-            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
-            let start = day_boundaries_utc[5].format_iso8601().unwrap().to_string();
-            let end = day_boundaries_utc[6].format_iso8601().unwrap().to_string();
-
-            self.create_event(start, end);
-        }
-
-        #[template_callback]
-        fn create_event_7(&self) {
-            let day_boundaries_utc_ref = self.day_boundaries_utc.borrow();
-            let day_boundaries_utc = day_boundaries_utc_ref.as_ref().unwrap();
-            let start = day_boundaries_utc[6].format_iso8601().unwrap().to_string();
-            let end = day_boundaries_utc[7].format_iso8601().unwrap().to_string();
-
-            self.create_event(start, end);
-        }
-
-        fn create_event(&self, start: String, end: String) {
-            let preset = EventPropertiesPreset {
-                name: String::new(),
-                description: String::new(),
-                location: String::new(),
-                conference: String::new(),
-                all_day: true,
-                start,
-                end,
-            };
-
-            let _ = self
-                .obj()
-                .activate_action("win.create-event", Some(&preset.to_variant()));
-        }
-
         /// Builds the focus order for this row:
         /// For each column: cell, then visible event widgets in that column (sorted by row),
         /// then the "more" button if visible.
@@ -1402,6 +1436,14 @@ impl MonthViewRow {
     /// Sets the triplet year-month-day.
     pub fn set_year_month_day(&self, year: i32, month: i32, day: i32) {
         self.imp().set_year_month_day(year, month, day);
+    }
+
+    pub fn date_at_coord(&self, x: f64) -> jiff::civil::Date {
+        self.imp().date_at_coord(x)
+    }
+
+    pub fn apply_highlight_for_range(&self, range: Option<(jiff::civil::Date, jiff::civil::Date)>) {
+        self.imp().apply_highlight_for_range(range);
     }
 
     /// Focuses the cell at the given column (0-6).

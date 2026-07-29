@@ -32,6 +32,14 @@ template $MonthViewInner: Widget {
     drag-update => $scroll_drag_update(template);
   }
 
+  // Mouse/touchpad click-drag to create a single or multi day event.
+  // Touch presses are denied immediately in the handler.
+  GestureDrag create_drag {
+    drag-begin => $create_drag_begin(template);
+    drag-update => $create_drag_update(template);
+    drag-end => $create_drag_end(template);
+  }
+
   // Kinetic deceleration after drag on touchscreen
   GestureSwipe scroll_swipe {
     touch-only: true;
@@ -40,7 +48,6 @@ template $MonthViewInner: Widget {
 
   // Pinch to zoom (trackpad or touchscreen)
   GestureZoom {
-    // TODO: begin might not be needed
     begin => $zoom_begin(template);
     scale-changed => $zoom_scale_changed(template);
   }
