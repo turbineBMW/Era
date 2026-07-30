@@ -57,23 +57,23 @@ stages:
     - test
     - deploy
 
-# cargo-fmt:
-#     <<: *flatpak-command
-#     stage: check
-#     variables:
-#         MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
-#         APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
-#         COMMAND: "cargo fmt"
-#     interruptible: true
+cargo-fmt:
+    <<: *flatpak-command
+    stage: check
+    variables:
+        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
+        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
+        COMMAND: "cargo fmt"
+    interruptible: true
 
-# cargo-clippy:
-#     <<: *flatpak-command
-#     stage: check
-#     variables:
-#         MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
-#         APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
-#         COMMAND: "cargo clippy -- -D warnings"
-#     interruptible: true
+cargo-clippy:
+    <<: *flatpak-command
+    stage: check
+    variables:
+        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
+        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
+        COMMAND: "cargo clippy -- -D warnings"
+    interruptible: true
 
 blueprint-format:
     stage: check
