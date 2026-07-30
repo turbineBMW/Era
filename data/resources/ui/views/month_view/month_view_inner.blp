@@ -32,6 +32,17 @@ template $MonthViewInner: Widget {
     drag-update => $scroll_drag_update(template);
   }
 
+  GestureLongPress create_long_press {
+    touch-only: true;
+    pressed => $create_long_press_pressed(template);
+  }
+
+  GestureDrag touch_create_drag {
+    touch-only: true;
+    drag-update => $touch_create_drag_update(template);
+    drag-end => $touch_create_drag_end(template);
+  }
+
   // Mouse/touchpad click-drag to create a single or multi day event.
   // Touch presses are denied immediately in the handler.
   GestureDrag create_drag {

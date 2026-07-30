@@ -76,6 +76,10 @@ mod imp {
         scroll_drag: TemplateChild<gtk::GestureDrag>,
         #[template_child]
         scroll_swipe: TemplateChild<gtk::GestureSwipe>,
+        #[template_child]
+        create_long_press: TemplateChild<gtk::GestureLongPress>,
+        #[template_child]
+        touch_create_drag: TemplateChild<gtk::GestureDrag>,
 
         /// Rows contained in the view.
         rows: OnceCell<Mutex<Vec<MonthViewRow>>>,
@@ -216,6 +220,8 @@ mod imp {
                 ));
 
             self.scroll_swipe.group_with(&self.scroll_drag.get());
+            self.touch_create_drag
+                .group_with(&self.create_long_press.get());
         }
 
         fn dispose(&self) {
@@ -973,6 +979,111 @@ mod imp {
                 self.scroll_offset_add((self.last_drag_offset_y.get() - offset_y) as i32);
                 self.last_drag_offset_y.set(offset_y);
             }
+        }
+
+        #[template_callback]
+        fn create_long_press_pressed(
+            &self,
+            x: f64,
+            y: f64,
+            gesture_long_press: gtk::GestureLongPress,
+        ) {
+            dbg!(x, y);
+
+            // Deny presses that land on an event widget or an overflow button.
+            let picked = self
+                .obj()
+                .pick(x, y, gtk::PickFlags::DEFAULT)
+                .expect("A widget should be picked");
+            let on_event_widget = picked.ancestor(EventWidget::static_type()).is_some();
+            let on_overflow_button = picked.ancestor(OverflowButton::static_type()).is_some();
+            if on_event_widget || on_overflow_button {
+                gesture_long_press.set_state(gtk::EventSequenceState::Denied);
+                return;
+            }
+
+            gesture_long_press.set_state(gtk::EventSequenceState::Claimed);
+
+            let anchor = self.date_at_coords(x, y);
+            dbg!(anchor);
+            self.create_drag_range.set(Some((anchor, anchor)));
+
+            for row in self.rows().lock().unwrap().iter() {
+                row.apply_highlight_for_range(Some((anchor, anchor)));
+            }
+        }
+
+        #[template_callback]
+        fn touch_create_drag_update(
+            &self,
+            offset_x: f64,
+            offset_y: f64,
+            gesture_drag: gtk::GestureDrag,
+        ) {
+            let Some((anchor, _)) = self.create_drag_range.get() else {
+                dbg!("No anchor yet");
+                // While there is no anchor, that means long-press hasn't fired yet.
+                return;
+            };
+
+            let (start_x, start_y) = gesture_drag.start_point().unwrap();
+            let x = start_x + offset_x;
+            let y = start_y + offset_y;
+
+            let hover = self.date_at_coords(x, y);
+            dbg!(hover);
+
+            self.create_drag_range.set(Some((anchor, hover)));
+
+            for row in self.rows().lock().unwrap().iter() {
+                row.apply_highlight_for_range(Some((anchor, hover)));
+            }
+        }
+
+        #[template_callback]
+        fn touch_create_drag_end(
+            &self,
+            _offset_x: f64,
+            _offset_y: f64,
+            _gesture_drag: gtk::GestureDrag,
+        ) {
+            for row in self.rows().lock().unwrap().iter() {
+                row.apply_highlight_for_range(None);
+            }
+
+            let Some((anchor, hover)) = self.create_drag_range.get() else {
+                return;
+            };
+
+            let (start, end) = if anchor < hover {
+                (anchor, hover)
+            } else {
+                (hover, anchor)
+            };
+
+            self.create_drag_range.set(None);
+
+            let tzid = Application::default()
+                .current_datetime()
+                .timezone()
+                .identifier();
+            let jiff_tz = jiff::tz::TimeZone::get(&tzid).unwrap();
+
+            let preset = EventPropertiesPreset {
+                all_day: true,
+                start: start.to_zoned(jiff_tz.clone()).unwrap().to_string(),
+                end: end
+                    .tomorrow()
+                    .unwrap()
+                    .to_zoned(jiff_tz)
+                    .unwrap()
+                    .to_string(),
+                ..Default::default()
+            };
+
+            let _ = self
+                .obj()
+                .activate_action("win.create-event", Some(&preset.to_variant()));
         }
 
         #[template_callback]
