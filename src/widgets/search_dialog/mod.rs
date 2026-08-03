@@ -35,12 +35,10 @@ mod imp {
         type ParentType = adw::Dialog;
 
         fn class_init(klass: &mut Self::Class) {
+            SearchResultRow::ensure_type();
+
             klass.bind_template();
             klass.bind_template_callbacks();
-
-            klass.set_css_name("search-dialog");
-
-            SearchResultRow::ensure_type();
 
             klass.install_action("search-dialog.focus-search", None, |obj, _, _| {
                 obj.imp().search_entry.grab_focus();

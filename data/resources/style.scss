@@ -20,7 +20,7 @@ sidebar {
     }
 }
 
-search-dialog {
+.search-dialog {
     listview {
         background-color: transparent;
         margin: 0 9px;
@@ -33,7 +33,7 @@ search-dialog {
     }
 }
 
-calendar-manager-dialog {
+.calendar-management-dialog {
     collections-list-page {
         listview {
             background-color: transparent;
@@ -100,7 +100,7 @@ calendar-manager-dialog {
     padding: 12px;
 }
 
-time-zone-picker-dialog {
+.time-zone-picker-dialog {
     listview {
         background-color: transparent;
         margin: 0 9px;

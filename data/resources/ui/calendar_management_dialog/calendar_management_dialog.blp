@@ -7,6 +7,10 @@ template $CalendarManagementDialog: Adw.Dialog {
   content-height: 500;
   content-width: 500;
 
+  styles [
+    "calendar-management-dialog",
+  ]
+
   Stack stack {
     visible-child-name: bind $ternary(
       $is_zero(
