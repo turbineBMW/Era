@@ -1,0 +1,15 @@
+using Gtk 4.0;
+
+template $NewMonthView: Box {
+  hexpand: true;
+  vexpand: true;
+  orientation: vertical;
+
+  styles [
+    "month-view",
+  ]
+
+  $NewMonthViewHeader header {}
+
+  $NewMonthViewInner inner {}
+}

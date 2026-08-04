@@ -10,7 +10,7 @@ use crate::{
     utils::{Date, EventPropertiesPreset, TemplateCallbacks},
     widgets::{
         CalendarManagementDialog, EventCreationDialog, SearchDialog, Sidebar,
-        views::{AgendaView, MonthView, YearView},
+        views::{AgendaView, MonthView, NewMonthView, YearView},
     },
 };
 
@@ -48,6 +48,8 @@ pub mod imp {
         year_view: TemplateChild<YearView>,
         #[template_child]
         month_view: TemplateChild<MonthView>,
+        #[template_child]
+        new_month_view: TemplateChild<NewMonthView>,
         #[template_child]
         agenda_view: TemplateChild<AgendaView>,
         #[template_child]
@@ -243,6 +245,7 @@ pub mod imp {
                     {
                         "year" => imp.wide_view_stack.set_visible_child_name("year"),
                         "month" => imp.wide_view_stack.set_visible_child_name("month"),
+                        "new-month" => imp.wide_view_stack.set_visible_child_name("new-month"),
                         "agenda" => imp.wide_view_stack.set_visible_child_name("agenda"),
                         name => panic!("Unknown narrow stack child name: {name}"),
                     }
@@ -262,6 +265,7 @@ pub mod imp {
                         {
                             "year" => imp.narrow_stack.set_visible_child_name("year"),
                             "month" => imp.narrow_stack.set_visible_child_name("month"),
+                            "new-month" => imp.narrow_stack.set_visible_child_name("new-month"),
                             "agenda" => imp.narrow_stack.set_visible_child_name("agenda"),
                             name => panic!("Unknown wide view stack child name: {name}"),
                         }
@@ -323,6 +327,7 @@ pub mod imp {
             month_year: i32,
             month_month: i32,
             month_day: i32,
+            new_month_view_date: &Date,
             agenda_view_date: &Date,
         ) -> String {
             match view {
@@ -333,9 +338,19 @@ pub mod imp {
                             .unwrap();
                     datetime.format(&gettext("%0B %Y")).unwrap().to_string()
                 }
+                "new-month" => Self::month_view_title(new_month_view_date),
                 "agenda" => Self::agenda_view_title(agenda_view_date),
                 _ => panic!("Unknown view: {view}"),
             }
+        }
+
+        #[template_callback(function)]
+        fn month_view_title(month_view_date: &Date) -> String {
+            month_view_date
+                .to_glib_date_time_utc()
+                .format(&gettext("%0B %Y"))
+                .unwrap()
+                .to_string()
         }
 
         #[template_callback(function)]

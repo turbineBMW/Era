@@ -156,6 +156,99 @@ year-view {
     }
 }
 
+.month-view {
+    .inner {
+        --raised-shade-color: color-mix(
+            in srgb,
+            var(--headerbar-shade-color) 50%,
+            transparent
+        );
+
+        box-shadow:
+            inset 0px 6px 4px -4px var(--raised-shade-color),
+            inset 0px -6px 4px -4px var(--raised-shade-color);
+
+        @media (prefers-contrast: more) {
+            box-shadow:
+                inset 0px 1px var(--border-color),
+                inset 0px -1px var(--border-color);
+        }
+    }
+
+    .cell:hover {
+        --bg-color: rgb(from var(--window-fg-color) r g b / 3.75%);
+
+        background-color: var(--bg-color);
+    }
+
+    .cell:active {
+        --bg-color: rgb(from var(--window-fg-color) r g b / 7.5%);
+
+        background-color: var(--bg-color);
+    }
+
+    .cell {
+        &.narrow {
+            label {
+                margin: 6px 3px 6px 3px;
+            }
+
+            label.day,
+            label.month {
+                border-radius: 6px;
+            }
+
+            label.day {
+                padding: 0 6px 0 6px;
+            }
+
+            label.month {
+                padding: 0 3px 0 3px;
+                font-weight: 700;
+            }
+        }
+
+        &.medium {
+            label {
+                margin: 6px;
+            }
+
+            label.day,
+            label.month {
+                border-radius: 6px;
+                padding: 0 6px 0 6px;
+            }
+
+            label.month {
+                font-weight: 700;
+            }
+
+            @media (prefers-color-scheme: light) {
+                label.month {
+                    color: white;
+                    background-color: var(--dark-2);
+                }
+            }
+
+            @media (prefers-color-scheme: dark) {
+                label.month {
+                    color: black;
+                    background-color: var(--light-3);
+                }
+            }
+        }
+
+        &.today {
+            label.day,
+            label.month {
+                font-weight: 700;
+                color: var(--accent-fg-color);
+                background-color: var(--accent-bg-color);
+            }
+        }
+    }
+}
+
 month-view {
     > box.header {
         > label.day-name {

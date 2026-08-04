@@ -1,0 +1,42 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $NewMonthViewCell: Adw.Bin {
+  focusable: true;
+  accessible-role: grid_cell;
+
+  styles [
+    "cell",
+  ]
+
+  Adw.Bin header {
+    halign: start;
+    valign: start;
+  }
+}
+
+Label day_number {
+  label: bind $date_get_day_in_month_number(template.date);
+
+  styles [
+    "day",
+  ]
+}
+
+Label month_abbreviation {
+  label: bind $date_get_month_abbreviation(template.date);
+  ellipsize: end;
+
+  styles [
+    "month",
+  ]
+}
+
+Label month_name {
+  label: bind $date_get_month_name(template.date);
+  ellipsize: end;
+
+  styles [
+    "month",
+  ]
+}

@@ -60,6 +60,11 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="month_view_inner.ui">ui/views/month_view/month_view_inner.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="month_view_row.ui">ui/views/month_view/month_view_row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="overflow_button.ui">ui/views/month_view/overflow_button.ui</file>
+    <!-- New Month View -->
+    <file compressed="true" preprocess="xml-stripblanks" alias="new_month_view.ui">ui/views/new_month_view/new_month_view.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="new_month_view_cell.ui">ui/views/new_month_view/new_month_view_cell.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="new_month_view_header.ui">ui/views/new_month_view/new_month_view_header.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="new_month_view_inner.ui">ui/views/new_month_view/new_month_view_inner.ui</file>
     <!-- Year View -->
     <file compressed="true" preprocess="xml-stripblanks" alias="year_view.ui">ui/views/year_view/year_view.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="year_view_cell.ui">ui/views/year_view/year_view_cell.ui</file>

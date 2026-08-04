@@ -1,9 +1,7 @@
-use glib::DateTime;
-
 use crate::utils::WeekDay;
 
 /// Returns the last occurrence of the given weekday before or on the given date.
-pub fn get_last_occurrence_of_weekday(date: DateTime, weekday: WeekDay) -> DateTime {
+pub fn get_last_occurrence_of_weekday(date: glib::DateTime, weekday: WeekDay) -> glib::DateTime {
     let base = match weekday {
         WeekDay::Monday => 1,
         WeekDay::Tuesday => 2,

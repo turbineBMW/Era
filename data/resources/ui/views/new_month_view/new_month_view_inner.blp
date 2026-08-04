@@ -1,0 +1,43 @@
+using Gtk 4.0;
+
+template $NewMonthViewInner: Widget {
+  overflow: hidden;
+  accessible-role: grid;
+  hexpand: true;
+  vexpand: true;
+
+  styles [
+    "inner",
+  ]
+
+  accessibility {
+    label: _("Month view");
+  }
+
+  // Continuous scroll (touchpad or smooth mouse wheel) followed by kinetic deceleration
+  EventControllerScroll {
+    flags: vertical | kinetic;
+    scroll-begin => $kinetic_scroll_begin(template);
+    scroll => $kinetic_scroll(template);
+    decelerate => $kinetic_scroll_decelerate(template);
+  }
+
+  // Discrete scroll (discrete mouse wheel), and zoom when Ctrl is pressed too
+  EventControllerScroll {
+    flags: vertical | discrete;
+    scroll => $discrete_scroll(template);
+  }
+
+  // Continuous scroll (drag on touchscreen)
+  GestureDrag scroll_drag {
+    touch-only: true;
+    drag-begin => $scroll_drag_begin(template);
+    drag-update => $scroll_drag_update(template);
+  }
+
+  // Kinetic deceleration after drag on touchscreen
+  GestureSwipe scroll_swipe {
+    touch-only: true;
+    swipe => $swipe(template);
+  }
+}

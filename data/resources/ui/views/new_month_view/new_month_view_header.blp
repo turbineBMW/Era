@@ -1,0 +1,275 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $NewMonthViewHeader: Adw.Bin {
+  styles [
+    "header",
+  ]
+
+  Stack {
+    visible-child-name: bind $ternary($styling_is_narrow(template.styling) as <bool>, "narrow", "medium");
+
+    StackPage {
+      name: "narrow";
+
+      child: Box {
+        homogeneous: true;
+        spacing: 1;
+
+        styles [
+          "header",
+        ]
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            1
+          );
+          hexpand: true;
+
+          styles [
+            "caption",
+            "day-name",
+          ]
+        }
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            2
+          );
+          hexpand: true;
+
+          styles [
+            "caption",
+            "day-name",
+          ]
+        }
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            3
+          );
+          hexpand: true;
+
+          styles [
+            "caption",
+            "day-name",
+          ]
+        }
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            4
+          );
+          hexpand: true;
+
+          styles [
+            "caption",
+            "day-name",
+          ]
+        }
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            5
+          );
+          hexpand: true;
+
+          styles [
+            "caption",
+            "day-name",
+          ]
+        }
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            6
+          );
+          hexpand: true;
+
+          styles [
+            "caption",
+            "day-name",
+          ]
+        }
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            7
+          );
+          hexpand: true;
+
+          styles [
+            "caption",
+            "day-name",
+          ]
+        }
+      };
+    }
+
+    StackPage {
+      name: "medium";
+
+      child: Box {
+        homogeneous: true;
+
+        styles [
+          "header",
+        ]
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            1
+          );
+          hexpand: true;
+          xalign: 0;
+
+          styles [
+            "day-name",
+          ]
+        }
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            2
+          );
+          hexpand: true;
+          xalign: 0;
+
+          styles [
+            "day-name",
+          ]
+        }
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            3
+          );
+          hexpand: true;
+          xalign: 0;
+
+          styles [
+            "day-name",
+          ]
+        }
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            4
+          );
+          hexpand: true;
+          xalign: 0;
+
+          styles [
+            "day-name",
+          ]
+        }
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            5
+          );
+          hexpand: true;
+          xalign: 0;
+
+          styles [
+            "day-name",
+          ]
+        }
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            6
+          );
+          hexpand: true;
+          xalign: 0;
+
+          styles [
+            "day-name",
+          ]
+        }
+
+        Label {
+          label: bind $day_abbreviation(
+            template
+              .root as <Window>
+              .application as <$EraApplication>
+              .system as <$EraSystem>
+              .first-week-day as <$DayOfWeek>,
+            7
+          );
+          hexpand: true;
+          xalign: 0;
+
+          styles [
+            "day-name",
+          ]
+        }
+      };
+    }
+  }
+}

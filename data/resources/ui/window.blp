@@ -171,6 +171,80 @@ template $EraWindow: Adw.ApplicationWindow {
             }
 
             StackPage {
+              name: "new-month";
+              title: _("New Month");
+
+              child: Adw.ToolbarView {
+                [top]
+                Adw.HeaderBar {
+                  [start]
+                  Button {
+                    icon-name: "go-previous-symbolic";
+                    tooltip-text: _("Year View");
+                    clicked => $go_back_to_year_view(template);
+                  }
+
+                  title-widget: Adw.WindowTitle {
+                    title: "WIP";
+                  };
+
+                  [end]
+                  MenuButton {
+                    primary: true;
+                    icon-name: "open-menu-symbolic";
+                    tooltip-text: _("Main Menu");
+                    menu-model: primary_menu;
+                  }
+
+                  [end]
+                  Button {
+                    icon-name: "system-search-symbolic";
+                    tooltip-text: _("Search");
+                    action-name: "win.search-events";
+
+                    styles [
+                      "flat",
+                    ]
+                  }
+                }
+
+                content: Adw.LayoutSlot {
+                  id: "new_month_view";
+                };
+
+                [bottom]
+                ActionBar {
+                  [start]
+                  Button {
+                    action-name: "win.today";
+
+                    child: Adw.ButtonContent {
+                      label: _("_Today");
+                      use-underline: true;
+                      icon-name: "today-symbolic";
+                      can-shrink: true;
+                      tooltip-text: _("Go to Today");
+                    };
+                  }
+
+                  [end]
+                  Button {
+                    icon-name: "list-add-symbolic";
+                    tooltip-text: _("Create Event");
+                    clicked => $create_event(template);
+                  }
+
+                  [end]
+                  Button {
+                    icon-name: "x-office-calendar-symbolic";
+                    tooltip-text: _("Manage Calendars");
+                    action-name: "win.manage-calendars";
+                  }
+                }
+              };
+            }
+
+            StackPage {
               name: "agenda";
               title: _("Agenda");
 
@@ -271,6 +345,7 @@ template $EraWindow: Adw.ApplicationWindow {
                     month_view.year,
                     month_view.month,
                     month_view.day,
+                    new_month_view.date,
                     agenda_view.date
                     ) as <string>;
 
@@ -333,6 +408,17 @@ template $EraWindow: Adw.ApplicationWindow {
                 }
 
                 Adw.ViewStackPage {
+                  name: "new-month";
+                  title: _("_New Month");
+                  use-underline: true;
+                  icon-name: "month-symbolic";
+
+                  child: Adw.LayoutSlot {
+                    id: "new_month_view";
+                  };
+                }
+
+                Adw.ViewStackPage {
                   name: "agenda";
                   title: _("_Agenda");
                   use-underline: true;
@@ -352,7 +438,7 @@ template $EraWindow: Adw.ApplicationWindow {
           height-request: 100;
 
           $YearView year_view {
-            month_clicked => $open_month_view(template);
+            month-clicked => $open_month_view(template);
           }
 
           Adw.Breakpoint {
@@ -384,6 +470,22 @@ template $EraWindow: Adw.ApplicationWindow {
 
             setters {
               month_view.styling: narrow;
+            }
+          }
+        }
+
+        [new_month_view]
+        Adw.BreakpointBin {
+          width-request: 100;
+          height-request: 100;
+
+          $NewMonthView new_month_view {}
+
+          Adw.Breakpoint {
+            condition ("max-width: 720sp")
+
+            setters {
+              new_month_view.styling: narrow;
             }
           }
         }
