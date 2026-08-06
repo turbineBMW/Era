@@ -1,0 +1,7 @@
+[wrap-git]
+url = https://gitlab.gnome.org/TitouanReal/clepsydre.git
+revision = 3d47152a28da5accd0d41b755d73f8cff0537d7d
+depth = 1
+
+[provide]
+dependency_names = clepsydre-eds-0.1-rs

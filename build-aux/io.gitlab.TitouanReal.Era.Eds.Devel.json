@@ -66,7 +66,7 @@
         {
           "type": "git",
           "url": "https://github.com/TitouanReal/meson",
-          "commit": "7327e98c755a7c4214541a52117ab16a85cccfde"
+          "branch": "cargo-env"
         }
       ]
     },
@@ -124,7 +124,7 @@
         {
           "type": "git",
           "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-          "commit": "6e3b8b692325deffd467af611e69e209d2970c0d"
+          "commit": "3d47152a28da5accd0d41b755d73f8cff0537d7d"
         }
       ],
       "config-opts": ["-Dlibclepsydre=true"]
@@ -136,7 +136,7 @@
         {
           "type": "git",
           "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-          "commit": "6e3b8b692325deffd467af611e69e209d2970c0d"
+          "commit": "3d47152a28da5accd0d41b755d73f8cff0537d7d"
         }
       ],
       "config-opts": ["-Dlibclepsydre-eds=true"]

@@ -2,7 +2,7 @@ project(
     'era',
     'rust',
     version: '0.1.0',
-    meson_version: '>= 1.8.5',
+    meson_version: '>= 1.12.0',
     default_options: [
         'warning_level=2',
         'werror=false',
@@ -14,12 +14,60 @@ backend = get_option('calendar-backend')
 i18n = import('i18n')
 gnome = import('gnome')
 
+era_deps = []
+
 dependency('gtk4', version: '>= 4.22')
 dependency('libadwaita-1', version: '>= 1.9')
-dependency('clepsydre-0', version: '>= 0.1')
+dependency(
+    'clepsydre-0',
+    version: '>= 0.1',
+    default_options: {
+        'libclepsydre': true,
+    },
+)
+# TODO: Remove this once Meson handles git dependencies better
+era_deps += dependency(
+    'clepsydre-rebind-0.1-rs',
+    version: '>= 0.1',
+    default_options: {
+        'clepsydre-rebind': true,
+    },
+)
 
 if backend == 'eds'
-    dependency('clepsydre-eds-0', version: '>= 0.1')
+    dependency(
+        'clepsydre-eds-0',
+        version: '>= 0.1',
+        default_options: {
+            'libclepsydre-eds': true,
+        },
+    )
+    # TODO: Remove this once Meson handles git dependencies better
+    era_deps += dependency(
+        'clepsydre-eds-0.1-rs',
+        version: '>= 0.1',
+        default_options: {
+            'clepsydre-eds': true,
+        },
+    )
+elif backend == 'mock'
+    # TODO: Remove this once Meson handles git dependencies better
+    era_deps += dependency(
+        'clepsydre-mock-0.1-rs',
+        version: '>= 0.1',
+        default_options: {
+            'clepsydre-mock': true,
+        },
+    )
+elif backend == 'p2panda'
+    # TODO: Remove this once Meson handles git dependencies better
+    era_deps += dependency(
+        'clepsydre-p2panda-0.1-rs',
+        version: '>= 0.1',
+        default_options: {
+            'clepsydre-p2panda': true,
+        },
+    )
 endif
 
 appstreamcli = find_program('appstreamcli', required: true)
@@ -61,6 +109,19 @@ endif
 subdir('data')
 subdir('src')
 subdir('po')
+
+features = []
+if backend == 'eds'
+    features += 'clepsydre-eds'
+elif backend == 'mock'
+    features += 'clepsydre-mock'
+elif backend == 'p2panda'
+    features += 'clepsydre-p2panda'
+endif
+
+cargo_module = import('rust').workspace(default_features: false, features: features)
+crate = cargo_module.package()
+crate.executable(install: true, install_dir: bindir, dependencies: era_deps)
 
 gnome.post_install(
     glib_compile_schemas: true,
