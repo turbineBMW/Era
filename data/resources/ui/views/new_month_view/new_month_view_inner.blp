@@ -19,6 +19,7 @@ template $NewMonthViewInner: Widget {
     flags: vertical | kinetic;
     scroll-begin => $kinetic_scroll_begin(template);
     scroll => $kinetic_scroll(template);
+    scroll-end => $kinetic_scroll_end(template);
     decelerate => $kinetic_scroll_decelerate(template);
   }
 
@@ -26,6 +27,7 @@ template $NewMonthViewInner: Widget {
   EventControllerScroll {
     flags: vertical | discrete;
     scroll => $discrete_scroll(template);
+    scroll-end => $discrete_scroll_end(template);
   }
 
   // Continuous scroll (drag on touchscreen)
@@ -33,6 +35,7 @@ template $NewMonthViewInner: Widget {
     touch-only: true;
     drag-begin => $scroll_drag_begin(template);
     drag-update => $scroll_drag_update(template);
+    drag-end => $scroll_drag_end(template);
   }
 
   // Kinetic deceleration after drag on touchscreen

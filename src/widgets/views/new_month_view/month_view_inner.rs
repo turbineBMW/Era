@@ -1,20 +1,24 @@
-use std::cell::{Cell, OnceCell};
+use std::cell::{Cell, OnceCell, RefCell};
 
 use adw::{prelude::*, subclass::prelude::*};
 use glib::clone;
 use jiff::ToSpan;
+use tracing::warn;
 
 use crate::{application::Application, utils::Date, widgets::window::Styling};
 
-use super::month_view_cell::NewMonthViewCell;
+use super::{kinetic_scrolling::KineticScrolling, month_view_cell::NewMonthViewCell};
 
 const NB_ROWS: usize = 200;
-const NB_ROWS_ABOVE_AT_STARTUP: usize = 10;
+const NB_CELLS: usize = 7 * NB_ROWS;
+const MINIMUM_NB_ROWS_BELOW: i32 = 10;
+const MINIMUM_NB_ROWS_ABOVE: i32 = 10;
+const NB_ROWS_ABOVE_AT_STARTUP: i32 = MINIMUM_NB_ROWS_ABOVE;
 
 /// Minimum height of a cell in pixel. A cell can report a higher minimum and size_allocate will
 /// respect it, but will never allocate them less than this.
 /// This is a hard minimum.
-const MINIMUM_CELL_HEIGHT: i32 = 10;
+const MINIMUM_CELL_HEIGHT: i32 = 120;
 /// Maximum height of a cell in pixel. Ignored if the cell's own minimum height exceeds this, in
 /// which case size_allocate allocates the cell's minimum height instead.
 const MAXIMUM_CELL_HEIGHT: i32 = 300;
@@ -25,6 +29,35 @@ const _: () = assert!(
 );
 
 const EVENT_GAP: i32 = 2;
+const SEPARATOR_HEIGHT: i32 = 1;
+const SEPARATOR_WIDTH: i32 = 1;
+
+/// Duration of the discrete-scroll animation in milliseconds.
+const DISCRETE_SCROLL_ANIMATION_MS: u32 = 200;
+
+/// Actively handled input or input consequence.
+#[derive(Debug)]
+enum Input {
+    Drag { start_offset: f64 },
+    ContinuousScroll,
+    Animation(Animation),
+}
+
+/// Active scroll animation.
+#[derive(Debug)]
+enum Animation {
+    /// Kinetic (inertial) deceleration after a swipe or touchpad fling.
+    KineticDeceleration {
+        kinetic_scrolling: KineticScrolling,
+        tick_id: gtk::TickCallbackId,
+    },
+    DiscreteScroll {
+        start_offset: f64,
+        start_time: i64,
+        target: f64,
+        tick_id: gtk::TickCallbackId,
+    },
+}
 
 mod imp {
     use super::*;
@@ -43,6 +76,12 @@ mod imp {
         #[template_child]
         scroll_swipe: TemplateChild<gtk::GestureSwipe>,
 
+        cells: OnceCell<[NewMonthViewCell; NB_CELLS]>,
+        column_separators: OnceCell<[gtk::Separator; 6]>,
+        row_separators: OnceCell<[gtk::Separator; NB_ROWS]>,
+
+        first_cell_index: Cell<usize>,
+
         /// Number of pixels from the top of the first cell to the top of the widget. Value should
         /// be positive, meaning the top rows are scrolled off-screen upward.
         scroll_offset: Cell<f64>,
@@ -52,18 +91,7 @@ mod imp {
         /// The row height doesn't include the separator height.
         cell_height: Cell<i32>,
 
-        /// The desired row height for the next size_allocate. It shouldn't be set to a value
-        /// bigger than MAXIMUM_ROW_HEIGHT. size_allocate might give the rows more height than
-        /// this, to respect the rows measurements and MINIMUM_ROW_HEIGHT.
-        /// This value is only set in stone once size_allocate is called. Before that point, it can
-        /// be set many times.
-        desired_cell_height: Cell<i32>,
-
-        cells: OnceCell<[NewMonthViewCell; 7 * NB_ROWS]>,
-
-        column_separators: OnceCell<[gtk::Separator; 6]>,
-
-        row_separators: OnceCell<[gtk::Separator; NB_ROWS]>,
+        input: RefCell<Option<Input>>,
     }
 
     #[glib::object_subclass]
@@ -87,14 +115,18 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
-            let application = Application::default();
-            let first_week_day = application.system().first_week_day();
-            let today = application.system().date();
+            let system = Application::default().system();
+            let first_cell_date = {
+                let first_day_of_week = system.first_week_day();
+                let today = system.date();
 
-            let first_cell_date = today
-                .previous_occurrence_of_weekday(first_week_day)
-                .to_jiff()
-                - (NB_ROWS_ABOVE_AT_STARTUP as i32 * 7).days();
+                today
+                    .previous_occurrence_of_weekday(first_day_of_week)
+                    .to_jiff()
+                    - (NB_ROWS_ABOVE_AT_STARTUP * 7).days()
+            };
+
+            self.first_cell_index.set(0);
 
             let cells = std::array::from_fn(|i| {
                 let date = (first_cell_date + (i as i32).days()).into();
@@ -119,13 +151,9 @@ mod imp {
             let event_height = 30;
             let initial_cell_height = 3 * event_height + 2 * EVENT_GAP;
             self.cell_height.set(initial_cell_height);
-            self.desired_cell_height.set(initial_cell_height);
 
-            let (separator_height, ..) = row_separators[0].measure(gtk::Orientation::Vertical, 200);
-
-            self.scroll_offset.set(
-                (NB_ROWS_ABOVE_AT_STARTUP as i32 * (initial_cell_height + separator_height)) as f64,
-            );
+            self.scroll_offset
+                .set((NB_ROWS_ABOVE_AT_STARTUP * (initial_cell_height + SEPARATOR_HEIGHT)) as f64);
 
             self.cells.set(cells).unwrap();
             self.column_separators.set(column_separators).unwrap();
@@ -133,10 +161,30 @@ mod imp {
 
             self.scroll_swipe.group_with(&*self.scroll_drag);
 
-            application.system().connect_first_week_day_notify(clone!(
-                #[weak(rename_to = _imp)]
+            system.connect_first_week_day_notify(clone!(
+                #[weak(rename_to = imp)]
                 self,
-                move |_system| unimplemented!()
+                move |settings| {
+                    let cells = imp.cells.get().unwrap();
+
+                    let first_week_day = settings.first_week_day();
+
+                    let first_cell_index = imp.first_cell_index.get();
+                    let old_first_date = cells[first_cell_index].date();
+
+                    let new_first_date =
+                        old_first_date.previous_occurrence_of_weekday(first_week_day);
+
+                    let difference =
+                        (old_first_date.to_jiff() - new_first_date.to_jiff()).get_days() as usize;
+                    let new_index = first_cell_index - difference;
+                    imp.first_cell_index.set(new_index);
+
+                    for i in 0..difference {
+                        cells[(new_index + i) % NB_CELLS]
+                            .set_date(Date::from(new_first_date.to_jiff() + (i as i32).days()));
+                    }
+                }
             ));
         }
 
@@ -159,16 +207,10 @@ mod imp {
             let column_separators = self.column_separators.get().unwrap();
             let row_separators = self.row_separators.get().unwrap();
 
-            let (separator_width, ..) =
-                column_separators[0].measure(gtk::Orientation::Horizontal, height);
-
-            let (separator_height, ..) =
-                row_separators[0].measure(gtk::Orientation::Vertical, width);
-
             // Width is distributed evenly. Any remainder pixels are given to the leftmost columns,
             // so the first (width % 7) columns are one pixel ider than the rest.
             let column_widths: [i32; 7] = {
-                let width = width - 6 * separator_width;
+                let width = width - 6 * SEPARATOR_WIDTH;
                 let base = width / 7;
                 let remainder = width % 7;
 
@@ -177,16 +219,17 @@ mod imp {
 
             let column_xs: [i32; 7] = {
                 std::array::from_fn(|i| {
-                    column_widths[..i].iter().sum::<i32>() + i as i32 * separator_width
+                    column_widths[..i].iter().sum::<i32>() + i as i32 * SEPARATOR_WIDTH
                 })
             };
 
             let column_separator_xs: [i32; 6] = {
                 std::array::from_fn(|i| {
-                    column_widths[..i + 1].iter().sum::<i32>() + i as i32 * separator_width
+                    column_widths[..i + 1].iter().sum::<i32>() + i as i32 * SEPARATOR_WIDTH
                 })
             };
 
+            let old_cell_height = self.cell_height.get();
             let cell_height = {
                 // Measures against the narrowest column (the last one) to get a conservative
                 // minimum height that holds for all cells regardless of their width.
@@ -198,26 +241,24 @@ mod imp {
                 if floored_minimum_cell_height > MAXIMUM_CELL_HEIGHT {
                     floored_minimum_cell_height
                 } else {
-                    self.desired_cell_height
-                        .get()
-                        .clamp(floored_minimum_cell_height, MAXIMUM_CELL_HEIGHT)
+                    old_cell_height
                 }
             };
 
             self.cell_height.set(cell_height);
-            self.desired_cell_height.set(cell_height);
 
             let scroll_offset = self.scroll_offset.get() as i32;
+            let first_cell_index = self.first_cell_index.get();
 
             for row_index in 0..NB_ROWS {
-                let row_height = cell_height + separator_height;
+                let row_height = cell_height + SEPARATOR_HEIGHT;
                 let cell_y = -scroll_offset + row_index as i32 * row_height;
                 let separator_y = cell_y + cell_height;
 
                 let row_visible = (cell_y + row_height) > 0;
 
                 for column_index in 0..7 {
-                    let cell = &cells[row_index * 7 + column_index];
+                    let cell = &cells[(row_index * 7 + column_index + first_cell_index) % NB_CELLS];
 
                     if row_visible {
                         cell.set_child_visible(true);
@@ -235,7 +276,7 @@ mod imp {
                 if row_visible {
                     row_separator.set_child_visible(true);
                     let separator_allocation =
-                        gtk::Allocation::new(0, separator_y, width, separator_height);
+                        gtk::Allocation::new(0, separator_y, width, SEPARATOR_HEIGHT);
                     row_separator.size_allocate(&separator_allocation, baseline);
                 } else {
                     row_separator.set_child_visible(false);
@@ -245,7 +286,7 @@ mod imp {
             for (i, column_separator) in column_separators.iter().enumerate() {
                 let separator_x = column_separator_xs[i];
                 let separator_allocation =
-                    gtk::Allocation::new(separator_x, 0, separator_width, height);
+                    gtk::Allocation::new(separator_x, 0, SEPARATOR_WIDTH, height);
                 column_separator.size_allocate(&separator_allocation, baseline);
             }
         }
@@ -267,46 +308,394 @@ mod imp {
         }
 
         #[template_callback]
-        fn kinetic_scroll_begin(&self) {}
+        fn kinetic_scroll_begin(&self, _scroll_controller: gtk::EventControllerScroll) {
+            self.cancel_animation();
+            self.input.replace(Some(Input::ContinuousScroll));
+        }
 
         #[template_callback]
         fn kinetic_scroll(
             &self,
             _dx: f64,
-            _dy: f64,
-            _controller: gtk::EventControllerScroll,
+            dy: f64,
+            scroll_controller: gtk::EventControllerScroll,
         ) -> bool {
+            let Some(Input::ContinuousScroll) = *self.input.borrow() else {
+                return false;
+            };
+
+            // For kinetic scrolling, we only want to handle smooth events. Don't handle discrete
+            // events.
+            match scroll_controller
+                .current_event()
+                .expect("Controller should have a current event")
+                .downcast::<gdk::ScrollEvent>()
+                .expect("A scroll controller should only have a scroll event")
+                .direction()
+            {
+                gdk::ScrollDirection::Up | gdk::ScrollDirection::Down => {
+                    return false;
+                }
+                gdk::ScrollDirection::Smooth => (),
+                gdk::ScrollDirection::Left | gdk::ScrollDirection::Right => {
+                    panic!("Vertical scroll controller should not signal horizontal scroll events")
+                }
+                direction => panic!("Unknown scroll direction: {direction:?}"),
+            }
+
+            let scroll_offset = self.scroll_offset.get();
+            self.scroll_offset.set(scroll_offset + dy);
+            self.recycle_if_needed();
+            self.obj().queue_allocate();
+
             true
         }
 
         #[template_callback]
-        fn kinetic_scroll_decelerate(&self, _dx: f64, _dy: f64) {}
+        fn kinetic_scroll_end(&self, _scroll_controller: gtk::EventControllerScroll) {
+            let Some(Input::ContinuousScroll) = *self.input.borrow() else {
+                return;
+            };
+
+            self.input.replace(None);
+        }
+
+        #[template_callback]
+        fn kinetic_scroll_decelerate(&self, _velocity_x: f64, velocity_y: f64) {
+            if self.input.borrow().is_some() {
+                return;
+            }
+
+            let frame_clock = self.obj().frame_clock().unwrap();
+            let now = frame_clock.frame_time();
+
+            let initial_position = self.scroll_offset.get();
+            let kinetic_scrolling = KineticScrolling::new(now, initial_position, velocity_y);
+
+            let tick_id = self.obj().add_tick_callback(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                #[upgrade_or]
+                glib::ControlFlow::Break,
+                move |_obj, frame_clock| imp.deceleration_tick(frame_clock.frame_time())
+            ));
+            self.input
+                .replace(Some(Input::Animation(Animation::KineticDeceleration {
+                    kinetic_scrolling,
+                    tick_id,
+                })));
+        }
 
         #[template_callback]
         fn discrete_scroll(
             &self,
             _dx: f64,
-            _dy: f64,
-            _controller: gtk::EventControllerScroll,
+            dy: f64,
+            scroll_controller: gtk::EventControllerScroll,
         ) -> bool {
+            // The discrete controller also fires for smooth scroll events. Those are already
+            // handled by the kinetic controller above, so skip them here.
+            match scroll_controller
+                .current_event()
+                .expect("Controller should have a current event")
+                .downcast::<gdk::ScrollEvent>()
+                .expect("A scroll controller should only have a scroll event")
+                .direction()
+            {
+                gdk::ScrollDirection::Up | gdk::ScrollDirection::Down => (),
+                gdk::ScrollDirection::Smooth => return false,
+                gdk::ScrollDirection::Left | gdk::ScrollDirection::Right => {
+                    panic!("Vertical scroll controller should not signal horizontal scroll events")
+                }
+                _ => unreachable!(),
+            }
+
+            // If a discrete animation was already running, we stack on top of where it was headed.
+            let baseline =
+                if let Some(Input::Animation(Animation::DiscreteScroll { target, .. })) =
+                    *self.input.borrow()
+                {
+                    target
+                } else {
+                    self.scroll_offset.get()
+                };
+
+            self.cancel_animation();
+
+            let height = self.obj().height() as f64;
+            let row_height = (self.cell_height.get() + SEPARATOR_HEIGHT) as f64;
+
+            let target = if row_height > height {
+                unimplemented!()
+            } else {
+                // Advance by exactly one row in the scroll direction, aligning to the next row
+                // boundary.
+                let offset_into_row = baseline.rem_euclid(row_height);
+                if dy > 0.0 {
+                    let to_next = row_height - offset_into_row;
+                    baseline + if to_next < 0.1 { row_height } else { to_next }
+                } else {
+                    if offset_into_row < 0.1 {
+                        baseline - row_height
+                    } else {
+                        baseline - offset_into_row
+                    }
+                }
+            };
+
+            let frame_clock = self.obj().frame_clock().unwrap();
+            let now = frame_clock.frame_time();
+            let start_offset = self.scroll_offset.get();
+
+            let tick_id = self.obj().add_tick_callback(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                #[upgrade_or]
+                glib::ControlFlow::Break,
+                move |_obj, frame_clock| imp
+                    .discrete_scroll_animation_tick(frame_clock.frame_time())
+            ));
+            self.input
+                .replace(Some(Input::Animation(Animation::DiscreteScroll {
+                    start_offset,
+                    start_time: now,
+                    target,
+                    tick_id,
+                })));
+
             true
         }
 
         #[template_callback]
+        fn discrete_scroll_end(&self, _scroll_controller: gtk::EventControllerScroll) {
+            let Some(Input::Animation(Animation::DiscreteScroll { .. })) = *self.input.borrow()
+            else {
+                return;
+            };
+
+            self.input.replace(None);
+        }
+
+        #[template_callback]
         fn scroll_drag_begin(&self, _start_x: f64, _start_y: f64, _gesture_drag: gtk::GestureDrag) {
+            self.cancel_animation();
+            self.input.replace(Some(Input::Drag {
+                start_offset: self.scroll_offset.get(),
+            }));
         }
 
         #[template_callback]
         fn scroll_drag_update(
             &self,
             _offset_x: f64,
-            _offset_y: f64,
-            _gesture_drag: gtk::GestureDrag,
+            offset_y: f64,
+            gesture_drag: gtk::GestureDrag,
         ) {
+            let Some(Input::Drag { start_offset }) = *self.input.borrow() else {
+                return;
+            };
+
+            if self.obj().drag_check_threshold(0, 0, 0, offset_y as i32) {
+                gesture_drag.set_state(gtk::EventSequenceState::Claimed);
+
+                let target = start_offset - offset_y;
+                self.scroll_offset.set(target);
+                self.recycle_if_needed();
+                self.obj().queue_allocate();
+            }
         }
 
         #[template_callback]
-        fn swipe(&self, _dx: f64, _dy: f64) {}
+        fn scroll_drag_end(&self, _offset_x: f64, _offset_y: f64, _gesture_drag: gtk::GestureDrag) {
+            let Some(Input::Drag { .. }) = *self.input.borrow() else {
+                return;
+            };
+
+            self.input.replace(None);
+        }
+
+        #[template_callback]
+        fn swipe(&self, _velocity_x: f64, velocity_y: f64, _gesture_swipe: gtk::GestureSwipe) {
+            match &*self.input.borrow() {
+                Some(Input::Drag { .. }) | None => {}
+                _ => return,
+            }
+
+            let frame_clock = self.obj().frame_clock().unwrap();
+            let now = frame_clock.frame_time();
+
+            let initial_position = self.scroll_offset.get();
+            let kinetic_scrolling = KineticScrolling::new(now, initial_position, -velocity_y);
+
+            let tick_id = self.obj().add_tick_callback(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                #[upgrade_or]
+                glib::ControlFlow::Break,
+                move |_obj, frame_clock| imp.deceleration_tick(frame_clock.frame_time())
+            ));
+            self.input
+                .replace(Some(Input::Animation(Animation::KineticDeceleration {
+                    kinetic_scrolling,
+                    tick_id,
+                })));
+        }
+
+        fn deceleration_tick(&self, frame_time: i64) -> glib::ControlFlow {
+            let (new_position, _velocity, running) = {
+                let Some(Input::Animation(Animation::KineticDeceleration {
+                    ref mut kinetic_scrolling,
+                    ..
+                })) = *self.input.borrow_mut()
+                else {
+                    warn!(
+                        "The kinetic deceleration animation should be cancelled properly by removing the tick callback"
+                    );
+                    return glib::ControlFlow::Break;
+                };
+                kinetic_scrolling.tick(frame_time)
+            };
+
+            self.scroll_offset.set(new_position);
+            self.recycle_if_needed();
+            self.obj().queue_allocate();
+
+            if running {
+                glib::ControlFlow::Continue
+            } else {
+                self.input.replace(None);
+                glib::ControlFlow::Break
+            }
+        }
+
+        fn discrete_scroll_animation_tick(&self, frame_time: i64) -> glib::ControlFlow {
+            let Some(Input::Animation(Animation::DiscreteScroll {
+                start_offset,
+                start_time,
+                target,
+                ..
+            })) = *self.input.borrow_mut()
+            else {
+                warn!(
+                    "The discrete scroll animation should be cancelled properly by removing the tick callback"
+                );
+                return glib::ControlFlow::Break;
+            };
+
+            let duration_us = DISCRETE_SCROLL_ANIMATION_MS as i64 * 1000;
+            let elapsed = frame_time - start_time;
+            let t = (elapsed as f64 / duration_us as f64).clamp(0.0, 1.0);
+
+            // Ease-out cubic: decelerate towards the target.
+            let eased = 1.0 - (1.0 - t).powi(3);
+
+            let new_offset = start_offset + (target - start_offset) * eased;
+            self.scroll_offset.set(new_offset);
+            self.recycle_if_needed();
+            self.obj().queue_allocate();
+
+            if t >= 1.0 {
+                self.input.replace(None);
+                return glib::ControlFlow::Break;
+            }
+
+            glib::ControlFlow::Continue
+        }
+
+        // Cancels any ongoing scroll animation, and reset the current input to None.
+        fn cancel_animation(&self) {
+            if let Some(Input::Animation(animation)) = self.input.borrow_mut().take() {
+                match animation {
+                    Animation::KineticDeceleration { tick_id, .. } => tick_id.remove(),
+                    Animation::DiscreteScroll { tick_id, .. } => tick_id.remove(),
+                }
+            }
+        }
+
+        fn recycle_if_needed(&self) {
+            let cells = self.cells.get().unwrap();
+
+            let row_height = (self.cell_height.get() + SEPARATOR_HEIGHT) as f64;
+            let height = self.obj().height() as f64;
+
+            let top_threshold = row_height * MINIMUM_NB_ROWS_ABOVE as f64;
+            let bottom_threshold = (NB_ROWS as f64 - MINIMUM_NB_ROWS_BELOW as f64) * row_height;
+
+            loop {
+                let scroll_offset = self.scroll_offset.get();
+                let first_cell_index = self.first_cell_index.get();
+
+                if scroll_offset < top_threshold {
+                    let new_index = (first_cell_index + NB_CELLS - 7) % NB_CELLS;
+                    let old_first_date = cells[first_cell_index].date().to_jiff();
+                    let new_first_date = old_first_date - 7.days();
+                    for i in 0..7 {
+                        cells[(new_index + i) % NB_CELLS]
+                            .set_date(Date::from(new_first_date + (i as i32).days()));
+                    }
+
+                    self.first_cell_index.set(new_index);
+                    self.scroll_offset.set(scroll_offset + row_height);
+
+                    // Adjust all scroll_offset related variables
+                    match &mut *self.input.borrow_mut() {
+                        Some(Input::Drag { start_offset }) => *start_offset += row_height,
+                        Some(Input::Animation(Animation::KineticDeceleration {
+                            kinetic_scrolling,
+                            ..
+                        })) => {
+                            kinetic_scrolling.shift_origin(row_height);
+                        }
+                        Some(Input::Animation(Animation::DiscreteScroll {
+                            start_offset,
+                            target,
+                            ..
+                        })) => {
+                            *start_offset += row_height;
+                            *target += row_height;
+                        }
+                        _ => {}
+                    }
+                } else if scroll_offset + height > bottom_threshold {
+                    let new_index = (first_cell_index + 7) % NB_CELLS;
+                    let old_last_date = cells[(first_cell_index + NB_CELLS - 1) % NB_CELLS]
+                        .date()
+                        .to_jiff();
+                    let new_last_date = old_last_date + 7.days();
+                    for i in 0..7 {
+                        cells[(new_index + i) % NB_CELLS]
+                            .set_date(Date::from(new_last_date + (i as i32).days()));
+                    }
+
+                    self.first_cell_index.set(new_index);
+                    self.scroll_offset.set(scroll_offset - row_height);
+
+                    // Adjust all scroll_offset related variables
+                    match &mut *self.input.borrow_mut() {
+                        Some(Input::Drag { start_offset, .. }) => {
+                            *start_offset -= row_height;
+                        }
+                        Some(Input::Animation(Animation::KineticDeceleration {
+                            kinetic_scrolling,
+                            ..
+                        })) => {
+                            kinetic_scrolling.shift_origin(-row_height);
+                        }
+                        Some(Input::Animation(Animation::DiscreteScroll {
+                            start_offset,
+                            target,
+                            ..
+                        })) => {
+                            *start_offset -= row_height;
+                            *target -= row_height;
+                        }
+                        _ => {}
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
     }
 }
 

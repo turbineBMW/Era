@@ -4,6 +4,7 @@ use adw::{prelude::*, subclass::prelude::*};
 
 use crate::widgets::window::Styling;
 
+mod kinetic_scrolling;
 mod month_view_cell;
 mod month_view_header;
 mod month_view_inner;
