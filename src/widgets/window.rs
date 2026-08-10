@@ -368,10 +368,11 @@ pub mod imp {
         }
 
         #[template_callback]
-        fn open_month_view(&self, year: i32, month: i32) {
-            self.month_view.set_year_month_day(year, month, 1);
-            self.wide_view_stack.set_visible_child_name("month");
-            self.narrow_stack.set_visible_child_name("month");
+        fn open_month_view(&self, _year: i32, _month: i32) {
+            // TODO: Enable that
+            // self.new_month_view.set_year_month_day(year, month, 1);
+            self.wide_view_stack.set_visible_child_name("new-month");
+            self.narrow_stack.set_visible_child_name("new-month");
         }
 
         #[template_callback(function)]

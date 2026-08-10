@@ -3,7 +3,7 @@ use std::cell::{Cell, OnceCell, RefCell};
 use adw::{prelude::*, subclass::prelude::*};
 use glib::clone;
 use jiff::ToSpan;
-use tracing::warn;
+use tracing::{error, warn};
 
 use crate::{application::Application, utils::Date, widgets::window::Styling};
 
@@ -13,15 +13,15 @@ const NB_ROWS: usize = 200;
 const NB_CELLS: usize = 7 * NB_ROWS;
 const MINIMUM_NB_ROWS_BELOW: i32 = 10;
 const MINIMUM_NB_ROWS_ABOVE: i32 = 10;
-const NB_ROWS_ABOVE_AT_STARTUP: i32 = MINIMUM_NB_ROWS_ABOVE;
+const NB_ROWS_ABOVE_AT_STARTUP: i32 = MINIMUM_NB_ROWS_ABOVE + 1;
 
 /// Minimum height of a cell in pixel. A cell can report a higher minimum and size_allocate will
 /// respect it, but will never allocate them less than this.
 /// This is a hard minimum.
-const MINIMUM_CELL_HEIGHT: i32 = 120;
+const MINIMUM_CELL_HEIGHT: i32 = 80;
 /// Maximum height of a cell in pixel. Ignored if the cell's own minimum height exceeds this, in
 /// which case size_allocate allocates the cell's minimum height instead.
-const MAXIMUM_CELL_HEIGHT: i32 = 300;
+const MAXIMUM_CELL_HEIGHT: i32 = 400;
 
 const _: () = assert!(
     MAXIMUM_CELL_HEIGHT >= MINIMUM_CELL_HEIGHT,
@@ -35,11 +35,15 @@ const SEPARATOR_WIDTH: i32 = 1;
 /// Duration of the discrete-scroll animation in milliseconds.
 const DISCRETE_SCROLL_ANIMATION_MS: u32 = 200;
 
+/// Duration of the discrete-zoom animation in milliseconds.
+const DISCRETE_ZOOM_ANIMATION_MS: u32 = 200;
+
 /// Actively handled input or input consequence.
 #[derive(Debug)]
 enum Input {
     Drag { start_offset: f64 },
     ContinuousScroll,
+    ContinuousZoom { last_scale_delta: f64 },
     Animation(Animation),
 }
 
@@ -55,6 +59,13 @@ enum Animation {
         start_offset: f64,
         start_time: i64,
         target: f64,
+        tick_id: gtk::TickCallbackId,
+    },
+    DiscreteZoom {
+        start_height: i32,
+        target_height: i32,
+        start_time: i64,
+        y_center: f64,
         tick_id: gtk::TickCallbackId,
     },
 }
@@ -92,6 +103,9 @@ mod imp {
         cell_height: Cell<i32>,
 
         input: RefCell<Option<Input>>,
+
+        /// Y position of the pointer to use for zooming with CTRL+scroll.
+        pointer_y: Cell<Option<f64>>,
     }
 
     #[glib::object_subclass]
@@ -402,7 +416,59 @@ mod imp {
                 .expect("A scroll controller should only have a scroll event")
                 .direction()
             {
-                gdk::ScrollDirection::Up | gdk::ScrollDirection::Down => (),
+                // Handle CTRL+scroll to zoom
+                gdk::ScrollDirection::Up | gdk::ScrollDirection::Down => {
+                    if scroll_controller
+                        .current_event_state()
+                        .contains(gdk::ModifierType::CONTROL_MASK)
+                    {
+                        let y_center = self
+                            .pointer_y
+                            .get()
+                            .unwrap_or(self.obj().height() as f64 / 2.);
+                        let scale = dy / 10.0 + 1.0;
+
+                        let baseline = if let Some(Input::Animation(Animation::DiscreteZoom {
+                            target_height,
+                            ..
+                        })) = *self.input.borrow()
+                        {
+                            target_height
+                        } else {
+                            self.cell_height.get()
+                        };
+
+                        self.cancel_animation();
+
+                        let target_height = ((baseline as f64 * scale) as i32)
+                            .clamp(MINIMUM_CELL_HEIGHT, MAXIMUM_CELL_HEIGHT);
+
+                        let frame_clock = self.obj().frame_clock().unwrap();
+                        let now = frame_clock.frame_time();
+                        let start_height = self.cell_height.get();
+
+                        let tick_id = self.obj().add_tick_callback(clone!(
+                            #[weak(rename_to = imp)]
+                            self,
+                            #[upgrade_or]
+                            glib::ControlFlow::Break,
+                            move |_obj, frame_clock| imp
+                                .discrete_zoom_animation_tick(frame_clock.frame_time())
+                        ));
+                        self.input
+                            .replace(Some(Input::Animation(Animation::DiscreteZoom {
+                                start_height,
+                                target_height,
+                                start_time: now,
+                                y_center,
+                                tick_id,
+                            })));
+
+                        return true;
+                    }
+                }
+                // The discrete controller also fires for smooth scroll events. Those are already
+                // handled by the kinetic controller above, so skip them here.
                 gdk::ScrollDirection::Smooth => return false,
                 gdk::ScrollDirection::Left | gdk::ScrollDirection::Right => {
                     panic!("Vertical scroll controller should not signal horizontal scroll events")
@@ -478,6 +544,13 @@ mod imp {
 
         #[template_callback]
         fn scroll_drag_begin(&self, _start_x: f64, _start_y: f64, _gesture_drag: gtk::GestureDrag) {
+            // FIXME:
+            // We require this check, because zoom on touchscreen triggers drag gestures that don't
+            // get canceled
+            if let Some(Input::ContinuousZoom { .. }) = *self.input.borrow() {
+                return;
+            };
+
             self.cancel_animation();
             self.input.replace(Some(Input::Drag {
                 start_offset: self.scroll_offset.get(),
@@ -492,6 +565,13 @@ mod imp {
             gesture_drag: gtk::GestureDrag,
         ) {
             let Some(Input::Drag { start_offset }) = *self.input.borrow() else {
+                // When zooming on a touchscreen, a drag gesture stays active with its event
+                // sequence set to NONE instead of DENIED (even though it is CLAIMED by the zoom
+                // gesture). We need to deny it here to ensure swipe will not happen.
+                // See https://gitlab.gnome.org/GNOME/gtk/-/work_items/8385
+                if let Some(Input::ContinuousZoom { .. }) = *self.input.borrow() {
+                    gesture_drag.set_state(gtk::EventSequenceState::Denied);
+                }
                 return;
             };
 
@@ -539,6 +619,65 @@ mod imp {
                     kinetic_scrolling,
                     tick_id,
                 })));
+        }
+
+        #[template_callback]
+        fn motion_enter(&self, _x: f64, y: f64, _motion_controller: gtk::EventControllerMotion) {
+            self.pointer_y.set(Some(y));
+        }
+
+        #[template_callback]
+        fn motion(&self, _x: f64, y: f64, _motion_controller: gtk::EventControllerMotion) {
+            self.pointer_y.set(Some(y));
+        }
+
+        #[template_callback]
+        fn motion_leave(&self) {
+            self.pointer_y.set(None);
+        }
+
+        #[template_callback]
+        fn zoom_begin(&self, _event_sequence: gdk::EventSequence, gesture_zoom: gtk::GestureZoom) {
+            self.cancel_animation();
+
+            self.input.replace(Some(Input::ContinuousZoom {
+                last_scale_delta: 1.0,
+            }));
+
+            // Setting state might call other callbacks inline, so we need to do it after replacing
+            // input
+            gesture_zoom.set_state(gtk::EventSequenceState::Claimed);
+        }
+
+        #[template_callback]
+        fn zoom_scale_changed(&self, scale: f64, gesture_zoom: gtk::GestureZoom) {
+            let Some(Input::ContinuousZoom { last_scale_delta }) = *self.input.borrow() else {
+                return;
+            };
+
+            let scale_delta = scale / last_scale_delta;
+            self.input.replace(Some(Input::ContinuousZoom {
+                last_scale_delta: scale,
+            }));
+
+            let old_cell_height = self.cell_height.get();
+            let new_cell_height = ((old_cell_height as f64 * scale_delta) as i32)
+                .clamp(MINIMUM_CELL_HEIGHT, MAXIMUM_CELL_HEIGHT);
+
+            let Some((_x_center, y_center)) = gesture_zoom.bounding_box_center() else {
+                return;
+            };
+
+            self.apply_zoom_height(new_cell_height, y_center);
+        }
+
+        #[template_callback]
+        fn zoom_end(&self) {
+            let Some(Input::ContinuousZoom { .. }) = *self.input.borrow() else {
+                return;
+            };
+
+            self.input.replace(None);
         }
 
         fn deceleration_tick(&self, frame_time: i64) -> glib::ControlFlow {
@@ -602,14 +741,67 @@ mod imp {
             glib::ControlFlow::Continue
         }
 
+        fn discrete_zoom_animation_tick(&self, frame_time: i64) -> glib::ControlFlow {
+            let Some(Input::Animation(Animation::DiscreteZoom {
+                start_height,
+                target_height,
+                start_time,
+                y_center,
+                ..
+            })) = *self.input.borrow_mut()
+            else {
+                error!(
+                    "The discrete zoom animation should be cancelled properly by removing the tick callback"
+                );
+                return glib::ControlFlow::Break;
+            };
+
+            let duration_us = DISCRETE_ZOOM_ANIMATION_MS as i64 * 1000;
+            let elapsed = frame_time - start_time;
+            let t = (elapsed as f64 / duration_us as f64).clamp(0.0, 1.0);
+
+            // Ease-out cubic: decelerate towards the target.
+            let eased = 1.0 - (1.0 - t).powi(3);
+
+            let new_height =
+                (start_height as f64 + (target_height - start_height) as f64 * eased) as i32;
+
+            self.apply_zoom_height(new_height, y_center);
+
+            if t >= 1.0 {
+                self.input.replace(None);
+                return glib::ControlFlow::Break;
+            }
+
+            glib::ControlFlow::Continue
+        }
+
         // Cancels any ongoing scroll animation, and reset the current input to None.
         fn cancel_animation(&self) {
             if let Some(Input::Animation(animation)) = self.input.borrow_mut().take() {
                 match animation {
                     Animation::KineticDeceleration { tick_id, .. } => tick_id.remove(),
                     Animation::DiscreteScroll { tick_id, .. } => tick_id.remove(),
+                    Animation::DiscreteZoom { tick_id, .. } => tick_id.remove(),
                 }
             }
+        }
+
+        fn apply_zoom_height(&self, new_cell_height: i32, y_center: f64) {
+            let old_cell_height = self.cell_height.get();
+
+            let old_row_height = (old_cell_height + SEPARATOR_HEIGHT) as f64;
+            let new_row_height = (new_cell_height + SEPARATOR_HEIGHT) as f64;
+
+            let old_scroll_offset = self.scroll_offset.get();
+            let new_scroll_offset =
+                (old_scroll_offset + y_center) * new_row_height / old_row_height - y_center;
+
+            self.cell_height.set(new_cell_height);
+            self.scroll_offset.set(new_scroll_offset);
+            self.recycle_if_needed();
+
+            self.obj().queue_allocate();
         }
 
         fn recycle_if_needed(&self) {

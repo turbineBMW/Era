@@ -43,4 +43,18 @@ template $NewMonthViewInner: Widget {
     touch-only: true;
     swipe => $swipe(template);
   }
+
+  // Pinch to zoom (trackpad or touchscreen)
+  GestureZoom {
+    begin => $zoom_begin(template);
+    scale-changed => $zoom_scale_changed(template);
+    end => $zoom_end(template);
+  }
+
+  // Pointer placement tracking to center Ctrl+wheel zoom
+  EventControllerMotion {
+    enter => $motion_enter(template);
+    motion => $motion(template);
+    leave => $motion_leave(template);
+  }
 }
