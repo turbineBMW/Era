@@ -25,13 +25,13 @@ variables:
         APP_ID: "io.gitlab.TitouanReal.Era.P2panda.Devel"
         BUNDLE: "era-p2panda-nightly.flatpak"
 
-.rust-nightly@x86_64:
+.rust-stable@x86_64:
     before_script:
-        - flatpak install flathub org.freedesktop.Sdk.Extension.rust-nightly/x86_64/25.08 --user -y
+        - flatpak install flathub-beta org.freedesktop.Sdk.Extension.rust-stable/x86_64/26.08beta --user -y
 
-.rust-nightly@aarch64:
+.rust-stable@aarch64:
     before_script:
-        - flatpak install flathub org.freedesktop.Sdk.Extension.rust-nightly/aarch64/25.08 --user -y
+        - flatpak install flathub-beta org.freedesktop.Sdk.Extension.rust-stable/aarch64/26.08beta --user -y
 
 stages:
     - check
@@ -48,7 +48,7 @@ cargo-fmt:
         APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
         COMMAND: "cargo fmt"
     script:
-        - flatpak install --user org.freedesktop.Sdk.Extension.rust-nightly/x86_64/25.08 -y
+        - flatpak install --user org.freedesktop.Sdk.Extension.rust-stable/x86_64/25.08 -y
         - flatpak-builder --user --disable-rofiles-fuse --keep-build-dirs --stop-at=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
         - flatpak build-finish --share=network flatpak_app
         - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
@@ -64,7 +64,7 @@ cargo-clippy:
         APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
         COMMAND: "cargo clippy -- -D warnings"
     script:
-        - flatpak install --user org.freedesktop.Sdk.Extension.rust-nightly/x86_64/25.08 -y
+        - flatpak install --user org.freedesktop.Sdk.Extension.rust-stable/x86_64/25.08 -y
         - flatpak-builder --user --disable-rofiles-fuse --keep-build-dirs --stop-at=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
         - flatpak build-finish --share=network flatpak_app
         - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
@@ -93,7 +93,7 @@ blueprint-lint:
 flatpak-eds@x86_64:
     extends:
         - .flatpak@x86_64
-        - .rust-nightly@x86_64
+        - .rust-stable@x86_64
         - .eds
     stage: build
     # Do the following to prepare for the lint-metainfo job.
@@ -111,7 +111,7 @@ flatpak-eds@x86_64:
 flatpak-eds@aarch64:
     extends:
         - .flatpak@aarch64
-        - .rust-nightly@aarch64
+        - .rust-stable@aarch64
         - .eds
     stage: build
     when: manual
@@ -119,14 +119,14 @@ flatpak-eds@aarch64:
 flatpak-mock@x86_64:
     extends:
         - .flatpak@x86_64
-        - .rust-nightly@x86_64
+        - .rust-stable@x86_64
         - .mock
     stage: build
 
 flatpak-mock@aarch64:
     extends:
         - .flatpak@aarch64
-        - .rust-nightly@aarch64
+        - .rust-stable@aarch64
         - .mock
     stage: build
     when: manual
@@ -134,14 +134,14 @@ flatpak-mock@aarch64:
 flatpak-p2panda@x86_64:
     extends:
         - .flatpak@x86_64
-        - .rust-nightly@x86_64
+        - .rust-stable@x86_64
         - .p2panda
     stage: build
 
 flatpak-p2panda@aarch64:
     extends:
         - .flatpak@aarch64
-        - .rust-nightly@aarch64
+        - .rust-stable@aarch64
         - .p2panda
     stage: build
     when: manual

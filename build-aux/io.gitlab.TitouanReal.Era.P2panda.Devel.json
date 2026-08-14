@@ -3,7 +3,7 @@
   "runtime": "org.gnome.Platform",
   "runtime-version": "master",
   "sdk": "org.gnome.Sdk",
-  "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-nightly"],
+  "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
   "command": "era",
   "finish-args": [
     "--share=ipc",
@@ -13,7 +13,7 @@
     "--system-talk-name=org.freedesktop.timedate1"
   ],
   "build-options": {
-    "append-path": "/usr/lib/sdk/rust-nightly/bin",
+    "append-path": "/usr/lib/sdk/rust-stable/bin",
     "build-args": ["--share=network"],
     "env": {
       "RUST_BACKTRACE": "1",
@@ -59,15 +59,13 @@
     {
       "name": "meson",
       "buildsystem": "simple",
-      "build-commands": [
-        "python3 setup.py install --prefix=/app"
-      ],
+      "build-commands": ["python3 setup.py install --prefix=/app"],
       "cleanup": ["*"],
       "sources": [
         {
           "type": "git",
-          "url": "https://github.com/mesonbuild/meson",
-          "commit": "ff84a1ab2699385f67eea990260a20beb2b46c98"
+          "url": "https://github.com/TitouanReal/meson",
+          "commit": "7327e98c755a7c4214541a52117ab16a85cccfde"
         }
       ]
     },
@@ -78,7 +76,7 @@
         {
           "type": "git",
           "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-          "commit": "8af2f5ece01ea2f03de771e00805f1e11f297e58"
+          "commit": "6e3b8b692325deffd467af611e69e209d2970c0d"
         }
       ],
       "config-opts": ["-Dlibclepsydre=true"]
