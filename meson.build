@@ -10,6 +10,7 @@ project(
 )
 
 backend = get_option('calendar-backend')
+platform = get_option('platform')
 
 i18n = import('i18n')
 gnome = import('gnome')
@@ -111,12 +112,19 @@ subdir('src')
 subdir('po')
 
 features = []
+
 if backend == 'eds'
-    features += 'clepsydre-eds'
+    features += 'backend-eds'
 elif backend == 'mock'
-    features += 'clepsydre-mock'
+    features += 'backend-mock'
 elif backend == 'p2panda'
-    features += 'clepsydre-p2panda'
+    features += 'backend-p2panda'
+endif
+
+if platform == 'flatpak'
+    features += 'platform-flatpak'
+elif platform == 'android'
+    features += 'platform-android'
 endif
 
 cargo_module = import('rust').workspace(default_features: false, features: features)

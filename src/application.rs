@@ -60,11 +60,11 @@ mod imp {
             obj.setup_gactions();
             obj.set_accels_for_action("app.quit", &["<primary>q"]);
 
-            #[cfg(feature = "clepsydre-eds")]
+            #[cfg(feature = "backend-eds")]
             let manager = clepsydre_eds::Manager::new().upcast();
-            #[cfg(feature = "clepsydre-mock")]
+            #[cfg(feature = "backend-mock")]
             let manager = clepsydre_mock::MockManager::new().upcast();
-            #[cfg(feature = "clepsydre-p2panda")]
+            #[cfg(feature = "backend-p2panda")]
             let manager = clepsydre_p2panda::P2pandaManager::new().upcast();
 
             self.system_settings

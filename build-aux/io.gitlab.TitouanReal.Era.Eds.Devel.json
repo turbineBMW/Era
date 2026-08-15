@@ -151,7 +151,7 @@
           "path": "../"
         }
       ],
-      "config-opts": ["-Dcalendar-backend=eds"]
+      "config-opts": ["-Dcalendar-backend=eds", "-Dplatform=flatpak"]
     }
   ]
 }

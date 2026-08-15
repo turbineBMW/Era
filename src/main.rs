@@ -19,6 +19,36 @@ use self::{
     config::{APP_NAME, GETTEXT_PACKAGE, LOCALEDIR, PROJECT_NAME, RESOURCES_FILE},
 };
 
+// Verify Clepsydre Backend
+#[cfg(not(any(
+    feature = "backend-eds",
+    feature = "backend-mock",
+    feature = "backend-p2panda"
+)))]
+compile_error!(
+    "You must enable EXACTLY ONE backend feature: `backend-eds`, `backend-mock`, or `backend-p2panda`."
+);
+
+#[cfg(any(
+    all(feature = "backend-eds", feature = "backend-mock"),
+    all(feature = "backend-eds", feature = "backend-p2panda"),
+    all(feature = "backend-mock", feature = "backend-p2panda"),
+))]
+compile_error!(
+    "Multiple backend features enabled! Choose only ONE: `backend-eds`, `backend-mock`, or `backend-p2panda`."
+);
+
+// Verify Platform
+#[cfg(not(any(feature = "platform-flatpak", feature = "platform-android")))]
+compile_error!(
+    "You must enable EXACTLY ONE platform feature: `platform-flatpak` or `platform-android`."
+);
+
+#[cfg(all(feature = "platform-flatpak", feature = "platform-android"))]
+compile_error!(
+    "Multiple platform features enabled! Choose only ONE: `platform-flatpak` or `platform-android`."
+);
+
 fn main() -> glib::ExitCode {
     // TODO: Debug - scrollwheel after scrolling down with pad is bugged
     unsafe {

@@ -90,7 +90,7 @@
           "path": "../"
         }
       ],
-      "config-opts": ["-Dcalendar-backend=mock"]
+      "config-opts": ["-Dcalendar-backend=mock", "-Dplatform=flatpak"]
     }
   ]
 }

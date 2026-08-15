@@ -1,4 +1,4 @@
-use std::{cell::Cell, sync::Arc};
+use std::sync::Arc;
 
 use ashpd::{desktop::settings::Settings, zvariant};
 use futures_util::StreamExt;
@@ -6,39 +6,13 @@ use glib::clone;
 use gtk::{glib, prelude::*, subclass::prelude::*};
 use tracing::error;
 
+use super::{ClockFormat, DayOfWeek, SystemSettings, SystemSettingsImpl};
 use crate::spawn;
 
 const GNOME_DESKTOP_INTERFACE_NAMESPACE: &str = "org.gnome.desktop.interface";
 const GNOME_DESKTOP_CALENDAR_NAMESPACE: &str = "org.gnome.desktop.calendar";
 const CLOCK_FORMAT_KEY: &str = "clock-format";
 const WEEK_START_DAY_KEY: &str = "week-start-day";
-
-/// The clock format setting.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, glib::Enum)]
-#[enum_type(name = "ClockFormat")]
-pub enum ClockFormat {
-    /// The 12h format, i.e. AM/PM.
-    TwelveHours,
-    /// The 24h format.
-    TwentyFourHours,
-}
-
-impl Default for ClockFormat {
-    fn default() -> Self {
-        // Use the locale's default clock format as a fallback.
-        let local_formatted_time = glib::DateTime::now_local()
-            .and_then(|d| d.format("%X"))
-            .map(|s| s.to_ascii_lowercase());
-        match &local_formatted_time {
-            Ok(s) if s.ends_with("am") || s.ends_with("pm") => ClockFormat::TwelveHours,
-            Ok(_) => ClockFormat::TwentyFourHours,
-            Err(error) => {
-                error!("Could not get local formatted time: {error}");
-                ClockFormat::TwelveHours
-            }
-        }
-    }
-}
 
 impl TryFrom<&zvariant::OwnedValue> for ClockFormat {
     type Error = zvariant::Error;
@@ -64,28 +38,6 @@ impl TryFrom<zvariant::OwnedValue> for ClockFormat {
     fn try_from(value: zvariant::OwnedValue) -> Result<Self, Self::Error> {
         Self::try_from(&value)
     }
-}
-
-/// The first day of the week setting.
-#[derive(Debug, Default, Hash, Eq, PartialEq, Clone, Copy, glib::Enum)]
-#[enum_type(name = "DayOfWeek")]
-#[repr(i32)]
-pub enum DayOfWeek {
-    #[default]
-    #[enum_value(name = "Monday", nick = "monday")]
-    Monday,
-    #[enum_value(name = "Tuesday", nick = "tuesday")]
-    Tuesday,
-    #[enum_value(name = "Wednesday", nick = "wednesday")]
-    Wednesday,
-    #[enum_value(name = "Thursday", nick = "thursday")]
-    Thursday,
-    #[enum_value(name = "Friday", nick = "friday")]
-    Friday,
-    #[enum_value(name = "Saturday", nick = "saturday")]
-    Saturday,
-    #[enum_value(name = "Sunday", nick = "sunday")]
-    Sunday,
 }
 
 impl TryFrom<&zvariant::OwnedValue> for DayOfWeek {
@@ -124,25 +76,17 @@ impl TryFrom<zvariant::OwnedValue> for DayOfWeek {
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, glib::Properties)]
-    #[properties(wrapper_type = super::SystemSettings)]
-    pub struct SystemSettings {
-        /// The clock format setting.
-        #[property(get, builder(ClockFormat::default()))]
-        pub(super) clock_format: Cell<ClockFormat>,
-        /// The first day of the week setting.
-        #[property(get, builder(DayOfWeek::default()))]
-        pub(super) first_day_of_week: Cell<DayOfWeek>,
-    }
+    #[derive(Debug, Default)]
+    pub struct FlatpakSystemSettings {}
 
     #[glib::object_subclass]
-    impl ObjectSubclass for SystemSettings {
-        const NAME: &'static str = "SystemSettings";
-        type Type = super::SystemSettings;
+    impl ObjectSubclass for FlatpakSystemSettings {
+        const NAME: &'static str = "FlatpakSystemSettings";
+        type Type = super::FlatpakSystemSettings;
+        type ParentType = SystemSettings;
     }
 
-    #[glib::derived_properties]
-    impl ObjectImpl for SystemSettings {
+    impl ObjectImpl for FlatpakSystemSettings {
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -156,7 +100,9 @@ mod imp {
         }
     }
 
-    impl SystemSettings {
+    impl SystemSettingsImpl for FlatpakSystemSettings {}
+
+    impl FlatpakSystemSettings {
         /// Initialize the system settings.
         async fn init(&self) {
             let obj = self.obj();
@@ -176,7 +122,9 @@ mod imp {
                 .read::<ClockFormat>(GNOME_DESKTOP_INTERFACE_NAMESPACE, CLOCK_FORMAT_KEY)
                 .await
             {
-                Ok(clock_format) => obj.set_clock_format(clock_format),
+                Ok(clock_format) => obj
+                    .upcast_ref::<SystemSettings>()
+                    .set_clock_format(clock_format),
                 Err(error) => {
                     error!("Could not access clock format system setting: {error}");
                 }
@@ -188,7 +136,9 @@ mod imp {
                 .read::<DayOfWeek>(GNOME_DESKTOP_CALENDAR_NAMESPACE, WEEK_START_DAY_KEY)
                 .await
             {
-                Ok(first_day_of_week) => obj.set_first_day_of_week(first_day_of_week),
+                Ok(first_day_of_week) => obj
+                    .upcast_ref::<SystemSettings>()
+                    .set_first_day_of_week(first_day_of_week),
                 Err(error) => {
                     error!("Could not access first day of week system setting: {error}");
                 }
@@ -214,6 +164,7 @@ mod imp {
                             );
                             return;
                         };
+                        let obj = obj.upcast_ref::<SystemSettings>();
 
                         let namespace = setting.namespace();
                         let key = setting.key();
@@ -246,49 +197,19 @@ mod imp {
 }
 
 glib::wrapper! {
-    /// A sublassable API to access system settings.
-    pub struct SystemSettings(ObjectSubclass<imp::SystemSettings>);
+    /// API to access system settings on Flatpak, via the XDG Desktop Settings portal.
+    pub struct FlatpakSystemSettings(ObjectSubclass<imp::FlatpakSystemSettings>)
+        @extends SystemSettings;
 }
 
-impl SystemSettings {
+impl FlatpakSystemSettings {
     pub fn new() -> Self {
         glib::Object::new()
     }
-
-    /// Set the clock format setting.
-    fn set_clock_format(&self, clock_format: ClockFormat) {
-        if self.clock_format() == clock_format {
-            return;
-        }
-
-        self.imp().clock_format.set(clock_format);
-        self.notify_clock_format();
-    }
-
-    /// Set the first day of the week setting.
-    fn set_first_day_of_week(&self, first_day_of_week: DayOfWeek) {
-        if self.first_day_of_week() == first_day_of_week {
-            return;
-        }
-
-        self.imp().first_day_of_week.set(first_day_of_week);
-        self.notify_first_day_of_week();
-    }
 }
 
-impl Default for SystemSettings {
+impl Default for FlatpakSystemSettings {
     fn default() -> Self {
         Self::new()
     }
-}
-
-/// Public trait that must be implemented for everything that derives from
-/// `SystemSettings`.
-pub trait SystemSettingsImpl: ObjectImpl {}
-
-unsafe impl<T> IsSubclassable<T> for SystemSettings
-where
-    T: SystemSettingsImpl,
-    T::Type: IsA<SystemSettings>,
-{
 }

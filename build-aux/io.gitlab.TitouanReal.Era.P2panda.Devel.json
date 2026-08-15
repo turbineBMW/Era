@@ -91,7 +91,7 @@
           "path": "../"
         }
       ],
-      "config-opts": ["-Dcalendar-backend=p2panda"]
+      "config-opts": ["-Dcalendar-backend=p2panda", "-Dplatform=flatpak"]
     }
   ]
 }

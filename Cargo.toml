@@ -30,4 +30,11 @@ tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 url = "2.5.8"
 
 [features]
-default = ["clepsydre-eds"]
+default = ["backend-eds", "platform-flatpak"]
+
+backend-eds = ["dep:clepsydre-eds"]
+backend-mock = ["dep:clepsydre-mock"]
+backend-p2panda = ["dep:clepsydre-p2panda"]
+
+platform-flatpak = []
+platform-android = []
