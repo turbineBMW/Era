@@ -12,7 +12,7 @@ use jiff::ToSpan;
 
 use crate::{
     Application,
-    system_settings::DayOfWeek,
+    system::DayOfWeek,
     utils::{self, EventPropertiesPreset},
     widgets::{
         views::month_view::{event_widget::EventWidget, overflow_button::OverflowButton},
@@ -158,7 +158,7 @@ mod imp {
             self.month.set(now.month());
             self.day.set(now.day_of_month());
 
-            let first_day_of_week = application.system_settings().first_day_of_week();
+            let first_day_of_week = application.system().first_day_of_week();
 
             let a_day_in_first_row = DateTime::new(
                 &now.timezone(),
@@ -210,7 +210,7 @@ mod imp {
                 .unwrap();
 
             Application::default()
-                .system_settings()
+                .system()
                 .connect_first_day_of_week_notify(clone!(
                     #[weak(rename_to = imp)]
                     self,
@@ -621,7 +621,7 @@ mod imp {
 
             let date = jiff::civil::Date::new(year as i16, month as i8, day as i8).unwrap();
 
-            let base = match Application::default().system_settings().first_day_of_week() {
+            let base = match Application::default().system().first_day_of_week() {
                 DayOfWeek::Monday => 1,
                 DayOfWeek::Tuesday => 2,
                 DayOfWeek::Wednesday => 3,

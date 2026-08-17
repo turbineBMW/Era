@@ -10,7 +10,7 @@ use tracing_subscriber::{EnvFilter, prelude::*};
 
 mod application;
 mod config;
-mod system_settings;
+mod system;
 mod utils;
 mod widgets;
 

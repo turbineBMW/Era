@@ -44,17 +44,17 @@ mod imp {
     use super::*;
 
     #[repr(C)]
-    pub struct SystemSettingsClass {
+    pub struct SystemClass {
         parent_class: glib::object::Class<glib::Object>,
     }
 
-    unsafe impl ClassStruct for SystemSettingsClass {
-        type Type = SystemSettings;
+    unsafe impl ClassStruct for SystemClass {
+        type Type = System;
     }
 
     #[derive(Debug, Default, glib::Properties)]
-    #[properties(wrapper_type = super::SystemSettings)]
-    pub struct SystemSettings {
+    #[properties(wrapper_type = super::System)]
+    pub struct System {
         /// The clock format setting.
         #[property(get, builder(ClockFormat::default()))]
         pub(super) clock_format: Cell<ClockFormat>,
@@ -64,28 +64,28 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for SystemSettings {
-        const NAME: &'static str = "SystemSettings";
-        type Type = super::SystemSettings;
-        type Class = SystemSettingsClass;
+    impl ObjectSubclass for System {
+        const NAME: &'static str = "EraSystem";
+        type Type = super::System;
+        type Class = SystemClass;
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for SystemSettings {}
+    impl ObjectImpl for System {}
 }
 
 glib::wrapper! {
-    /// A sublassable API to access system settings.
-    pub struct SystemSettings(ObjectSubclass<imp::SystemSettings>);
+    /// A sublassable API to access system state.
+    pub struct System(ObjectSubclass<imp::System>);
 }
 
-impl SystemSettings {
+impl System {
     pub fn new() -> Self {
         #[cfg(feature = "platform-flatpak")]
-        let obj = flatpak::FlatpakSystemSettings::new().upcast();
+        let obj = flatpak::FlatpakSystem::new().upcast();
 
         #[cfg(feature = "platform-android")]
-        let obj = android::AndroidSystemSettings::new().upcast();
+        let obj = android::AndroidSystem::new().upcast();
 
         obj
     }
@@ -111,19 +111,18 @@ impl SystemSettings {
     }
 }
 
-impl Default for SystemSettings {
+impl Default for System {
     fn default() -> Self {
         Self::new()
     }
 }
 
-/// Public trait that must be implemented for everything that derives from
-/// `SystemSettings`.
-pub trait SystemSettingsImpl: ObjectImpl {}
+/// Public trait that must be implemented for everything that derives from `System`.
+pub trait SystemImpl: ObjectImpl {}
 
-unsafe impl<T> IsSubclassable<T> for SystemSettings
+unsafe impl<T> IsSubclassable<T> for System
 where
-    T: SystemSettingsImpl,
-    T::Type: IsA<SystemSettings>,
+    T: SystemImpl,
+    T::Type: IsA<System>,
 {
 }

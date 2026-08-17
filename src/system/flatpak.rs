@@ -1,13 +1,14 @@
 use std::sync::Arc;
 
-use ashpd::{desktop::settings::Settings, zvariant};
+use ashpd::zvariant;
 use futures_util::StreamExt;
 use glib::clone;
 use gtk::{glib, prelude::*, subclass::prelude::*};
 use tracing::error;
 
-use super::{ClockFormat, DayOfWeek, SystemSettings, SystemSettingsImpl};
 use crate::spawn;
+
+use super::{ClockFormat, DayOfWeek, System, SystemImpl};
 
 const GNOME_DESKTOP_INTERFACE_NAMESPACE: &str = "org.gnome.desktop.interface";
 const GNOME_DESKTOP_CALENDAR_NAMESPACE: &str = "org.gnome.desktop.calendar";
@@ -77,16 +78,16 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default)]
-    pub struct FlatpakSystemSettings {}
+    pub struct FlatpakSystem {}
 
     #[glib::object_subclass]
-    impl ObjectSubclass for FlatpakSystemSettings {
-        const NAME: &'static str = "FlatpakSystemSettings";
-        type Type = super::FlatpakSystemSettings;
-        type ParentType = SystemSettings;
+    impl ObjectSubclass for FlatpakSystem {
+        const NAME: &'static str = "FlatpakSystem";
+        type Type = super::FlatpakSystem;
+        type ParentType = System;
     }
 
-    impl ObjectImpl for FlatpakSystemSettings {
+    impl ObjectImpl for FlatpakSystem {
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -100,14 +101,14 @@ mod imp {
         }
     }
 
-    impl SystemSettingsImpl for FlatpakSystemSettings {}
+    impl SystemImpl for FlatpakSystem {}
 
-    impl FlatpakSystemSettings {
-        /// Initialize the system settings.
+    impl FlatpakSystem {
+        /// Initialize the system state.
         async fn init(&self) {
             let obj = self.obj();
 
-            let proxy = match Settings::new().await {
+            let proxy = match ashpd::desktop::settings::Settings::new().await {
                 Ok(proxy) => proxy,
                 Err(error) => {
                     error!("Could not access settings portal: {error}");
@@ -122,9 +123,7 @@ mod imp {
                 .read::<ClockFormat>(GNOME_DESKTOP_INTERFACE_NAMESPACE, CLOCK_FORMAT_KEY)
                 .await
             {
-                Ok(clock_format) => obj
-                    .upcast_ref::<SystemSettings>()
-                    .set_clock_format(clock_format),
+                Ok(clock_format) => obj.upcast_ref::<System>().set_clock_format(clock_format),
                 Err(error) => {
                     error!("Could not access clock format system setting: {error}");
                 }
@@ -137,7 +136,7 @@ mod imp {
                 .await
             {
                 Ok(first_day_of_week) => obj
-                    .upcast_ref::<SystemSettings>()
+                    .upcast_ref::<System>()
                     .set_first_day_of_week(first_day_of_week),
                 Err(error) => {
                     error!("Could not access first day of week system setting: {error}");
@@ -164,7 +163,7 @@ mod imp {
                             );
                             return;
                         };
-                        let obj = obj.upcast_ref::<SystemSettings>();
+                        let obj = obj.upcast_ref::<System>();
 
                         let namespace = setting.namespace();
                         let key = setting.key();
@@ -197,18 +196,18 @@ mod imp {
 }
 
 glib::wrapper! {
-    /// API to access system settings on Flatpak, via the XDG Desktop Settings portal.
-    pub struct FlatpakSystemSettings(ObjectSubclass<imp::FlatpakSystemSettings>)
-        @extends SystemSettings;
+    /// API to access system state on Flatpak, via the XDG Desktop Settings portal.
+    pub struct FlatpakSystem(ObjectSubclass<imp::FlatpakSystem>)
+        @extends System;
 }
 
-impl FlatpakSystemSettings {
+impl FlatpakSystem {
     pub fn new() -> Self {
         glib::Object::new()
     }
 }
 
-impl Default for FlatpakSystemSettings {
+impl Default for FlatpakSystem {
     fn default() -> Self {
         Self::new()
     }

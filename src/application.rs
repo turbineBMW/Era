@@ -8,7 +8,7 @@ use glib::{DateTime, TimeZone, clone};
 
 use crate::{
     config::{APP_ID, APP_NAME, BASE_RESOURCE_PATH, VERSION},
-    system_settings::SystemSettings,
+    system::System,
     widgets::Window,
 };
 
@@ -19,7 +19,7 @@ mod imp {
     #[properties(wrapper_type = super::Application)]
     pub struct Application {
         #[property(get, set)]
-        system_settings: OnceCell<SystemSettings>,
+        system: OnceCell<System>,
         #[property(get, set)]
         current_datetime: RefCell<DateTime>,
         #[property(get, set)]
@@ -32,7 +32,7 @@ mod imp {
     impl Default for Application {
         fn default() -> Self {
             Self {
-                system_settings: OnceCell::default(),
+                system: OnceCell::default(),
                 current_datetime: RefCell::new(
                     DateTime::new(&TimeZone::utc(), 1, 1, 1, 0, 0, 0.).unwrap(),
                 ),
@@ -67,9 +67,9 @@ mod imp {
             #[cfg(feature = "backend-p2panda")]
             let manager = clepsydre_p2panda::P2pandaManager::new().upcast();
 
-            self.system_settings
-                .set(SystemSettings::new())
-                .expect("System settings should not already be initialized");
+            self.system
+                .set(System::new())
+                .expect("System should not already be initialized");
             self.manager
                 .set(manager)
                 .expect("Manager should not already be initialized");

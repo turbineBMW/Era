@@ -4,7 +4,7 @@ use clepsydre::{AttendeeRole, AttendeeType, ParticipationStatus};
 use gettextrs::gettext;
 use glib::Object;
 
-use crate::system_settings::DayOfWeek;
+use crate::system::DayOfWeek;
 
 /// Struct used as a collection of template callbacks.
 pub struct TemplateCallbacks {}

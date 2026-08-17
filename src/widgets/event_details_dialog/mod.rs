@@ -14,7 +14,7 @@ use tracing::{debug, warn};
 
 use crate::{
     spawn,
-    system_settings::ClockFormat,
+    system::ClockFormat,
     utils::{self, EventPropertiesPreset, PaintableCallbacks, TemplateCallbacks},
     widgets::{
         QrCodeDialog,

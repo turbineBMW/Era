@@ -1,6 +1,6 @@
 use gettextrs::gettext;
 
-use crate::system_settings::ClockFormat;
+use crate::system::ClockFormat;
 
 #[derive(Debug)]
 enum TzCase {

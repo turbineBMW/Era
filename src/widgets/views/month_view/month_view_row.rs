@@ -9,7 +9,7 @@ use clepsydre::{Calendar, Event, Subscription, Timeframe, prelude::*};
 use glib::{DateTime, clone};
 use jiff::ToSpan;
 
-use crate::{Application, system_settings::DayOfWeek, utils, widgets::window::Styling};
+use crate::{Application, system::DayOfWeek, utils, widgets::window::Styling};
 
 use super::{
     event_widget::EventWidget, month_view_header::MonthViewHeader, overflow_button::OverflowButton,
@@ -307,7 +307,7 @@ mod imp {
             self.update_styling();
 
             application
-                .system_settings()
+                .system()
                 .connect_first_day_of_week_notify(clone!(
                     #[weak(rename_to = imp)]
                     self,
@@ -705,7 +705,7 @@ mod imp {
                 panic!("Invalid date: year={year}, month={month}, day={day}");
             };
 
-            let first_day_of_week = Application::default().system_settings().first_day_of_week();
+            let first_day_of_week = Application::default().system().first_day_of_week();
 
             let base = match first_day_of_week {
                 DayOfWeek::Monday => 1,
@@ -771,7 +771,7 @@ mod imp {
                 panic!("Invalid date: year={year}, month={month}, day={day}");
             };
 
-            let first_day_of_week = Application::default().system_settings().first_day_of_week();
+            let first_day_of_week = Application::default().system().first_day_of_week();
 
             let base = match first_day_of_week {
                 DayOfWeek::Monday => 1,
@@ -852,7 +852,7 @@ mod imp {
             let day = self.day.get();
 
             let application = Application::default();
-            let first_day_of_week = application.system_settings().first_day_of_week();
+            let first_day_of_week = application.system().first_day_of_week();
             let timezone = application.current_datetime().timezone();
 
             let date = DateTime::new(&timezone, year, month, day, 0, 0, 0.)
@@ -876,7 +876,7 @@ mod imp {
                 panic!("Invalid date: year={year}, month={month}, day={day}");
             };
 
-            let first_day_of_week = Application::default().system_settings().first_day_of_week();
+            let first_day_of_week = Application::default().system().first_day_of_week();
 
             let base = match first_day_of_week {
                 DayOfWeek::Monday => 1,

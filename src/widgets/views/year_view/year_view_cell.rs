@@ -3,9 +3,7 @@ use std::{cell::Cell, cmp};
 use adw::{prelude::*, subclass::prelude::*};
 use glib::clone;
 
-use crate::{
-    Application, system_settings::DayOfWeek, utils::TemplateCallbacks, widgets::window::Styling,
-};
+use crate::{Application, system::DayOfWeek, utils::TemplateCallbacks, widgets::window::Styling};
 
 mod imp {
     use super::*;
@@ -116,8 +114,8 @@ mod imp {
                 }
             ));
 
-            let system_settings = application.system_settings();
-            system_settings.connect_first_day_of_week_notify(clone!(
+            let system = application.system();
+            system.connect_first_day_of_week_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 #[weak]
@@ -234,10 +232,10 @@ mod imp {
             let first_day = jiff::civil::date(year as i16, month as i8, 1);
             let days_in_month = first_day.days_in_month() as usize;
 
-            // Get the first day of week from system settings
+            // Get the first day of week from system state
             let application = Application::default();
-            let system_settings = application.system_settings();
-            let first_day_of_week = system_settings.first_day_of_week();
+            let system = application.system();
+            let first_day_of_week = system.first_day_of_week();
             let first_day_offset = Self::first_day_of_week_offset(first_day_of_week);
 
             // Calculate the position of the first day of the month in the grid
@@ -348,10 +346,10 @@ mod imp {
             if year == current_year && month == current_month {
                 let first_day = jiff::civil::date(year as i16, month as i8, 1);
 
-                // Get the first day of week from system settings
+                // Get the first day of week from system state
                 let application = Application::default();
-                let system_settings = application.system_settings();
-                let first_day_of_week = system_settings.first_day_of_week();
+                let system = application.system();
+                let first_day_of_week = system.first_day_of_week();
                 let first_day_offset = Self::first_day_of_week_offset(first_day_of_week);
 
                 // Calculate the position accounting for first day of week setting

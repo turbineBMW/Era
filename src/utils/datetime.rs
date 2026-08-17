@@ -1,6 +1,6 @@
 use glib::DateTime;
 
-use crate::system_settings::DayOfWeek;
+use crate::system::DayOfWeek;
 
 /// Returns the last occurrence of the given weekday before or on the given date.
 pub fn get_last_occurrence_of_weekday(date: DateTime, weekday: DayOfWeek) -> DateTime {
