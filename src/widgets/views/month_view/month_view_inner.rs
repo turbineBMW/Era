@@ -12,8 +12,7 @@ use jiff::ToSpan;
 
 use crate::{
     Application,
-    system::DayOfWeek,
-    utils::{self, EventPropertiesPreset},
+    utils::{self, EventPropertiesPreset, WeekDay},
     widgets::{
         views::month_view::{event_widget::EventWidget, overflow_button::OverflowButton},
         window::Styling,
@@ -622,13 +621,13 @@ mod imp {
             let date = jiff::civil::Date::new(year as i16, month as i8, day as i8).unwrap();
 
             let base = match Application::default().system().first_day_of_week() {
-                DayOfWeek::Monday => 1,
-                DayOfWeek::Tuesday => 2,
-                DayOfWeek::Wednesday => 3,
-                DayOfWeek::Thursday => 4,
-                DayOfWeek::Friday => 5,
-                DayOfWeek::Saturday => 6,
-                DayOfWeek::Sunday => 7,
+                WeekDay::Monday => 1,
+                WeekDay::Tuesday => 2,
+                WeekDay::Wednesday => 3,
+                WeekDay::Thursday => 4,
+                WeekDay::Friday => 5,
+                WeekDay::Saturday => 6,
+                WeekDay::Sunday => 7,
             };
             let offset = match date.weekday() {
                 jiff::civil::Weekday::Monday => 1,

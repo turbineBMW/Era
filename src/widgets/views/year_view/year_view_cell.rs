@@ -3,7 +3,7 @@ use std::{cell::Cell, cmp};
 use adw::{prelude::*, subclass::prelude::*};
 use glib::clone;
 
-use crate::{Application, system::DayOfWeek, utils::TemplateCallbacks, widgets::window::Styling};
+use crate::{Application, utils::TemplateCallbacks, utils::WeekDay, widgets::window::Styling};
 
 mod imp {
     use super::*;
@@ -213,16 +213,16 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl YearViewCell {
-        /// Convert FirstDayOfWeek to a numeric offset (0 = Monday, 6 = Sunday).
-        fn first_day_of_week_offset(first_day_of_week: DayOfWeek) -> usize {
+        /// Convert WeekDay to a numeric offset (0 = Monday, 6 = Sunday).
+        fn first_day_of_week_offset(first_day_of_week: WeekDay) -> usize {
             match first_day_of_week {
-                DayOfWeek::Monday => 0,
-                DayOfWeek::Tuesday => 1,
-                DayOfWeek::Wednesday => 2,
-                DayOfWeek::Thursday => 3,
-                DayOfWeek::Friday => 4,
-                DayOfWeek::Saturday => 5,
-                DayOfWeek::Sunday => 6,
+                WeekDay::Monday => 0,
+                WeekDay::Tuesday => 1,
+                WeekDay::Wednesday => 2,
+                WeekDay::Thursday => 3,
+                WeekDay::Friday => 4,
+                WeekDay::Saturday => 5,
+                WeekDay::Sunday => 6,
             }
         }
 

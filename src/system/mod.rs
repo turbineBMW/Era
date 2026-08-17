@@ -2,6 +2,8 @@ use std::cell::Cell;
 
 use gtk::{prelude::*, subclass::prelude::*};
 
+use crate::utils::WeekDay;
+
 #[cfg(feature = "platform-android")]
 mod android;
 #[cfg(feature = "platform-flatpak")]
@@ -16,28 +18,6 @@ pub enum ClockFormat {
     /// The 24h format.
     #[default]
     TwentyFourHours,
-}
-
-/// The first day of the week setting.
-#[derive(Debug, Default, Hash, Eq, PartialEq, Clone, Copy, glib::Enum)]
-#[enum_type(name = "DayOfWeek")]
-#[repr(i32)]
-pub enum DayOfWeek {
-    #[default]
-    #[enum_value(name = "Monday", nick = "monday")]
-    Monday,
-    #[enum_value(name = "Tuesday", nick = "tuesday")]
-    Tuesday,
-    #[enum_value(name = "Wednesday", nick = "wednesday")]
-    Wednesday,
-    #[enum_value(name = "Thursday", nick = "thursday")]
-    Thursday,
-    #[enum_value(name = "Friday", nick = "friday")]
-    Friday,
-    #[enum_value(name = "Saturday", nick = "saturday")]
-    Saturday,
-    #[enum_value(name = "Sunday", nick = "sunday")]
-    Sunday,
 }
 
 mod imp {
@@ -59,8 +39,8 @@ mod imp {
         #[property(get, builder(ClockFormat::default()))]
         pub(super) clock_format: Cell<ClockFormat>,
         /// The first day of the week setting.
-        #[property(get, builder(DayOfWeek::default()))]
-        pub(super) first_day_of_week: Cell<DayOfWeek>,
+        #[property(get, builder(WeekDay::default()))]
+        pub(super) first_day_of_week: Cell<WeekDay>,
     }
 
     #[glib::object_subclass]
@@ -101,7 +81,7 @@ impl System {
     }
 
     /// Set the first day of the week setting.
-    fn set_first_day_of_week(&self, first_day_of_week: DayOfWeek) {
+    fn set_first_day_of_week(&self, first_day_of_week: WeekDay) {
         if self.first_day_of_week() == first_day_of_week {
             return;
         }

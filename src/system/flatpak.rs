@@ -6,9 +6,9 @@ use glib::clone;
 use gtk::{glib, prelude::*, subclass::prelude::*};
 use tracing::error;
 
-use crate::spawn;
+use crate::{spawn, utils::WeekDay};
 
-use super::{ClockFormat, DayOfWeek, System, SystemImpl};
+use super::{ClockFormat, System, SystemImpl};
 
 const GNOME_DESKTOP_INTERFACE_NAMESPACE: &str = "org.gnome.desktop.interface";
 const GNOME_DESKTOP_CALENDAR_NAMESPACE: &str = "org.gnome.desktop.calendar";
@@ -41,7 +41,7 @@ impl TryFrom<zvariant::OwnedValue> for ClockFormat {
     }
 }
 
-impl TryFrom<&zvariant::OwnedValue> for DayOfWeek {
+impl TryFrom<&zvariant::OwnedValue> for WeekDay {
     type Error = zvariant::Error;
 
     fn try_from(value: &zvariant::OwnedValue) -> Result<Self, Self::Error> {
@@ -66,7 +66,7 @@ impl TryFrom<&zvariant::OwnedValue> for DayOfWeek {
     }
 }
 
-impl TryFrom<zvariant::OwnedValue> for DayOfWeek {
+impl TryFrom<zvariant::OwnedValue> for WeekDay {
     type Error = zvariant::Error;
 
     fn try_from(value: zvariant::OwnedValue) -> Result<Self, Self::Error> {
@@ -132,7 +132,7 @@ mod imp {
             // Read the initial first day of the week value.
             let proxy_clone = proxy.clone();
             match proxy_clone
-                .read::<DayOfWeek>(GNOME_DESKTOP_CALENDAR_NAMESPACE, WEEK_START_DAY_KEY)
+                .read::<WeekDay>(GNOME_DESKTOP_CALENDAR_NAMESPACE, WEEK_START_DAY_KEY)
                 .await
             {
                 Ok(first_day_of_week) => obj
@@ -179,7 +179,7 @@ mod imp {
                         } else if namespace == GNOME_DESKTOP_CALENDAR_NAMESPACE
                             && key == WEEK_START_DAY_KEY
                         {
-                            match DayOfWeek::try_from(setting.value()) {
+                            match WeekDay::try_from(setting.value()) {
                                 Ok(first_day_of_week) => {
                                     obj.set_first_day_of_week(first_day_of_week)
                                 }

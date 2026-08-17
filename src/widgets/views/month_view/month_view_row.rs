@@ -9,7 +9,7 @@ use clepsydre::{Calendar, Event, Subscription, Timeframe, prelude::*};
 use glib::{DateTime, clone};
 use jiff::ToSpan;
 
-use crate::{Application, system::DayOfWeek, utils, widgets::window::Styling};
+use crate::{Application, utils, utils::WeekDay, widgets::window::Styling};
 
 use super::{
     event_widget::EventWidget, month_view_header::MonthViewHeader, overflow_button::OverflowButton,
@@ -708,13 +708,13 @@ mod imp {
             let first_day_of_week = Application::default().system().first_day_of_week();
 
             let base = match first_day_of_week {
-                DayOfWeek::Monday => 1,
-                DayOfWeek::Tuesday => 2,
-                DayOfWeek::Wednesday => 3,
-                DayOfWeek::Thursday => 4,
-                DayOfWeek::Friday => 5,
-                DayOfWeek::Saturday => 6,
-                DayOfWeek::Sunday => 7,
+                WeekDay::Monday => 1,
+                WeekDay::Tuesday => 2,
+                WeekDay::Wednesday => 3,
+                WeekDay::Thursday => 4,
+                WeekDay::Friday => 5,
+                WeekDay::Saturday => 6,
+                WeekDay::Sunday => 7,
             };
             let offset = match date.weekday() {
                 jiff::civil::Weekday::Monday => 1,
@@ -774,13 +774,13 @@ mod imp {
             let first_day_of_week = Application::default().system().first_day_of_week();
 
             let base = match first_day_of_week {
-                DayOfWeek::Monday => 1,
-                DayOfWeek::Tuesday => 2,
-                DayOfWeek::Wednesday => 3,
-                DayOfWeek::Thursday => 4,
-                DayOfWeek::Friday => 5,
-                DayOfWeek::Saturday => 6,
-                DayOfWeek::Sunday => 7,
+                WeekDay::Monday => 1,
+                WeekDay::Tuesday => 2,
+                WeekDay::Wednesday => 3,
+                WeekDay::Thursday => 4,
+                WeekDay::Friday => 5,
+                WeekDay::Saturday => 6,
+                WeekDay::Sunday => 7,
             };
             let offset = match date.weekday() {
                 jiff::civil::Weekday::Monday => 1,
@@ -879,13 +879,13 @@ mod imp {
             let first_day_of_week = Application::default().system().first_day_of_week();
 
             let base = match first_day_of_week {
-                DayOfWeek::Monday => 1,
-                DayOfWeek::Tuesday => 2,
-                DayOfWeek::Wednesday => 3,
-                DayOfWeek::Thursday => 4,
-                DayOfWeek::Friday => 5,
-                DayOfWeek::Saturday => 6,
-                DayOfWeek::Sunday => 7,
+                WeekDay::Monday => 1,
+                WeekDay::Tuesday => 2,
+                WeekDay::Wednesday => 3,
+                WeekDay::Thursday => 4,
+                WeekDay::Friday => 5,
+                WeekDay::Saturday => 6,
+                WeekDay::Sunday => 7,
             };
             let offset = match date.weekday() {
                 jiff::civil::Weekday::Monday => 1,
