@@ -306,16 +306,14 @@ mod imp {
             self.update_event_widgets();
             self.update_styling();
 
-            application
-                .system()
-                .connect_first_day_of_week_notify(clone!(
-                    #[weak(rename_to = imp)]
-                    self,
-                    move |_| {
-                        imp.update_days();
-                        imp.update_timeframe();
-                    }
-                ));
+            application.system().connect_first_week_day_notify(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |_| {
+                    imp.update_days();
+                    imp.update_timeframe();
+                }
+            ));
             application.connect_current_datetime_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
@@ -705,9 +703,9 @@ mod imp {
                 panic!("Invalid date: year={year}, month={month}, day={day}");
             };
 
-            let first_day_of_week = Application::default().system().first_day_of_week();
+            let first_week_day = Application::default().system().first_week_day();
 
-            let base = match first_day_of_week {
+            let base = match first_week_day {
                 WeekDay::Monday => 1,
                 WeekDay::Tuesday => 2,
                 WeekDay::Wednesday => 3,
@@ -771,9 +769,9 @@ mod imp {
                 panic!("Invalid date: year={year}, month={month}, day={day}");
             };
 
-            let first_day_of_week = Application::default().system().first_day_of_week();
+            let first_week_day = Application::default().system().first_week_day();
 
-            let base = match first_day_of_week {
+            let base = match first_week_day {
                 WeekDay::Monday => 1,
                 WeekDay::Tuesday => 2,
                 WeekDay::Wednesday => 3,
@@ -845,20 +843,20 @@ mod imp {
         }
 
         /// Returns (start, end) `glib::DateTime` for this row's week,
-        /// accounting for first-day-of-week.
+        /// accounting for first-week-day.
         fn row_date_range(&self) -> (DateTime, DateTime) {
             let year = self.year.get();
             let month = self.month.get();
             let day = self.day.get();
 
             let application = Application::default();
-            let first_day_of_week = application.system().first_day_of_week();
+            let first_week_day = application.system().first_week_day();
             let timezone = application.current_datetime().timezone();
 
             let date = DateTime::new(&timezone, year, month, day, 0, 0, 0.)
                 .expect("DateTime should be valid");
 
-            let first_day = utils::get_last_occurrence_of_weekday(date, first_day_of_week);
+            let first_day = utils::get_last_occurrence_of_weekday(date, first_week_day);
             let last_day = first_day.add_days(7).expect("DateTime should be valid");
 
             (first_day, last_day)
@@ -876,9 +874,9 @@ mod imp {
                 panic!("Invalid date: year={year}, month={month}, day={day}");
             };
 
-            let first_day_of_week = Application::default().system().first_day_of_week();
+            let first_week_day = Application::default().system().first_week_day();
 
-            let base = match first_day_of_week {
+            let base = match first_week_day {
                 WeekDay::Monday => 1,
                 WeekDay::Tuesday => 2,
                 WeekDay::Wednesday => 3,
@@ -1055,7 +1053,7 @@ mod imp {
                 let label = format!(
                     "{} {} {} {}",
                     utils::TemplateCallbacks::day_name(
-                        first_day_of_week,
+                        first_week_day,
                         (date.weekday().to_monday_one_offset() - base + 1) as i32
                     ),
                     date.day(),

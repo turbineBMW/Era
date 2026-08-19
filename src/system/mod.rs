@@ -40,7 +40,7 @@ mod imp {
         pub(super) clock_format: Cell<ClockFormat>,
         /// The first day of the week setting.
         #[property(get, builder(WeekDay::default()))]
-        pub(super) first_day_of_week: Cell<WeekDay>,
+        pub(super) first_week_day: Cell<WeekDay>,
     }
 
     #[glib::object_subclass]
@@ -81,13 +81,13 @@ impl System {
     }
 
     /// Set the first day of the week setting.
-    fn set_first_day_of_week(&self, first_day_of_week: WeekDay) {
-        if self.first_day_of_week() == first_day_of_week {
+    fn set_first_week_day(&self, first_week_day: WeekDay) {
+        if self.first_week_day() == first_week_day {
             return;
         }
 
-        self.imp().first_day_of_week.set(first_day_of_week);
-        self.notify_first_day_of_week();
+        self.imp().first_week_day.set(first_week_day);
+        self.notify_first_week_day();
     }
 }
 

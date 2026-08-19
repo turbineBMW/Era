@@ -115,7 +115,7 @@ mod imp {
             ));
 
             let system = application.system();
-            system.connect_first_day_of_week_notify(clone!(
+            system.connect_first_week_day_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 #[weak]
@@ -214,7 +214,7 @@ mod imp {
     #[gtk::template_callbacks]
     impl YearViewCell {
         /// Convert WeekDay to a numeric offset (0 = Monday, 6 = Sunday).
-        fn first_day_of_week_offset(first_day_of_week: WeekDay) -> usize {
+        fn first_week_day_offset(first_day_of_week: WeekDay) -> usize {
             match first_day_of_week {
                 WeekDay::Monday => 0,
                 WeekDay::Tuesday => 1,
@@ -235,8 +235,8 @@ mod imp {
             // Get the first day of week from system state
             let application = Application::default();
             let system = application.system();
-            let first_day_of_week = system.first_day_of_week();
-            let first_day_offset = Self::first_day_of_week_offset(first_day_of_week);
+            let first_week_day = system.first_week_day();
+            let first_day_offset = Self::first_week_day_offset(first_week_day);
 
             // Calculate the position of the first day of the month in the grid
             let weekday_of_first_day = first_day.weekday().to_monday_zero_offset() as usize;
@@ -349,8 +349,8 @@ mod imp {
                 // Get the first day of week from system state
                 let application = Application::default();
                 let system = application.system();
-                let first_day_of_week = system.first_day_of_week();
-                let first_day_offset = Self::first_day_of_week_offset(first_day_of_week);
+                let first_week_day = system.first_week_day();
+                let first_day_offset = Self::first_week_day_offset(first_week_day);
 
                 // Calculate the position accounting for first day of week setting
                 let weekday_of_first_day = first_day.weekday().to_monday_zero_offset() as usize;

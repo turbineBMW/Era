@@ -135,9 +135,9 @@ mod imp {
                 .read::<WeekDay>(GNOME_DESKTOP_CALENDAR_NAMESPACE, WEEK_START_DAY_KEY)
                 .await
             {
-                Ok(first_day_of_week) => obj
+                Ok(first_week_day) => obj
                     .upcast_ref::<System>()
-                    .set_first_day_of_week(first_day_of_week),
+                    .set_first_week_day(first_week_day),
                 Err(error) => {
                     error!("Could not access first day of week system setting: {error}");
                 }
@@ -180,9 +180,7 @@ mod imp {
                             && key == WEEK_START_DAY_KEY
                         {
                             match WeekDay::try_from(setting.value()) {
-                                Ok(first_day_of_week) => {
-                                    obj.set_first_day_of_week(first_day_of_week)
-                                }
+                                Ok(first_week_day) => obj.set_first_week_day(first_week_day),
                                 Err(error) => {
                                     error!("Could not update first day of week setting: {error}");
                                 }

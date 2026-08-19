@@ -157,7 +157,7 @@ mod imp {
             self.month.set(now.month());
             self.day.set(now.day_of_month());
 
-            let first_day_of_week = application.system().first_day_of_week();
+            let first_week_day = application.system().first_week_day();
 
             let a_day_in_first_row = DateTime::new(
                 &now.timezone(),
@@ -173,7 +173,7 @@ mod imp {
             .expect("DateTime should be valid");
 
             let first_day_of_timeframe =
-                utils::get_last_occurrence_of_weekday(a_day_in_first_row, first_day_of_week);
+                utils::get_last_occurrence_of_weekday(a_day_in_first_row, first_week_day);
 
             // Setup rows
             self.rows
@@ -210,7 +210,7 @@ mod imp {
 
             Application::default()
                 .system()
-                .connect_first_day_of_week_notify(clone!(
+                .connect_first_week_day_notify(clone!(
                     #[weak(rename_to = imp)]
                     self,
                     move |_| {
@@ -620,7 +620,7 @@ mod imp {
 
             let date = jiff::civil::Date::new(year as i16, month as i8, day as i8).unwrap();
 
-            let base = match Application::default().system().first_day_of_week() {
+            let base = match Application::default().system().first_week_day() {
                 WeekDay::Monday => 1,
                 WeekDay::Tuesday => 2,
                 WeekDay::Wednesday => 3,
