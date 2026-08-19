@@ -114,7 +114,7 @@ pub mod imp {
             });
 
             klass.install_action("win.today", None, |obj, _, _| {
-                let today = Application::default().current_datetime();
+                let today = Application::default().system().datetime();
                 let year = today.year();
                 let month = today.month();
                 let day = today.day_of_month();
@@ -344,7 +344,7 @@ pub mod imp {
 
         #[template_callback]
         fn create_event(&self) {
-            let now = Application::default().current_datetime();
+            let now = Application::default().system().datetime();
 
             let tzid = now.timezone().identifier();
             let jiff_tz = jiff::tz::TimeZone::get(&tzid).unwrap();

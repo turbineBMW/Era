@@ -79,14 +79,14 @@ mod imp {
             }
 
             let application = Application::default();
-            let dt = application.current_datetime();
+            let dt = application.system().datetime();
             self.update_month_label_color(dt.year(), dt.month());
 
             obj.connect_year_notify(clone!(
                 #[weak]
                 application,
                 move |obj| {
-                    let dt = application.current_datetime();
+                    let dt = application.system().datetime();
                     obj.imp().update_month_label_color(dt.year(), dt.month());
                     obj.imp()
                         .update_day_label_color(dt.year(), dt.month(), dt.day_of_month());
@@ -97,18 +97,18 @@ mod imp {
                 #[weak]
                 application,
                 move |obj| {
-                    let dt = application.current_datetime();
+                    let dt = application.system().datetime();
                     obj.imp().update_month_label_color(dt.year(), dt.month());
                     obj.imp()
                         .update_day_label_color(dt.year(), dt.month(), dt.day_of_month());
                 }
             ));
 
-            application.connect_current_datetime_notify(clone!(
+            application.system().connect_datetime_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
-                move |application| {
-                    let dt = application.current_datetime();
+                move |system| {
+                    let dt = system.datetime();
                     imp.update_month_label_color(dt.year(), dt.month());
                     imp.update_day_label_color(dt.year(), dt.month(), dt.day_of_month());
                 }
@@ -118,10 +118,8 @@ mod imp {
             system.connect_first_week_day_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
-                #[weak]
-                application,
-                move |_| {
-                    let dt = application.current_datetime();
+                move |system| {
+                    let dt = system.datetime();
                     imp.set_days_grid();
                     imp.update_day_label_color(dt.year(), dt.month(), dt.day_of_month());
                 }

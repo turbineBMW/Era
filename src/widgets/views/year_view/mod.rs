@@ -84,7 +84,7 @@ mod imp {
             let obj = self.obj();
 
             let application = Application::default();
-            let current_year = application.current_datetime().year();
+            let current_year = application.system().datetime().year();
             self.year.set(current_year);
             obj.notify_year();
 

@@ -1,9 +1,10 @@
-use std::sync::Arc;
+use std::cell::OnceCell;
 
 use ashpd::zvariant;
 use futures_util::StreamExt;
-use glib::clone;
-use gtk::{glib, prelude::*, subclass::prelude::*};
+use gio::DBusConnection;
+use glib::{DateTime, TimeZone, clone};
+use gtk::{prelude::*, subclass::prelude::*};
 use tracing::error;
 
 use crate::{spawn, utils::WeekDay};
@@ -19,15 +20,15 @@ impl TryFrom<&zvariant::OwnedValue> for ClockFormat {
     type Error = zvariant::Error;
 
     fn try_from(value: &zvariant::OwnedValue) -> Result<Self, Self::Error> {
-        let Ok(s) = <&str>::try_from(value) else {
+        let Ok(string) = <&str>::try_from(value) else {
             return Err(zvariant::Error::IncorrectType);
         };
 
-        match s {
+        match string {
             "12h" => Ok(Self::TwelveHours),
             "24h" => Ok(Self::TwentyFourHours),
             _ => Err(zvariant::Error::Message(format!(
-                "Invalid string `{s}`, expected `12h` or `24h`"
+                "Invalid string `{string}`, expected `12h` or `24h`"
             ))),
         }
     }
@@ -60,7 +61,7 @@ impl TryFrom<&zvariant::OwnedValue> for WeekDay {
             // TODO: Retrieve from locale
             "default" => Ok(Self::Monday),
             _ => Err(zvariant::Error::Message(format!(
-                "Invalid string `{s}`, expected a day of the week"
+                "Invalid string `{s}`, expected a week day"
             ))),
         }
     }
@@ -78,7 +79,9 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default)]
-    pub struct FlatpakSystem {}
+    pub struct FlatpakSystem {
+        system_bus: OnceCell<DBusConnection>,
+    }
 
     #[glib::object_subclass]
     impl ObjectSubclass for FlatpakSystem {
@@ -91,11 +94,96 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
+            let system_bus = gio::bus_get_sync(gio::BusType::System, gio::Cancellable::NONE)
+                .expect("Failed to connect to system D-Bus");
+            self.system_bus
+                .set(system_bus)
+                .expect("System bus should not already be initialized");
+
+            self.update_datetime();
+            glib::timeout_add_seconds_local(
+                1,
+                clone!(
+                    #[weak(rename_to = imp)]
+                    self,
+                    #[upgrade_or]
+                    glib::ControlFlow::Break,
+                    move || {
+                        imp.update_datetime();
+                        glib::ControlFlow::Continue
+                    }
+                ),
+            );
+
             spawn!(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 async move {
-                    imp.init().await;
+                    let system = imp.obj().clone().upcast::<System>();
+
+                    let proxy = ashpd::desktop::settings::Settings::new().await.unwrap();
+
+                    match proxy
+                        .read::<ClockFormat>(GNOME_DESKTOP_INTERFACE_NAMESPACE, CLOCK_FORMAT_KEY)
+                        .await
+                    {
+                        Ok(clock_format) => system.set_clock_format(clock_format),
+                        Err(error) => {
+                            error!("Could not access clock format system setting: {error}");
+                        }
+                    }
+
+                    match proxy
+                        .read::<WeekDay>(GNOME_DESKTOP_CALENDAR_NAMESPACE, WEEK_START_DAY_KEY)
+                        .await
+                    {
+                        Ok(first_week_day) => system.set_first_week_day(first_week_day),
+                        Err(error) => {
+                            error!("Could not access first day of week system setting: {error}");
+                        }
+                    }
+
+                    proxy
+                        .receive_setting_changed()
+                        .await
+                        .unwrap()
+                        .for_each(move |setting| {
+                            let system_weak = system.downgrade();
+                            async move {
+                                let Some(system) = system_weak.upgrade() else {
+                                    error!(
+                                    "Could not update system setting: could not upgrade weak reference"
+                                );
+                                return;
+                            };
+
+                            let namespace = setting.namespace();
+                            let key = setting.key();
+
+                            if namespace == GNOME_DESKTOP_INTERFACE_NAMESPACE
+                                && key == CLOCK_FORMAT_KEY
+                            {
+                                match ClockFormat::try_from(setting.value()) {
+                                    Ok(clock_format) => system.set_clock_format(clock_format),
+                                    Err(error) => {
+                                        error!("Could not update clock format setting: {error}");
+                                    }
+                                }
+                            } else if namespace == GNOME_DESKTOP_CALENDAR_NAMESPACE
+                                && key == WEEK_START_DAY_KEY
+                            {
+                                match WeekDay::try_from(setting.value()) {
+                                    Ok(first_week_day) => system.set_first_week_day(first_week_day),
+                                    Err(error) => {
+                                        error!(
+                                            "Could not update first day of week setting: {error}"
+                                        );
+                                    }
+                                }
+                            }
+                            }
+                        })
+                        .await;
                 }
             ));
         }
@@ -104,91 +192,59 @@ mod imp {
     impl SystemImpl for FlatpakSystem {}
 
     impl FlatpakSystem {
-        /// Initialize the system state.
-        async fn init(&self) {
-            let obj = self.obj();
+        /// Reads the system timezone from org.freedesktop.timedate1.
+        fn read_system_timezone(&self) -> TimeZone {
+            let connection = self
+                .system_bus
+                .get()
+                .expect("System bus should be initialized");
 
-            let proxy = match ashpd::desktop::settings::Settings::new().await {
-                Ok(proxy) => proxy,
-                Err(error) => {
-                    error!("Could not access settings portal: {error}");
-                    return;
-                }
-            };
-            let proxy = Arc::new(proxy);
+            let result = connection.call_sync(
+                Some("org.freedesktop.timedate1"),
+                "/org/freedesktop/timedate1",
+                "org.freedesktop.DBus.Properties",
+                "Get",
+                Some(&glib::Variant::from((
+                    "org.freedesktop.timedate1",
+                    "Timezone",
+                ))),
+                Some(glib::VariantTy::new("(v)").expect("Variant Type should be valid")),
+                gio::DBusCallFlags::NONE,
+                -1,
+                gio::Cancellable::NONE,
+            );
 
-            // Read the initial clock format value.
-            let proxy_clone = proxy.clone();
-            match proxy_clone
-                .read::<ClockFormat>(GNOME_DESKTOP_INTERFACE_NAMESPACE, CLOCK_FORMAT_KEY)
-                .await
-            {
-                Ok(clock_format) => obj.upcast_ref::<System>().set_clock_format(clock_format),
-                Err(error) => {
-                    error!("Could not access clock format system setting: {error}");
-                }
+            let iana_name = result
+                .expect("Failed to read Timezone from timedate1")
+                .child_value(0)
+                .as_variant()
+                .expect("Variant should contain another variant")
+                .get::<String>()
+                .expect("Variant should contain a string");
+
+            TimeZone::from_identifier(Some(&iana_name)).expect("TimeZone should exist")
+        }
+
+        /// Returns the current time in the system timezone.
+        fn now(&self) -> DateTime {
+            let tz = self.read_system_timezone();
+            DateTime::now(&tz).expect("Now should exist in any timezone")
+        }
+
+        /// Updates the `current-datetime` property from the system clock.
+        fn update_datetime(&self) {
+            let new_dt = self.now();
+
+            let old = self.obj().upcast_ref::<System>().datetime();
+            let changed = old.year() != new_dt.year()
+                || old.month() != new_dt.month()
+                || old.day_of_month() != new_dt.day_of_month()
+                || old.hour() != new_dt.hour()
+                || old.minute() != new_dt.minute();
+
+            if changed {
+                self.obj().upcast_ref::<System>().set_datetime(new_dt);
             }
-
-            // Read the initial first day of the week value.
-            let proxy_clone = proxy.clone();
-            match proxy_clone
-                .read::<WeekDay>(GNOME_DESKTOP_CALENDAR_NAMESPACE, WEEK_START_DAY_KEY)
-                .await
-            {
-                Ok(first_week_day) => obj
-                    .upcast_ref::<System>()
-                    .set_first_week_day(first_week_day),
-                Err(error) => {
-                    error!("Could not access first day of week system setting: {error}");
-                }
-            }
-
-            // Listen to setting changes.
-            let setting_changed_stream = match proxy.receive_setting_changed().await {
-                Ok(stream) => stream,
-                Err(error) => {
-                    error!("Could not listen to changes of system settings: {error}");
-                    return;
-                }
-            };
-
-            let obj_weak = obj.downgrade();
-            setting_changed_stream
-                .for_each(move |setting| {
-                    let obj_weak = obj_weak.clone();
-                    async move {
-                        let Some(obj) = obj_weak.upgrade() else {
-                            error!(
-                                "Could not update system setting: could not upgrade weak reference"
-                            );
-                            return;
-                        };
-                        let obj = obj.upcast_ref::<System>();
-
-                        let namespace = setting.namespace();
-                        let key = setting.key();
-
-                        if namespace == GNOME_DESKTOP_INTERFACE_NAMESPACE && key == CLOCK_FORMAT_KEY
-                        {
-                            match ClockFormat::try_from(setting.value()) {
-                                Ok(clock_format) => obj.set_clock_format(clock_format),
-                                Err(error) => {
-                                    error!("Could not update clock format setting: {error}");
-                                }
-                            }
-                        } else if namespace == GNOME_DESKTOP_CALENDAR_NAMESPACE
-                            && key == WEEK_START_DAY_KEY
-                        {
-                            match WeekDay::try_from(setting.value()) {
-                                Ok(first_week_day) => obj.set_first_week_day(first_week_day),
-                                Err(error) => {
-                                    error!("Could not update first day of week setting: {error}");
-                                }
-                            }
-                        }
-                    }
-                })
-                .await;
         }
     }
 }

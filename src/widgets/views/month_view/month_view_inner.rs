@@ -151,7 +151,7 @@ mod imp {
             self.parent_constructed();
 
             let application = Application::default();
-            let now = application.current_datetime();
+            let now = application.system().datetime();
 
             self.year.set(now.year());
             self.month.set(now.month());
@@ -493,7 +493,7 @@ mod imp {
         /// Updates the view to the currently stored date.
         fn update_view_to_stored_date(&self) {
             let application = Application::default();
-            let timezone = application.current_datetime().timezone();
+            let timezone = application.system().datetime().timezone();
 
             let a_day_in_first_row = DateTime::new(
                 &timezone,
@@ -1063,7 +1063,8 @@ mod imp {
             self.create_drag_range.set(None);
 
             let tzid = Application::default()
-                .current_datetime()
+                .system()
+                .datetime()
                 .timezone()
                 .identifier();
             let jiff_tz = jiff::tz::TimeZone::get(&tzid).unwrap();
@@ -1173,7 +1174,8 @@ mod imp {
             self.create_drag_range.set(None);
 
             let tzid = Application::default()
-                .current_datetime()
+                .system()
+                .datetime()
                 .timezone()
                 .identifier();
             let jiff_tz = jiff::tz::TimeZone::get(&tzid).unwrap();

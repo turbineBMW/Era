@@ -1,5 +1,6 @@
-use std::cell::Cell;
+use std::cell::{Cell, RefCell};
 
+use glib::{DateTime, TimeZone};
 use gtk::{prelude::*, subclass::prelude::*};
 
 use crate::utils::WeekDay;
@@ -32,15 +33,29 @@ mod imp {
         type Type = System;
     }
 
-    #[derive(Debug, Default, glib::Properties)]
+    #[derive(Debug, glib::Properties)]
     #[properties(wrapper_type = super::System)]
     pub struct System {
+        #[property(get)]
+        pub(super) datetime: RefCell<DateTime>,
         /// The clock format setting.
         #[property(get, builder(ClockFormat::default()))]
         pub(super) clock_format: Cell<ClockFormat>,
         /// The first day of the week setting.
         #[property(get, builder(WeekDay::default()))]
         pub(super) first_week_day: Cell<WeekDay>,
+    }
+
+    impl Default for System {
+        fn default() -> Self {
+            Self {
+                datetime: RefCell::new(
+                    DateTime::new(&TimeZone::utc(), 2000, 1, 1, 0, 0, 0.).unwrap(),
+                ),
+                clock_format: Cell::default(),
+                first_week_day: Cell::default(),
+            }
+        }
     }
 
     #[glib::object_subclass]
@@ -70,7 +85,17 @@ impl System {
         obj
     }
 
-    /// Set the clock format setting.
+    /// Sets the system time.
+    fn set_datetime(&self, datetime: DateTime) {
+        if self.datetime() == datetime {
+            return;
+        }
+
+        self.imp().datetime.replace(datetime);
+        self.notify_datetime();
+    }
+
+    /// Sets the clock format setting.
     fn set_clock_format(&self, clock_format: ClockFormat) {
         if self.clock_format() == clock_format {
             return;
@@ -80,7 +105,7 @@ impl System {
         self.notify_clock_format();
     }
 
-    /// Set the first day of the week setting.
+    /// Sets the first day of the week setting.
     fn set_first_week_day(&self, first_week_day: WeekDay) {
         if self.first_week_day() == first_week_day {
             return;

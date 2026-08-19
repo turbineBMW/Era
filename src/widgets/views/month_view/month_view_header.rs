@@ -59,13 +59,15 @@ mod imp {
             self.update_today();
             self.update_styling();
 
-            Application::default().connect_current_datetime_notify(clone!(
-                #[weak(rename_to = imp)]
-                self,
-                move |_| {
-                    imp.update_today();
-                }
-            ));
+            Application::default()
+                .system()
+                .connect_datetime_notify(clone!(
+                    #[weak(rename_to = imp)]
+                    self,
+                    move |_| {
+                        imp.update_today();
+                    }
+                ));
         }
     }
 
@@ -129,7 +131,7 @@ mod imp {
 
         /// Updates the style in case the day of this cell is the current day of the system.
         fn update_today(&self) {
-            let today = Application::default().current_datetime();
+            let today = Application::default().system().datetime();
 
             if today.year() == self.year.get()
                 && today.month() == self.month.get()

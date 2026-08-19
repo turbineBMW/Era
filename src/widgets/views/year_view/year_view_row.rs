@@ -70,14 +70,14 @@ mod imp {
             self.update_styling();
 
             let application = Application::default();
-            let current_year = application.current_datetime().year();
+            let current_year = application.system().datetime().year();
             self.update_year_label_color(current_year);
 
-            application.connect_current_datetime_notify(clone!(
+            application.system().connect_datetime_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
-                move |application| {
-                    let current_year = application.current_datetime().year();
+                move |system| {
+                    let current_year = system.datetime().year();
                     imp.update_year_label_color(current_year);
                 }
             ));
@@ -200,7 +200,7 @@ mod imp {
             self.year.set(year);
 
             let application = Application::default();
-            let current_year = application.current_datetime().year();
+            let current_year = application.system().datetime().year();
             self.update_year_label_color(current_year);
 
             self.obj().notify_year();

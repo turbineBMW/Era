@@ -314,7 +314,7 @@ mod imp {
                     imp.update_timeframe();
                 }
             ));
-            application.connect_current_datetime_notify(clone!(
+            application.system().connect_datetime_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 move |_| {
@@ -851,7 +851,7 @@ mod imp {
 
             let application = Application::default();
             let first_week_day = application.system().first_week_day();
-            let timezone = application.current_datetime().timezone();
+            let timezone = application.system().datetime().timezone();
 
             let date = DateTime::new(&timezone, year, month, day, 0, 0, 0.)
                 .expect("DateTime should be valid");
