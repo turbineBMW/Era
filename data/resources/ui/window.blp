@@ -177,6 +177,73 @@ template $EraWindow: Adw.ApplicationWindow {
                 }
               };
             }
+
+            StackPage {
+              name: "agenda";
+              title: _("Agenda");
+
+              child: Adw.ToolbarView {
+                [top]
+                Adw.HeaderBar {
+                  title-widget: Adw.WindowTitle {
+                    title: "WIP";
+                  };
+
+                  [end]
+                  MenuButton {
+                    primary: true;
+                    icon-name: "open-menu-symbolic";
+                    tooltip-text: _("Main Menu");
+                    menu-model: primary_menu;
+                  }
+
+                  [end]
+                  Button {
+                    icon-name: "system-search-symbolic";
+                    tooltip-text: _("Search");
+                    action-name: "win.search-events";
+
+                    styles [
+                      "flat",
+                    ]
+                  }
+                }
+
+                content: Adw.LayoutSlot {
+                  id: "agenda_view";
+                };
+
+                [bottom]
+                ActionBar {
+                  [start]
+                  Button {
+                    action-name: "win.today";
+
+                    child: Adw.ButtonContent {
+                      label: _("_Today");
+                      use-underline: true;
+                      icon-name: "today-symbolic";
+                      can-shrink: true;
+                      tooltip-text: _("Go to Today");
+                    };
+                  }
+
+                  [end]
+                  Button {
+                    icon-name: "list-add-symbolic";
+                    tooltip-text: _("Create Event");
+                    clicked => $create_event(template);
+                  }
+
+                  [end]
+                  Button {
+                    icon-name: "x-office-calendar-symbolic";
+                    tooltip-text: _("Manage Calendars");
+                    action-name: "win.manage-calendars";
+                  }
+                }
+              };
+            }
           };
         }
 
@@ -238,6 +305,17 @@ template $EraWindow: Adw.ApplicationWindow {
 
                   child: Adw.LayoutSlot {
                     id: "month_view";
+                  };
+                }
+
+                Adw.ViewStackPage {
+                  name: "agenda";
+                  title: _("_Agenda");
+                  use-underline: true;
+                  icon-name: "month-symbolic";
+
+                  child: Adw.LayoutSlot {
+                    id: "agenda_view";
                   };
                 }
               };
@@ -322,6 +400,9 @@ template $EraWindow: Adw.ApplicationWindow {
             }
           }
         }
+
+        [agenda_view]
+        $AgendaView agenda_view {}
       };
     }
   };

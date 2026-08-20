@@ -647,6 +647,14 @@ mod imp {
                     } else {
                         button.set_small_mode(false);
                         button.set_text(format!("+{count}"));
+                        let datetime = self.day_boundaries_utc.borrow().as_ref().cloned().unwrap()
+                            [column]
+                            .clone();
+                        button.set_year_month_day(
+                            datetime.year(),
+                            datetime.month(),
+                            datetime.day_of_month(),
+                        );
                     }
                     button.set_child_visible(true);
 

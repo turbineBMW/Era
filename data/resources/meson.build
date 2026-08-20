@@ -52,6 +52,9 @@ blueprints = custom_target(
         'ui/sidebar/sidebar.blp',
         'ui/sidebar/sidebar_calendar_row.blp',
         # Views
+        # Agenda View
+        'ui/views/agenda_view/agenda_view.blp',
+        'ui/views/agenda_view/agenda_view_row.blp',
         # Month View
         'ui/views/month_view/event_widget.blp',
         'ui/views/month_view/month_view.blp',

@@ -9,7 +9,7 @@ use crate::{
     utils::{EventPropertiesPreset, TemplateCallbacks},
     widgets::{
         CalendarManagementDialog, EventCreationDialog, SearchDialog, Sidebar,
-        views::{MonthView, YearView},
+        views::{AgendaView, MonthView, YearView},
     },
 };
 
@@ -47,6 +47,8 @@ pub mod imp {
         year_view: TemplateChild<YearView>,
         #[template_child]
         month_view: TemplateChild<MonthView>,
+        #[template_child]
+        agenda_view: TemplateChild<AgendaView>,
         #[template_child]
         event_creation_dialog: TemplateChild<EventCreationDialog>,
         #[template_child]
@@ -118,8 +120,9 @@ pub mod imp {
                 let year = today.year();
                 let month = today.month();
                 let day = today.day_of_month();
-                obj.imp().month_view.set_year_month_day(year, month, day);
                 obj.imp().year_view.set_year(year);
+                obj.imp().month_view.set_year_month_day(year, month, day);
+                obj.imp().agenda_view.set_year_month_day(year, month, day);
             });
             klass.add_binding_action(gdk::Key::T, gdk::ModifierType::CONTROL_MASK, "win.today");
             klass.add_binding_action(
@@ -128,6 +131,21 @@ pub mod imp {
                 "win.today",
             );
             klass.add_binding_action(gdk::Key::Down, gdk::ModifierType::ALT_MASK, "win.today");
+
+            klass.install_action(
+                "win.show-agenda-view",
+                Some(&glib::VariantType::new("(iii)").unwrap()),
+                |obj, _action_name, parameter| {
+                    let (year, month, day) = parameter
+                        .unwrap()
+                        .get::<(i32, i32, i32)>()
+                        .expect("Parameter should be of type EventPropertiesPreset");
+
+                    obj.imp().wide_view_stack.set_visible_child_name("agenda");
+                    obj.imp().narrow_stack.set_visible_child_name("agenda");
+                    obj.imp().agenda_view.set_year_month_day(year, month, day);
+                },
+            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -219,6 +237,7 @@ pub mod imp {
                     {
                         "year" => imp.wide_view_stack.set_visible_child_name("year"),
                         "month" => imp.wide_view_stack.set_visible_child_name("month"),
+                        "agenda" => imp.wide_view_stack.set_visible_child_name("agenda"),
                         name => panic!("Unknown narrow stack child name: {name}"),
                     }
                 }
@@ -237,6 +256,7 @@ pub mod imp {
                         {
                             "year" => imp.narrow_stack.set_visible_child_name("year"),
                             "month" => imp.narrow_stack.set_visible_child_name("month"),
+                            "agenda" => imp.narrow_stack.set_visible_child_name("agenda"),
                             name => panic!("Unknown wide view stack child name: {name}"),
                         }
                     }

@@ -19,6 +19,9 @@ mod imp {
         #[template_child]
         image: TemplateChild<gtk::Image>,
 
+        year: Cell<i32>,
+        month: Cell<i32>,
+        day: Cell<i32>,
         small_mode: Cell<bool>,
     }
 
@@ -85,12 +88,18 @@ mod imp {
             self.small_mode.set(small_mode);
         }
 
+        pub(super) fn set_year_month_day(&self, year: i32, month: i32, day: i32) {
+            self.year.set(year);
+            self.month.set(month);
+            self.day.set(day);
+        }
+
         #[template_callback]
         fn open_day_list(&self) {
-            self.obj().grab_focus();
-
-            let dialog = adw::Dialog::new();
-            dialog.present(Some(&*self.obj()));
+            let _ = self.obj().activate_action(
+                "win.show-agenda-view",
+                Some(&(self.year.get(), self.month.get(), self.day.get()).to_variant()),
+            );
         }
     }
 }
@@ -108,6 +117,10 @@ impl OverflowButton {
 
     pub fn set_small_mode(&self, small_mode: bool) {
         self.imp().set_small_mode(small_mode);
+    }
+
+    pub fn set_year_month_day(&self, year: i32, month: i32, day: i32) {
+        self.imp().set_year_month_day(year, month, day);
     }
 }
 

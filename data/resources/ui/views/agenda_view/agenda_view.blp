@@ -1,0 +1,58 @@
+using Gtk 4.0;
+using Adw 1;
+using Clepsydre 0;
+
+template $AgendaView: Box {
+  styles [
+    "agenda-view",
+  ]
+
+  orientation: vertical;
+
+  Label {
+    label: bind $day_label(template, template.year, template.month, template.day);
+
+    styles [
+      "title-1",
+    ]
+  }
+
+  Stack stack {
+    // TODO: Use this once Subscription has n-items property
+    // visible-child-name: bind $ternary(
+    //   $is_zero(events.model as <Gio.ListModel> as <Clepsydre.Subscription>.n-items) as <bool>,
+    //   "empty",
+    //   "events"
+    // );
+    StackPage {
+      name: "empty";
+
+      child: Adw.StatusPage {
+        icon-name: "loupe-symbolic";
+        title: _("No events on this day");
+      };
+    }
+
+    StackPage {
+      name: "events";
+
+      child: ScrolledWindow {
+        Adw.ClampScrollable {
+          ListView events {
+            single-click-activate: true;
+
+            factory: BuilderListItemFactory {
+              template ListItem {
+                child: $SearchResultRow {
+                  event: bind template.item as <Clepsydre.Event>;
+                };
+              }
+            };
+
+            activate => $open_event_details(template);
+          }
+        }
+      };
+    }
+  }
+}

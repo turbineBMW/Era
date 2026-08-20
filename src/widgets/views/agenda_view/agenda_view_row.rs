@@ -10,17 +10,17 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/search_result_row.ui")]
-    #[properties(wrapper_type = super::SearchResultRow)]
-    pub struct SearchResultRow {
+    #[template(resource = "/io/gitlab/TitouanReal/Era/agenda_view_row.ui")]
+    #[properties(wrapper_type = super::AgendaViewRow)]
+    pub struct AgendaViewRow {
         #[property(get, set)]
         event: RefCell<Option<Event>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for SearchResultRow {
-        const NAME: &'static str = "SearchResultRow";
-        type Type = super::SearchResultRow;
+    impl ObjectSubclass for AgendaViewRow {
+        const NAME: &'static str = "AgendaViewRow";
+        type Type = super::AgendaViewRow;
         type ParentType = gtk::Box;
 
         fn class_init(klass: &mut Self::Class) {
@@ -28,8 +28,6 @@ mod imp {
 
             klass.bind_template();
             klass.bind_template_callbacks();
-
-            klass.set_css_name("search-result-row");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -38,12 +36,12 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for SearchResultRow {}
-    impl WidgetImpl for SearchResultRow {}
-    impl BoxImpl for SearchResultRow {}
+    impl ObjectImpl for AgendaViewRow {}
+    impl WidgetImpl for AgendaViewRow {}
+    impl BoxImpl for AgendaViewRow {}
 
     #[gtk::template_callbacks]
-    impl SearchResultRow {
+    impl AgendaViewRow {
         #[template_callback]
         fn get_start_time(&self, start: DateTime, all_day: bool) -> String {
             if all_day {
@@ -69,7 +67,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct SearchResultRow(ObjectSubclass<imp::SearchResultRow>)
+    pub struct AgendaViewRow(ObjectSubclass<imp::AgendaViewRow>)
     @extends gtk::Widget, gtk::Box,
     @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
 }
