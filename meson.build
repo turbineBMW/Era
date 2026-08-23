@@ -36,7 +36,16 @@ era_deps += dependency(
     },
 )
 
-if backend == 'eds'
+if backend == 'android'
+    # TODO: Remove this once Meson handles git dependencies better
+    era_deps += dependency(
+        'clepsydre-android-0.1-rs',
+        version: '>= 0.1',
+        default_options: {
+            'clepsydre-android': true,
+        },
+    )
+elif backend == 'eds'
     era_deps += dependency(
         'clepsydre-eds-0',
         version: '>= 0.1',
@@ -80,7 +89,9 @@ desktop_file_validate = find_program('desktop-file-validate', required: true)
 application_name = 'Era'
 base_resource_path = '/io/gitlab/TitouanReal/' + application_name
 
-if backend == 'eds'
+if backend == 'android'
+    backend_name = 'Android'
+elif backend == 'eds'
     backend_name = 'Eds'
 elif backend == 'mock'
     backend_name = 'Mock'
@@ -115,7 +126,9 @@ subdir('po')
 
 features = []
 
-if backend == 'eds'
+if backend == 'android'
+    features += 'backend-android'
+elif backend == 'eds'
     features += 'backend-eds'
 elif backend == 'mock'
     features += 'backend-mock'
@@ -134,7 +147,7 @@ cargo_module = import('rust').workspace(
     features: features,
 )
 crate = cargo_module.package()
-crate.executable(install: true, install_dir: bindir, dependencies: era_deps)
+crate.executable(install: true, dependencies: era_deps)
 
 gnome.post_install(
     glib_compile_schemas: true,

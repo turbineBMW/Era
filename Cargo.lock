@@ -610,6 +610,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "clepsydre-android"
+version = "0.1.0"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#6bf8968f29493e0479fc3bddfdbef396941f30ff"
+dependencies = [
+ "clepsydre-rebind",
+ "glib",
+]
+
+[[package]]
 name = "clepsydre-eds"
 version = "0.1.0"
 source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#6bf8968f29493e0479fc3bddfdbef396941f30ff"
@@ -1348,6 +1357,7 @@ name = "era"
 version = "0.1.0"
 dependencies = [
  "ashpd",
+ "clepsydre-android",
  "clepsydre-eds",
  "clepsydre-mock",
  "clepsydre-p2panda",

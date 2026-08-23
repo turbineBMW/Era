@@ -12,6 +12,7 @@ codegen-units = 1
 adw = { package = "libadwaita", version = "0.9.1", features = ["v1_9", "gtk_v4_22", "gio_v2_80"] }
 ashpd = { version = "0.13.13", default-features = false, features = ["async-io", "settings", "file_chooser", "open_uri"] }
 clepsydre = { package = "clepsydre-rebind", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git" }
+clepsydre-android = { package = "clepsydre-android", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git", optional = true }
 clepsydre-eds = { package = "clepsydre-eds", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git", optional = true }
 clepsydre-mock = { package = "clepsydre-mock", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git", optional = true }
 clepsydre-p2panda = { package = "clepsydre-p2panda", git = "https://gitlab.gnome.org/TitouanReal/clepsydre.git", optional = true }
@@ -32,6 +33,7 @@ url = "2.5.8"
 [features]
 default = ["backend-eds", "platform-flatpak"]
 
+backend-android = ["dep:clepsydre-android"]
 backend-eds = ["dep:clepsydre-eds"]
 backend-mock = ["dep:clepsydre-mock"]
 backend-p2panda = ["dep:clepsydre-p2panda"]

@@ -21,21 +21,25 @@ use self::{
 
 // Verify Clepsydre Backend
 #[cfg(not(any(
+    feature = "backend-android",
     feature = "backend-eds",
     feature = "backend-mock",
     feature = "backend-p2panda"
 )))]
 compile_error!(
-    "You must enable EXACTLY ONE backend feature: `backend-eds`, `backend-mock`, or `backend-p2panda`."
+    "You must enable EXACTLY ONE backend feature: `backend-android`, `backend-eds`, `backend-mock`, or `backend-p2panda`."
 );
 
 #[cfg(any(
     all(feature = "backend-eds", feature = "backend-mock"),
     all(feature = "backend-eds", feature = "backend-p2panda"),
+    all(feature = "backend-eds", feature = "backend-android"),
     all(feature = "backend-mock", feature = "backend-p2panda"),
+    all(feature = "backend-mock", feature = "backend-android"),
+    all(feature = "backend-p2panda", feature = "backend-android"),
 ))]
 compile_error!(
-    "Multiple backend features enabled! Choose only ONE: `backend-eds`, `backend-mock`, or `backend-p2panda`."
+    "Multiple backend features enabled! Choose only ONE: `backend-eds`, `backend-mock`, `backend-p2panda`, or `backend-android`."
 );
 
 // Verify Platform
