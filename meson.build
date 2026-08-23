@@ -17,13 +17,14 @@ gnome = import('gnome')
 
 era_deps = []
 
-dependency('gtk4', version: '>= 4.22')
-dependency('libadwaita-1', version: '>= 1.9')
-dependency(
+era_deps += dependency('gtk4', version: '>= 4.22')
+era_deps += dependency('libadwaita-1', version: '>= 1.9')
+era_deps += dependency(
     'clepsydre-0',
     version: '>= 0.1',
     default_options: {
         'libclepsydre': true,
+        'introspection': true,
     },
 )
 # TODO: Remove this once Meson handles git dependencies better
@@ -36,11 +37,12 @@ era_deps += dependency(
 )
 
 if backend == 'eds'
-    dependency(
+    era_deps += dependency(
         'clepsydre-eds-0',
         version: '>= 0.1',
         default_options: {
             'libclepsydre-eds': true,
+            'introspection': true,
         },
     )
     # TODO: Remove this once Meson handles git dependencies better
