@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:gnome="http://api.gnome.org/doap-extensions#"
+         xmlns="http://usefulinc.com/ns/doap#">
+
+  <name>Era</name>
+  <shortname>era</shortname>
+
+  <homepage rdf:resource="https://gitlab.gnome.org/TitouanReal/era" />
+  <bug-database rdf:resource="https://gitlab.gnome.org/TitouanReal/era/issues/" />
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Titouan Real</foaf:name>
+      <foaf:mbox rdf:resource="mailto:titouan.real@gmail.com" />
+      <gnome:userid>titouanreal</gnome:userid>
+    </foaf:Person>
+  </maintainer>
+
+  <description>Era is a time management application designed to help you stay organized and productive.</description>
+  <programming-language>Rust</programming-language>
+</Project>

@@ -11,7 +11,7 @@
     </description>
 
     <developer id="io.gitlab.titouanreal">
-        <name translatable="no">Titouan Real</name>
+        <name translate="no">Titouan Real</name>
     </developer>
 
     <url type="homepage">https://gitlab.gnome.org/TitouanReal/era</url>
