@@ -185,7 +185,7 @@ hyper-1.11.0/
 hyper-rustls-0.27.9/
 hyper-util-0.1.20/
 iana-time-zone-0.1.65/
-icalendar-0.17.12/
+icalendar-0.17.13/
 icu_collections-2.2.0/
 icu_locale_core-2.2.0/
 icu_normalizer-2.2.0/
@@ -212,7 +212,7 @@ iroh-metrics-derive-1.0.1/
 iroh-relay-1.0.3/
 irpc-0.17.0/
 irpc-derive-0.17.0/
-iso8601-0.6.3/
+iso8601-0.6.5/
 itoa-1.0.18/
 jiff-0.2.35/
 jiff-core-0.1.0/

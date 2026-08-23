@@ -127,7 +127,10 @@ elif platform == 'android'
     features += 'platform-android'
 endif
 
-cargo_module = import('rust').workspace(default_features: false, features: features)
+cargo_module = import('rust').workspace(
+    default_features: false,
+    features: features,
+)
 crate = cargo_module.package()
 crate.executable(install: true, install_dir: bindir, dependencies: era_deps)
 

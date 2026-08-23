@@ -17,7 +17,6 @@ blueprints = custom_target(
         'ui/calendar_management_dialog/calendar_management_dialog.blp',
         'ui/calendar_management_dialog/collection_row.blp',
         'ui/calendar_management_dialog/collections_list_page.blp',
-
         # Components
         # Calendar Combo Row
         'ui/components/calendar_combo_row/calendar_combo_row.blp',
@@ -33,10 +32,8 @@ blueprints = custom_target(
         'ui/components/timeframe_picker/date_time_picker_group.blp',
         'ui/components/timeframe_picker/time_zone_picker_dialog.blp',
         'ui/components/timeframe_picker/timeframe_picker.blp',
-
         # Event Creation Dialog
         'ui/event_creation_dialog.blp',
-
         # Event Details Dialog
         'ui/event_details_dialog/attendee_list_row/attendee_list_row.blp',
         'ui/event_details_dialog/attendee_list_row/attendee_row.blp',
@@ -44,21 +41,16 @@ blueprints = custom_target(
         'ui/event_details_dialog/attendees_list_page/attendee_details_row.blp',
         'ui/event_details_dialog/attendees_list_page/attendees_list_page.blp',
         'ui/event_details_dialog/event_details_dialog.blp',
-
         # Qr Code Dialog
         'ui/qr_code_dialog.blp',
-
         # Search Dialog
         'ui/search_dialog/search_dialog.blp',
         'ui/search_dialog/search_result_row.blp',
-
         # Shortcuts Dialog
         'ui/shortcuts_dialog.blp',
-
         # Sidebar
         'ui/sidebar/sidebar.blp',
         'ui/sidebar/sidebar_calendar_row.blp',
-
         # Views
         # Month View
         'ui/views/month_view/event_widget.blp',
@@ -71,7 +63,6 @@ blueprints = custom_target(
         'ui/views/year_view/year_view.blp',
         'ui/views/year_view/year_view_cell.blp',
         'ui/views/year_view/year_view_row.blp',
-
         'ui/window.blp',
     ),
     output: '.',

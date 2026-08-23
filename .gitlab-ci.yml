@@ -70,6 +70,14 @@ cargo-clippy:
         - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
     interruptible: true
 
+meson-format:
+    stage: check
+    image: quay.io/gnome_infrastructure/gnome-build-meta:core-nightly
+    interruptible: true
+    script:
+        - meson --version
+        - git ls-files | grep -E 'meson.options$|meson.build$' | xargs -r meson fmt --check-diff
+
 blueprint-format:
     stage: check
     image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
