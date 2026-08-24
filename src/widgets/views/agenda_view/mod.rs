@@ -2,7 +2,7 @@ use std::cell::{Cell, OnceCell};
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Event, Subscription, Timeframe, prelude::*};
-use glib::clone;
+use glib::{TimeZone, clone};
 
 use crate::{
     Application, utils::TemplateCallbacks, widgets::event_details_dialog::EventDetailsDialog,
@@ -11,8 +11,6 @@ use crate::{
 mod agenda_view_row;
 
 mod imp {
-    use glib::TimeZone;
-
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
