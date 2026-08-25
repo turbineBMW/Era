@@ -5,7 +5,7 @@ use std::{
 };
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, Event, Subscription, Timeframe, prelude::*};
+use clepsydre::{Calendar, Event, Subscription, prelude::*};
 use glib::{DateTime, clone};
 use jiff::ToSpan;
 
@@ -293,9 +293,7 @@ mod imp {
 
             // Setup subscription
             let (first_day, last_day) = self.row_date_range();
-            let timeframe =
-                Timeframe::new(true, &first_day, &last_day).expect("start should be before end");
-            let subscription = manager.new_subscription(&timeframe).unwrap().unwrap();
+            let subscription = manager.new_subscription(&first_day, &last_day).unwrap();
             self.subscription
                 .set(subscription.clone())
                 .expect("Subscription should not be initialized yet");
@@ -1074,12 +1072,10 @@ mod imp {
 
         fn update_timeframe(&self) {
             let (first_day, last_day) = self.row_date_range();
-            let timeframe =
-                Timeframe::new(true, &first_day, &last_day).expect("start should be before end");
             self.subscription
                 .get()
                 .unwrap()
-                .set_timeframe(Some(&timeframe));
+                .set_timeframe(&first_day, &last_day);
 
             // Recompute cached day boundaries
             let boundaries: [DateTime; 8] = std::array::from_fn(|i| {

@@ -1,7 +1,7 @@
 use std::cell::{Cell, OnceCell};
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Event, Subscription, Timeframe, prelude::*};
+use clepsydre::{Event, Subscription, prelude::*};
 use glib::{TimeZone, clone};
 
 use crate::{
@@ -59,11 +59,9 @@ mod imp {
             let system = application.system();
 
             let now = system.datetime();
-
             let tomorrow = now.add_days(1).unwrap();
-            let timeframe =
-                Timeframe::new(true, &now, &tomorrow).expect("start should be before end");
-            let subscription = manager.new_subscription(&timeframe).unwrap().unwrap();
+
+            let subscription = manager.new_subscription(&now, &tomorrow).unwrap();
             self.subscription
                 .set(subscription.clone())
                 .expect("Subscription should not be initialized yet");
@@ -110,11 +108,7 @@ mod imp {
 
             let start = glib::DateTime::new(&TimeZone::utc(), year, month, day, 0, 0, 0.).unwrap();
             let end = start.add_days(1).unwrap();
-            let timeframe = Timeframe::new(true, &start, &end).unwrap();
-            self.subscription
-                .get()
-                .unwrap()
-                .set_timeframe(Some(&timeframe));
+            self.subscription.get().unwrap().set_timeframe(&start, &end);
         }
 
         #[template_callback]
