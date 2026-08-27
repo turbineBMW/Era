@@ -6,7 +6,7 @@ use glib::{clone, translate::*};
 
 use crate::{
     Application,
-    utils::{EventPropertiesPreset, TemplateCallbacks},
+    utils::{Date, EventPropertiesPreset, TemplateCallbacks},
     widgets::{
         CalendarManagementDialog, EventCreationDialog, SearchDialog, Sidebar,
         views::{AgendaView, MonthView, YearView},
@@ -116,13 +116,15 @@ pub mod imp {
             });
 
             klass.install_action("win.today", None, |obj, _, _| {
-                let today = Application::default().system().datetime();
-                let year = today.year();
-                let month = today.month();
-                let day = today.day_of_month();
+                let today = Application::default().system().date();
+                obj.imp().agenda_view.set_date(today);
+
+                // TODO: Use date as well
+                let year = today.to_glib_date_time_utc().year();
+                let month = today.to_glib_date_time_utc().month();
+                let day = today.to_glib_date_time_utc().day_of_month();
                 obj.imp().year_view.set_year(year);
                 obj.imp().month_view.set_year_month_day(year, month, day);
-                obj.imp().agenda_view.set_year_month_day(year, month, day);
             });
             klass.add_binding_action(gdk::Key::T, gdk::ModifierType::CONTROL_MASK, "win.today");
             klass.add_binding_action(
@@ -139,11 +141,14 @@ pub mod imp {
                     let (year, month, day) = parameter
                         .unwrap()
                         .get::<(i32, i32, i32)>()
-                        .expect("Parameter should be of type EventPropertiesPreset");
+                        .expect("Parameter should be of type (i32, i32, i32)");
+                    let date: Date = jiff::civil::Date::new(year as i16, month as i8, day as i8)
+                        .unwrap()
+                        .into();
 
                     obj.imp().wide_view_stack.set_visible_child_name("agenda");
                     obj.imp().narrow_stack.set_visible_child_name("agenda");
-                    obj.imp().agenda_view.set_year_month_day(year, month, day);
+                    obj.imp().agenda_view.set_date(date);
                 },
             );
         }

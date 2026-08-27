@@ -1,11 +1,13 @@
-use std::cell::{Cell, OnceCell};
+use std::cell::{OnceCell, RefCell};
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Event, Subscription, prelude::*};
-use glib::{TimeZone, clone};
+use glib::clone;
 
 use crate::{
-    Application, utils::TemplateCallbacks, widgets::event_details_dialog::EventDetailsDialog,
+    Application,
+    utils::{Date, TemplateCallbacks},
+    widgets::event_details_dialog::EventDetailsDialog,
 };
 
 mod agenda_view_row;
@@ -17,12 +19,8 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Era/agenda_view.ui")]
     #[properties(wrapper_type = super::AgendaView)]
     pub struct AgendaView {
-        #[property(get)]
-        year: Cell<i32>,
-        #[property(get)]
-        month: Cell<i32>,
-        #[property(get)]
-        day: Cell<i32>,
+        #[property(get, set = Self::set_date)]
+        date: RefCell<Date>,
         #[property(get)]
         subscription: OnceCell<Subscription>,
 
@@ -59,14 +57,13 @@ mod imp {
             let system = application.system();
 
             let now = system.datetime();
-            let tomorrow = now.add_days(1).unwrap();
 
-            let subscription = manager.new_subscription(&now, &tomorrow).unwrap();
+            let subscription = manager.new_subscription(&now, &now).unwrap();
             self.subscription
                 .set(subscription.clone())
                 .expect("Subscription should not be initialized yet");
 
-            self.set_year_month_day(now.year(), now.month(), now.day_of_month());
+            self.obj().set_date(system.date());
 
             self.events
                 .set_model(Some(&gtk::NoSelection::new(Some(subscription.clone()))));
@@ -82,43 +79,46 @@ mod imp {
                     }
                 }
             ));
+
+            system.connect_datetime_notify(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |_system| {
+                    imp.update_timeframe();
+                }
+            ));
         }
     }
+
     impl WidgetImpl for AgendaView {}
     impl BoxImpl for AgendaView {}
 
     #[gtk::template_callbacks]
     impl AgendaView {
-        /// Sets the triplet year-month-day.
-        pub(super) fn set_year_month_day(&self, year: i32, month: i32, day: i32) {
-            if self.year.get() != year {
-                self.year.set(year);
-                self.obj().notify_year();
+        fn set_date(&self, date: Date) {
+            if date == *self.date.borrow() {
+                return;
             }
 
-            if self.month.get() != month {
-                self.month.set(month);
-                self.obj().notify_month();
-            }
+            self.date.replace(date);
 
-            if self.day.get() != day {
-                self.day.set(day);
-                self.obj().notify_day();
-            }
+            self.update_timeframe();
 
-            let start = glib::DateTime::new(&TimeZone::utc(), year, month, day, 0, 0, 0.).unwrap();
+            self.obj().notify_date();
+        }
+
+        fn update_timeframe(&self) {
+            let date = *self.date.borrow();
+            let timezone = Application::default().system().datetime().timezone();
+            let start = date.to_glib_date_time(&timezone);
             let end = start.add_days(1).unwrap();
             self.subscription.get().unwrap().set_timeframe(&start, &end);
         }
 
         #[template_callback]
         fn day_label(&self) -> String {
-            format!(
-                "{}-{:02}-{:02}",
-                self.year.get(),
-                self.month.get(),
-                self.day.get()
-            )
+            let date = self.date.borrow().to_jiff();
+            format!("{}-{:02}-{:02}", date.year(), date.month(), date.day())
         }
 
         #[template_callback]
@@ -144,9 +144,4 @@ glib::wrapper! {
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
 }
 
-impl AgendaView {
-    /// Sets the triplet year-month-day.
-    pub fn set_year_month_day(&self, year: i32, month: i32, day: i32) {
-        self.imp().set_year_month_day(year, month, day);
-    }
-}
+impl AgendaView {}

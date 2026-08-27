@@ -10,7 +10,7 @@ template $AgendaView: Box {
   orientation: vertical;
 
   Label {
-    label: bind $day_label(template, template.year, template.month, template.day);
+    label: bind $day_label(template, template.date);
 
     styles [
       "title-1",

@@ -1,5 +1,6 @@
 mod attendee_type_filter;
 mod child_property_ext;
+mod date;
 mod datetime;
 mod event_properties_preset;
 mod macros;
@@ -10,7 +11,7 @@ mod timeframe_label;
 mod week_day;
 
 pub use self::{
-    attendee_type_filter::*, child_property_ext::*, datetime::*, event_properties_preset::*,
-    paintable_callbacks::*, participation_status_filter::*, template_callbacks::*,
-    timeframe_label::*, week_day::WeekDay,
+    attendee_type_filter::*, child_property_ext::*, date::Date, datetime::*,
+    event_properties_preset::*, paintable_callbacks::*, participation_status_filter::*,
+    template_callbacks::*, timeframe_label::*, week_day::WeekDay,
 };

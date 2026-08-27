@@ -3,7 +3,7 @@ use std::cell::{Cell, RefCell};
 use glib::{DateTime, TimeZone};
 use gtk::{prelude::*, subclass::prelude::*};
 
-use crate::utils::WeekDay;
+use crate::utils::{Date, WeekDay};
 
 #[cfg(feature = "platform-android")]
 mod android;
@@ -113,6 +113,16 @@ impl System {
 
         self.imp().first_week_day.set(first_week_day);
         self.notify_first_week_day();
+    }
+
+    pub fn date(&self) -> Date {
+        let datetime = self.imp().datetime.borrow();
+        let year = datetime.year();
+        let month = datetime.month();
+        let day = datetime.day_of_month();
+        jiff::civil::Date::new(year as i16, month as i8, day as i8)
+            .unwrap()
+            .into()
     }
 }
 
