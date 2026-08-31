@@ -120,6 +120,7 @@ pub mod imp {
 
             klass.install_action("win.today", None, |obj, _, _| {
                 let today = Application::default().system().date();
+                obj.imp().new_month_view.set_date(today);
                 obj.imp().agenda_view.set_date(today);
 
                 // TODO: Use date as well
@@ -187,6 +188,26 @@ pub mod imp {
                 gdk::Key::underscore,
                 gdk::ModifierType::CONTROL_MASK,
                 "win.zoomout",
+            );
+
+            klass.install_action(
+                "win.show-month-view",
+                Some(&glib::VariantType::new("(iii)").unwrap()),
+                |obj, _action_name, parameter| {
+                    let (year, month, day) = parameter
+                        .unwrap()
+                        .get::<(i32, i32, i32)>()
+                        .expect("Parameter should be of type (i32, i32, i32)");
+                    let date: Date = jiff::civil::Date::new(year as i16, month as i8, day as i8)
+                        .unwrap()
+                        .into();
+
+                    obj.imp()
+                        .wide_view_stack
+                        .set_visible_child_name("new-month");
+                    obj.imp().narrow_stack.set_visible_child_name("new-month");
+                    obj.imp().new_month_view.set_date(date);
+                },
             );
 
             klass.install_action(
@@ -417,14 +438,6 @@ pub mod imp {
         #[template_callback(function)]
         fn get_year_label(year: i32) -> String {
             year.to_string()
-        }
-
-        #[template_callback]
-        fn open_month_view(&self, _year: i32, _month: i32) {
-            // TODO: Enable that
-            // self.new_month_view.set_year_month_day(year, month, 1);
-            self.wide_view_stack.set_visible_child_name("new-month");
-            self.narrow_stack.set_visible_child_name("new-month");
         }
 
         #[template_callback(function)]

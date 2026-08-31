@@ -13,7 +13,7 @@ const NB_ROWS: usize = 200;
 const NB_CELLS: usize = 7 * NB_ROWS;
 const MINIMUM_NB_ROWS_BELOW: i32 = 10;
 const MINIMUM_NB_ROWS_ABOVE: i32 = 10;
-const NB_ROWS_ABOVE_AT_STARTUP: i32 = MINIMUM_NB_ROWS_ABOVE + 1;
+const NB_ROWS_ABOVE_AT_RESET: i32 = MINIMUM_NB_ROWS_ABOVE + 1;
 
 /// Minimum height of a cell in pixel. A cell can report a higher minimum and size_allocate will
 /// respect it, but will never allocate them less than this.
@@ -77,7 +77,7 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Era/new_month_view_inner.ui")]
     #[properties(wrapper_type = super::NewMonthViewInner)]
     pub struct NewMonthViewInner {
-        #[property(get, set)]
+        #[property(get, set = Self::set_date)]
         date: Cell<Date>,
         #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]
         styling: Cell<Styling>,
@@ -87,10 +87,13 @@ mod imp {
         #[template_child]
         scroll_swipe: TemplateChild<gtk::GestureSwipe>,
 
+        // A collection of cells used to display the month. The first element might not be the first
+        // cell displayed. This is used as a circular set for efficient recycling.
         cells: OnceCell<[NewMonthViewCell; NB_CELLS]>,
         column_separators: OnceCell<[gtk::Separator; 6]>,
         row_separators: OnceCell<[gtk::Separator; NB_ROWS]>,
 
+        // The index of the first cell displayed.
         first_cell_index: Cell<usize>,
 
         /// Number of pixels from the top of the first cell to the top of the widget. Value should
@@ -130,14 +133,17 @@ mod imp {
             self.parent_constructed();
 
             let system = Application::default().system();
+            let today = system.date();
+
+            self.date.set(today);
+
             let first_cell_date = {
                 let first_day_of_week = system.first_week_day();
-                let today = system.date();
 
                 today
                     .previous_occurrence_of_weekday(first_day_of_week)
                     .to_jiff()
-                    - (NB_ROWS_ABOVE_AT_STARTUP * 7).days()
+                    - (NB_ROWS_ABOVE_AT_RESET * 7).days()
             };
 
             self.first_cell_index.set(0);
@@ -167,7 +173,7 @@ mod imp {
             self.cell_height.set(initial_cell_height);
 
             self.scroll_offset
-                .set((NB_ROWS_ABOVE_AT_STARTUP * (initial_cell_height + SEPARATOR_HEIGHT)) as f64);
+                .set((NB_ROWS_ABOVE_AT_RESET * (initial_cell_height + SEPARATOR_HEIGHT)) as f64);
 
             self.cells.set(cells).unwrap();
             self.column_separators.set(column_separators).unwrap();
@@ -178,10 +184,10 @@ mod imp {
             system.connect_first_week_day_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
-                move |settings| {
+                move |system| {
                     let cells = imp.cells.get().unwrap();
 
-                    let first_week_day = settings.first_week_day();
+                    let first_week_day = system.first_week_day();
 
                     let first_cell_index = imp.first_cell_index.get();
                     let old_first_date = cells[first_cell_index].date();
@@ -198,6 +204,8 @@ mod imp {
                         cells[(new_index + i) % NB_CELLS]
                             .set_date(Date::from(new_first_date.to_jiff() + (i as i32).days()));
                     }
+
+                    imp.recycle_if_needed();
                 }
             ));
         }
@@ -222,7 +230,7 @@ mod imp {
             let row_separators = self.row_separators.get().unwrap();
 
             // Width is distributed evenly. Any remainder pixels are given to the leftmost columns,
-            // so the first (width % 7) columns are one pixel ider than the rest.
+            // so the first (width % 7) columns are one pixel wider than the rest.
             let column_widths: [i32; 7] = {
                 let width = width - 6 * SEPARATOR_WIDTH;
                 let base = width / 7;
@@ -308,6 +316,40 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl NewMonthViewInner {
+        /// Sets the date displayed in the view.
+        fn set_date(&self, date: Date) {
+            if self.date.get() == date {
+                return;
+            }
+
+            self.cancel_animation();
+            self.input.replace(None);
+
+            let system = Application::default().system();
+            let first_cell_date = {
+                let first_day_of_week = system.first_week_day();
+
+                date.previous_occurrence_of_weekday(first_day_of_week)
+                    .to_jiff()
+                    - (NB_ROWS_ABOVE_AT_RESET * 7).days()
+            };
+
+            self.first_cell_index.set(0);
+
+            self.scroll_offset
+                .set((NB_ROWS_ABOVE_AT_RESET * (self.cell_height.get() + SEPARATOR_HEIGHT)) as f64);
+
+            for (i, cell) in self.cells.get().unwrap().iter().enumerate() {
+                let date: Date = (first_cell_date + (i as i32).days()).into();
+                cell.set_date(date);
+            }
+
+            self.date.set(date);
+            self.obj().notify_date();
+
+            self.obj().queue_allocate();
+        }
+
         /// Sets the styling used for the view.
         fn set_styling(&self, styling: Styling) {
             if self.styling.get() == styling {
@@ -889,6 +931,17 @@ mod imp {
                 } else {
                     break;
                 }
+            }
+
+            let first_cell_index = self.first_cell_index.get();
+
+            let rows_above_view = (self.scroll_offset.get() / row_height).ceil() as usize;
+            let first_visible_cell_index = (first_cell_index + rows_above_view * 7) % NB_CELLS;
+            let new_date = cells[first_visible_cell_index].date();
+
+            if self.date.get() != new_date {
+                self.date.set(new_date);
+                self.obj().notify_date();
             }
         }
     }

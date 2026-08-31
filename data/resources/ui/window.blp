@@ -185,7 +185,7 @@ template $EraWindow: Adw.ApplicationWindow {
                   }
 
                   title-widget: Adw.WindowTitle {
-                    title: "WIP";
+                    title: bind $month_view_title(new_month_view.date) as <string>;
                   };
 
                   [end]
@@ -437,9 +437,7 @@ template $EraWindow: Adw.ApplicationWindow {
           width-request: 100;
           height-request: 100;
 
-          $YearView year_view {
-            month-clicked => $open_month_view(template);
-          }
+          $YearView year_view {}
 
           Adw.Breakpoint {
             condition ("max-width: 720sp")

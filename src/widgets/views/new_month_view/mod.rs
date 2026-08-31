@@ -1,8 +1,9 @@
-use std::cell::Cell;
+use std::{cell::Cell, marker::PhantomData};
 
 use adw::{prelude::*, subclass::prelude::*};
+use glib::clone;
 
-use crate::widgets::window::Styling;
+use crate::{utils::Date, widgets::window::Styling};
 
 mod kinetic_scrolling;
 mod month_view_cell;
@@ -18,6 +19,8 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Era/new_month_view.ui")]
     #[properties(wrapper_type = super::NewMonthView)]
     pub struct NewMonthView {
+        #[property(get = Self::date, set = Self::set_date)]
+        date: PhantomData<Date>,
         #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]
         styling: Cell<Styling>,
 
@@ -44,12 +47,39 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for NewMonthView {}
+    impl ObjectImpl for NewMonthView {
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            self.inner.connect_date_notify(clone!(
+                #[weak(rename_to=imp)]
+                self,
+                move |_| {
+                    imp.obj().notify_date();
+                }
+            ));
+        }
+    }
+
     impl WidgetImpl for NewMonthView {}
     impl BoxImpl for NewMonthView {}
 
     #[gtk::template_callbacks]
     impl NewMonthView {
+        /// Returns the date displayed by the view.
+        fn date(&self) -> Date {
+            self.inner.date()
+        }
+
+        /// Sets the date displayed by the view.
+        fn set_date(&self, date: Date) {
+            if self.inner.date() == date {
+                return;
+            }
+
+            self.inner.set_date(date);
+        }
+
         /// Sets the styling used for the view.
         fn set_styling(&self, styling: Styling) {
             if self.styling.get() == styling {

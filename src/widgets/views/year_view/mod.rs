@@ -1,11 +1,11 @@
 use std::{
     cell::{Cell, OnceCell, RefCell},
     mem,
-    sync::{LazyLock, Mutex},
+    sync::Mutex,
 };
 
 use adw::{prelude::*, subclass::prelude::*};
-use glib::{clone, subclass::Signal};
+use glib::clone;
 use gtk::Allocation;
 
 use crate::{Application, widgets::window::Styling};
@@ -101,7 +101,10 @@ mod imp {
                     #[weak]
                     obj,
                     move |_row, year, month| {
-                        obj.emit_by_name::<()>("month-clicked", &[&year, &month]);
+                        let _ = obj.activate_action(
+                            "win.show-month-view",
+                            Some(&(year, month, 1).to_variant()),
+                        );
                     }
                 ));
                 rows.push(row);
@@ -113,18 +116,6 @@ mod imp {
             for row in self.rows.get().unwrap().lock().unwrap().iter() {
                 row.unparent();
             }
-        }
-
-        fn signals() -> &'static [Signal] {
-            static SIGNALS: LazyLock<Vec<Signal>> = LazyLock::new(|| {
-                vec![
-                    Signal::builder("month-clicked")
-                        // Year, Month
-                        .param_types([i32::static_type(), i32::static_type()])
-                        .build(),
-                ]
-            });
-            SIGNALS.as_ref()
         }
     }
 
