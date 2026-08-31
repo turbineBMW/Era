@@ -33,7 +33,14 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for NewMonthViewHeader {}
+    impl ObjectImpl for NewMonthViewHeader {
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            self.update_style_classes();
+        }
+    }
+
     impl WidgetImpl for NewMonthViewHeader {}
     impl BinImpl for NewMonthViewHeader {}
 
@@ -45,7 +52,26 @@ mod imp {
             }
 
             self.styling.set(styling);
+
+            self.update_style_classes();
+
             self.obj().notify_styling();
+        }
+
+        /// Updates the style classes based on the cell's styling.
+        fn update_style_classes(&self) {
+            let styling = self.styling.get();
+
+            match styling {
+                Styling::Narrow => {
+                    self.obj().remove_css_class("medium");
+                    self.obj().add_css_class("narrow");
+                }
+                Styling::Medium | Styling::Wide => {
+                    self.obj().add_css_class("medium");
+                    self.obj().remove_css_class("narrow");
+                }
+            }
         }
 
         #[template_callback(function)]

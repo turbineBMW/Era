@@ -157,6 +157,20 @@ year-view {
 }
 
 .month-view {
+    .header {
+        label {
+            font-weight: bold;
+            margin: 6px;
+            opacity: var(--dim-opacity);
+        }
+
+        &.medium {
+            label {
+                padding: 0 6px 0 6px;
+            }
+        }
+    }
+
     .inner {
         --raised-shade-color: color-mix(
             in srgb,

@@ -133,12 +133,19 @@ mod imp {
             match (day, styling) {
                 (1, Styling::Narrow) => {
                     self.header.set_child(Some(&*self.month_abbreviation));
+                    self.header.set_halign(gtk::Align::Center);
                 }
                 (1, Styling::Medium | Styling::Wide) => {
                     self.header.set_child(Some(&*self.month_name));
+                    self.header.set_halign(gtk::Align::Start);
                 }
-                (2..=31, _) => {
+                (2..=31, Styling::Narrow) => {
                     self.header.set_child(Some(&*self.day_number));
+                    self.header.set_halign(gtk::Align::Center);
+                }
+                (2..=31, Styling::Medium | Styling::Wide) => {
+                    self.header.set_child(Some(&*self.day_number));
+                    self.header.set_halign(gtk::Align::Start);
                 }
                 _ => unreachable!(),
             }
