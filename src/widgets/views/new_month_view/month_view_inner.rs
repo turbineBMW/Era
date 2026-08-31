@@ -1,6 +1,7 @@
 use std::cell::{Cell, OnceCell, RefCell};
 
 use adw::{prelude::*, subclass::prelude::*};
+use clepsydre::{Subscription, prelude::*};
 use glib::clone;
 use jiff::ToSpan;
 use tracing::{error, warn};
@@ -87,6 +88,8 @@ mod imp {
         #[template_child]
         scroll_swipe: TemplateChild<gtk::GestureSwipe>,
 
+        subscription: OnceCell<Subscription>,
+
         // A collection of cells used to display the month. The first element might not be the first
         // cell displayed. This is used as a circular set for efficient recycling.
         cells: OnceCell<[NewMonthViewCell; NB_CELLS]>,
@@ -132,8 +135,11 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
-            let system = Application::default().system();
+            let application = Application::default();
+            let manager = application.manager();
+            let system = application.system();
             let today = system.date();
+            let timezone = system.datetime().timezone();
 
             self.date.set(today);
 
@@ -146,7 +152,9 @@ mod imp {
                     - (NB_ROWS_ABOVE_AT_RESET * 7).days()
             };
 
-            self.first_cell_index.set(0);
+            let first_cell_index = 0;
+            let last_cell_index = (first_cell_index + NB_CELLS - 1) % NB_CELLS;
+            self.first_cell_index.set(first_cell_index);
 
             let cells = std::array::from_fn(|i| {
                 let date = (first_cell_date + (i as i32).days()).into();
@@ -166,6 +174,12 @@ mod imp {
                 separator.insert_before(&*self.obj(), None::<&gtk::Widget>);
                 separator
             });
+
+            let start = cells[first_cell_index].date().to_glib_date_time(&timezone);
+            let end = Date::from(cells[last_cell_index].date().to_jiff().tomorrow().unwrap())
+                .to_glib_date_time(&timezone);
+            let subscription = manager.new_subscription(&start, &end).unwrap();
+            self.subscription.set(subscription).unwrap();
 
             // TODO: use a real event widget instead
             let event_height = 30;
@@ -206,6 +220,14 @@ mod imp {
                     }
 
                     imp.recycle_if_needed();
+                }
+            ));
+
+            system.connect_datetime_notify(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |_system| {
+                    imp.update_subscription_timeframe();
                 }
             ));
         }
@@ -345,6 +367,9 @@ mod imp {
             }
 
             self.date.set(date);
+
+            self.update_subscription_timeframe();
+
             self.obj().notify_date();
 
             self.obj().queue_allocate();
@@ -943,6 +968,22 @@ mod imp {
                 self.date.set(new_date);
                 self.obj().notify_date();
             }
+
+            self.update_subscription_timeframe();
+        }
+
+        fn update_subscription_timeframe(&self) {
+            let timezone = Application::default().system().datetime().timezone();
+
+            let cells = self.cells.get().unwrap();
+            let first_cell_index = self.first_cell_index.get();
+            let last_cell_index = (first_cell_index + NB_CELLS - 1) % NB_CELLS;
+
+            let start = cells[first_cell_index].date().to_glib_date_time(&timezone);
+            let end = Date::from(cells[last_cell_index].date().to_jiff().tomorrow().unwrap())
+                .to_glib_date_time(&timezone);
+
+            self.subscription.get().unwrap().set_timeframe(&start, &end);
         }
     }
 }
