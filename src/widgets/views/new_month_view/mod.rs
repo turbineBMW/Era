@@ -24,7 +24,7 @@ mod imp {
         #[template_child]
         header: TemplateChild<NewMonthViewHeader>,
         #[template_child]
-        inner: TemplateChild<NewMonthViewInner>,
+        pub(super) inner: TemplateChild<NewMonthViewInner>,
     }
 
     #[glib::object_subclass]
@@ -70,4 +70,12 @@ glib::wrapper! {
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
 }
 
-impl NewMonthView {}
+impl NewMonthView {
+    pub fn zoom_in(&self) {
+        self.imp().inner.zoom_in();
+    }
+
+    pub fn zoom_out(&self) {
+        self.imp().inner.zoom_out();
+    }
+}

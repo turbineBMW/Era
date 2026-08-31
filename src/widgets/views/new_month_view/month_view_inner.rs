@@ -422,47 +422,9 @@ mod imp {
                         .current_event_state()
                         .contains(gdk::ModifierType::CONTROL_MASK)
                     {
-                        let y_center = self
-                            .pointer_y
-                            .get()
-                            .unwrap_or(self.obj().height() as f64 / 2.);
                         let scale = dy / 10.0 + 1.0;
 
-                        let baseline = if let Some(Input::Animation(Animation::DiscreteZoom {
-                            target_height,
-                            ..
-                        })) = *self.input.borrow()
-                        {
-                            target_height
-                        } else {
-                            self.cell_height.get()
-                        };
-
-                        self.cancel_animation();
-
-                        let target_height = ((baseline as f64 * scale) as i32)
-                            .clamp(MINIMUM_CELL_HEIGHT, MAXIMUM_CELL_HEIGHT);
-
-                        let frame_clock = self.obj().frame_clock().unwrap();
-                        let now = frame_clock.frame_time();
-                        let start_height = self.cell_height.get();
-
-                        let tick_id = self.obj().add_tick_callback(clone!(
-                            #[weak(rename_to = imp)]
-                            self,
-                            #[upgrade_or]
-                            glib::ControlFlow::Break,
-                            move |_obj, frame_clock| imp
-                                .discrete_zoom_animation_tick(frame_clock.frame_time())
-                        ));
-                        self.input
-                            .replace(Some(Input::Animation(Animation::DiscreteZoom {
-                                start_height,
-                                target_height,
-                                start_time: now,
-                                y_center,
-                                tick_id,
-                            })));
+                        self.start_discrete_zoom_animation(scale);
 
                         return true;
                     }
@@ -678,6 +640,47 @@ mod imp {
             };
 
             self.input.replace(None);
+        }
+
+        pub(super) fn start_discrete_zoom_animation(&self, scale: f64) {
+            let y_center = self
+                .pointer_y
+                .get()
+                .unwrap_or(self.obj().height() as f64 / 2.);
+
+            let baseline =
+                if let Some(Input::Animation(Animation::DiscreteZoom { target_height, .. })) =
+                    *self.input.borrow()
+                {
+                    target_height
+                } else {
+                    self.cell_height.get()
+                };
+
+            self.cancel_animation();
+
+            let target_height =
+                ((baseline as f64 * scale) as i32).clamp(MINIMUM_CELL_HEIGHT, MAXIMUM_CELL_HEIGHT);
+
+            let frame_clock = self.obj().frame_clock().unwrap();
+            let now = frame_clock.frame_time();
+            let start_height = self.cell_height.get();
+
+            let tick_id = self.obj().add_tick_callback(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                #[upgrade_or]
+                glib::ControlFlow::Break,
+                move |_obj, frame_clock| imp.discrete_zoom_animation_tick(frame_clock.frame_time())
+            ));
+            self.input
+                .replace(Some(Input::Animation(Animation::DiscreteZoom {
+                    start_height,
+                    target_height,
+                    start_time: now,
+                    y_center,
+                    tick_id,
+                })));
         }
 
         fn deceleration_tick(&self, frame_time: i64) -> glib::ControlFlow {
@@ -897,4 +900,12 @@ glib::wrapper! {
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
 
-impl NewMonthViewInner {}
+impl NewMonthViewInner {
+    pub fn zoom_in(&self) {
+        self.imp().start_discrete_zoom_animation(1.1);
+    }
+
+    pub fn zoom_out(&self) {
+        self.imp().start_discrete_zoom_animation(0.9);
+    }
+}

@@ -137,6 +137,58 @@ pub mod imp {
             );
             klass.add_binding_action(gdk::Key::Down, gdk::ModifierType::ALT_MASK, "win.today");
 
+            klass.install_action("win.zoomin", None, |obj, _, _| {
+                match obj
+                    .imp()
+                    .narrow_stack
+                    .visible_child_name()
+                    .expect("Narrow stack should have a visible child")
+                    .as_str()
+                {
+                    "new-month" => {
+                        obj.imp().new_month_view.zoom_in();
+                    }
+                    "year" | "month" | "agenda" => {}
+                    name => panic!("Unknown narrow stack child name: {name}"),
+                };
+            });
+            klass.add_binding_action(
+                gdk::Key::plus,
+                gdk::ModifierType::CONTROL_MASK,
+                "win.zoomin",
+            );
+            klass.add_binding_action(
+                gdk::Key::equal,
+                gdk::ModifierType::CONTROL_MASK,
+                "win.zoomin",
+            );
+
+            klass.install_action("win.zoomout", None, |obj, _, _| {
+                match obj
+                    .imp()
+                    .narrow_stack
+                    .visible_child_name()
+                    .expect("Narrow stack should have a visible child")
+                    .as_str()
+                {
+                    "new-month" => {
+                        obj.imp().new_month_view.zoom_out();
+                    }
+                    "year" | "month" | "agenda" => {}
+                    name => panic!("Unknown narrow stack child name: {name}"),
+                };
+            });
+            klass.add_binding_action(
+                gdk::Key::minus,
+                gdk::ModifierType::CONTROL_MASK,
+                "win.zoomout",
+            );
+            klass.add_binding_action(
+                gdk::Key::underscore,
+                gdk::ModifierType::CONTROL_MASK,
+                "win.zoomout",
+            );
+
             klass.install_action(
                 "win.show-agenda-view",
                 Some(&glib::VariantType::new("(iii)").unwrap()),
