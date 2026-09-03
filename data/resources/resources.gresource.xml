@@ -71,11 +71,6 @@
   <gresource prefix="/io/gitlab/TitouanReal/Era/icons">
     <!-- TODO: Replace by new icons -->
     <file preprocess="xml-stripblanks" alias="info-outline-symbolic.svg">icons/info-outline-symbolic.svg</file>
-    <file preprocess="xml-stripblanks" alias="year-symbolic.svg">icons/year-symbolic.svg</file>
-    <file preprocess="xml-stripblanks" alias="month-symbolic.svg">icons/month-symbolic.svg</file>
-    <file preprocess="xml-stripblanks" alias="week-symbolic.svg">icons/week-symbolic.svg</file>
-    <file preprocess="xml-stripblanks" alias="days-symbolic.svg">icons/days-symbolic.svg</file>
-    <file preprocess="xml-stripblanks" alias="day-symbolic.svg">icons/day-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="today-symbolic.svg">icons/today-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="read-only-symbolic.svg">icons/read-only-symbolic.svg</file>
     <file preprocess="xml-stripblanks" alias="share-symbolic.svg">icons/share-symbolic.svg</file>

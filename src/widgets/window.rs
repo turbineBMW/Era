@@ -2,6 +2,7 @@ use std::cell::Cell;
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Calendar, prelude::*};
+use gettextrs::gettext;
 use glib::{clone, translate::*};
 
 use crate::{
@@ -316,6 +317,37 @@ pub mod imp {
         }
 
         #[template_callback(function)]
+        fn medium_view_title(
+            view: &str,
+            year_year: i32,
+            month_year: i32,
+            month_month: i32,
+            month_day: i32,
+            agenda_view_date: &Date,
+        ) -> String {
+            match view {
+                "year" => year_year.to_string(),
+                "month" => {
+                    let datetime =
+                        glib::DateTime::from_utc(month_year, month_month, month_day, 0, 0, 0.0)
+                            .unwrap();
+                    datetime.format(&gettext("%0B %Y")).unwrap().to_string()
+                }
+                "agenda" => Self::agenda_view_title(agenda_view_date),
+                _ => panic!("Unknown view: {view}"),
+            }
+        }
+
+        #[template_callback(function)]
+        fn agenda_view_title(agenda_view_date: &Date) -> String {
+            agenda_view_date
+                .to_glib_date_time_utc()
+                .format(&gettext("%0B %Y"))
+                .unwrap()
+                .to_string()
+        }
+
+        #[template_callback(function)]
         fn get_year_label(year: i32) -> String {
             year.to_string()
         }
@@ -340,6 +372,12 @@ pub mod imp {
         }
 
         #[template_callback]
+        fn go_back_to_month_view(&self) {
+            self.wide_view_stack.set_visible_child_name("month");
+            self.narrow_stack.set_visible_child_name("month");
+        }
+
+        #[template_callback]
         fn open_days_view(&self) {
             match self
                 .main_view
@@ -349,20 +387,6 @@ pub mod imp {
             {
                 "wide" => (),
                 "narrow" => self.narrow_stack.set_visible_child_name("days"),
-                _ => (),
-            }
-        }
-
-        #[template_callback]
-        fn go_back_to_month_view(&self) {
-            match self
-                .main_view
-                .layout_name()
-                .expect("A layout should be selected")
-                .as_str()
-            {
-                "wide" => (),
-                "narrow" => self.narrow_stack.set_visible_child_name("month"),
                 _ => (),
             }
         }

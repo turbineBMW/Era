@@ -5,7 +5,22 @@ using Clepsydre 0;
 template $Sidebar: Adw.Bin {
   Adw.ToolbarView {
     [top]
-    Adw.HeaderBar {}
+    Adw.HeaderBar {
+      title-widget: Label {
+        label: _("Calendars");
+
+        styles [
+          "title",
+        ]
+      };
+
+      [start]
+      Button {
+        icon-name: "x-office-calendar-symbolic";
+        tooltip-text: _("Manage Calendars");
+        action-name: "win.manage-calendars";
+      }
+    }
 
     content: ScrolledWindow {
       ListView {
