@@ -121,6 +121,7 @@ impl Application {
             .version(VERSION)
             .developers(vec!["Titouan Real"])
             .designers(vec!["Philipp Sauberzweig"])
+            .artists(vec!["Hylke Bons https://planetpeanut.studio"])
             // Translators: Replace "translator-credits" with your name/username, and optionally an
             // email or URL.
             .translator_credits(gettext("translator-credits"))
