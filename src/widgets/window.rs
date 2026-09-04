@@ -383,7 +383,7 @@ pub mod imp {
                     let color_str = color.to_string();
                     let color_id = glib::Quark::from_str(&color_str);
                     css.push_str(&format!(
-                        ".color-{} {{ --calendar-bg-color: {}; }}\n",
+                        ".color-{} {{ --calendar-color: {}; }}\n",
                         color_id.into_glib(),
                         color_str
                     ));
