@@ -78,6 +78,7 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Era/new_month_view_inner.ui")]
     #[properties(wrapper_type = super::NewMonthViewInner)]
     pub struct NewMonthViewInner {
+        /// The date of the last cell of the first row whose top separator is visible.
         #[property(get, set = Self::set_date)]
         date: Cell<Date>,
         #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]
@@ -366,7 +367,8 @@ mod imp {
                 cell.set_date(date);
             }
 
-            self.date.set(date);
+            let date_to_set = (first_cell_date + (NB_ROWS_ABOVE_AT_RESET * 7 + 6).days()).into();
+            self.date.set(date_to_set);
 
             self.update_subscription_timeframe();
 
@@ -961,7 +963,8 @@ mod imp {
 
             let rows_above_view = (self.scroll_offset.get() / row_height).ceil() as usize;
             let first_visible_cell_index = (first_cell_index + rows_above_view * 7) % NB_CELLS;
-            let new_date = cells[first_visible_cell_index].date();
+            let last_cell_of_first_visible_row = (first_visible_cell_index + 6) % NB_CELLS;
+            let new_date = cells[last_cell_of_first_visible_row].date();
 
             if self.date.get() != new_date {
                 self.date.set(new_date);
