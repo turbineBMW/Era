@@ -923,10 +923,9 @@ mod imp {
                     let old_last_date = cells[(first_cell_index + NB_CELLS - 1) % NB_CELLS]
                         .date()
                         .to_jiff();
-                    let new_last_date = old_last_date + 7.days();
                     for i in 0..7 {
-                        cells[(new_index + i) % NB_CELLS]
-                            .set_date(Date::from(new_last_date + (i as i32).days()));
+                        cells[(first_cell_index + i) % NB_CELLS]
+                            .set_date(Date::from(old_last_date + (i as i32).days()));
                     }
 
                     self.first_cell_index.set(new_index);
