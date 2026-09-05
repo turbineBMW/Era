@@ -28,6 +28,8 @@ mod imp {
         header: TemplateChild<NewMonthViewHeader>,
         #[template_child]
         pub(super) inner: TemplateChild<NewMonthViewInner>,
+        #[template_child]
+        floating_controls: TemplateChild<gtk::Box>,
     }
 
     #[glib::object_subclass]
@@ -87,8 +89,18 @@ mod imp {
             }
 
             self.styling.set(styling);
+
             self.header.set_styling(styling);
             self.inner.set_styling(styling);
+            match styling {
+                Styling::Narrow => {
+                    self.floating_controls.set_visible(false);
+                }
+                Styling::Medium | Styling::Wide => {
+                    self.floating_controls.set_visible(true);
+                }
+            }
+
             self.obj().notify_styling();
         }
     }

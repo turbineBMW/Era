@@ -331,13 +331,6 @@ template $EraWindow: Adw.ApplicationWindow {
                 }
 
                 [start]
-                Button {
-                  action-name: "win.today";
-                  icon-name: "today-symbolic";
-                  tooltip-text: _("Go to Today");
-                }
-
-                [start]
                 Label {
                   label: bind $medium_view_title(
                     wide_view_stack.visible-child-name,

@@ -271,6 +271,26 @@ year-view {
     }
 }
 
+.floating-controls {
+    --raised-shade-color: color-mix(
+        in srgb,
+        var(--headerbar-shade-color) 50%,
+        transparent
+    );
+
+    background-color: var(--popover-bg-color);
+    border-radius: 15px;
+    margin: 12px;
+    padding: 6px;
+    box-shadow:
+        0px 4px 12px var(--raised-shade-color),
+        0px 1px 3px var(--raised-shade-color);
+
+    @media (prefers-contrast: more) {
+        box-shadow: 0 0 0 1px var(--border-color);
+    }
+}
+
 month-view {
     > box.header {
         > label.day-name {
