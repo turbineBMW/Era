@@ -131,7 +131,6 @@ pub mod imp {
                 gdk::ModifierType::NO_MODIFIER_MASK,
                 "win.today",
             );
-            klass.add_binding_action(gdk::Key::Down, gdk::ModifierType::ALT_MASK, "win.today");
 
             klass.install_action("win.zoomin", None, |obj, _, _| {
                 match obj
