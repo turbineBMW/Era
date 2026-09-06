@@ -1,5 +1,4 @@
 using Gtk 4.0;
-using Adw 1;
 
 template $MonthView: Box {
   hexpand: true;
@@ -12,31 +11,5 @@ template $MonthView: Box {
 
   $MonthViewHeader header {}
 
-  Overlay {
-    $MonthViewInner inner {}
-
-    [overlay]
-    Box floating_controls {
-      halign: end;
-      valign: end;
-
-      styles [
-        "floating-controls",
-      ]
-
-      Button {
-        action-name: "win.today";
-
-        styles [
-          "flat",
-        ]
-
-        child: Adw.ButtonContent {
-          label: _("_Today");
-          use-underline: true;
-          icon-name: "today-symbolic";
-        };
-      }
-    }
-  }
+  $MonthViewInner inner {}
 }

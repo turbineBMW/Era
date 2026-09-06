@@ -368,6 +368,8 @@ mod imp {
         styling: Cell<Styling>,
 
         #[template_child]
+        floating_controls: TemplateChild<gtk::Box>,
+        #[template_child]
         scroll_drag: TemplateChild<gtk::GestureDrag>,
         #[template_child]
         scroll_swipe: TemplateChild<gtk::GestureSwipe>,
@@ -451,19 +453,19 @@ mod imp {
             let cells = std::array::from_fn(|i| {
                 let date = (first_cell_date + (i as i32).days()).into();
                 let cell = MonthViewCell::new(date);
-                cell.insert_before(&*self.obj(), None::<&gtk::Widget>);
+                cell.insert_before(&*self.obj(), Some(&self.floating_controls.get()));
                 cell
             });
 
             let column_separators = std::array::from_fn(|_| {
                 let separator = gtk::Separator::new(gtk::Orientation::Vertical);
-                separator.insert_before(&*self.obj(), None::<&gtk::Widget>);
+                separator.insert_before(&*self.obj(), Some(&self.floating_controls.get()));
                 separator
             });
 
             let row_separators = std::array::from_fn(|_| {
                 let separator = gtk::Separator::new(gtk::Orientation::Horizontal);
-                separator.insert_before(&*self.obj(), None::<&gtk::Widget>);
+                separator.insert_before(&*self.obj(), Some(&self.floating_controls.get()));
                 separator
             });
 
@@ -476,7 +478,7 @@ mod imp {
                 .map(|_| {
                     let event_widget = MonthViewEvent::new(None);
                     event_widget.set_child_visible(false);
-                    event_widget.set_parent(&*self.obj());
+                    event_widget.insert_before(&*self.obj(), Some(&self.floating_controls.get()));
                     event_widget
                 })
                 .collect::<Vec<_>>();
@@ -485,13 +487,13 @@ mod imp {
                 let date = (first_cell_date + (i as i32).days()).into();
                 let overflow_widget = MonthViewOverflow::new(date);
                 overflow_widget.set_child_visible(false);
-                overflow_widget.insert_before(&*self.obj(), None::<&gtk::Widget>);
+                overflow_widget.insert_before(&*self.obj(), Some(&self.floating_controls.get()));
                 overflow_widget
             });
 
             let (_minimum_event_height, natural_event_height, ..) =
-                event_widgets[0].measure(gtk::Orientation::Vertical, 100);
-            let header_height = cells[0].header_height(100);
+                event_widgets[0].measure(gtk::Orientation::Vertical, -1);
+            let header_height = cells[0].header_height(-1);
 
             // TODO: CSS isn't applied yet. We should do this initialisation in the first
             // size_allocate? We could use widget margins?
@@ -617,6 +619,7 @@ mod imp {
             for overflow_widget in self.overflow_widgets.get().unwrap() {
                 overflow_widget.unparent();
             }
+            self.floating_controls.unparent();
         }
     }
 
@@ -794,6 +797,31 @@ mod imp {
                 let separator_allocation =
                     gtk::Allocation::new(separator_x, 0, SEPARATOR_WIDTH, height);
                 column_separator.size_allocate(&separator_allocation, baseline);
+            }
+
+            match self.styling.get() {
+                Styling::Narrow => {
+                    self.floating_controls.set_child_visible(false);
+                }
+                Styling::Medium | Styling::Wide => {
+                    self.floating_controls.set_child_visible(true);
+
+                    let (_minimum_floating_controls_width, natural_floating_controls_width, ..) =
+                        self.floating_controls
+                            .measure(gtk::Orientation::Horizontal, -1);
+                    let (_minimum_floating_controls_height, natural_floating_controls_height, ..) =
+                        self.floating_controls
+                            .measure(gtk::Orientation::Vertical, -1);
+
+                    let allocation = gtk::Allocation::new(
+                        width - natural_floating_controls_width,
+                        height - natural_floating_controls_height,
+                        natural_floating_controls_width,
+                        natural_floating_controls_height,
+                    );
+
+                    self.floating_controls.size_allocate(&allocation, baseline);
+                }
             }
         }
     }
@@ -1503,7 +1531,7 @@ mod imp {
             while event_widgets.len() < total_segments {
                 let event_widget = MonthViewEvent::new(None);
                 event_widget.set_child_visible(false);
-                event_widget.set_parent(&*self.obj());
+                event_widget.insert_before(&*self.obj(), Some(&self.floating_controls.get()));
                 event_widgets.push(event_widget);
             }
 
