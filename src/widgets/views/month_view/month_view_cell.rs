@@ -13,9 +13,9 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/new_month_view_cell.ui")]
-    #[properties(wrapper_type = super::NewMonthViewCell)]
-    pub struct NewMonthViewCell {
+    #[template(resource = "/io/gitlab/TitouanReal/Era/month_view_cell.ui")]
+    #[properties(wrapper_type = super::MonthViewCell)]
+    pub struct MonthViewCell {
         #[property(get, set = Self::set_date, construct)]
         date: Cell<Date>,
         #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]
@@ -32,9 +32,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for NewMonthViewCell {
-        const NAME: &'static str = "NewMonthViewCell";
-        type Type = super::NewMonthViewCell;
+    impl ObjectSubclass for MonthViewCell {
+        const NAME: &'static str = "MonthViewCell";
+        type Type = super::MonthViewCell;
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
@@ -49,7 +49,7 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for NewMonthViewCell {
+    impl ObjectImpl for MonthViewCell {
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -68,11 +68,11 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for NewMonthViewCell {}
-    impl BinImpl for NewMonthViewCell {}
+    impl WidgetImpl for MonthViewCell {}
+    impl BinImpl for MonthViewCell {}
 
     #[gtk::template_callbacks]
-    impl NewMonthViewCell {
+    impl MonthViewCell {
         /// Sets the date of the cell.
         fn set_date(&self, date: Date) {
             if self.date.get() == date {
@@ -161,12 +161,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct NewMonthViewCell(ObjectSubclass<imp::NewMonthViewCell>)
+    pub struct MonthViewCell(ObjectSubclass<imp::MonthViewCell>)
         @extends gtk::Widget, adw::Bin,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
 
-impl NewMonthViewCell {
+impl MonthViewCell {
     pub fn new(date: Date) -> Self {
         glib::Object::builder().property("date", date).build()
     }

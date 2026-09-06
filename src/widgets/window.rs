@@ -10,7 +10,7 @@ use crate::{
     utils::{Date, EventPropertiesPreset},
     widgets::{
         CalendarManagementDialog, EventCreationDialog, SearchDialog, Sidebar,
-        views::{AgendaView, NewMonthView, YearView},
+        views::{AgendaView, MonthView, YearView},
     },
 };
 
@@ -47,7 +47,7 @@ pub mod imp {
         #[template_child]
         year_view: TemplateChild<YearView>,
         #[template_child]
-        new_month_view: TemplateChild<NewMonthView>,
+        month_view: TemplateChild<MonthView>,
         #[template_child]
         agenda_view: TemplateChild<AgendaView>,
         #[template_child]
@@ -118,7 +118,7 @@ pub mod imp {
 
             klass.install_action("win.today", None, |obj, _, _| {
                 let today = Application::default().system().date();
-                obj.imp().new_month_view.set_date(today);
+                obj.imp().month_view.set_date(today);
                 obj.imp().agenda_view.set_date(today);
 
                 // TODO: Use date as well
@@ -141,8 +141,8 @@ pub mod imp {
                     .expect("Narrow stack should have a visible child")
                     .as_str()
                 {
-                    "new-month" => {
-                        obj.imp().new_month_view.zoom_in();
+                    "month" => {
+                        obj.imp().month_view.zoom_in();
                     }
                     "year" | "agenda" => {}
                     name => panic!("Unknown narrow stack child name: {name}"),
@@ -167,8 +167,8 @@ pub mod imp {
                     .expect("Narrow stack should have a visible child")
                     .as_str()
                 {
-                    "new-month" => {
-                        obj.imp().new_month_view.zoom_out();
+                    "month" => {
+                        obj.imp().month_view.zoom_out();
                     }
                     "year" | "agenda" => {}
                     name => panic!("Unknown narrow stack child name: {name}"),
@@ -197,11 +197,9 @@ pub mod imp {
                         .unwrap()
                         .into();
 
-                    obj.imp()
-                        .wide_view_stack
-                        .set_visible_child_name("new-month");
-                    obj.imp().narrow_stack.set_visible_child_name("new-month");
-                    obj.imp().new_month_view.set_date(date);
+                    obj.imp().wide_view_stack.set_visible_child_name("month");
+                    obj.imp().narrow_stack.set_visible_child_name("month");
+                    obj.imp().month_view.set_date(date);
                 },
             );
 
@@ -312,7 +310,7 @@ pub mod imp {
                         .as_str()
                     {
                         "year" => imp.wide_view_stack.set_visible_child_name("year"),
-                        "new-month" => imp.wide_view_stack.set_visible_child_name("new-month"),
+                        "month" => imp.wide_view_stack.set_visible_child_name("month"),
                         "agenda" => imp.wide_view_stack.set_visible_child_name("agenda"),
                         name => panic!("Unknown narrow stack child name: {name}"),
                     }
@@ -331,7 +329,7 @@ pub mod imp {
                             .as_str()
                         {
                             "year" => imp.narrow_stack.set_visible_child_name("year"),
-                            "new-month" => imp.narrow_stack.set_visible_child_name("new-month"),
+                            "month" => imp.narrow_stack.set_visible_child_name("month"),
                             "agenda" => imp.narrow_stack.set_visible_child_name("agenda"),
                             name => panic!("Unknown wide view stack child name: {name}"),
                         }
@@ -390,12 +388,12 @@ pub mod imp {
         fn medium_view_title(
             view: &str,
             year_year: i32,
-            new_month_view_date: &Date,
+            month_view_date: &Date,
             agenda_view_date: &Date,
         ) -> String {
             match view {
                 "year" => year_year.to_string(),
-                "new-month" => Self::month_view_title(new_month_view_date),
+                "month" => Self::month_view_title(month_view_date),
                 "agenda" => Self::agenda_view_title(agenda_view_date),
                 _ => panic!("Unknown view: {view}"),
             }
@@ -432,8 +430,8 @@ pub mod imp {
 
         #[template_callback]
         fn go_back_to_month_view(&self) {
-            self.wide_view_stack.set_visible_child_name("new-month");
-            self.narrow_stack.set_visible_child_name("new-month");
+            self.wide_view_stack.set_visible_child_name("month");
+            self.narrow_stack.set_visible_child_name("month");
         }
 
         #[template_callback]

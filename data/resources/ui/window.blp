@@ -105,8 +105,8 @@ template $EraWindow: Adw.ApplicationWindow {
             }
 
             StackPage {
-              name: "new-month";
-              title: _("New Month");
+              name: "month";
+              title: _("Month");
 
               child: Adw.ToolbarView {
                 [top]
@@ -119,7 +119,7 @@ template $EraWindow: Adw.ApplicationWindow {
                   }
 
                   title-widget: Adw.WindowTitle {
-                    title: bind $month_view_title(new_month_view.date) as <string>;
+                    title: bind $month_view_title(month_view.date) as <string>;
                   };
 
                   [end]
@@ -143,7 +143,7 @@ template $EraWindow: Adw.ApplicationWindow {
                 }
 
                 content: Adw.LayoutSlot {
-                  id: "new_month_view";
+                  id: "month_view";
                 };
 
                 [bottom]
@@ -269,7 +269,7 @@ template $EraWindow: Adw.ApplicationWindow {
                   label: bind $medium_view_title(
                     wide_view_stack.visible-child-name,
                     year_view.year,
-                    new_month_view.date,
+                    month_view.date,
                     agenda_view.date
                     ) as <string>;
 
@@ -322,13 +322,13 @@ template $EraWindow: Adw.ApplicationWindow {
                 }
 
                 Adw.ViewStackPage {
-                  name: "new-month";
-                  title: _("_New Month");
+                  name: "month";
+                  title: _("_Month");
                   use-underline: true;
                   icon-name: "month-symbolic";
 
                   child: Adw.LayoutSlot {
-                    id: "new_month_view";
+                    id: "month_view";
                   };
                 }
 
@@ -370,18 +370,18 @@ template $EraWindow: Adw.ApplicationWindow {
           }
         }
 
-        [new_month_view]
+        [month_view]
         Adw.BreakpointBin {
           width-request: 100;
           height-request: 100;
 
-          $NewMonthView new_month_view {}
+          $MonthView month_view {}
 
           Adw.Breakpoint {
             condition ("max-width: 720sp")
 
             setters {
-              new_month_view.styling: narrow;
+              month_view.styling: narrow;
             }
           }
         }

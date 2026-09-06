@@ -8,17 +8,17 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/new_month_view_header.ui")]
-    #[properties(wrapper_type = super::NewMonthViewHeader)]
-    pub struct NewMonthViewHeader {
+    #[template(resource = "/io/gitlab/TitouanReal/Era/month_view_header.ui")]
+    #[properties(wrapper_type = super::MonthViewHeader)]
+    pub struct MonthViewHeader {
         #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]
         styling: Cell<Styling>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for NewMonthViewHeader {
-        const NAME: &'static str = "NewMonthViewHeader";
-        type Type = super::NewMonthViewHeader;
+    impl ObjectSubclass for MonthViewHeader {
+        const NAME: &'static str = "MonthViewHeader";
+        type Type = super::MonthViewHeader;
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
@@ -33,7 +33,7 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for NewMonthViewHeader {
+    impl ObjectImpl for MonthViewHeader {
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -41,11 +41,11 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for NewMonthViewHeader {}
-    impl BinImpl for NewMonthViewHeader {}
+    impl WidgetImpl for MonthViewHeader {}
+    impl BinImpl for MonthViewHeader {}
 
     #[gtk::template_callbacks]
-    impl NewMonthViewHeader {
+    impl MonthViewHeader {
         fn set_styling(&self, styling: Styling) {
             if self.styling.get() == styling {
                 return;
@@ -82,9 +82,9 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct NewMonthViewHeader(ObjectSubclass<imp::NewMonthViewHeader>)
+    pub struct MonthViewHeader(ObjectSubclass<imp::MonthViewHeader>)
         @extends gtk::Widget, adw::Bin,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
 
-impl NewMonthViewHeader {}
+impl MonthViewHeader {}

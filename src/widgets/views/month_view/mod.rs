@@ -12,32 +12,32 @@ mod month_view_header;
 mod month_view_inner;
 mod month_view_overflow;
 
-use self::{month_view_header::NewMonthViewHeader, month_view_inner::NewMonthViewInner};
+use self::{month_view_header::MonthViewHeader, month_view_inner::MonthViewInner};
 
 mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/new_month_view.ui")]
-    #[properties(wrapper_type = super::NewMonthView)]
-    pub struct NewMonthView {
+    #[template(resource = "/io/gitlab/TitouanReal/Era/month_view.ui")]
+    #[properties(wrapper_type = super::MonthView)]
+    pub struct MonthView {
         #[property(get = Self::date, set = Self::set_date)]
         date: PhantomData<Date>,
         #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]
         styling: Cell<Styling>,
 
         #[template_child]
-        header: TemplateChild<NewMonthViewHeader>,
+        header: TemplateChild<MonthViewHeader>,
         #[template_child]
-        pub(super) inner: TemplateChild<NewMonthViewInner>,
+        pub(super) inner: TemplateChild<MonthViewInner>,
         #[template_child]
         floating_controls: TemplateChild<gtk::Box>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for NewMonthView {
-        const NAME: &'static str = "NewMonthView";
-        type Type = super::NewMonthView;
+    impl ObjectSubclass for MonthView {
+        const NAME: &'static str = "MonthView";
+        type Type = super::MonthView;
         type ParentType = gtk::Box;
 
         fn class_init(klass: &mut Self::Class) {
@@ -51,7 +51,7 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for NewMonthView {
+    impl ObjectImpl for MonthView {
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -65,11 +65,11 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for NewMonthView {}
-    impl BoxImpl for NewMonthView {}
+    impl WidgetImpl for MonthView {}
+    impl BoxImpl for MonthView {}
 
     #[gtk::template_callbacks]
-    impl NewMonthView {
+    impl MonthView {
         /// Returns the date displayed by the view.
         fn date(&self) -> Date {
             self.inner.date()
@@ -109,12 +109,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct NewMonthView(ObjectSubclass<imp::NewMonthView>)
+    pub struct MonthView(ObjectSubclass<imp::MonthView>)
         @extends gtk::Widget, gtk::Box,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
 }
 
-impl NewMonthView {
+impl MonthView {
     pub fn zoom_in(&self) {
         self.imp().inner.zoom_in();
     }

@@ -12,7 +12,7 @@ use tracing::{error, warn};
 use crate::{application::Application, utils::Date, widgets::window::Styling};
 
 use super::{
-    kinetic_scrolling::KineticScrolling, month_view_cell::NewMonthViewCell,
+    kinetic_scrolling::KineticScrolling, month_view_cell::MonthViewCell,
     month_view_event::MonthViewEvent, month_view_overflow::MonthViewOverflow,
 };
 
@@ -358,9 +358,9 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/new_month_view_inner.ui")]
-    #[properties(wrapper_type = super::NewMonthViewInner)]
-    pub struct NewMonthViewInner {
+    #[template(resource = "/io/gitlab/TitouanReal/Era/month_view_inner.ui")]
+    #[properties(wrapper_type = super::MonthViewInner)]
+    pub struct MonthViewInner {
         /// The date of the last cell of the first row whose top separator is visible.
         #[property(get, set = Self::set_date)]
         date: Cell<Date>,
@@ -374,7 +374,7 @@ mod imp {
 
         // A collection of cells used to display the month. The first element might not be the first
         // cell displayed. This is used as a circular set for efficient recycling.
-        cells: OnceCell<[NewMonthViewCell; NB_CELLS]>,
+        cells: OnceCell<[MonthViewCell; NB_CELLS]>,
         column_separators: OnceCell<[gtk::Separator; 6]>,
         row_separators: OnceCell<[gtk::Separator; NB_ROWS]>,
 
@@ -406,9 +406,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for NewMonthViewInner {
-        const NAME: &'static str = "NewMonthViewInner";
-        type Type = super::NewMonthViewInner;
+    impl ObjectSubclass for MonthViewInner {
+        const NAME: &'static str = "MonthViewInner";
+        type Type = super::MonthViewInner;
         type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
@@ -422,7 +422,7 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for NewMonthViewInner {
+    impl ObjectImpl for MonthViewInner {
         fn constructed(&self) {
             self.parent_constructed();
 
@@ -450,7 +450,7 @@ mod imp {
 
             let cells = std::array::from_fn(|i| {
                 let date = (first_cell_date + (i as i32).days()).into();
-                let cell = NewMonthViewCell::new(date);
+                let cell = MonthViewCell::new(date);
                 cell.insert_before(&*self.obj(), None::<&gtk::Widget>);
                 cell
             });
@@ -620,7 +620,7 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for NewMonthViewInner {
+    impl WidgetImpl for MonthViewInner {
         fn size_allocate(&self, width: i32, height: i32, baseline: i32) {
             let cells = self.cells.get().unwrap();
             let column_separators = self.column_separators.get().unwrap();
@@ -799,7 +799,7 @@ mod imp {
     }
 
     #[gtk::template_callbacks]
-    impl NewMonthViewInner {
+    impl MonthViewInner {
         /// Sets the date displayed in the view.
         fn set_date(&self, date: Date) {
             if self.date.get() == date {
@@ -1539,12 +1539,12 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct NewMonthViewInner(ObjectSubclass<imp::NewMonthViewInner>)
+    pub struct MonthViewInner(ObjectSubclass<imp::MonthViewInner>)
         @extends gtk::Widget,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
 
-impl NewMonthViewInner {
+impl MonthViewInner {
     pub fn zoom_in(&self) {
         self.imp().start_discrete_zoom_animation(1.1);
     }
