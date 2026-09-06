@@ -197,19 +197,19 @@ year-view {
         }
     }
 
-    .cell:hover {
-        --bg-color: rgb(from var(--window-fg-color) r g b / 3.75%);
-
-        background-color: var(--bg-color);
-    }
-
-    .cell:active {
-        --bg-color: rgb(from var(--window-fg-color) r g b / 7.5%);
-
-        background-color: var(--bg-color);
-    }
-
     .cell {
+        &:hover {
+            --bg-color: rgb(from var(--window-fg-color) r g b / 3.75%);
+
+            background-color: var(--bg-color);
+        }
+
+        &:active {
+            --bg-color: rgb(from var(--window-fg-color) r g b / 7.5%);
+
+            background-color: var(--bg-color);
+        }
+
         &.narrow {
             label {
                 margin: 6px 3px 6px 3px;
@@ -346,181 +346,6 @@ year-view {
 
     @media (prefers-contrast: more) {
         box-shadow: 0 0 0 1px var(--border-color);
-    }
-}
-
-month-view {
-    > box.header {
-        > label.day-name {
-            font-weight: bold;
-            margin: 6px;
-            opacity: var(--dim-opacity);
-        }
-    }
-
-    > month-view-inner {
-        --raised-shade-color-base: color-mix(
-            in srgb,
-            var(--headerbar-shade-color) 50%,
-            transparent
-        );
-
-        box-shadow:
-            inset 0 -1px
-                var(--raised-shade-color, var(--raised-shade-color-base)),
-            inset 0 -2px 4px var(--raised-shade-color-base),
-            inset 0 1px
-                var(--raised-shade-color, var(--raised-shade-color-base)),
-            inset 0 2px 4px var(--raised-shade-color-base);
-    }
-}
-
-month-view-row {
-    .cell:hover {
-        --bg-color: rgb(from var(--window-fg-color) r g b / 3.75%);
-
-        background-color: var(--bg-color);
-    }
-
-    .cell:active {
-        --bg-color: rgb(from var(--window-fg-color) r g b / 7.5%);
-
-        background-color: var(--bg-color);
-    }
-
-    .cell:focus-visible {
-        outline: 2px solid var(--accent-bg-color);
-        outline-offset: -2px;
-    }
-
-    separator.month-separator {
-        --bg-color: rgb(
-            from rgb(from var(--border-color) r g b / calc(alpha + 7.5%)) r g
-                b / calc(alpha * 5)
-        );
-
-        background-color: var(--bg-color);
-    }
-
-    event-widget {
-        background-color: color-mix(
-            in srgb,
-            oklab(from var(--calendar-color) 0.6 a b) 25%,
-            var(--view-bg-color)
-        );
-        color: color-mix(
-            in srgb,
-            oklab(from var(--calendar-color) 0.6 a b) 10%,
-            var(--view-fg-color)
-        );
-
-        .edge {
-            background-color: oklab(from var(--calendar-color) 0.6 a b);
-            min-width: 6px;
-        }
-
-        label {
-            padding-top: 3px;
-            padding-bottom: 3px;
-        }
-    }
-
-    overflow-button {
-        &:hover {
-            background-color: #88888888;
-        }
-    }
-
-    event-widget,
-    overflow-button {
-        min-height: 8px;
-        border-radius: 6px;
-
-        &:focus-visible {
-            outline: 2px solid var(--accent-bg-color);
-            outline-offset: -2px;
-        }
-    }
-
-    &.narrow {
-        event-widget,
-        overflow-button {
-            label {
-                font-size: 82%;
-            }
-        }
-
-        event-widget {
-            label {
-                margin: 2px;
-            }
-        }
-    }
-
-    &.medium {
-        event-widget,
-        overflow-button {
-            label {
-                margin: 3px;
-            }
-        }
-    }
-}
-
-month-view-header {
-    &.narrow {
-        margin: 6px 3px 6px 3px;
-
-        label.day,
-        label.month {
-            border-radius: 6px;
-        }
-
-        label.day {
-            padding: 0 6px 0 6px;
-        }
-
-        label.month {
-            padding: 0 3px 0 3px;
-            font-weight: 700;
-        }
-    }
-
-    &.medium {
-        margin: 6px;
-
-        label.day,
-        label.month {
-            border-radius: 6px;
-            padding: 0 6px 0 6px;
-        }
-
-        label.month {
-            font-weight: 700;
-        }
-
-        @media (prefers-color-scheme: light) {
-            label.month {
-                color: white;
-                background-color: var(--dark-2);
-            }
-        }
-
-        @media (prefers-color-scheme: dark) {
-            label.month {
-                color: black;
-                background-color: var(--light-3);
-            }
-        }
-    }
-
-    &.today {
-        label.day,
-        label.month {
-            font-weight: 700;
-            color: var(--accent-fg-color);
-            background-color: var(--accent-bg-color);
-        }
     }
 }
 

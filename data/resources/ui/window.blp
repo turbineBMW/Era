@@ -105,72 +105,6 @@ template $EraWindow: Adw.ApplicationWindow {
             }
 
             StackPage {
-              name: "month";
-              title: _("Month");
-
-              child: Adw.ToolbarView {
-                [top]
-                Adw.HeaderBar {
-                  [start]
-                  Button {
-                    icon-name: "go-previous-symbolic";
-                    tooltip-text: _("Year View");
-                    clicked => $go_back_to_year_view(template);
-                  }
-
-                  title-widget: Adw.WindowTitle {
-                    title: bind $get_year_month_label(month_view.year, month_view.month) as <string>;
-                  };
-
-                  [end]
-                  Button {
-                    icon-name: "system-search-symbolic";
-                    tooltip-text: _("Search");
-                    action-name: "win.search-events";
-
-                    styles [
-                      "flat",
-                    ]
-                  }
-                }
-
-                content: Adw.LayoutSlot {
-                  id: "month_view";
-                };
-
-                [bottom]
-                ActionBar {
-                  [start]
-                  Button {
-                    action-name: "win.today";
-
-                    child: Adw.ButtonContent {
-                      label: _("_Today");
-                      use-underline: true;
-                      icon-name: "today-symbolic";
-                      can-shrink: true;
-                      tooltip-text: _("Go to Today");
-                    };
-                  }
-
-                  [end]
-                  Button {
-                    icon-name: "list-add-symbolic";
-                    tooltip-text: _("Create Event");
-                    clicked => $create_event(template);
-                  }
-
-                  [end]
-                  Button {
-                    icon-name: "x-office-calendar-symbolic";
-                    tooltip-text: _("Manage Calendars");
-                    action-name: "win.manage-calendars";
-                  }
-                }
-              };
-            }
-
-            StackPage {
               name: "new-month";
               title: _("New Month");
 
@@ -335,9 +269,6 @@ template $EraWindow: Adw.ApplicationWindow {
                   label: bind $medium_view_title(
                     wide_view_stack.visible-child-name,
                     year_view.year,
-                    month_view.year,
-                    month_view.month,
-                    month_view.day,
                     new_month_view.date,
                     agenda_view.date
                     ) as <string>;
@@ -391,16 +322,6 @@ template $EraWindow: Adw.ApplicationWindow {
                 }
 
                 Adw.ViewStackPage {
-                  name: "month";
-                  title: _("_Month");
-                  use-underline: true;
-
-                  child: Adw.LayoutSlot {
-                    id: "month_view";
-                  };
-                }
-
-                Adw.ViewStackPage {
                   name: "new-month";
                   title: _("_New Month");
                   use-underline: true;
@@ -445,22 +366,6 @@ template $EraWindow: Adw.ApplicationWindow {
 
             setters {
               year_view.styling: wide;
-            }
-          }
-        }
-
-        [month_view]
-        Adw.BreakpointBin {
-          width-request: 100;
-          height-request: 100;
-
-          $MonthView month_view {}
-
-          Adw.Breakpoint {
-            condition ("max-width: 720sp")
-
-            setters {
-              month_view.styling: narrow;
             }
           }
         }

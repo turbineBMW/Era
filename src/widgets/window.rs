@@ -7,10 +7,10 @@ use glib::{clone, translate::*};
 
 use crate::{
     Application,
-    utils::{Date, EventPropertiesPreset, TemplateCallbacks},
+    utils::{Date, EventPropertiesPreset},
     widgets::{
         CalendarManagementDialog, EventCreationDialog, SearchDialog, Sidebar,
-        views::{AgendaView, MonthView, NewMonthView, YearView},
+        views::{AgendaView, NewMonthView, YearView},
     },
 };
 
@@ -46,8 +46,6 @@ pub mod imp {
         narrow_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         year_view: TemplateChild<YearView>,
-        #[template_child]
-        month_view: TemplateChild<MonthView>,
         #[template_child]
         new_month_view: TemplateChild<NewMonthView>,
         #[template_child]
@@ -125,10 +123,7 @@ pub mod imp {
 
                 // TODO: Use date as well
                 let year = today.to_glib_date_time_utc().year();
-                let month = today.to_glib_date_time_utc().month();
-                let day = today.to_glib_date_time_utc().day_of_month();
                 obj.imp().year_view.set_year(year);
-                obj.imp().month_view.set_year_month_day(year, month, day);
             });
             klass.add_binding_action(gdk::Key::T, gdk::ModifierType::CONTROL_MASK, "win.today");
             klass.add_binding_action(
@@ -149,7 +144,7 @@ pub mod imp {
                     "new-month" => {
                         obj.imp().new_month_view.zoom_in();
                     }
-                    "year" | "month" | "agenda" => {}
+                    "year" | "agenda" => {}
                     name => panic!("Unknown narrow stack child name: {name}"),
                 };
             });
@@ -175,7 +170,7 @@ pub mod imp {
                     "new-month" => {
                         obj.imp().new_month_view.zoom_out();
                     }
-                    "year" | "month" | "agenda" => {}
+                    "year" | "agenda" => {}
                     name => panic!("Unknown narrow stack child name: {name}"),
                 };
             });
@@ -317,7 +312,6 @@ pub mod imp {
                         .as_str()
                     {
                         "year" => imp.wide_view_stack.set_visible_child_name("year"),
-                        "month" => imp.wide_view_stack.set_visible_child_name("month"),
                         "new-month" => imp.wide_view_stack.set_visible_child_name("new-month"),
                         "agenda" => imp.wide_view_stack.set_visible_child_name("agenda"),
                         name => panic!("Unknown narrow stack child name: {name}"),
@@ -337,7 +331,6 @@ pub mod imp {
                             .as_str()
                         {
                             "year" => imp.narrow_stack.set_visible_child_name("year"),
-                            "month" => imp.narrow_stack.set_visible_child_name("month"),
                             "new-month" => imp.narrow_stack.set_visible_child_name("new-month"),
                             "agenda" => imp.narrow_stack.set_visible_child_name("agenda"),
                             name => panic!("Unknown wide view stack child name: {name}"),
@@ -397,20 +390,11 @@ pub mod imp {
         fn medium_view_title(
             view: &str,
             year_year: i32,
-            month_year: i32,
-            month_month: i32,
-            month_day: i32,
             new_month_view_date: &Date,
             agenda_view_date: &Date,
         ) -> String {
             match view {
                 "year" => year_year.to_string(),
-                "month" => {
-                    let datetime =
-                        glib::DateTime::from_utc(month_year, month_month, month_day, 0, 0, 0.0)
-                            .unwrap();
-                    datetime.format(&gettext("%0B %Y")).unwrap().to_string()
-                }
                 "new-month" => Self::month_view_title(new_month_view_date),
                 "agenda" => Self::agenda_view_title(agenda_view_date),
                 _ => panic!("Unknown view: {view}"),
@@ -440,12 +424,6 @@ pub mod imp {
             year.to_string()
         }
 
-        #[template_callback(function)]
-        fn get_year_month_label(year: i32, month: i32) -> String {
-            let month_name = TemplateCallbacks::capitalized_month_name(month);
-            format!("{month_name} {year} ")
-        }
-
         #[template_callback]
         fn go_back_to_year_view(&self) {
             self.wide_view_stack.set_visible_child_name("year");
@@ -454,8 +432,8 @@ pub mod imp {
 
         #[template_callback]
         fn go_back_to_month_view(&self) {
-            self.wide_view_stack.set_visible_child_name("month");
-            self.narrow_stack.set_visible_child_name("month");
+            self.wide_view_stack.set_visible_child_name("new-month");
+            self.narrow_stack.set_visible_child_name("new-month");
         }
 
         #[template_callback]
