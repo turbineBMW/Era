@@ -44,4 +44,18 @@ Adw.ShortcutsDialog shortcuts_dialog {
       accelerator: "<Alt>Down <Primary>T Home";
     }
   }
+
+  Adw.ShortcutsSection {
+    title: C_("shortcut dialog", "View");
+
+    Adw.ShortcutsItem {
+      title: C_("shortcut dialog", "Zoom In");
+      accelerator: "<Primary>plus <Primary>equal";
+    }
+
+    Adw.ShortcutsItem {
+      title: C_("shortcut dialog", "Zoom Out");
+      accelerator: "<Primary>minus";
+    }
+  }
 }
