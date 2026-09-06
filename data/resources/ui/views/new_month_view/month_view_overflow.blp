@@ -1,0 +1,23 @@
+using Gtk 4.0;
+
+template $MonthViewOverflow: Widget {
+  focusable: true;
+
+  styles [
+    "overflow",
+    "dimmed",
+  ]
+
+  Inscription inscription {
+    text: bind template.text;
+    xalign: 0.5;
+  }
+
+  Image image {
+    icon-name: "view-more-horizontal-symbolic";
+  }
+
+  GestureClick {
+    released => $open_agenda_view(template);
+  }
+}

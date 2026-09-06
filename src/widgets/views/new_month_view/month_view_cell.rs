@@ -150,6 +150,13 @@ mod imp {
                 _ => unreachable!(),
             }
         }
+
+        pub(super) fn header_height(&self, width: i32) -> i32 {
+            let (_minimum_header_height, natural_header_height, ..) =
+                self.header.measure(gtk::Orientation::Vertical, width);
+
+            natural_header_height
+        }
     }
 }
 
@@ -162,5 +169,9 @@ glib::wrapper! {
 impl NewMonthViewCell {
     pub fn new(date: Date) -> Self {
         glib::Object::builder().property("date", date).build()
+    }
+
+    pub fn header_height(&self, width: i32) -> i32 {
+        self.imp().header_height(width)
     }
 }

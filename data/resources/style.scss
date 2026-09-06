@@ -269,6 +269,64 @@ year-view {
             }
         }
     }
+
+    .event {
+        background-color: color-mix(
+            in srgb,
+            oklab(from var(--calendar-color) 0.6 a b) 25%,
+            var(--view-bg-color)
+        );
+        color: color-mix(
+            in srgb,
+            oklab(from var(--calendar-color) 0.6 a b) 10%,
+            var(--view-fg-color)
+        );
+
+        .edge {
+            background-color: oklab(from var(--calendar-color) 0.6 a b);
+            min-width: 6px;
+        }
+
+        label {
+            padding-top: 3px;
+            padding-bottom: 3px;
+        }
+
+        &.narrow {
+            label {
+                margin: 2px;
+            }
+        }
+    }
+
+    .overflow {
+        &:hover {
+            background-color: #88888888;
+        }
+    }
+
+    .event,
+    .overflow {
+        min-height: 8px;
+        border-radius: 6px;
+
+        &:focus-visible {
+            outline: 2px solid var(--accent-bg-color);
+            outline-offset: -2px;
+        }
+
+        &.narrow {
+            label {
+                font-size: 82%;
+            }
+        }
+
+        &.medium {
+            label {
+                margin: 3px;
+            }
+        }
+    }
 }
 
 .floating-controls {

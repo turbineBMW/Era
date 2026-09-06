@@ -65,8 +65,10 @@ blueprints = custom_target(
         # New Month View
         'ui/views/new_month_view/new_month_view.blp',
         'ui/views/new_month_view/new_month_view_cell.blp',
+        'ui/views/new_month_view/month_view_event.blp',
         'ui/views/new_month_view/new_month_view_header.blp',
         'ui/views/new_month_view/new_month_view_inner.blp',
+        'ui/views/new_month_view/month_view_overflow.blp',
         # Year View
         'ui/views/year_view/year_view.blp',
         'ui/views/year_view/year_view_cell.blp',

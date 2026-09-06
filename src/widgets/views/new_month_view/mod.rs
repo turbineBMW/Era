@@ -7,8 +7,10 @@ use crate::{utils::Date, widgets::window::Styling};
 
 mod kinetic_scrolling;
 mod month_view_cell;
+mod month_view_event;
 mod month_view_header;
 mod month_view_inner;
+mod month_view_overflow;
 
 use self::{month_view_header::NewMonthViewHeader, month_view_inner::NewMonthViewInner};
 

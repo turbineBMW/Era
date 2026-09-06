@@ -1,16 +1,22 @@
-use std::cell::{Cell, OnceCell, RefCell};
+use std::{
+    cell::{Cell, OnceCell, RefCell},
+    collections::HashSet,
+};
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Subscription, prelude::*};
-use glib::clone;
+use clepsydre::{Calendar, Event, Subscription, prelude::*};
+use glib::{GString, clone};
 use jiff::ToSpan;
 use tracing::{error, warn};
 
 use crate::{application::Application, utils::Date, widgets::window::Styling};
 
-use super::{kinetic_scrolling::KineticScrolling, month_view_cell::NewMonthViewCell};
+use super::{
+    kinetic_scrolling::KineticScrolling, month_view_cell::NewMonthViewCell,
+    month_view_event::MonthViewEvent, month_view_overflow::MonthViewOverflow,
+};
 
-const NB_ROWS: usize = 200;
+const NB_ROWS: usize = 100;
 const NB_CELLS: usize = 7 * NB_ROWS;
 const MINIMUM_NB_ROWS_BELOW: i32 = 10;
 const MINIMUM_NB_ROWS_ABOVE: i32 = 10;
@@ -38,6 +44,11 @@ const DISCRETE_SCROLL_ANIMATION_MS: u32 = 200;
 
 /// Duration of the discrete-zoom animation in milliseconds.
 const DISCRETE_ZOOM_ANIMATION_MS: u32 = 200;
+
+const INITIAL_EVENT_WIDGET_POOL_SIZE: usize = 100;
+
+const UNIX_EPOCH_DATE: jiff::civil::Date = jiff::civil::date(1970, 1, 1);
+const SECONDS_PER_DAY: i64 = 86_400;
 
 /// Actively handled input or input consequence.
 #[derive(Debug)]
@@ -71,6 +82,278 @@ enum Animation {
     },
 }
 
+#[derive(Debug, Clone)]
+struct EventSegment {
+    row_index: usize,
+    column_start: usize,
+    column_end: usize,
+    event: Event,
+}
+
+#[derive(Debug, Clone)]
+struct StackedSegment {
+    column_start: usize,
+    column_end: usize,
+    stack_row: usize,
+    event: Event,
+}
+
+#[derive(Debug, Clone)]
+struct EventLayout {
+    widget: MonthViewEvent,
+    column_start: usize,
+    column_end: usize,
+    stack_row: usize,
+}
+
+#[derive(Debug, Clone)]
+struct PlacedEvent {
+    layout: EventLayout,
+    hidden: bool,
+}
+
+#[derive(Debug, Clone)]
+struct RowOverflow {
+    placements: Vec<PlacedEvent>,
+    column_hidden_counts: [usize; 7],
+}
+
+impl RowOverflow {
+    fn compute(row_layouts: &[EventLayout], max_events: usize) -> Self {
+        let column_max_row = {
+            let mut column_max_row = [0usize; 7];
+            for layout in row_layouts {
+                for max_row in &mut column_max_row[layout.column_start..=layout.column_end] {
+                    *max_row = (*max_row).max(layout.stack_row + 1);
+                }
+            }
+            column_max_row
+        };
+
+        let column_needs_more = {
+            let mut column_needs_more = [false; 7];
+            for i in 0..7 {
+                if column_max_row[i] > max_events {
+                    column_needs_more[i] = true;
+                }
+            }
+            column_needs_more
+        };
+
+        let placements = row_layouts
+            .iter()
+            .map(|layout| {
+                let hidden = (layout.column_start..=layout.column_end)
+                    .any(|i| column_needs_more[i] && layout.stack_row >= max_events - 1);
+
+                PlacedEvent {
+                    layout: layout.clone(),
+                    hidden,
+                }
+            })
+            .collect::<Vec<_>>();
+
+        let column_hidden_counts = {
+            let mut column_hidden_counts = [0; 7];
+            for placement in &placements {
+                if placement.hidden {
+                    for count in &mut column_hidden_counts
+                        [placement.layout.column_start..=placement.layout.column_end]
+                    {
+                        *count += 1;
+                    }
+                }
+            }
+            column_hidden_counts
+        };
+
+        Self {
+            placements,
+            column_hidden_counts,
+        }
+    }
+}
+
+fn compute_event_segments(
+    events: &[Event],
+    buffer_start_unix_days: i64,
+    timezone: &glib::TimeZone,
+) -> Vec<EventSegment> {
+    let mut segments = Vec::new();
+
+    for event in events {
+        if !event.calendar().unwrap().is_visible() {
+            continue;
+        }
+
+        let timeframe = event.timeframe().unwrap();
+
+        let start_unix_seconds = timeframe.start_unix();
+        let end_unix_seconds = timeframe.end_unix();
+
+        let (start_unix_days, end_unix_days_inclusive) = if timeframe.is_all_day() {
+            let start_unix_days = start_unix_seconds / SECONDS_PER_DAY;
+            let end_unix_days_inclusive = end_unix_seconds / SECONDS_PER_DAY - 1;
+
+            (start_unix_days, end_unix_days_inclusive)
+        } else {
+            let start_unix_days = (start_unix_seconds
+                + timezone
+                    .offset(timezone.find_interval(glib::TimeType::Universal, start_unix_seconds))
+                    as i64)
+                / SECONDS_PER_DAY;
+            let end_unix_days_inclusive = (end_unix_seconds
+                + timezone
+                    .offset(timezone.find_interval(glib::TimeType::Universal, end_unix_seconds))
+                    as i64)
+                / SECONDS_PER_DAY;
+
+            let ends_exactly_at_midnight = (end_unix_seconds
+                + timezone
+                    .offset(timezone.find_interval(glib::TimeType::Universal, end_unix_seconds))
+                    as i64)
+                % SECONDS_PER_DAY
+                == 0;
+
+            let end_unix_days_inclusive = if ends_exactly_at_midnight {
+                end_unix_days_inclusive - 1
+            } else {
+                end_unix_days_inclusive
+            };
+
+            (start_unix_days, end_unix_days_inclusive)
+        };
+
+        let first_day_offset = start_unix_days - buffer_start_unix_days;
+        let last_day_offset = end_unix_days_inclusive - buffer_start_unix_days;
+
+        // Ignore events outside the range before casting to usize, as this can cause a
+        // wraparound
+        if last_day_offset < 0 || first_day_offset > NB_CELLS as i64 - 1 {
+            tracing::warn!("Subscription gave an event outside the range");
+            continue;
+        }
+
+        let first_day_offset = (first_day_offset).max(0) as usize;
+        let last_day_offset = (last_day_offset).min(NB_CELLS as i64 - 1) as usize;
+
+        let first_row_index = first_day_offset / 7;
+        let last_row_index = last_day_offset / 7;
+
+        // Emit one segment per row touched by this event
+        for row_index in first_row_index..=last_row_index {
+            let row_first_day_offset = row_index * 7;
+            let row_last_day_offset = row_first_day_offset + 6;
+
+            let column_start = first_day_offset.max(row_first_day_offset) - row_first_day_offset;
+            let column_end = last_day_offset.min(row_last_day_offset) - row_first_day_offset;
+
+            let segment = EventSegment {
+                row_index,
+                column_start,
+                column_end,
+                event: event.clone(),
+            };
+            segments.push(segment);
+        }
+    }
+
+    segments
+}
+
+/// Groups `segments` by `row_index` and assigns each one a `stack_row`, independently per row,
+/// via first-fit packing: segments are sorted widest-span-first (then by `column_start`), and
+/// each one is greedily placed in the first stack row whose occupied half-open column intervals
+/// don't conflict with it. A multi-row event's segments can end up on different `stack_row`s in
+/// different rows -- that's an accepted outcome, not a bug (no cross-row continuity requirement).
+fn stack_event_segments(segments: &[EventSegment]) -> Vec<Vec<StackedSegment>> {
+    let mut segments_by_row: Vec<Vec<&EventSegment>> = (0..NB_ROWS).map(|_| Vec::new()).collect();
+    for segment in segments {
+        segments_by_row[segment.row_index].push(segment);
+    }
+
+    segments_by_row
+        .into_iter()
+        .map(|mut row_segments| {
+            // Sort widest-span-first, then by start column, so a wide event claims a stack
+            // row before narrower events that could otherwise fragment the packing.
+            row_segments.sort_by(|a, b| {
+                let span_a = a.column_end - a.column_start;
+                let span_b = b.column_end - b.column_start;
+                span_b
+                    .cmp(&span_a)
+                    .then_with(|| a.column_start.cmp(&b.column_start))
+            });
+
+            // First-fit packing: each stack row tracks the half-open column intervals it
+            // already occupies; a segment is placed in the first stack row it doesn't
+            // conflict with, or a new one if none fit.
+            let mut stack_row_occupancy: Vec<Vec<(usize, usize)>> = Vec::new();
+            let mut stacked_row = Vec::with_capacity(row_segments.len());
+
+            for segment in row_segments {
+                let start_column = segment.column_start;
+                let end_column = segment.column_end + 1; // half-open
+
+                let mut assigned_stack_row = None;
+                for (stack_row, occupied) in stack_row_occupancy.iter_mut().enumerate() {
+                    let conflicts = occupied
+                        .iter()
+                        .any(|&(s, e)| start_column < e && end_column > s);
+                    if !conflicts {
+                        occupied.push((start_column, end_column));
+                        assigned_stack_row = Some(stack_row);
+                        break;
+                    }
+                }
+                let assigned_stack_row = assigned_stack_row.unwrap_or_else(|| {
+                    stack_row_occupancy.push(vec![(start_column, end_column)]);
+                    stack_row_occupancy.len() - 1
+                });
+
+                stacked_row.push(StackedSegment {
+                    column_start: segment.column_start,
+                    column_end: segment.column_end,
+                    stack_row: assigned_stack_row,
+                    event: segment.event.clone(),
+                });
+            }
+
+            stacked_row
+        })
+        .collect()
+}
+
+fn build_event_layouts(
+    event_widgets: &[MonthViewEvent],
+    stacked_segments_by_row: &[Vec<StackedSegment>],
+) -> Vec<Vec<EventLayout>> {
+    let mut event_widget_index = 0;
+    let mut layouts_by_row = Vec::with_capacity(stacked_segments_by_row.len());
+
+    for row_stacked_segments in stacked_segments_by_row {
+        let mut row_layouts = Vec::with_capacity(row_stacked_segments.len());
+
+        for stacked_segment in row_stacked_segments {
+            let event_widget = &event_widgets[event_widget_index];
+            event_widget_index += 1;
+
+            event_widget.set_event(Some(&stacked_segment.event));
+
+            row_layouts.push(EventLayout {
+                widget: event_widget.clone(),
+                column_start: stacked_segment.column_start,
+                column_end: stacked_segment.column_end,
+                stack_row: stacked_segment.stack_row,
+            });
+        }
+
+        layouts_by_row.push(row_layouts);
+    }
+
+    layouts_by_row
+}
+
 mod imp {
     use super::*;
 
@@ -88,8 +371,6 @@ mod imp {
         scroll_drag: TemplateChild<gtk::GestureDrag>,
         #[template_child]
         scroll_swipe: TemplateChild<gtk::GestureSwipe>,
-
-        subscription: OnceCell<Subscription>,
 
         // A collection of cells used to display the month. The first element might not be the first
         // cell displayed. This is used as a circular set for efficient recycling.
@@ -113,6 +394,15 @@ mod imp {
 
         /// Y position of the pointer to use for zooming with CTRL+scroll.
         pointer_y: Cell<Option<f64>>,
+
+        subscription: OnceCell<Subscription>,
+
+        event_widgets: RefCell<Vec<MonthViewEvent>>,
+        overflow_widgets: OnceCell<[MonthViewOverflow; NB_CELLS]>,
+
+        event_layouts: RefCell<Vec<Vec<EventLayout>>>,
+
+        connected_event_uris: RefCell<HashSet<GString>>,
     }
 
     #[glib::object_subclass]
@@ -141,6 +431,7 @@ mod imp {
             let system = application.system();
             let today = system.date();
             let timezone = system.datetime().timezone();
+            let calendars_model = manager.calendars_model().unwrap();
 
             self.date.set(today);
 
@@ -180,11 +471,31 @@ mod imp {
             let end = Date::from(cells[last_cell_index].date().to_jiff().tomorrow().unwrap())
                 .to_glib_date_time(&timezone);
             let subscription = manager.new_subscription(&start, &end).unwrap();
-            self.subscription.set(subscription).unwrap();
 
-            // TODO: use a real event widget instead
-            let event_height = 30;
-            let initial_cell_height = 3 * event_height + 2 * EVENT_GAP;
+            let event_widgets = (0..INITIAL_EVENT_WIDGET_POOL_SIZE)
+                .map(|_| {
+                    let event_widget = MonthViewEvent::new(None);
+                    event_widget.set_child_visible(false);
+                    event_widget.set_parent(&*self.obj());
+                    event_widget
+                })
+                .collect::<Vec<_>>();
+
+            let overflow_widgets = std::array::from_fn(|i| {
+                let date = (first_cell_date + (i as i32).days()).into();
+                let overflow_widget = MonthViewOverflow::new(date);
+                overflow_widget.set_child_visible(false);
+                overflow_widget.insert_before(&*self.obj(), None::<&gtk::Widget>);
+                overflow_widget
+            });
+
+            let (_minimum_event_height, natural_event_height, ..) =
+                event_widgets[0].measure(gtk::Orientation::Vertical, 100);
+            let header_height = cells[0].header_height(100);
+
+            // TODO: CSS isn't applied yet. We should do this initialisation in the first
+            // size_allocate? We could use widget margins?
+            let initial_cell_height = header_height + 4 * natural_event_height + 3 * EVENT_GAP;
             self.cell_height.set(initial_cell_height);
 
             self.scroll_offset
@@ -194,13 +505,30 @@ mod imp {
             self.column_separators.set(column_separators).unwrap();
             self.row_separators.set(row_separators).unwrap();
 
+            self.subscription.set(subscription).unwrap();
+
+            self.event_widgets.replace(event_widgets);
+            self.overflow_widgets.set(overflow_widgets).unwrap();
+
             self.scroll_swipe.group_with(&*self.scroll_drag);
+
+            self.subscription
+                .get()
+                .unwrap()
+                .connect_items_changed(clone!(
+                    #[weak(rename_to = imp)]
+                    self,
+                    move |_model, _position, _removed, _added| {
+                        imp.recompute_event_layouts();
+                    }
+                ));
 
             system.connect_first_week_day_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 move |system| {
                     let cells = imp.cells.get().unwrap();
+                    let overflow_widgets = imp.overflow_widgets.get().unwrap();
 
                     let first_week_day = system.first_week_day();
 
@@ -216,11 +544,13 @@ mod imp {
                     imp.first_cell_index.set(new_index);
 
                     for i in 0..difference {
-                        cells[(new_index + i) % NB_CELLS]
-                            .set_date(Date::from(new_first_date.to_jiff() + (i as i32).days()));
+                        let date = Date::from(new_first_date.to_jiff() + (i as i32).days());
+                        cells[(new_index + i) % NB_CELLS].set_date(date);
+                        overflow_widgets[(new_index + i) % NB_CELLS].set_date(date);
                     }
 
                     imp.recycle_if_needed();
+                    imp.recompute_event_layouts();
                 }
             ));
 
@@ -231,6 +561,44 @@ mod imp {
                     imp.update_subscription_timeframe();
                 }
             ));
+
+            for i in 0..calendars_model.n_items() {
+                let item = calendars_model
+                    .item(i)
+                    .unwrap()
+                    .downcast::<Calendar>()
+                    .unwrap();
+                item.connect_visible_notify(clone!(
+                    #[weak(rename_to = imp)]
+                    self,
+                    move |_calendar| {
+                        imp.recompute_event_layouts();
+                    }
+                ));
+            }
+
+            calendars_model.connect_items_changed(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |model, position, _removed, added| {
+                    for i in 0..added {
+                        let item = model
+                            .item(position + i)
+                            .unwrap()
+                            .downcast::<Calendar>()
+                            .unwrap();
+                        item.connect_visible_notify(clone!(
+                            #[weak]
+                            imp,
+                            move |_calendar| {
+                                imp.recompute_event_layouts();
+                            }
+                        ));
+                    }
+                }
+            ));
+
+            self.recompute_event_layouts();
         }
 
         fn dispose(&self) {
@@ -243,6 +611,12 @@ mod imp {
             for separator in self.row_separators.get().unwrap() {
                 separator.unparent();
             }
+            for event_widget in self.event_widgets.borrow().iter() {
+                event_widget.unparent();
+            }
+            for overflow_widget in self.overflow_widgets.get().unwrap() {
+                overflow_widget.unparent();
+            }
         }
     }
 
@@ -251,6 +625,7 @@ mod imp {
             let cells = self.cells.get().unwrap();
             let column_separators = self.column_separators.get().unwrap();
             let row_separators = self.row_separators.get().unwrap();
+            let overflow_widgets = self.overflow_widgets.get().unwrap();
 
             // Width is distributed evenly. Any remainder pixels are given to the leftmost columns,
             // so the first (width % 7) columns are one pixel wider than the rest.
@@ -274,8 +649,8 @@ mod imp {
                 })
             };
 
-            let old_cell_height = self.cell_height.get();
             let cell_height = {
+                let old_cell_height = self.cell_height.get();
                 // Measures against the narrowest column (the last one) to get a conservative
                 // minimum height that holds for all cells regardless of their width.
                 let (minimum_cell_height, ..) =
@@ -294,6 +669,14 @@ mod imp {
 
             let scroll_offset = self.scroll_offset.get() as i32;
             let first_cell_index = self.first_cell_index.get();
+
+            let (minimum_event_height, natural_event_height, ..) = {
+                let event_widgets = self.event_widgets.borrow();
+                event_widgets[0].measure(gtk::Orientation::Vertical, column_widths[6])
+            };
+            let header_height = cells[0].header_height(column_widths[6]);
+
+            let event_layouts = self.event_layouts.borrow();
 
             for row_index in 0..NB_ROWS {
                 let row_height = cell_height + SEPARATOR_HEIGHT;
@@ -325,6 +708,84 @@ mod imp {
                     row_separator.size_allocate(&separator_allocation, baseline);
                 } else {
                     row_separator.set_child_visible(false);
+                }
+
+                let row_layouts = &event_layouts[row_index];
+
+                if !row_visible {
+                    for layout in row_layouts.iter() {
+                        layout.widget.set_child_visible(false);
+                    }
+                    for column_index in 0..7 {
+                        let overflow_widget = &overflow_widgets
+                            [(row_index * 7 + column_index + first_cell_index) % NB_CELLS];
+                        overflow_widget.set_child_visible(false);
+                    }
+                    continue;
+                }
+
+                let use_dense_allocation =
+                    cell_height - header_height < 2 * natural_event_height + EVENT_GAP;
+
+                let event_height = if use_dense_allocation {
+                    minimum_event_height
+                } else {
+                    natural_event_height
+                };
+
+                let max_events = ((cell_height - header_height + EVENT_GAP)
+                    / (event_height + EVENT_GAP)) as usize;
+
+                assert!(max_events >= 2);
+
+                let events_y = cell_y + header_height;
+
+                let overflow = RowOverflow::compute(row_layouts, max_events);
+
+                for placed in overflow.placements {
+                    let layout = &placed.layout;
+
+                    if placed.hidden {
+                        layout.widget.set_child_visible(false);
+                        continue;
+                    }
+
+                    layout.widget.set_child_visible(true);
+
+                    let x = column_xs[layout.column_start];
+                    let width = column_widths[layout.column_start..=layout.column_end]
+                        .iter()
+                        .sum::<i32>()
+                        + SEPARATOR_WIDTH * (layout.column_end - layout.column_start) as i32;
+                    let y = events_y
+                        + layout.stack_row as i32 * event_height
+                        + (layout.stack_row as i32 - 1) * EVENT_GAP;
+                    let height = event_height;
+                    let allocation = gtk::Allocation::new(x, y, width, height);
+
+                    layout.widget.size_allocate(&allocation, baseline);
+                }
+
+                for column_index in 0..7 {
+                    let overflow_widget = &overflow_widgets
+                        [(row_index * 7 + column_index + first_cell_index) % NB_CELLS];
+
+                    let hidden_count = overflow.column_hidden_counts[column_index];
+                    if hidden_count == 0 {
+                        overflow_widget.set_child_visible(false);
+                        continue;
+                    }
+
+                    overflow_widget.set_child_visible(true);
+                    overflow_widget.set_text(format!("+{hidden_count}"));
+
+                    let x = column_xs[column_index];
+                    let width = column_widths[column_index];
+                    let y = events_y + (max_events as i32 - 1) * (event_height + EVENT_GAP);
+                    let height = event_height;
+                    let allocation = gtk::Allocation::new(x, y, width, height);
+
+                    overflow_widget.size_allocate(&allocation, baseline);
                 }
             }
 
@@ -367,10 +828,16 @@ mod imp {
                 cell.set_date(date);
             }
 
+            for (i, overflow_widget) in self.overflow_widgets.get().unwrap().iter().enumerate() {
+                let date: Date = (first_cell_date + (i as i32).days()).into();
+                overflow_widget.set_date(date);
+            }
+
             let date_to_set = (first_cell_date + (NB_ROWS_ABOVE_AT_RESET * 7 + 6).days()).into();
             self.date.set(date_to_set);
 
             self.update_subscription_timeframe();
+            self.recompute_event_layouts();
 
             self.obj().notify_date();
 
@@ -384,9 +851,17 @@ mod imp {
             }
 
             self.styling.set(styling);
+
             for cell in self.cells.get().unwrap() {
                 cell.set_styling(styling);
             }
+            for event_widget in self.event_widgets.borrow().iter() {
+                event_widget.set_styling(styling);
+            }
+            for overflow_widget in self.overflow_widgets.get().unwrap() {
+                overflow_widget.set_styling(styling);
+            }
+
             self.obj().notify_styling();
         }
 
@@ -878,6 +1353,7 @@ mod imp {
 
         fn recycle_if_needed(&self) {
             let cells = self.cells.get().unwrap();
+            let overflow_widgets = self.overflow_widgets.get().unwrap();
 
             let row_height = (self.cell_height.get() + SEPARATOR_HEIGHT) as f64;
             let height = self.obj().height() as f64;
@@ -885,17 +1361,22 @@ mod imp {
             let top_threshold = row_height * MINIMUM_NB_ROWS_ABOVE as f64;
             let bottom_threshold = (NB_ROWS as f64 - MINIMUM_NB_ROWS_BELOW as f64) * row_height;
 
+            let mut shifted = false;
+
             loop {
                 let scroll_offset = self.scroll_offset.get();
                 let first_cell_index = self.first_cell_index.get();
 
                 if scroll_offset < top_threshold {
+                    shifted = true;
+
                     let new_index = (first_cell_index + NB_CELLS - 7) % NB_CELLS;
                     let old_first_date = cells[first_cell_index].date().to_jiff();
                     let new_first_date = old_first_date - 7.days();
                     for i in 0..7 {
-                        cells[(new_index + i) % NB_CELLS]
-                            .set_date(Date::from(new_first_date + (i as i32).days()));
+                        let date = Date::from(new_first_date + (i as i32).days());
+                        cells[(new_index + i) % NB_CELLS].set_date(date);
+                        overflow_widgets[(new_index + i) % NB_CELLS].set_date(date);
                     }
 
                     self.first_cell_index.set(new_index);
@@ -921,13 +1402,16 @@ mod imp {
                         _ => {}
                     }
                 } else if scroll_offset + height > bottom_threshold {
+                    shifted = true;
+
                     let new_index = (first_cell_index + 7) % NB_CELLS;
                     let old_last_date = cells[(first_cell_index + NB_CELLS - 1) % NB_CELLS]
                         .date()
                         .to_jiff();
                     for i in 0..7 {
-                        cells[(first_cell_index + i) % NB_CELLS]
-                            .set_date(Date::from(old_last_date + (i as i32).days()));
+                        let date = Date::from(old_last_date + (i as i32 + 1).days());
+                        cells[(first_cell_index + i) % NB_CELLS].set_date(date);
+                        overflow_widgets[(first_cell_index + i) % NB_CELLS].set_date(date);
                     }
 
                     self.first_cell_index.set(new_index);
@@ -971,7 +1455,11 @@ mod imp {
                 self.obj().notify_date();
             }
 
-            self.update_subscription_timeframe();
+            if shifted {
+                self.update_subscription_timeframe();
+                // TODO: We could just shift the layouts
+                self.recompute_event_layouts();
+            }
         }
 
         fn update_subscription_timeframe(&self) {
@@ -986,6 +1474,66 @@ mod imp {
                 .to_glib_date_time(&timezone);
 
             self.subscription.get().unwrap().set_timeframe(&start, &end);
+        }
+
+        fn recompute_event_layouts(&self) {
+            let cells = self.cells.get().unwrap();
+            let subscription = self.subscription.get().unwrap();
+            let first_cell_index = self.first_cell_index.get();
+            let timezone = Application::default().system().datetime().timezone();
+
+            let events: Vec<Event> = (0..subscription.n_items())
+                .map(|i| subscription.item(i).unwrap().downcast::<Event>().unwrap())
+                .collect();
+
+            let buffer_start_unix_days =
+                (cells[first_cell_index].date().to_jiff() - UNIX_EPOCH_DATE).get_days() as i64;
+
+            let segments = compute_event_segments(&events, buffer_start_unix_days, &timezone);
+
+            for segment in &segments {
+                self.connect_event_timeframe_notify(&segment.event);
+            }
+
+            let stacked_segments_by_row = stack_event_segments(&segments);
+            let total_segments = stacked_segments_by_row.iter().map(Vec::len).sum();
+
+            let mut event_widgets = self.event_widgets.borrow_mut();
+
+            while event_widgets.len() < total_segments {
+                let event_widget = MonthViewEvent::new(None);
+                event_widget.set_child_visible(false);
+                event_widget.set_parent(&*self.obj());
+                event_widgets.push(event_widget);
+            }
+
+            let event_layouts = build_event_layouts(&event_widgets, &stacked_segments_by_row);
+
+            for event_widget in event_widgets.iter().skip(total_segments) {
+                event_widget.set_child_visible(false);
+            }
+
+            drop(event_widgets);
+
+            self.event_layouts.replace(event_layouts);
+
+            self.obj().queue_allocate();
+        }
+
+        fn connect_event_timeframe_notify(&self, event: &Event) {
+            let uri = event.uri().unwrap();
+
+            if !self.connected_event_uris.borrow_mut().insert(uri) {
+                return;
+            }
+
+            event.connect_timeframe_notify(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move |_event| {
+                    imp.recompute_event_layouts();
+                }
+            ));
         }
     }
 }

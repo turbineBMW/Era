@@ -1,0 +1,38 @@
+using Gtk 4.0;
+using Adw 1;
+using Clepsydre 0;
+
+template $MonthViewEvent: Widget {
+  overflow: hidden;
+  focusable: true;
+
+  styles [
+    "event",
+  ]
+
+  Adw.Bin edge {
+    styles [
+      "edge",
+    ]
+  }
+
+  Label name {
+    label: bind template.event as <Clepsydre.Event>.name;
+    hexpand: true;
+    xalign: 0;
+    ellipsize: end;
+  }
+
+  Label time {
+    visible: bind $not(template.event as <Clepsydre.Event>.timeframe as <Clepsydre.Timeframe>.all-day);
+    label: bind $start_label(template.event as <Clepsydre.Event>.timeframe);
+
+    styles [
+      "dimmed",
+    ]
+  }
+
+  GestureClick {
+    released => $open_details(template);
+  }
+}
