@@ -516,7 +516,8 @@ mod imp {
 
                     let x = column_xs[column_index];
                     let width = column_widths[column_index];
-                    let y = events_y + (max_events as i32 - 1) * (event_height + EVENT_GAP);
+                    let y =
+                        events_y + (max_events as i32 - 1) * (event_height + EVENT_GAP) - EVENT_GAP;
                     let height = event_height;
                     let allocation = gtk::Allocation::new(x, y, width, height);
 
