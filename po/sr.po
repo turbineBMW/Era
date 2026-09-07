@@ -1,0 +1,790 @@
+# Serbian translation for era.
+# Copyright (C) 2026 era's COPYRIGHT HOLDER
+# This file is distributed under the same license as the era package.
+# Марко Костић <marko.m.kostic@gmail.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: era main\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
+"POT-Creation-Date: 2026-08-23 16:43+0000\n"
+"PO-Revision-Date: 2026-09-07 08:41+0200\n"
+"Last-Translator: Марко Костић <marko.m.kostic@gmail.com>\n"
+"Language-Team: Serbian <Serbian>\n"
+"Language: sr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Poedit 3.9\n"
+
+#: data/io.gitlab.TitouanReal.Era.desktop.in.in:2
+msgid "@app-name@"
+msgstr "@app-name@"
+
+#: data/io.gitlab.TitouanReal.Era.desktop.in.in:8
+msgid "GTK;"
+msgstr "ГТК;"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
+msgid "Era"
+msgstr "Ера"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
+msgid "Manage your time"
+msgstr "Управљај својим временом"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
+msgid "Era is a time management application designed to help you stay organized and productive."
+msgstr "Ера је програм за управљање временом, осмишљен да вам помогне да останете организовани и продуктивни."
+
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:5
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:12
+msgid "Create Calendar"
+msgstr "Направи календар"
+
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:20
+msgid "Creation Method"
+msgstr "Начин прављења"
+
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:21
+msgid "Choose how to create the calendar."
+msgstr "Изаберите како да направите календар."
+
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:29
+msgid "Flow Details"
+msgstr "Појединости протока"
+
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:42
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:286 data/resources/ui/event_creation_dialog.blp:45
+msgid "Cancel"
+msgstr "Откажи"
+
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:49 data/resources/ui/event_creation_dialog.blp:52
+msgid "Create"
+msgstr "Направи"
+
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:16 data/resources/ui/event_creation_dialog.blp:64
+msgid "Name"
+msgstr "Назив"
+
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:22
+msgid "Color"
+msgstr "Боја"
+
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:23
+msgid "No good way to change color in the UI yet"
+msgstr "Још увек не постоји добар начин за промену боје у корисничком прочељу"
+
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:36
+msgid "Remove Calendar"
+msgstr "Уклони календар"
+
+#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:50
+msgid "Read only"
+msgstr "Само за читање"
+
+#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:57
+msgid "Calendar details"
+msgstr "Појединости календара"
+
+#: data/resources/ui/calendar_management_dialog/calendar_management_dialog.blp:6
+msgid "Calendars"
+msgstr "Календари"
+
+#: data/resources/ui/calendar_management_dialog/calendar_management_dialog.blp:31
+msgid "No collection"
+msgstr "Нема збирке"
+
+#: data/resources/ui/calendar_management_dialog/calendar_management_dialog.blp:32
+msgid "Create a collection first."
+msgstr "Прво направи збирку."
+
+#: data/resources/ui/calendar_management_dialog/collection_row.blp:49
+msgid "No Calendar in This Collection"
+msgstr "Нема календара у овој збирци"
+
+#: data/resources/ui/components/calendar_combo_row/calendar_combo_row.blp:6
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:115
+msgid "Calendar"
+msgstr "Календар"
+
+#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:15
+#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:32
+msgid "Edit Date"
+msgstr "Уреди датум"
+
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:21
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:112
+msgid "Edit Time"
+msgstr "Уреди време"
+
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:63
+msgid ":"
+msgstr ":"
+
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:100
+msgid "Change Timezone"
+msgstr "Промени временску зону"
+
+#: data/resources/ui/components/timeframe_picker/time_zone_picker_dialog.blp:6
+msgid "Select Timezone"
+msgstr "Изабери временску зону"
+
+#: data/resources/ui/components/timeframe_picker/time_zone_picker_dialog.blp:21
+msgid "Search Timezones"
+msgstr "Претражи временске зоне"
+
+#: data/resources/ui/components/timeframe_picker/time_zone_picker_dialog.blp:37
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:31
+msgid "No Result"
+msgstr "Нема резултата"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:15
+msgid "_All Day"
+msgstr "_Цео дан"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:21
+msgid "_Time Slot"
+msgstr "_Временски период"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:28
+msgid "Start Date"
+msgstr "Датум почетка"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:29
+msgid "Start Time"
+msgstr "Време почетка"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:34
+msgid "End Date"
+msgstr "Датум завршетка"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:35
+msgid "End Time"
+msgstr "Време завршетка"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:44
+msgid "Debug - timeframe:"
+msgstr "Отклањање грешака - временски оквир:"
+
+#: data/resources/ui/components/error_dialog.blp:7
+msgid "Error Details"
+msgstr "Појединости грешке"
+
+#: data/resources/ui/components/error_dialog.blp:16
+msgid "Message"
+msgstr "Порука"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:16
+msgid "Event"
+msgstr "Догађај"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:25
+msgid "Share"
+msgstr "Подели"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:28
+msgid "Export"
+msgstr "Извези"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:29
+msgid "Show QR code"
+msgstr "Прикажи КР код"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:309 data/resources/ui/event_creation_dialog.blp:68
+msgid "Location"
+msgstr "Локација"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:84
+msgid "Open Map"
+msgstr "Отвори карту"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:313 data/resources/ui/event_creation_dialog.blp:72
+msgid "Conference"
+msgstr "Конференција"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:105
+msgid "Join"
+msgstr "Придружи се"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:140
+msgid "Organizer"
+msgstr "Организатор"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:150
+msgid "Participants"
+msgstr "Учесници"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:158
+msgid "Resources"
+msgstr "Ресурси"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:169
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:336 data/resources/ui/event_creation_dialog.blp:84
+msgid "Description"
+msgstr "Опис"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:186
+msgid "This event has recurrence properties. Such events are currently not editable in this app."
+msgstr "Овај догађај има својства понављања. Такви догађаји тренутно нису измењиви у овом програму."
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:218
+msgid "_Edit"
+msgstr "_Уреди"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:238
+msgid "_Remove"
+msgstr "_Уклони"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:254
+msgid "_Duplicate"
+msgstr "_Удвостручи"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:273
+msgid "Edit Event"
+msgstr "Уреди догађај"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:293
+msgid "Save"
+msgstr "Сачувај"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:305
+msgid "Title"
+msgstr "Наслов"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:347
+msgid "Share Event"
+msgstr "Подели догађај"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
+#: data/resources/ui/search_dialog/search_dialog.blp:24 data/resources/ui/window.blp:62 data/resources/ui/window.blp:136
+#: data/resources/ui/window.blp:203 data/resources/ui/window.blp:279
+msgid "Search"
+msgstr "Претражи"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:40
+msgid "Accepted"
+msgstr "Прихваћено"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:45
+msgid "Tentative"
+msgstr "Привремено"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:50
+msgid "Declined"
+msgstr "Одбијено"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:55
+msgid "Delegated"
+msgstr "Делегирано"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:60
+msgid "Needs Action"
+msgstr "Потребна радња"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:6
+msgid "Search Events"
+msgstr "Тражи догађаје"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:67
+msgid "No Results Found"
+msgstr "Нису пронађени резултати"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:68
+msgid "Try a different search term"
+msgstr "Покушајте са другим појмом за претрагу"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:77
+msgid "Unable to Search Events"
+msgstr "Не могу да претражим догађаје"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:78
+msgid "An error occurred in the backend. Try searching again"
+msgstr "Догадила се грешка у позадинацу. Покушајте поново да претражите"
+
+#: data/resources/ui/views/month_view/month_view_inner.blp:11
+msgid "Month view"
+msgstr "Месечни преглед"
+
+#: data/resources/ui/event_creation_dialog.blp:6 data/resources/ui/window.blp:93 data/resources/ui/window.blp:167
+#: data/resources/ui/window.blp:234 data/resources/ui/window.blp:347
+msgid "Create Event"
+msgstr "Направи догађај"
+
+#: data/resources/ui/event_creation_dialog.blp:27
+msgid "No Calendar"
+msgstr "Нема календара"
+
+#: data/resources/ui/event_creation_dialog.blp:28
+msgid "There is no calendar to add an event to."
+msgstr "Нема календара у који се може додати догађај."
+
+#: data/resources/ui/qr_code_dialog.blp:28
+msgid "Scan to Import"
+msgstr "Скенирај за увоз"
+
+#: data/resources/ui/shortcuts_dialog.blp:6
+msgctxt "shortcut dialog"
+msgid "General"
+msgstr "Опште"
+
+#: data/resources/ui/shortcuts_dialog.blp:9
+msgctxt "shortcut dialog"
+msgid "Open Main Menu"
+msgstr "Отвори главни мени"
+
+#: data/resources/ui/shortcuts_dialog.blp:14
+msgctxt "shortcut dialog"
+msgid "New Event"
+msgstr "Нови догађај"
+
+#: data/resources/ui/shortcuts_dialog.blp:19
+msgctxt "shortcut dialog"
+msgid "Manage Calendars"
+msgstr "Управљај календарима"
+
+#: data/resources/ui/shortcuts_dialog.blp:24
+msgctxt "shortcut dialog"
+msgid "Close Window"
+msgstr "Затвори прозор"
+
+#: data/resources/ui/shortcuts_dialog.blp:29
+msgctxt "shortcut dialog"
+msgid "Search"
+msgstr "Претражи"
+
+#: data/resources/ui/shortcuts_dialog.blp:34
+msgctxt "shortcut dialog"
+msgid "Shortcuts"
+msgstr "Пречице"
+
+#: data/resources/ui/shortcuts_dialog.blp:40
+msgctxt "shortcut dialog"
+msgid "Navigation"
+msgstr "Навигација"
+
+#: data/resources/ui/shortcuts_dialog.blp:43
+msgctxt "shortcut dialog"
+msgid "Show Today"
+msgstr "Прикажи данас"
+
+#: data/resources/ui/window.blp:20
+msgid "About Era"
+msgstr "О програму Ера"
+
+#: data/resources/ui/window.blp:26
+msgid "No Backend"
+msgstr "Нема позадинца"
+
+#: data/resources/ui/window.blp:27
+msgid "The calendaring backend seems to not be available."
+msgstr "Чини се да позадинац за календар није доступан."
+
+#: data/resources/ui/window.blp:42
+msgid "Year"
+msgstr "Година"
+
+#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:129 data/resources/ui/window.blp:196
+#: data/resources/ui/window.blp:272
+msgid "Main Menu"
+msgstr "Главни мени"
+
+#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:156 data/resources/ui/window.blp:223
+#: data/resources/ui/window.blp:330
+msgid "_Today"
+msgstr "_Данас"
+
+#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:160 data/resources/ui/window.blp:227
+#: data/resources/ui/window.blp:334
+msgid "Go to Today"
+msgstr "Иди на данас"
+
+#: data/resources/ui/window.blp:100 data/resources/ui/window.blp:174 data/resources/ui/window.blp:241
+#: data/resources/ui/window.blp:354
+msgid "Manage Calendars"
+msgstr "Управљај календарима"
+
+#: data/resources/ui/window.blp:109
+msgid "Month"
+msgstr "Месец"
+
+#: data/resources/ui/window.blp:117
+msgid "Year View"
+msgstr "Годишњи преглед"
+
+#: data/resources/ui/window.blp:183
+msgid "Agenda"
+msgstr "Дневни ред"
+
+#: data/resources/ui/window.blp:265
+msgid "Toggle Sidebar"
+msgstr "Окини бочну површ"
+
+#: data/resources/ui/window.blp:291
+msgid "_Year"
+msgstr "_Година"
+
+#: data/resources/ui/window.blp:302
+msgid "_Month"
+msgstr "_Месец"
+
+#: data/resources/ui/window.blp:313
+msgid "_Agenda"
+msgstr "_Дневни ред"
+
+#: data/resources/ui/window.blp:430
+msgid "_Keyboard Shortcuts"
+msgstr "_Пречице тастатуре"
+
+#: data/resources/ui/window.blp:435
+msgid "_About Era"
+msgstr "_О програму Ера"
+
+#. Translators: Replace "translator-credits" with your name/username, and optionally an
+#. email or URL.
+#: src/application.rs:126
+msgid "translator-credits"
+msgstr ""
+"Марко Костић <marko.m.kostic@gmail.com>\n"
+"Превод на српски језик https://гном.срб"
+
+#: src/utils/template_callbacks.rs:117
+msgid "monday"
+msgstr "понедељак"
+
+#: src/utils/template_callbacks.rs:118
+msgid "tuesday"
+msgstr "уторак"
+
+#: src/utils/template_callbacks.rs:119
+msgid "wednesday"
+msgstr "среда"
+
+#: src/utils/template_callbacks.rs:120
+msgid "thursday"
+msgstr "четвртак"
+
+#: src/utils/template_callbacks.rs:121
+msgid "friday"
+msgstr "петак"
+
+#: src/utils/template_callbacks.rs:122
+msgid "saturday"
+msgstr "субота"
+
+#: src/utils/template_callbacks.rs:123
+msgid "sunday"
+msgstr "недеља"
+
+#: src/utils/template_callbacks.rs:134
+msgid "MON"
+msgstr "Пон"
+
+#: src/utils/template_callbacks.rs:135
+msgid "TUE"
+msgstr "Уто"
+
+#: src/utils/template_callbacks.rs:136
+msgid "WED"
+msgstr "Сре"
+
+#: src/utils/template_callbacks.rs:137
+msgid "THU"
+msgstr "Чет"
+
+#: src/utils/template_callbacks.rs:138
+msgid "FRI"
+msgstr "Пет"
+
+#: src/utils/template_callbacks.rs:139
+msgid "SAT"
+msgstr "Суб"
+
+#: src/utils/template_callbacks.rs:140
+msgid "SUN"
+msgstr "Нед"
+
+#: src/utils/template_callbacks.rs:149
+msgid "january"
+msgstr "јануар"
+
+#: src/utils/template_callbacks.rs:150
+msgid "february"
+msgstr "фебруар"
+
+#: src/utils/template_callbacks.rs:151
+msgid "march"
+msgstr "март"
+
+#: src/utils/template_callbacks.rs:152
+msgid "april"
+msgstr "април"
+
+#: src/utils/template_callbacks.rs:153
+msgid "may"
+msgstr "мај"
+
+#: src/utils/template_callbacks.rs:154
+msgid "june"
+msgstr "јун"
+
+#: src/utils/template_callbacks.rs:155
+msgid "july"
+msgstr "јул"
+
+#: src/utils/template_callbacks.rs:156
+msgid "august"
+msgstr "август"
+
+#: src/utils/template_callbacks.rs:157
+msgid "september"
+msgstr "септембар"
+
+#: src/utils/template_callbacks.rs:158
+msgid "october"
+msgstr "октобар"
+
+#: src/utils/template_callbacks.rs:159
+msgid "november"
+msgstr "новембар"
+
+#: src/utils/template_callbacks.rs:160
+msgid "december"
+msgstr "децембар"
+
+#: src/utils/template_callbacks.rs:170
+msgid "January"
+msgstr "Јануар"
+
+#: src/utils/template_callbacks.rs:171
+msgid "February"
+msgstr "Фебруар"
+
+#: src/utils/template_callbacks.rs:172
+msgid "March"
+msgstr "Март"
+
+#: src/utils/template_callbacks.rs:173
+msgid "April"
+msgstr "Април"
+
+#: src/utils/template_callbacks.rs:174 src/utils/template_callbacks.rs:195
+msgid "May"
+msgstr "Мај"
+
+#: src/utils/template_callbacks.rs:175
+msgid "June"
+msgstr "Јун"
+
+#: src/utils/template_callbacks.rs:176
+msgid "July"
+msgstr "Јул"
+
+#: src/utils/template_callbacks.rs:177
+msgid "August"
+msgstr "Август"
+
+#: src/utils/template_callbacks.rs:178
+msgid "September"
+msgstr "Септембар"
+
+#: src/utils/template_callbacks.rs:179
+msgid "October"
+msgstr "Октобар"
+
+#: src/utils/template_callbacks.rs:180
+msgid "November"
+msgstr "Новембар"
+
+#: src/utils/template_callbacks.rs:181
+msgid "December"
+msgstr "Децембар"
+
+#: src/utils/template_callbacks.rs:191
+msgid "Jan"
+msgstr "Јан"
+
+#: src/utils/template_callbacks.rs:192
+msgid "Feb"
+msgstr "Феб"
+
+#: src/utils/template_callbacks.rs:193
+msgid "Mar"
+msgstr "Мар"
+
+#: src/utils/template_callbacks.rs:194
+msgid "Apr"
+msgstr "Апр"
+
+#: src/utils/template_callbacks.rs:196
+msgid "Jun"
+msgstr "Јун"
+
+#: src/utils/template_callbacks.rs:197
+msgid "Jul"
+msgstr "Јул"
+
+#: src/utils/template_callbacks.rs:198
+msgid "Aug"
+msgstr "Авг"
+
+#: src/utils/template_callbacks.rs:199
+msgid "Sep"
+msgstr "Сеп"
+
+#: src/utils/template_callbacks.rs:200
+msgid "Oct"
+msgstr "Окт"
+
+#: src/utils/template_callbacks.rs:201
+msgid "Nov"
+msgstr "Нов"
+
+#: src/utils/template_callbacks.rs:202
+msgid "Dec"
+msgstr "Дец"
+
+#: src/utils/timeframe_label.rs:80
+msgid "Yesterday"
+msgstr "Јуче"
+
+#: src/utils/timeframe_label.rs:81
+msgid "Today"
+msgstr "Данас"
+
+#: src/utils/timeframe_label.rs:82
+msgid "Tomorrow"
+msgstr "Сутра"
+
+#. TRANSLATORS: date of a single all-day event, of the current year.
+#. {month} is the month name (e.g. "June"), {day} is the day number (e.g. "12").
+#: src/utils/timeframe_label.rs:91
+#, rust-format
+msgid "{month} {day}"
+msgstr "{day}. {month}"
+
+#. TRANSLATORS: date of a single all-day event.
+#. {month} is the month name (e.g. "June"), {day} is the day number (e.g. "12"),
+#. {year} is the year (e.g. "2025").
+#: src/utils/timeframe_label.rs:99
+#, rust-format
+msgid "{month} {day}, {year}"
+msgstr "{day}. {month} {year}"
+
+#. e.g. "June 12 – 15"
+#. TRANSLATORS: all-day event range within the same month of the current year.
+#. {month} month name, {day_start} and {day_end} day numbers.
+#: src/utils/timeframe_label.rs:112
+#, rust-format
+msgid "{month} {day_start} – {day_end}"
+msgstr "{day_start}. – {day_end}. {month}"
+
+#. e.g. "June 12 – 15, 2025"
+#. TRANSLATORS: all-day event range within the same month of a past or future year.
+#. {month} month name, {day_start} and {day_end} day numbers, {year} year.
+#: src/utils/timeframe_label.rs:121
+#, rust-format
+msgid "{month} {day_start} – {day_end}, {year}"
+msgstr "{day_start}. – {day_end}. {month} {year}"
+
+#. e.g. "June 12 – July 3"
+#. TRANSLATORS: all-day event range spanning different months in the current year.
+#. {month_start} and {month_end} month names, {day_start} and {day_end} day numbers.
+#: src/utils/timeframe_label.rs:135
+#, rust-format
+msgid "{month_start} {day_start} – {month_end} {day_end}"
+msgstr "{day_start}. {month_start} – {day_end}. {month_end}"
+
+#. e.g. "June 12 – July 3, 2025"
+#. TRANSLATORS: all-day event range spanning different months in a past or future year.
+#. {month_start} and {month_end} month names, {day_start} and {day_end} day numbers,
+#. {year} the shared year.
+#: src/utils/timeframe_label.rs:150
+#, rust-format
+msgid "{month_start} {day_start} – {month_end} {day_end}, {year}"
+msgstr "{day_start}. {month_start} – {day_end}. {month_end} {year}"
+
+#. e.g. "June 12, 2024 – January 3, 2025"
+#. TRANSLATORS: all-day event range spanning different years.
+#. {month_start} and {month_end} month names, {day_start} and {day_end} day numbers,
+#. {year_start} and {year_end} years.
+#: src/utils/timeframe_label.rs:162
+#, rust-format
+msgid "{month_start} {day_start}, {year_start} – {month_end} {day_end}, {year_end}"
+msgstr "{day_start}. {month_start} {year_start} – {day_end}. {month_end} {year_end}"
+
+#. e.g. "June 12, 14:00 – 15:30"
+#. TRANSLATORS: timed event on a single day, system timezone (not shown).
+#. {month} month name, {day} day number, {time_start} and {time_end} clock times.
+#: src/utils/timeframe_label.rs:233
+#, rust-format
+msgid "{month} {day}, {time_start} – {time_end}"
+msgstr "{day}. {month}, {time_start} – {time_end}"
+
+#. e.g. "June 12, 14:00 (America/New_York) – 15:30 (Europe/Paris)"
+#. TRANSLATORS: timed event on a single day, each time in a different non-system
+#. timezone. {month}, {day}, {time_start}, {time_end} as above;
+#. {tz_start} and {tz_end} the respective IANA timezones.
+#: src/utils/timeframe_label.rs:244
+#, rust-format
+msgid "{month} {day}, {time_start} ({tz_start}) – {time_end} ({tz_end})"
+msgstr "{day} {month}, {time_start} ({tz_start}) – {time_end} ({tz_end})"
+
+#. e.g. "June 12, 14:00 – July 3, 15:30"
+#. TRANSLATORS: timed event spanning months within the current year, system timezone.
+#. {month_start}, {day_start}, {time_start} start date/time;
+#. {month_end}, {day_end}, {time_end} end date/time.
+#: src/utils/timeframe_label.rs:262
+#, rust-format
+msgid "{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}"
+msgstr "{day_start} {month_start}, {time_start} – {day_end} {month_end}, {time_end}"
+
+#. e.g. "June 12, 14:00 (America/New_York) – July 3, 15:30 (Europe/Paris)"
+#. TRANSLATORS: cross-month current-year range; each time in a different non-system
+#. timezone. {month_start}, {day_start}, {time_start}, {month_end}, {day_end},
+#. {time_end} as above; {tz_start} and {tz_end} respective IANA timezones.
+#: src/utils/timeframe_label.rs:280
+#, rust-format
+msgid "{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} {day_end}, {time_end} ({tz_end})"
+msgstr "{day_start} {month_start}, {time_start} ({tz_start}) – {day_end} {month_end}, {time_end} ({tz_end})"
+
+#. e.g. "June 12, 14:00 – July 3, 15:30, 2025"
+#. TRANSLATORS: timed event spanning months within a past or future year, system
+#. timezone. {month_start}, {day_start}, {time_start}, {month_end}, {day_end},
+#. {time_end} as above; {year} the shared year.
+#: src/utils/timeframe_label.rs:300
+#, rust-format
+msgid "{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}, {year}"
+msgstr "{day_start} {month_start}, {time_start} – {day_end} {month_end}, {time_end}, {year}"
+
+#. e.g. "June 12, 14:00 (America/New_York) – July 3, 15:30 (Europe/Paris), 2025"
+#. TRANSLATORS: cross-month past/future-year range; each time in a different non-system
+#. timezone. {month_start}, {day_start}, {time_start}, {month_end}, {day_end},
+#. {time_end}, {year} as above; {tz_start} and {tz_end} respective IANA timezones.
+#: src/utils/timeframe_label.rs:319
+#, rust-format
+msgid "{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} {day_end}, {time_end} ({tz_end}), {year}"
+msgstr "{day_start} {month_start}, {time_start} ({tz_start}) – {day_end} {month_end}, {time_end} ({tz_end}), {year}"
+
+#. e.g. "June 12, 2024, 14:00 – January 3, 2025, 15:30"
+#. TRANSLATORS: timed event spanning different years, system timezone.
+#. {month_start}, {day_start}, {year_start}, {time_start} start date/time;
+#. {month_end}, {day_end}, {year_end}, {time_end} end date/time.
+#: src/utils/timeframe_label.rs:335
+#, rust-format
+msgid "{month_start} {day_start}, {year_start}, {time_start} – {month_end} {day_end}, {year_end}, {time_end}"
+msgstr "{day_start} {month_start} {year_start}, {time_start} – {day_end} {month_end} {year_end}, {time_end}"
+
+#. e.g. "June 12, 2024, 14:00 (America/New_York) – January 3, 2025, 15:30
+#. (Europe/Paris)" TRANSLATORS: different-year range; each time in a
+#. different non-system timezone. {month_start}, {day_start}, {year_start},
+#. {time_start}, {month_end}, {day_end}, {year_end}, {time_end} as above;
+#. {tz_start} and {tz_end} respective IANA timezones.
+#: src/utils/timeframe_label.rs:351
+#, rust-format
+msgid ""
+"{month_start} {day_start}, {year_start}, {time_start} ({tz_start}) – {month_end} {day_end}, {year_end}, {time_end} ({tz_end})"
+msgstr "{day_start} {month_start} {year_start}, {time_start} ({tz_start}) – {day_end} {month_end} {year_end}, {time_end} ({tz_end})"
