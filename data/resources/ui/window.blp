@@ -36,9 +36,9 @@ template $EraWindow: Adw.ApplicationWindow {
         Adw.Layout {
           name: "narrow";
 
-          content: Stack narrow_stack {
-            StackPage {
-              name: "year";
+          content: Adw.NavigationView narrow_navigation_view {
+            Adw.NavigationPage narrow_navigation_view_year_page {
+              tag: "year";
               title: _("Year");
 
               child: Adw.ToolbarView {
@@ -104,20 +104,13 @@ template $EraWindow: Adw.ApplicationWindow {
               };
             }
 
-            StackPage {
-              name: "month";
+            Adw.NavigationPage narrow_navigation_view_month_page {
+              tag: "month";
               title: _("Month");
 
               child: Adw.ToolbarView {
                 [top]
                 Adw.HeaderBar {
-                  [start]
-                  Button {
-                    icon-name: "go-previous-symbolic";
-                    tooltip-text: _("Year View");
-                    clicked => $go_back_to_year_view(template);
-                  }
-
                   title-widget: Adw.WindowTitle {
                     title: bind $month_view_title(month_view.date) as <string>;
                   };
@@ -170,20 +163,13 @@ template $EraWindow: Adw.ApplicationWindow {
               };
             }
 
-            StackPage {
-              name: "agenda";
+            Adw.NavigationPage narrow_navigation_view_agenda_page {
+              tag: "agenda";
               title: _("Agenda");
 
               child: Adw.ToolbarView {
                 [top]
                 Adw.HeaderBar {
-                  [start]
-                  Button {
-                    icon-name: "go-previous-symbolic";
-                    tooltip-text: _("Month View");
-                    clicked => $go_back_to_month_view(template);
-                  }
-
                   title-widget: Adw.WindowTitle {
                     title: bind $agenda_view_title(agenda_view.date) as <string>;
                   };

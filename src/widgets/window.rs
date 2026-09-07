@@ -1,4 +1,4 @@
-use std::cell::Cell;
+use std::cell::{Cell, OnceCell};
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Calendar, prelude::*};
@@ -44,7 +44,13 @@ pub mod imp {
         #[template_child]
         wide_view_stack: TemplateChild<adw::ViewStack>,
         #[template_child]
-        narrow_stack: TemplateChild<gtk::Stack>,
+        narrow_navigation_view: TemplateChild<adw::NavigationView>,
+        #[template_child]
+        narrow_navigation_view_year_page: TemplateChild<adw::NavigationPage>,
+        #[template_child]
+        narrow_navigation_view_month_page: TemplateChild<adw::NavigationPage>,
+        #[template_child]
+        narrow_navigation_view_agenda_page: TemplateChild<adw::NavigationPage>,
         #[template_child]
         year_view: TemplateChild<YearView>,
         #[template_child]
@@ -58,6 +64,7 @@ pub mod imp {
         #[template_child]
         search_dialog: TemplateChild<SearchDialog>,
 
+        wide_view_stack_visible_child_name_handler_id: OnceCell<glib::SignalHandlerId>,
         colors_provider: gtk::CssProvider,
     }
 
@@ -133,16 +140,16 @@ pub mod imp {
             klass.install_action("win.scroll-up", None, |obj, _, _| {
                 match obj
                     .imp()
-                    .narrow_stack
-                    .visible_child_name()
-                    .expect("Narrow stack should have a visible child")
+                    .narrow_navigation_view
+                    .visible_page_tag()
+                    .expect("Narrow navigation view should have a visible page")
                     .as_str()
                 {
                     "month" => {
                         obj.imp().month_view.scroll_up();
                     }
                     "year" | "agenda" => {}
-                    name => panic!("Unknown narrow stack child name: {name}"),
+                    name => panic!("Unknown narrow navigation view page tag: {name}"),
                 };
             });
             klass.add_binding_action(gdk::Key::Up, gdk::ModifierType::ALT_MASK, "win.scroll-up");
@@ -150,16 +157,16 @@ pub mod imp {
             klass.install_action("win.scroll-down", None, |obj, _, _| {
                 match obj
                     .imp()
-                    .narrow_stack
-                    .visible_child_name()
-                    .expect("Narrow stack should have a visible child")
+                    .narrow_navigation_view
+                    .visible_page_tag()
+                    .expect("Narrow navigation view should have a visible page")
                     .as_str()
                 {
                     "month" => {
                         obj.imp().month_view.scroll_down();
                     }
                     "year" | "agenda" => {}
-                    name => panic!("Unknown narrow stack child name: {name}"),
+                    name => panic!("Unknown narrow navigation view page tag: {name}"),
                 };
             });
             klass.add_binding_action(
@@ -171,16 +178,16 @@ pub mod imp {
             klass.install_action("win.zoomin", None, |obj, _, _| {
                 match obj
                     .imp()
-                    .narrow_stack
-                    .visible_child_name()
-                    .expect("Narrow stack should have a visible child")
+                    .narrow_navigation_view
+                    .visible_page_tag()
+                    .expect("Narrow navigation view should have a visible page")
                     .as_str()
                 {
                     "month" => {
                         obj.imp().month_view.zoom_in();
                     }
                     "year" | "agenda" => {}
-                    name => panic!("Unknown narrow stack child name: {name}"),
+                    name => panic!("Unknown narrow navigation view page tag: {name}"),
                 };
             });
             klass.add_binding_action(
@@ -197,16 +204,16 @@ pub mod imp {
             klass.install_action("win.zoomout", None, |obj, _, _| {
                 match obj
                     .imp()
-                    .narrow_stack
-                    .visible_child_name()
-                    .expect("Narrow stack should have a visible child")
+                    .narrow_navigation_view
+                    .visible_page_tag()
+                    .expect("Narrow navigation view should have a visible page")
                     .as_str()
                 {
                     "month" => {
                         obj.imp().month_view.zoom_out();
                     }
                     "year" | "agenda" => {}
-                    name => panic!("Unknown narrow stack child name: {name}"),
+                    name => panic!("Unknown narrow navigation view page tag: {name}"),
                 };
             });
             klass.add_binding_action(
@@ -224,6 +231,12 @@ pub mod imp {
                 "win.show-month-view",
                 Some(&glib::VariantType::new("(iii)").unwrap()),
                 |obj, _action_name, parameter| {
+                    let imp = obj.imp();
+                    let handler_id = imp
+                        .wide_view_stack_visible_child_name_handler_id
+                        .get()
+                        .unwrap();
+
                     let (year, month, day) = parameter
                         .unwrap()
                         .get::<(i32, i32, i32)>()
@@ -232,9 +245,16 @@ pub mod imp {
                         .unwrap()
                         .into();
 
-                    obj.imp().wide_view_stack.set_visible_child_name("month");
-                    obj.imp().narrow_stack.set_visible_child_name("month");
-                    obj.imp().month_view.set_date(date);
+                    // Setting the visible child name will trigger the signal handler,
+                    // so we need to block it first to avoid the narrow navigation view being told
+                    // to push a page. We handled the navigation view push ourselves.
+                    imp.wide_view_stack.block_signal(handler_id);
+                    imp.wide_view_stack.set_visible_child_name("month");
+                    imp.wide_view_stack.unblock_signal(handler_id);
+
+                    imp.narrow_navigation_view.push_by_tag("month");
+
+                    imp.month_view.set_date(date);
                 },
             );
 
@@ -242,6 +262,12 @@ pub mod imp {
                 "win.show-agenda-view",
                 Some(&glib::VariantType::new("(iii)").unwrap()),
                 |obj, _action_name, parameter| {
+                    let imp = obj.imp();
+                    let handler_id = imp
+                        .wide_view_stack_visible_child_name_handler_id
+                        .get()
+                        .unwrap();
+
                     let (year, month, day) = parameter
                         .unwrap()
                         .get::<(i32, i32, i32)>()
@@ -250,9 +276,16 @@ pub mod imp {
                         .unwrap()
                         .into();
 
-                    obj.imp().wide_view_stack.set_visible_child_name("agenda");
-                    obj.imp().narrow_stack.set_visible_child_name("agenda");
-                    obj.imp().agenda_view.set_date(date);
+                    // Setting the visible child name will trigger the signal handler,
+                    // so we need to block it first to avoid the narrow navigation view being told
+                    // to push a page. We handled the navigation view push ourselves.
+                    imp.wide_view_stack.block_signal(handler_id);
+                    imp.wide_view_stack.set_visible_child_name("agenda");
+                    imp.wide_view_stack.unblock_signal(handler_id);
+
+                    imp.narrow_navigation_view.push_by_tag("agenda");
+
+                    imp.agenda_view.set_date(date);
                 },
             );
         }
@@ -334,25 +367,27 @@ pub mod imp {
                 },
             ));
 
-            self.narrow_stack.connect_visible_child_name_notify(clone!(
-                #[weak(rename_to = imp)]
-                self,
-                move |_| {
-                    match imp
-                        .narrow_stack
-                        .visible_child_name()
-                        .expect("Narrow stack should have a visible child")
-                        .as_str()
-                    {
-                        "year" => imp.wide_view_stack.set_visible_child_name("year"),
-                        "month" => imp.wide_view_stack.set_visible_child_name("month"),
-                        "agenda" => imp.wide_view_stack.set_visible_child_name("agenda"),
-                        name => panic!("Unknown narrow stack child name: {name}"),
+            self.narrow_navigation_view
+                .connect_visible_page_tag_notify(clone!(
+                    #[weak(rename_to = imp)]
+                    self,
+                    move |_| {
+                        match imp
+                            .narrow_navigation_view
+                            .visible_page_tag()
+                            .expect("Narrow navigation view should have a visible page tag")
+                            .as_str()
+                        {
+                            "year" => imp.wide_view_stack.set_visible_child_name("year"),
+                            "month" => imp.wide_view_stack.set_visible_child_name("month"),
+                            "agenda" => imp.wide_view_stack.set_visible_child_name("agenda"),
+                            name => panic!("Unknown narrow navigation view page tag: {name}"),
+                        }
                     }
-                }
-            ));
+                ));
 
-            self.wide_view_stack
+            let wide_view_stack_visible_child_name_handler_id = self
+                .wide_view_stack
                 .connect_visible_child_name_notify(clone!(
                     #[weak(rename_to = imp)]
                     self,
@@ -363,13 +398,26 @@ pub mod imp {
                             .expect("Narrow stack should have a visible child")
                             .as_str()
                         {
-                            "year" => imp.narrow_stack.set_visible_child_name("year"),
-                            "month" => imp.narrow_stack.set_visible_child_name("month"),
-                            "agenda" => imp.narrow_stack.set_visible_child_name("agenda"),
+                            "year" => imp
+                                .narrow_navigation_view
+                                .replace(&[imp.narrow_navigation_view_year_page.get()]),
+                            "month" => imp.narrow_navigation_view.replace(&[
+                                imp.narrow_navigation_view_year_page.get(),
+                                imp.narrow_navigation_view_month_page.get(),
+                            ]),
+                            "agenda" => imp.narrow_navigation_view.replace(&[
+                                imp.narrow_navigation_view_year_page.get(),
+                                imp.narrow_navigation_view_month_page.get(),
+                                imp.narrow_navigation_view_agenda_page.get(),
+                            ]),
                             name => panic!("Unknown wide view stack child name: {name}"),
                         }
                     }
                 ));
+
+            self.wide_view_stack_visible_child_name_handler_id
+                .set(wide_view_stack_visible_child_name_handler_id)
+                .unwrap();
         }
     }
 
@@ -455,32 +503,6 @@ pub mod imp {
         #[template_callback(function)]
         fn get_year_label(year: i32) -> String {
             year.to_string()
-        }
-
-        #[template_callback]
-        fn go_back_to_year_view(&self) {
-            self.wide_view_stack.set_visible_child_name("year");
-            self.narrow_stack.set_visible_child_name("year");
-        }
-
-        #[template_callback]
-        fn go_back_to_month_view(&self) {
-            self.wide_view_stack.set_visible_child_name("month");
-            self.narrow_stack.set_visible_child_name("month");
-        }
-
-        #[template_callback]
-        fn open_days_view(&self) {
-            match self
-                .main_view
-                .layout_name()
-                .expect("A layout should be selected")
-                .as_str()
-            {
-                "wide" => (),
-                "narrow" => self.narrow_stack.set_visible_child_name("days"),
-                _ => (),
-            }
         }
 
         #[template_callback]
