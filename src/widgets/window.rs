@@ -74,7 +74,6 @@ pub mod imp {
 
             klass.install_action("win.search-events", None, |obj, _, _| {
                 obj.imp().search_dialog.present(Some(obj));
-                obj.imp().search_dialog.grab_focus();
             });
             klass.add_binding_action(
                 gdk::Key::F,
@@ -84,7 +83,6 @@ pub mod imp {
 
             klass.install_action("win.manage-calendars", None, |obj, _, _| {
                 obj.imp().calendar_management_dialog.present(Some(obj));
-                obj.imp().calendar_management_dialog.grab_focus();
             });
             klass.add_binding_action(
                 gdk::Key::F8,
@@ -108,7 +106,6 @@ pub mod imp {
 
                     obj.imp().event_creation_dialog.set_data(preset);
                     obj.imp().event_creation_dialog.present(Some(obj));
-                    obj.imp().event_creation_dialog.grab_focus();
                 },
             );
             klass.add_binding(gdk::Key::N, gdk::ModifierType::CONTROL_MASK, |obj| {
