@@ -27,11 +27,11 @@ variables:
 
 .rust-stable@x86_64:
     before_script:
-        - flatpak install flathub-beta org.freedesktop.Sdk.Extension.rust-stable/x86_64/26.08beta --user -y
+        - flatpak install flathub org.freedesktop.Sdk.Extension.rust-stable/x86_64/26.08 --user -y
 
 .rust-stable@aarch64:
     before_script:
-        - flatpak install flathub-beta org.freedesktop.Sdk.Extension.rust-stable/aarch64/26.08beta --user -y
+        - flatpak install flathub org.freedesktop.Sdk.Extension.rust-stable/aarch64/26.08 --user -y
 
 stages:
     - check
@@ -48,7 +48,7 @@ cargo-fmt:
         APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
         COMMAND: "cargo fmt"
     script:
-        - flatpak install --user org.freedesktop.Sdk.Extension.rust-stable/x86_64/25.08 -y
+        - flatpak install --user org.freedesktop.Sdk.Extension.rust-stable/x86_64/26.08 -y
         - flatpak-builder --user --disable-rofiles-fuse --keep-build-dirs --stop-at=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
         - flatpak build-finish --share=network flatpak_app
         - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
@@ -64,7 +64,7 @@ cargo-clippy:
         APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
         COMMAND: "cargo clippy -- -D warnings"
     script:
-        - flatpak install --user org.freedesktop.Sdk.Extension.rust-stable/x86_64/25.08 -y
+        - flatpak install --user org.freedesktop.Sdk.Extension.rust-stable/x86_64/26.08 -y
         - flatpak-builder --user --disable-rofiles-fuse --keep-build-dirs --stop-at=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
         - flatpak build-finish --share=network flatpak_app
         - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}

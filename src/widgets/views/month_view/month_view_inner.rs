@@ -12,12 +12,17 @@ use tracing::{error, warn};
 use crate::{application::Application, utils::Date, widgets::window::Styling};
 
 use super::{
-    kinetic_scrolling::KineticScrolling, month_view_cell::MonthViewCell,
-    month_view_event::MonthViewEvent, month_view_overflow::MonthViewOverflow,
+    kinetic_scrolling::KineticScrolling,
+    layout_utils::{
+        EventLayout, RowOverflow, build_event_layouts, compute_event_segments, stack_event_segments,
+    },
+    month_view_cell::MonthViewCell,
+    month_view_event::MonthViewEvent,
+    month_view_overflow::MonthViewOverflow,
 };
 
-const NB_ROWS: usize = 100;
-const NB_CELLS: usize = 7 * NB_ROWS;
+pub const NB_ROWS: usize = 100;
+pub const NB_CELLS: usize = 7 * NB_ROWS;
 const MINIMUM_NB_ROWS_BELOW: i32 = 10;
 const MINIMUM_NB_ROWS_ABOVE: i32 = 10;
 const NB_ROWS_ABOVE_AT_RESET: i32 = MINIMUM_NB_ROWS_ABOVE + 1;
@@ -48,7 +53,6 @@ const DISCRETE_ZOOM_ANIMATION_MS: u32 = 200;
 const INITIAL_EVENT_WIDGET_POOL_SIZE: usize = 100;
 
 const UNIX_EPOCH_DATE: jiff::civil::Date = jiff::civil::date(1970, 1, 1);
-const SECONDS_PER_DAY: i64 = 86_400;
 
 /// Actively handled input or input consequence.
 #[derive(Debug)]
@@ -80,278 +84,6 @@ enum Animation {
         y_center: f64,
         tick_id: gtk::TickCallbackId,
     },
-}
-
-#[derive(Debug, Clone)]
-struct EventSegment {
-    row_index: usize,
-    column_start: usize,
-    column_end: usize,
-    event: Event,
-}
-
-#[derive(Debug, Clone)]
-struct StackedSegment {
-    column_start: usize,
-    column_end: usize,
-    stack_row: usize,
-    event: Event,
-}
-
-#[derive(Debug, Clone)]
-struct EventLayout {
-    widget: MonthViewEvent,
-    column_start: usize,
-    column_end: usize,
-    stack_row: usize,
-}
-
-#[derive(Debug, Clone)]
-struct PlacedEvent {
-    layout: EventLayout,
-    hidden: bool,
-}
-
-#[derive(Debug, Clone)]
-struct RowOverflow {
-    placements: Vec<PlacedEvent>,
-    column_hidden_counts: [usize; 7],
-}
-
-impl RowOverflow {
-    fn compute(row_layouts: &[EventLayout], max_events: usize) -> Self {
-        let column_max_row = {
-            let mut column_max_row = [0usize; 7];
-            for layout in row_layouts {
-                for max_row in &mut column_max_row[layout.column_start..=layout.column_end] {
-                    *max_row = (*max_row).max(layout.stack_row + 1);
-                }
-            }
-            column_max_row
-        };
-
-        let column_needs_more = {
-            let mut column_needs_more = [false; 7];
-            for i in 0..7 {
-                if column_max_row[i] > max_events {
-                    column_needs_more[i] = true;
-                }
-            }
-            column_needs_more
-        };
-
-        let placements = row_layouts
-            .iter()
-            .map(|layout| {
-                let hidden = (layout.column_start..=layout.column_end)
-                    .any(|i| column_needs_more[i] && layout.stack_row >= max_events - 1);
-
-                PlacedEvent {
-                    layout: layout.clone(),
-                    hidden,
-                }
-            })
-            .collect::<Vec<_>>();
-
-        let column_hidden_counts = {
-            let mut column_hidden_counts = [0; 7];
-            for placement in &placements {
-                if placement.hidden {
-                    for count in &mut column_hidden_counts
-                        [placement.layout.column_start..=placement.layout.column_end]
-                    {
-                        *count += 1;
-                    }
-                }
-            }
-            column_hidden_counts
-        };
-
-        Self {
-            placements,
-            column_hidden_counts,
-        }
-    }
-}
-
-fn compute_event_segments(
-    events: &[Event],
-    buffer_start_unix_days: i64,
-    timezone: &glib::TimeZone,
-) -> Vec<EventSegment> {
-    let mut segments = Vec::new();
-
-    for event in events {
-        if !event.calendar().unwrap().is_visible() {
-            continue;
-        }
-
-        let timeframe = event.timeframe().unwrap();
-
-        let start_unix_seconds = timeframe.start_unix();
-        let end_unix_seconds = timeframe.end_unix();
-
-        let (start_unix_days, end_unix_days_inclusive) = if timeframe.is_all_day() {
-            let start_unix_days = start_unix_seconds / SECONDS_PER_DAY;
-            let end_unix_days_inclusive = end_unix_seconds / SECONDS_PER_DAY - 1;
-
-            (start_unix_days, end_unix_days_inclusive)
-        } else {
-            let start_unix_days = (start_unix_seconds
-                + timezone
-                    .offset(timezone.find_interval(glib::TimeType::Universal, start_unix_seconds))
-                    as i64)
-                / SECONDS_PER_DAY;
-            let end_unix_days_inclusive = (end_unix_seconds
-                + timezone
-                    .offset(timezone.find_interval(glib::TimeType::Universal, end_unix_seconds))
-                    as i64)
-                / SECONDS_PER_DAY;
-
-            let ends_exactly_at_midnight = (end_unix_seconds
-                + timezone
-                    .offset(timezone.find_interval(glib::TimeType::Universal, end_unix_seconds))
-                    as i64)
-                % SECONDS_PER_DAY
-                == 0;
-
-            let end_unix_days_inclusive = if ends_exactly_at_midnight {
-                end_unix_days_inclusive - 1
-            } else {
-                end_unix_days_inclusive
-            };
-
-            (start_unix_days, end_unix_days_inclusive)
-        };
-
-        let first_day_offset = start_unix_days - buffer_start_unix_days;
-        let last_day_offset = end_unix_days_inclusive - buffer_start_unix_days;
-
-        // Ignore events outside the range before casting to usize, as this can cause a
-        // wraparound
-        if last_day_offset < 0 || first_day_offset > NB_CELLS as i64 - 1 {
-            tracing::warn!("Subscription gave an event outside the range");
-            continue;
-        }
-
-        let first_day_offset = (first_day_offset).max(0) as usize;
-        let last_day_offset = (last_day_offset).min(NB_CELLS as i64 - 1) as usize;
-
-        let first_row_index = first_day_offset / 7;
-        let last_row_index = last_day_offset / 7;
-
-        // Emit one segment per row touched by this event
-        for row_index in first_row_index..=last_row_index {
-            let row_first_day_offset = row_index * 7;
-            let row_last_day_offset = row_first_day_offset + 6;
-
-            let column_start = first_day_offset.max(row_first_day_offset) - row_first_day_offset;
-            let column_end = last_day_offset.min(row_last_day_offset) - row_first_day_offset;
-
-            let segment = EventSegment {
-                row_index,
-                column_start,
-                column_end,
-                event: event.clone(),
-            };
-            segments.push(segment);
-        }
-    }
-
-    segments
-}
-
-/// Groups `segments` by `row_index` and assigns each one a `stack_row`, independently per row,
-/// via first-fit packing: segments are sorted widest-span-first (then by `column_start`), and
-/// each one is greedily placed in the first stack row whose occupied half-open column intervals
-/// don't conflict with it. A multi-row event's segments can end up on different `stack_row`s in
-/// different rows -- that's an accepted outcome, not a bug (no cross-row continuity requirement).
-fn stack_event_segments(segments: &[EventSegment]) -> Vec<Vec<StackedSegment>> {
-    let mut segments_by_row: Vec<Vec<&EventSegment>> = (0..NB_ROWS).map(|_| Vec::new()).collect();
-    for segment in segments {
-        segments_by_row[segment.row_index].push(segment);
-    }
-
-    segments_by_row
-        .into_iter()
-        .map(|mut row_segments| {
-            // Sort widest-span-first, then by start column, so a wide event claims a stack
-            // row before narrower events that could otherwise fragment the packing.
-            row_segments.sort_by(|a, b| {
-                let span_a = a.column_end - a.column_start;
-                let span_b = b.column_end - b.column_start;
-                span_b
-                    .cmp(&span_a)
-                    .then_with(|| a.column_start.cmp(&b.column_start))
-            });
-
-            // First-fit packing: each stack row tracks the half-open column intervals it
-            // already occupies; a segment is placed in the first stack row it doesn't
-            // conflict with, or a new one if none fit.
-            let mut stack_row_occupancy: Vec<Vec<(usize, usize)>> = Vec::new();
-            let mut stacked_row = Vec::with_capacity(row_segments.len());
-
-            for segment in row_segments {
-                let start_column = segment.column_start;
-                let end_column = segment.column_end + 1; // half-open
-
-                let mut assigned_stack_row = None;
-                for (stack_row, occupied) in stack_row_occupancy.iter_mut().enumerate() {
-                    let conflicts = occupied
-                        .iter()
-                        .any(|&(s, e)| start_column < e && end_column > s);
-                    if !conflicts {
-                        occupied.push((start_column, end_column));
-                        assigned_stack_row = Some(stack_row);
-                        break;
-                    }
-                }
-                let assigned_stack_row = assigned_stack_row.unwrap_or_else(|| {
-                    stack_row_occupancy.push(vec![(start_column, end_column)]);
-                    stack_row_occupancy.len() - 1
-                });
-
-                stacked_row.push(StackedSegment {
-                    column_start: segment.column_start,
-                    column_end: segment.column_end,
-                    stack_row: assigned_stack_row,
-                    event: segment.event.clone(),
-                });
-            }
-
-            stacked_row
-        })
-        .collect()
-}
-
-fn build_event_layouts(
-    event_widgets: &[MonthViewEvent],
-    stacked_segments_by_row: &[Vec<StackedSegment>],
-) -> Vec<Vec<EventLayout>> {
-    let mut event_widget_index = 0;
-    let mut layouts_by_row = Vec::with_capacity(stacked_segments_by_row.len());
-
-    for row_stacked_segments in stacked_segments_by_row {
-        let mut row_layouts = Vec::with_capacity(row_stacked_segments.len());
-
-        for stacked_segment in row_stacked_segments {
-            let event_widget = &event_widgets[event_widget_index];
-            event_widget_index += 1;
-
-            event_widget.set_event(Some(&stacked_segment.event));
-
-            row_layouts.push(EventLayout {
-                widget: event_widget.clone(),
-                column_start: stacked_segment.column_start,
-                column_end: stacked_segment.column_end,
-                stack_row: stacked_segment.stack_row,
-            });
-        }
-
-        layouts_by_row.push(row_layouts);
-    }
-
-    layouts_by_row
 }
 
 mod imp {
