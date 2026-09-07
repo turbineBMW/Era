@@ -132,6 +132,44 @@ pub mod imp {
                 "win.today",
             );
 
+            klass.install_action("win.scroll-up", None, |obj, _, _| {
+                match obj
+                    .imp()
+                    .narrow_stack
+                    .visible_child_name()
+                    .expect("Narrow stack should have a visible child")
+                    .as_str()
+                {
+                    "month" => {
+                        obj.imp().month_view.scroll_up();
+                    }
+                    "year" | "agenda" => {}
+                    name => panic!("Unknown narrow stack child name: {name}"),
+                };
+            });
+            klass.add_binding_action(gdk::Key::Up, gdk::ModifierType::ALT_MASK, "win.scroll-up");
+
+            klass.install_action("win.scroll-down", None, |obj, _, _| {
+                match obj
+                    .imp()
+                    .narrow_stack
+                    .visible_child_name()
+                    .expect("Narrow stack should have a visible child")
+                    .as_str()
+                {
+                    "month" => {
+                        obj.imp().month_view.scroll_down();
+                    }
+                    "year" | "agenda" => {}
+                    name => panic!("Unknown narrow stack child name: {name}"),
+                };
+            });
+            klass.add_binding_action(
+                gdk::Key::Down,
+                gdk::ModifierType::ALT_MASK,
+                "win.scroll-down",
+            );
+
             klass.install_action("win.zoomin", None, |obj, _, _| {
                 match obj
                     .imp()

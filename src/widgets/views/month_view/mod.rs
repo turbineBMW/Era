@@ -105,6 +105,14 @@ glib::wrapper! {
 }
 
 impl MonthView {
+    pub fn scroll_up(&self) {
+        self.imp().inner.scroll_up();
+    }
+
+    pub fn scroll_down(&self) {
+        self.imp().inner.scroll_down();
+    }
+
     pub fn zoom_in(&self) {
         self.imp().inner.zoom_in();
     }

@@ -33,6 +33,24 @@ template $MonthViewInner: Widget {
         icon-name: "today-symbolic";
       };
     }
+
+    Button {
+      icon-name: "go-down-symbolic";
+      action-name: "win.scroll-down";
+
+      styles [
+        "flat",
+      ]
+    }
+
+    Button {
+      icon-name: "go-up-symbolic";
+      action-name: "win.scroll-up";
+
+      styles [
+        "flat",
+      ]
+    }
   }
 
   // Continuous scroll (touchpad or smooth mouse wheel) followed by kinetic deceleration

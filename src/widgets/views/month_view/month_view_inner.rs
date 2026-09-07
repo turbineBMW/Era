@@ -1010,58 +1010,11 @@ mod imp {
                 _ => unreachable!(),
             }
 
-            // If a discrete animation was already running, we stack on top of where it was headed.
-            let baseline =
-                if let Some(Input::Animation(Animation::DiscreteScroll { target, .. })) =
-                    *self.input.borrow()
-                {
-                    target
-                } else {
-                    self.scroll_offset.get()
-                };
-
-            self.cancel_animation();
-
-            let height = self.obj().height() as f64;
-            let row_height = (self.cell_height.get() + SEPARATOR_HEIGHT) as f64;
-
-            let target = if row_height > height {
-                unimplemented!()
+            if dy > 0.0 {
+                self.accumulate_discrete_scroll(false);
             } else {
-                // Advance by exactly one row in the scroll direction, aligning to the next row
-                // boundary.
-                let offset_into_row = baseline.rem_euclid(row_height);
-                if dy > 0.0 {
-                    let to_next = row_height - offset_into_row;
-                    baseline + if to_next < 0.1 { row_height } else { to_next }
-                } else {
-                    if offset_into_row < 0.1 {
-                        baseline - row_height
-                    } else {
-                        baseline - offset_into_row
-                    }
-                }
-            };
-
-            let frame_clock = self.obj().frame_clock().unwrap();
-            let now = frame_clock.frame_time();
-            let start_offset = self.scroll_offset.get();
-
-            let tick_id = self.obj().add_tick_callback(clone!(
-                #[weak(rename_to = imp)]
-                self,
-                #[upgrade_or]
-                glib::ControlFlow::Break,
-                move |_obj, frame_clock| imp
-                    .discrete_scroll_animation_tick(frame_clock.frame_time())
-            ));
-            self.input
-                .replace(Some(Input::Animation(Animation::DiscreteScroll {
-                    start_offset,
-                    start_time: now,
-                    target,
-                    tick_id,
-                })));
+                self.accumulate_discrete_scroll(true);
+            }
 
             true
         }
@@ -1212,6 +1165,61 @@ mod imp {
             };
 
             self.input.replace(None);
+        }
+
+        pub(super) fn accumulate_discrete_scroll(&self, up: bool) {
+            // If a discrete animation was already running, we stack on top of where it was headed.
+            let baseline =
+                if let Some(Input::Animation(Animation::DiscreteScroll { target, .. })) =
+                    *self.input.borrow()
+                {
+                    target
+                } else {
+                    self.scroll_offset.get()
+                };
+
+            self.cancel_animation();
+
+            let height = self.obj().height() as f64;
+            let row_height = (self.cell_height.get() + SEPARATOR_HEIGHT) as f64;
+
+            let target = if row_height > height {
+                unimplemented!()
+            } else {
+                // Advance by exactly one row in the scroll direction, aligning to the next row
+                // boundary.
+                let offset_into_row = baseline.rem_euclid(row_height);
+                if up {
+                    if offset_into_row < 0.1 {
+                        baseline - row_height
+                    } else {
+                        baseline - offset_into_row
+                    }
+                } else {
+                    let to_next = row_height - offset_into_row;
+                    baseline + if to_next < 0.1 { row_height } else { to_next }
+                }
+            };
+
+            let frame_clock = self.obj().frame_clock().unwrap();
+            let now = frame_clock.frame_time();
+            let start_offset = self.scroll_offset.get();
+
+            let tick_id = self.obj().add_tick_callback(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                #[upgrade_or]
+                glib::ControlFlow::Break,
+                move |_obj, frame_clock| imp
+                    .discrete_scroll_animation_tick(frame_clock.frame_time())
+            ));
+            self.input
+                .replace(Some(Input::Animation(Animation::DiscreteScroll {
+                    start_offset,
+                    start_time: now,
+                    target,
+                    tick_id,
+                })));
         }
 
         pub(super) fn start_discrete_zoom_animation(&self, scale: f64) {
@@ -1573,6 +1581,14 @@ glib::wrapper! {
 }
 
 impl MonthViewInner {
+    pub fn scroll_up(&self) {
+        self.imp().accumulate_discrete_scroll(true);
+    }
+
+    pub fn scroll_down(&self) {
+        self.imp().accumulate_discrete_scroll(false);
+    }
+
     pub fn zoom_in(&self) {
         self.imp().start_discrete_zoom_animation(1.1);
     }
