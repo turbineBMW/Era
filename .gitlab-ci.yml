@@ -78,6 +78,14 @@ meson-format:
         - meson --version
         - git ls-files | grep -E 'meson.options$|meson.build$' | xargs -r meson fmt --check-diff
 
+check-potfiles:
+    stage: check
+    image: quay.io/gnome_infrastructure/gnome-build-meta:core-nightly
+    script:
+        - curl --proto '=https' --tlsv1.2 -sSf -O
+            https://gitlab.gnome.org/msandova/check-potfiles/-/raw/master/check_potfiles.py
+        - python3 check_potfiles.py --directory src --directory data
+
 blueprint-format:
     stage: check
     image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
