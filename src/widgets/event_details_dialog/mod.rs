@@ -360,22 +360,26 @@ mod imp {
         #[template_callback]
         fn edit(&self) {
             let event = self.obj().event().expect("event should be initialized");
-
-            self.navigation_view.push_by_tag("editor");
+            let timeframe = event.timeframe().unwrap();
+            let all_day = timeframe.is_all_day();
+            let start = timeframe.start().unwrap();
+            let end = timeframe.end().unwrap();
 
             self.name_entry.set_text(&event.name().unwrap());
             self.location_entry.set_text(&event.location().unwrap());
             self.conference_entry.set_text(&event.conference().unwrap());
-            self.timeframe_picker
-                .set_timeframe(event.timeframe().unwrap());
+            self.timeframe_picker.set_data(all_day, &start, &end);
             self.calendar_choice
                 .set_selected_calendar(&event.calendar().unwrap());
             self.description_entry
                 .set_text(&event.description().unwrap());
+
+            self.navigation_view.push_by_tag("editor");
+
+            self.name_entry.grab_focus();
         }
 
         async fn update_event(&self) {
-            self.save.grab_focus();
             self.cancel.set_sensitive(false);
             self.save.set_is_loading(true);
             self.name_entry.set_sensitive(false);
@@ -461,36 +465,47 @@ mod imp {
         #[template_callback]
         fn duplicate(&self) {
             let event = self.obj().event().expect("event should be initialized");
+            let timeframe = event.timeframe().unwrap();
 
             let name = event.name().unwrap().to_string();
             let description = event.description().unwrap().to_string();
             let location = event.location().unwrap().to_string();
             let conference = event.conference().unwrap().to_string();
-            let all_day = event.timeframe().unwrap().is_all_day();
-            let start = event.timeframe().unwrap().start().unwrap();
-            let end = event.timeframe().unwrap().end().unwrap();
+            let all_day = timeframe.is_all_day();
+            let start_glib = timeframe.start().unwrap();
+            let end_glib = timeframe.end().unwrap();
 
-            let start_tzid = start.timezone().identifier();
+            let start_tzid = start_glib.timezone().identifier();
             let start_jiff_tz = jiff::tz::TimeZone::get(&start_tzid).unwrap();
             let start = jiff::civil::Date::new(
-                start.year() as i16,
-                start.month() as i8,
-                start.day_of_month() as i8,
+                start_glib.year() as i16,
+                start_glib.month() as i8,
+                start_glib.day_of_month() as i8,
             )
             .unwrap()
             .to_zoned(start_jiff_tz)
             .unwrap()
+            .with()
+            .hour(start_glib.hour() as i8)
+            .minute(start_glib.minute() as i8)
+            .build()
+            .unwrap()
             .to_string();
 
-            let end_tzid = end.timezone().identifier();
+            let end_tzid = end_glib.timezone().identifier();
             let end_jiff_tz = jiff::tz::TimeZone::get(&end_tzid).unwrap();
             let end = jiff::civil::Date::new(
-                end.year() as i16,
-                end.month() as i8,
-                end.day_of_month() as i8,
+                end_glib.year() as i16,
+                end_glib.month() as i8,
+                end_glib.day_of_month() as i8,
             )
             .unwrap()
             .to_zoned(end_jiff_tz)
+            .unwrap()
+            .with()
+            .hour(end_glib.hour() as i8)
+            .minute(end_glib.minute() as i8)
+            .build()
             .unwrap()
             .to_string();
 

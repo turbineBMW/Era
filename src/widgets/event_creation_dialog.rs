@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, Timeframe, prelude::*};
+use clepsydre::{Calendar, prelude::*};
 use glib::{DateTime, TimeZone, clone};
 use tracing::{debug, warn};
 
@@ -141,8 +141,8 @@ mod imp {
             )
             .expect("Failed to create glib::DateTime");
 
-            let timeframe = Timeframe::new(preset.all_day, &glib_start, &glib_end).unwrap();
-            self.timeframe_picker.set_timeframe(timeframe);
+            self.timeframe_picker
+                .set_data(preset.all_day, &glib_start, &glib_end);
         }
 
         fn update_save_action(&self) {

@@ -8,19 +8,19 @@ template $TimeframePicker: Adw.PreferencesGroup {
     spacing: 12;
 
     Adw.ToggleGroup schedule_type {
-      active-name: "all-day";
+      active-name: "time-slot";
       homogeneous: true;
-
-      Adw.Toggle {
-        label: _("_All Day");
-        use-underline: true;
-        name: "all-day";
-      }
 
       Adw.Toggle {
         label: _("_Time Slot");
         use-underline: true;
         name: "time-slot";
+      }
+
+      Adw.Toggle {
+        label: _("_All Day");
+        use-underline: true;
+        name: "all-day";
       }
     }
 

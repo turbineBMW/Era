@@ -27,6 +27,7 @@ mod imp {
         date_time: RefCell<DateTime>,
         #[property(get, set = Self::set_error)]
         error: Cell<bool>,
+
         #[template_child]
         date: TemplateChild<DatePickerRow>,
         #[template_child]

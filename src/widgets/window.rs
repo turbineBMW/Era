@@ -4,6 +4,7 @@ use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Calendar, prelude::*};
 use gettextrs::gettext;
 use glib::{clone, translate::*};
+use jiff::ToSpan;
 
 use crate::{
     Application,
@@ -489,20 +490,20 @@ pub mod imp {
             let tzid = now.timezone().identifier();
             let jiff_tz = jiff::tz::TimeZone::get(&tzid).unwrap();
 
-            let today = jiff::civil::Date::new(
-                now.year() as i16,
-                now.month() as i8,
-                now.day_of_month() as i8,
-            )
-            .unwrap();
+            let start_of_current_hour =
+                jiff::Zoned::new(jiff::Timestamp::new(now.to_unix(), 0).unwrap(), jiff_tz)
+                    .round(
+                        jiff::ZonedRound::new()
+                            .smallest(jiff::Unit::Hour)
+                            .mode(jiff::RoundMode::Trunc),
+                    )
+                    .unwrap();
 
-            let tomorrow = today.tomorrow().unwrap();
-
-            let start = today.to_zoned(jiff_tz.clone()).unwrap().to_string();
-            let end = tomorrow.to_zoned(jiff_tz).unwrap().to_string();
+            let start = (start_of_current_hour.clone() + 1.hour()).to_string();
+            let end = (start_of_current_hour + 2.hours()).to_string();
 
             let preset = EventPropertiesPreset {
-                all_day: true,
+                all_day: false,
                 start,
                 end,
                 ..Default::default()

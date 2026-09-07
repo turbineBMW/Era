@@ -2,7 +2,7 @@ use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::Timeframe;
-use glib::clone;
+use glib::{DateTime, clone};
 
 use crate::utils::TemplateCallbacks;
 
@@ -17,8 +17,9 @@ mod imp {
     #[template(resource = "/io/gitlab/TitouanReal/Era/timeframe_picker.ui")]
     #[properties(wrapper_type = super::TimeframePicker)]
     pub struct TimeframePicker {
-        #[property(get, set = Self::set_timeframe)]
+        #[property(get, nullable)]
         timeframe: RefCell<Option<Timeframe>>,
+
         #[template_child]
         schedule_type: TemplateChild<adw::ToggleGroup>,
         #[template_child]
@@ -81,28 +82,19 @@ mod imp {
 
     #[gtk::template_callbacks]
     impl TimeframePicker {
-        fn set_timeframe(&self, timeframe: &Timeframe) {
-            if Some(timeframe) == self.timeframe.borrow().as_ref() {
-                return;
-            }
-
-            self.timeframe.replace(Some(timeframe.clone()));
-
-            let all_day = timeframe.is_all_day();
-
+        pub(super) fn set_data(&self, all_day: bool, start: &DateTime, end: &DateTime) {
             self.schedule_type
                 .set_active_name(Some(if all_day { "all-day" } else { "time-slot" }));
-            self.start.set_date_only(timeframe.is_all_day());
-            self.end.set_date_only(timeframe.is_all_day());
-            self.start.set_date_time(timeframe.start().unwrap());
+            self.start.set_date_only(all_day);
+            self.end.set_date_only(all_day);
 
+            self.start.set_date_time(start);
             self.end.set_date_time(
-                timeframe
-                    .end()
-                    .unwrap()
-                    .add_days(if all_day { -1 } else { 0 })
+                end.add_days(if all_day { -1 } else { 0 })
                     .expect("Datetime should exist"),
             );
+
+            self.update_timeframe();
 
             self.obj().notify_timeframe();
         }
@@ -125,4 +117,10 @@ glib::wrapper! {
     pub struct TimeframePicker(ObjectSubclass<imp::TimeframePicker>)
         @extends gtk::Widget, adw::PreferencesGroup,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
+}
+
+impl TimeframePicker {
+    pub fn set_data(&self, all_day: bool, start: &DateTime, end: &DateTime) {
+        self.imp().set_data(all_day, start, end);
+    }
 }
