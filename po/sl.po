@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-08-23 16:43+0000\n"
-"PO-Revision-Date: 2026-08-27 17:41+0200\n"
+"POT-Creation-Date: 2026-09-07 18:45+0000\n"
+"PO-Revision-Date: 2026-09-07 21:55+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
@@ -61,18 +61,18 @@ msgid "Flow Details"
 msgstr "Podrobnosti poteka"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:42
+#: data/resources/ui/event_creation_dialog.blp:46
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:286
-#: data/resources/ui/event_creation_dialog.blp:45
 msgid "Cancel"
 msgstr "Prekliči"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:49
-#: data/resources/ui/event_creation_dialog.blp:52
+#: data/resources/ui/event_creation_dialog.blp:53
 msgid "Create"
 msgstr "Ustvari"
 
 #: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:16
-#: data/resources/ui/event_creation_dialog.blp:64
+#: data/resources/ui/event_creation_dialog.blp:65
 msgid "Name"
 msgstr "Ime"
 
@@ -97,6 +97,8 @@ msgid "Calendar details"
 msgstr "Podrobnosti koledarja"
 
 #: data/resources/ui/calendar_management_dialog/calendar_management_dialog.blp:6
+#: data/resources/ui/calendar_management_dialog/collections_list_page.blp:6
+#: data/resources/ui/sidebar/sidebar.blp:10
 msgid "Calendars"
 msgstr "Koledarji"
 
@@ -116,6 +118,14 @@ msgstr " V tej zbirki ni koledarjev"
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:115
 msgid "Calendar"
 msgstr "Koledar"
+
+#: data/resources/ui/components/error_dialog.blp:7
+msgid "Error Details"
+msgstr "Podrobnosti o napaki"
+
+#: data/resources/ui/components/error_dialog.blp:16
+msgid "Message"
+msgstr "Sporočilo"
 
 #: data/resources/ui/components/timeframe_picker/date_picker_row.blp:15
 #: data/resources/ui/components/timeframe_picker/date_picker_row.blp:32
@@ -149,12 +159,12 @@ msgid "No Result"
 msgstr "Brez rezultatov"
 
 #: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:15
-msgid "_All Day"
-msgstr "_Ves dan"
-
-#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:21
 msgid "_Time Slot"
 msgstr "_Časovno okno"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:21
+msgid "_All Day"
+msgstr "_Ves dan"
 
 #: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:28
 msgid "Start Date"
@@ -176,13 +186,64 @@ msgstr "Čas konca"
 msgid "Debug - timeframe:"
 msgstr "Razhroščevanje - časovni okvir:"
 
-#: data/resources/ui/components/error_dialog.blp:7
-msgid "Error Details"
-msgstr "Podrobnosti o napaki"
+#: data/resources/ui/event_creation_dialog.blp:6
+#: data/resources/ui/window.blp:93 data/resources/ui/window.blp:159
+#: data/resources/ui/window.blp:225 data/resources/ui/window.blp:289
+msgid "Create Event"
+msgstr "Ustvari dogodek"
 
-#: data/resources/ui/components/error_dialog.blp:16
-msgid "Message"
-msgstr "Sporočilo"
+#: data/resources/ui/event_creation_dialog.blp:28
+msgid "No Calendar"
+msgstr "Ni koledarjev"
+
+#: data/resources/ui/event_creation_dialog.blp:29
+msgid "There is no calendar to add an event to."
+msgstr "Ni koledarja, v katerega bi lahko dodali dogodek."
+
+#: data/resources/ui/event_creation_dialog.blp:69
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:309
+msgid "Location"
+msgstr "Kraj"
+
+#: data/resources/ui/event_creation_dialog.blp:73
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:313
+msgid "Conference"
+msgstr "Konferenca"
+
+#: data/resources/ui/event_creation_dialog.blp:85
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:169
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:336
+msgid "Description"
+msgstr "Opis"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
+#: data/resources/ui/search_dialog/search_dialog.blp:24
+#: data/resources/ui/window.blp:62 data/resources/ui/window.blp:128
+#: data/resources/ui/window.blp:194 data/resources/ui/window.blp:296
+msgid "Search"
+msgstr "Išči"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:40
+msgid "Accepted"
+msgstr "Sprejeto"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:45
+msgid "Tentative"
+msgstr "V usklajevanju"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:50
+msgid "Declined"
+msgstr "Zavrnjeno"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:55
+msgid "Delegated"
+msgstr "Pooblaščeno zastopanje"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:60
+msgid "Needs Action"
+msgstr "Zahteva dejanje"
 
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:16
 msgid "Event"
@@ -200,21 +261,9 @@ msgstr "Izvozi"
 msgid "Show QR code"
 msgstr "Pokaži kodo QR"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:309
-#: data/resources/ui/event_creation_dialog.blp:68
-msgid "Location"
-msgstr "Kraj"
-
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:84
 msgid "Open Map"
 msgstr "Odpri zemljevid"
-
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:313
-#: data/resources/ui/event_creation_dialog.blp:72
-msgid "Conference"
-msgstr "Konferenca"
 
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:105
 msgid "Join"
@@ -231,12 +280,6 @@ msgstr "Udeleženci"
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:158
 msgid "Resources"
 msgstr "Viri"
-
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:169
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:336
-#: data/resources/ui/event_creation_dialog.blp:84
-msgid "Description"
-msgstr "Opis"
 
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:186
 msgid ""
@@ -274,32 +317,9 @@ msgstr "Naziv"
 msgid "Share Event"
 msgstr "Deli dogodek"
 
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
-#: data/resources/ui/search_dialog/search_dialog.blp:24
-#: data/resources/ui/window.blp:62 data/resources/ui/window.blp:136
-#: data/resources/ui/window.blp:203 data/resources/ui/window.blp:279
-msgid "Search"
-msgstr "Išči"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:40
-msgid "Accepted"
-msgstr "Sprejeto"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:45
-msgid "Tentative"
-msgstr "V usklajevanju"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:50
-msgid "Declined"
-msgstr "Zavrnjeno"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:55
-msgid "Delegated"
-msgstr "Pooblaščeno zastopanje"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:60
-msgid "Needs Action"
-msgstr "Zahteva dejanje"
+#: data/resources/ui/qr_code_dialog.blp:28
+msgid "Scan to Import"
+msgstr "Optično preberi za uvoz"
 
 #: data/resources/ui/search_dialog/search_dialog.blp:6
 msgid "Search Events"
@@ -320,28 +340,6 @@ msgstr "Iskanje dogodkov ni možno"
 #: data/resources/ui/search_dialog/search_dialog.blp:78
 msgid "An error occurred in the backend. Try searching again"
 msgstr "Prišlo je do napake v zaledju, poskusite z novim iskanjem."
-
-#: data/resources/ui/views/month_view/month_view_inner.blp:11
-msgid "Month view"
-msgstr "Mesečni pogled"
-
-#: data/resources/ui/event_creation_dialog.blp:6
-#: data/resources/ui/window.blp:93 data/resources/ui/window.blp:167
-#: data/resources/ui/window.blp:234 data/resources/ui/window.blp:347
-msgid "Create Event"
-msgstr "Ustvari dogodek"
-
-#: data/resources/ui/event_creation_dialog.blp:27
-msgid "No Calendar"
-msgstr "Ni koledarjev"
-
-#: data/resources/ui/event_creation_dialog.blp:28
-msgid "There is no calendar to add an event to."
-msgstr "Ni koledarja, v katerega bi lahko dodali dogodek."
-
-#: data/resources/ui/qr_code_dialog.blp:28
-msgid "Scan to Import"
-msgstr "Optično preberi za uvoz"
 
 #: data/resources/ui/shortcuts_dialog.blp:6
 msgctxt "shortcut dialog"
@@ -388,6 +386,50 @@ msgctxt "shortcut dialog"
 msgid "Show Today"
 msgstr "Pokaže današnji dan"
 
+#: data/resources/ui/shortcuts_dialog.blp:49
+msgctxt "shortcut dialog"
+msgid "View"
+msgstr "Pogled"
+
+#: data/resources/ui/shortcuts_dialog.blp:52
+msgctxt "shortcut dialog"
+msgid "Scroll Up"
+msgstr "Drsenje navzgor"
+
+#: data/resources/ui/shortcuts_dialog.blp:57
+msgctxt "shortcut dialog"
+msgid "Scroll Down"
+msgstr "Drsenje navzdol"
+
+#: data/resources/ui/shortcuts_dialog.blp:62
+msgctxt "shortcut dialog"
+msgid "Zoom In"
+msgstr "Približaj"
+
+#: data/resources/ui/shortcuts_dialog.blp:67
+msgctxt "shortcut dialog"
+msgid "Zoom Out"
+msgstr "Oddalji"
+
+#: data/resources/ui/sidebar/sidebar.blp:20 data/resources/ui/window.blp:100
+#: data/resources/ui/window.blp:166 data/resources/ui/window.blp:232
+msgid "Manage Calendars"
+msgstr "Upravljanje s koledarji"
+
+#: data/resources/ui/views/agenda_view/agenda_view.blp:33
+msgid "No events on this day"
+msgstr "Na ta dan ni dogodkov"
+
+#: data/resources/ui/views/month_view/month_view_inner.blp:15
+msgid "Month view"
+msgstr "Mesečni pogled"
+
+#: data/resources/ui/views/month_view/month_view_inner.blp:31
+#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:148
+#: data/resources/ui/window.blp:214
+msgid "_Today"
+msgstr "_Danes"
+
 #: data/resources/ui/window.blp:20
 msgid "About Era"
 msgstr "O programu Era"
@@ -404,25 +446,14 @@ msgstr "Zaledje koledarja očitno ni na voljo."
 msgid "Year"
 msgstr "Leto"
 
-#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:129
-#: data/resources/ui/window.blp:196 data/resources/ui/window.blp:272
+#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:282
 msgid "Main Menu"
 msgstr "Glavni meni"
 
-#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:156
-#: data/resources/ui/window.blp:223 data/resources/ui/window.blp:330
-msgid "_Today"
-msgstr "_Danes"
-
-#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:160
-#: data/resources/ui/window.blp:227 data/resources/ui/window.blp:334
+#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:152
+#: data/resources/ui/window.blp:218
 msgid "Go to Today"
 msgstr "Pojdi na današnji dan"
-
-#: data/resources/ui/window.blp:100 data/resources/ui/window.blp:174
-#: data/resources/ui/window.blp:241 data/resources/ui/window.blp:354
-msgid "Manage Calendars"
-msgstr "Upravljanje s koledarji"
 
 #: data/resources/ui/window.blp:109
 msgid "Month"
@@ -432,37 +463,41 @@ msgstr "Mesec"
 msgid "Year View"
 msgstr "Letni pogled"
 
-#: data/resources/ui/window.blp:183
+#: data/resources/ui/window.blp:175
 msgid "Agenda"
 msgstr "Dnevni red"
 
-#: data/resources/ui/window.blp:265
+#: data/resources/ui/window.blp:183
+msgid "Month View"
+msgstr "Mesečni pogled"
+
+#: data/resources/ui/window.blp:256
 msgid "Toggle Sidebar"
 msgstr "Preklopi stransko okno"
 
-#: data/resources/ui/window.blp:291
+#: data/resources/ui/window.blp:308
 msgid "_Year"
 msgstr "_Leto"
 
-#: data/resources/ui/window.blp:302
+#: data/resources/ui/window.blp:318
 msgid "_Month"
 msgstr "_Mesec"
 
-#: data/resources/ui/window.blp:313
+#: data/resources/ui/window.blp:329
 msgid "_Agenda"
 msgstr "_Dnevni red"
 
-#: data/resources/ui/window.blp:430
+#: data/resources/ui/window.blp:409
 msgid "_Keyboard Shortcuts"
 msgstr "_Tipkovne bližnjice"
 
-#: data/resources/ui/window.blp:435
+#: data/resources/ui/window.blp:414
 msgid "_About Era"
 msgstr "_O programu Era"
 
 #. Translators: Replace "translator-credits" with your name/username, and optionally an
 #. email or URL.
-#: src/application.rs:126
+#: src/application.rs:127
 msgid "translator-credits"
 msgstr "Martin Srebotnjak <miles@filmsi.net>"
 
@@ -522,51 +557,51 @@ msgstr "SO"
 msgid "SUN"
 msgstr "NE"
 
-#: src/utils/template_callbacks.rs:149
+#: src/utils/template_callbacks.rs:149 src/utils/template_callbacks.rs:217
 msgid "january"
 msgstr "januar"
 
-#: src/utils/template_callbacks.rs:150
+#: src/utils/template_callbacks.rs:150 src/utils/template_callbacks.rs:218
 msgid "february"
 msgstr "februar"
 
-#: src/utils/template_callbacks.rs:151
+#: src/utils/template_callbacks.rs:151 src/utils/template_callbacks.rs:219
 msgid "march"
 msgstr "marec"
 
-#: src/utils/template_callbacks.rs:152
+#: src/utils/template_callbacks.rs:152 src/utils/template_callbacks.rs:220
 msgid "april"
 msgstr "april"
 
-#: src/utils/template_callbacks.rs:153
+#: src/utils/template_callbacks.rs:153 src/utils/template_callbacks.rs:221
 msgid "may"
 msgstr "maj"
 
-#: src/utils/template_callbacks.rs:154
+#: src/utils/template_callbacks.rs:154 src/utils/template_callbacks.rs:222
 msgid "june"
 msgstr "junij"
 
-#: src/utils/template_callbacks.rs:155
+#: src/utils/template_callbacks.rs:155 src/utils/template_callbacks.rs:223
 msgid "july"
 msgstr "julij"
 
-#: src/utils/template_callbacks.rs:156
+#: src/utils/template_callbacks.rs:156 src/utils/template_callbacks.rs:224
 msgid "august"
 msgstr "avgust"
 
-#: src/utils/template_callbacks.rs:157
+#: src/utils/template_callbacks.rs:157 src/utils/template_callbacks.rs:225
 msgid "september"
 msgstr "september"
 
-#: src/utils/template_callbacks.rs:158
+#: src/utils/template_callbacks.rs:158 src/utils/template_callbacks.rs:226
 msgid "october"
 msgstr "oktober"
 
-#: src/utils/template_callbacks.rs:159
+#: src/utils/template_callbacks.rs:159 src/utils/template_callbacks.rs:227
 msgid "november"
 msgstr "november"
 
-#: src/utils/template_callbacks.rs:160
+#: src/utils/template_callbacks.rs:160 src/utils/template_callbacks.rs:228
 msgid "december"
 msgstr "december"
 
@@ -587,6 +622,7 @@ msgid "April"
 msgstr "april"
 
 #: src/utils/template_callbacks.rs:174 src/utils/template_callbacks.rs:195
+#: src/utils/template_callbacks.rs:241
 msgid "May"
 msgstr "maj"
 
@@ -618,47 +654,47 @@ msgstr "november"
 msgid "December"
 msgstr "december"
 
-#: src/utils/template_callbacks.rs:191
+#: src/utils/template_callbacks.rs:191 src/utils/template_callbacks.rs:237
 msgid "Jan"
 msgstr "jan"
 
-#: src/utils/template_callbacks.rs:192
+#: src/utils/template_callbacks.rs:192 src/utils/template_callbacks.rs:238
 msgid "Feb"
 msgstr "feb"
 
-#: src/utils/template_callbacks.rs:193
+#: src/utils/template_callbacks.rs:193 src/utils/template_callbacks.rs:239
 msgid "Mar"
 msgstr "mar"
 
-#: src/utils/template_callbacks.rs:194
+#: src/utils/template_callbacks.rs:194 src/utils/template_callbacks.rs:240
 msgid "Apr"
 msgstr "apr"
 
-#: src/utils/template_callbacks.rs:196
+#: src/utils/template_callbacks.rs:196 src/utils/template_callbacks.rs:242
 msgid "Jun"
 msgstr "jun"
 
-#: src/utils/template_callbacks.rs:197
+#: src/utils/template_callbacks.rs:197 src/utils/template_callbacks.rs:243
 msgid "Jul"
 msgstr "jul"
 
-#: src/utils/template_callbacks.rs:198
+#: src/utils/template_callbacks.rs:198 src/utils/template_callbacks.rs:244
 msgid "Aug"
 msgstr "avg"
 
-#: src/utils/template_callbacks.rs:199
+#: src/utils/template_callbacks.rs:199 src/utils/template_callbacks.rs:245
 msgid "Sep"
 msgstr "sep"
 
-#: src/utils/template_callbacks.rs:200
+#: src/utils/template_callbacks.rs:200 src/utils/template_callbacks.rs:246
 msgid "Oct"
 msgstr "okt"
 
-#: src/utils/template_callbacks.rs:201
+#: src/utils/template_callbacks.rs:201 src/utils/template_callbacks.rs:247
 msgid "Nov"
 msgstr "nov"
 
-#: src/utils/template_callbacks.rs:202
+#: src/utils/template_callbacks.rs:202 src/utils/template_callbacks.rs:248
 msgid "Dec"
 msgstr "dec"
 
@@ -827,3 +863,7 @@ msgid ""
 msgstr ""
 "{day_start}. {month_start} {year_start} ob {time_start} ({tz_start}) – "
 "{day_end}. {month_end} {year_end} ob {time_end} ({tz_end})"
+
+#: src/widgets/window.rs:441 src/widgets/window.rs:450
+msgid "%0B %Y"
+msgstr "%0B %Y"
