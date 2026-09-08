@@ -3,69 +3,7 @@
   <gresource prefix="/io/gitlab/TitouanReal/Era">
     <file compressed="true" alias="style.css">style.css</file>
 
-    <!-- Calendar Manager Dialog -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_management_calendar_row.ui">ui/calendar_management_dialog/calendar_management_calendar_row.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="collection_row.ui">ui/calendar_management_dialog/collection_row.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="collections_list_page.ui">ui/calendar_management_dialog/collections_list_page.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_creation_dialog.ui">ui/calendar_management_dialog/calendar_creation_dialog.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_management_dialog.ui">ui/calendar_management_dialog/calendar_management_dialog.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_details_page.ui">ui/calendar_management_dialog/calendar_details_page.ui</file>
-
-    <!-- Components -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="error_dialog.ui">ui/components/error_dialog.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="loading_bin.ui">ui/components/loading_bin.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="loading_button_row.ui">ui/components/loading_button_row.ui</file>
-    <!-- Timeframe Picker -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="date_picker_row.ui">ui/components/timeframe_picker/date_picker_row.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="date_time_picker_group.ui">ui/components/timeframe_picker/date_time_picker_group.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="time_zone_picker_dialog.ui">ui/components/timeframe_picker/time_zone_picker_dialog.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="timeframe_picker.ui">ui/components/timeframe_picker/timeframe_picker.ui</file>
-    <!-- Calendar Combo Row -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_combo_row.ui">ui/components/calendar_combo_row/calendar_combo_row.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="calendar_combo_row_list_item.ui">ui/components/calendar_combo_row/calendar_combo_row_list_item.ui</file>
-
-    <!-- Event Creation Dialog -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="event_creation_dialog.ui">ui/event_creation_dialog.ui</file>
-
-    <!-- Event Details Dialog -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="attendee_details_row.ui">ui/event_details_dialog/attendees_list_page/attendee_details_row.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="attendees_list_page.ui">ui/event_details_dialog/attendees_list_page/attendees_list_page.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="attendee_list_row.ui">ui/event_details_dialog/attendee_list_row/attendee_list_row.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="attendee_row.ui">ui/event_details_dialog/attendee_list_row/attendee_row.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="attendee_status_section.ui">ui/event_details_dialog/attendee_list_row/attendee_status_section.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="event_details_dialog.ui">ui/event_details_dialog/event_details_dialog.ui</file>
-
-    <!-- Qr Code Dialog -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="qr_code_dialog.ui">ui/qr_code_dialog.ui</file>
-
-    <!-- Search Dialog -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="search_dialog.ui">ui/search_dialog/search_dialog.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="search_result_row.ui">ui/search_dialog/search_result_row.ui</file>
-
-    <!-- Sidebar -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="sidebar.ui">ui/sidebar/sidebar.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="sidebar_calendar_row.ui">ui/sidebar/sidebar_calendar_row.ui</file>
-
-    <!-- Shortcuts Dialog -->
     <file compressed="true" preprocess="xml-stripblanks" alias="shortcuts-dialog.ui">ui/shortcuts_dialog.ui</file>
-
-    <!-- Views -->
-    <!-- Agenda View -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="agenda_view.ui">ui/views/agenda_view/agenda_view.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="agenda_view_row.ui">ui/views/agenda_view/agenda_view_row.ui</file>
-    <!-- Month View -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="month_view.ui">ui/views/month_view/month_view.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="month_view_cell.ui">ui/views/month_view/month_view_cell.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="month_view_event.ui">ui/views/month_view/month_view_event.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="month_view_header.ui">ui/views/month_view/month_view_header.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="month_view_inner.ui">ui/views/month_view/month_view_inner.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="month_view_overflow.ui">ui/views/month_view/month_view_overflow.ui</file>
-    <!-- Year View -->
-    <file compressed="true" preprocess="xml-stripblanks" alias="year_view.ui">ui/views/year_view/year_view.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="year_view_cell.ui">ui/views/year_view/year_view_cell.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="year_view_row.ui">ui/views/year_view/year_view_row.ui</file>
-
-    <file compressed="true" preprocess="xml-stripblanks" alias="window.ui">ui/window.ui</file>
   </gresource>
 
   <gresource prefix="/io/gitlab/TitouanReal/Era/icons">

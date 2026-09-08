@@ -13,7 +13,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/time_zone_picker_dialog.ui")]
+    #[template(file = "data/resources/ui/components/timeframe_picker/time_zone_picker_dialog.blp")]
     #[properties(wrapper_type = super::TimeZonePickerDialog)]
     pub struct TimeZonePickerDialog {
         #[template_child]

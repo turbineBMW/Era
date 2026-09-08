@@ -11,7 +11,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/sidebar_calendar_row.ui")]
+    #[template(file = "data/resources/ui/sidebar/sidebar_calendar_row.blp")]
     #[properties(wrapper_type = super::SidebarCalendarRow)]
     pub struct SidebarCalendarRow {
         #[property(get, set = Self::set_calendar, nullable)]

@@ -14,7 +14,9 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/attendees_list_page.ui")]
+    #[template(
+        file = "data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp"
+    )]
     #[properties(wrapper_type = super::AttendeeListPage)]
     pub struct AttendeesListPage {
         #[property(get, set, nullable)]

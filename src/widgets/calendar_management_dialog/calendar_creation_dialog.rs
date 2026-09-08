@@ -40,7 +40,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/calendar_creation_dialog.ui")]
+    #[template(file = "data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp")]
     #[properties(wrapper_type = super::CalendarCreationDialog)]
     pub struct CalendarCreationDialog {
         #[property(get, set, construct_only)]

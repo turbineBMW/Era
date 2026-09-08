@@ -15,7 +15,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/event_creation_dialog.ui")]
+    #[template(file = "data/resources/ui/event_creation_dialog.blp")]
     pub struct EventCreationDialog {
         #[template_child]
         toast_overlay: TemplateChild<adw::ToastOverlay>,

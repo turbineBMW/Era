@@ -32,7 +32,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/year_view.ui")]
+    #[template(file = "data/resources/ui/views/year_view/year_view.blp")]
     #[properties(wrapper_type = super::YearView)]
     pub struct YearView {
         #[property(get, set = Self::set_year)]

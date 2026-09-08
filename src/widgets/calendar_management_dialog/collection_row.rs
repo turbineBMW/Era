@@ -14,7 +14,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/collection_row.ui")]
+    #[template(file = "data/resources/ui/calendar_management_dialog/collection_row.blp")]
     #[properties(wrapper_type = super::CollectionRow)]
     pub struct CollectionRow {
         #[property(get, set = Self::set_collection, nullable)]

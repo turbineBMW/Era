@@ -11,7 +11,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/month_view_overflow.ui")]
+    #[template(file = "data/resources/ui/views/month_view/month_view_overflow.blp")]
     #[properties(wrapper_type = super::MonthViewOverflow)]
     pub struct MonthViewOverflow {
         #[property(get, set = Self::set_date, construct)]

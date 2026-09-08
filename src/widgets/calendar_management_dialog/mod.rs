@@ -18,7 +18,9 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/calendar_management_dialog.ui")]
+    #[template(
+        file = "data/resources/ui/calendar_management_dialog/calendar_management_dialog.blp"
+    )]
     pub struct CalendarManagementDialog {
         #[template_child]
         stack: TemplateChild<gtk::Stack>,

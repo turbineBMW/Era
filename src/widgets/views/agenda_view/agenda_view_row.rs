@@ -10,7 +10,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/agenda_view_row.ui")]
+    #[template(file = "data/resources/ui/views/agenda_view/agenda_view_row.blp")]
     #[properties(wrapper_type = super::AgendaViewRow)]
     pub struct AgendaViewRow {
         #[property(get, set)]

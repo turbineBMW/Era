@@ -16,7 +16,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/agenda_view.ui")]
+    #[template(file = "data/resources/ui/views/agenda_view/agenda_view.blp")]
     #[properties(wrapper_type = super::AgendaView)]
     pub struct AgendaView {
         #[property(get, set = Self::set_date)]

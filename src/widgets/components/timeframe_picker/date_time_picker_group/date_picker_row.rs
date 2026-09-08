@@ -8,7 +8,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/date_picker_row.ui")]
+    #[template(file = "data/resources/ui/components/timeframe_picker/date_picker_row.blp")]
     #[properties(wrapper_type = super::DatePickerRow)]
     pub struct DatePickerRow {
         #[property(get, set)]

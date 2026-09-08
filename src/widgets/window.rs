@@ -31,7 +31,7 @@ pub mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/window.ui")]
+    #[template(file = "data/resources/ui/window.blp")]
     #[properties(wrapper_type = super::Window)]
     pub struct Window {
         #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]

@@ -90,7 +90,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/month_view_inner.ui")]
+    #[template(file = "data/resources/ui/views/month_view/month_view_inner.blp")]
     #[properties(wrapper_type = super::MonthViewInner)]
     pub struct MonthViewInner {
         /// The date of the last cell of the first row whose top separator is visible.

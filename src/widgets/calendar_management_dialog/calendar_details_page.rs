@@ -14,7 +14,7 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/calendar_details_page.ui")]
+    #[template(file = "data/resources/ui/calendar_management_dialog/calendar_details_page.blp")]
     #[properties(wrapper_type = super::CalendarDetailsPage)]
     pub struct CalendarDetailsPage {
         #[property(get, construct_only)]

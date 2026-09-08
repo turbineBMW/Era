@@ -8,7 +8,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/month_view_header.ui")]
+    #[template(file = "data/resources/ui/views/month_view/month_view_header.blp")]
     #[properties(wrapper_type = super::MonthViewHeader)]
     pub struct MonthViewHeader {
         #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]

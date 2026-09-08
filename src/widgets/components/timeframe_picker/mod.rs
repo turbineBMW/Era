@@ -14,7 +14,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(resource = "/io/gitlab/TitouanReal/Era/timeframe_picker.ui")]
+    #[template(file = "data/resources/ui/components/timeframe_picker/timeframe_picker.blp")]
     #[properties(wrapper_type = super::TimeframePicker)]
     pub struct TimeframePicker {
         #[property(get, nullable)]
