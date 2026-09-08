@@ -24,7 +24,7 @@ use self::{
     feature = "backend-android",
     feature = "backend-eds",
     feature = "backend-mock",
-    feature = "backend-p2panda"
+    feature = "backend-p2panda",
 )))]
 compile_error!(
     "You must enable EXACTLY ONE backend feature: `backend-android`, `backend-eds`, `backend-mock`, or `backend-p2panda`."
