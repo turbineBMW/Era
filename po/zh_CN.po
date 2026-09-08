@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-08-23 16:43+0000\n"
-"PO-Revision-Date: 2026-08-26 10:49+0800\n"
+"POT-Creation-Date: 2026-09-07 18:45+0000\n"
+"PO-Revision-Date: 2026-09-08 08:25+0800\n"
 "Last-Translator: lumingzh <lumingzh@qq.com>\n"
 "Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -58,18 +58,18 @@ msgid "Flow Details"
 msgstr "流详情"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:42
+#: data/resources/ui/event_creation_dialog.blp:46
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:286
-#: data/resources/ui/event_creation_dialog.blp:45
 msgid "Cancel"
 msgstr "取消"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:49
-#: data/resources/ui/event_creation_dialog.blp:52
+#: data/resources/ui/event_creation_dialog.blp:53
 msgid "Create"
 msgstr "创建"
 
 #: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:16
-#: data/resources/ui/event_creation_dialog.blp:64
+#: data/resources/ui/event_creation_dialog.blp:65
 msgid "Name"
 msgstr "名称"
 
@@ -94,6 +94,8 @@ msgid "Calendar details"
 msgstr "日历详情"
 
 #: data/resources/ui/calendar_management_dialog/calendar_management_dialog.blp:6
+#: data/resources/ui/calendar_management_dialog/collections_list_page.blp:6
+#: data/resources/ui/sidebar/sidebar.blp:10
 msgid "Calendars"
 msgstr "日历"
 
@@ -113,6 +115,14 @@ msgstr "此集合中没有日历"
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:115
 msgid "Calendar"
 msgstr "日历"
+
+#: data/resources/ui/components/error_dialog.blp:7
+msgid "Error Details"
+msgstr "错误详情"
+
+#: data/resources/ui/components/error_dialog.blp:16
+msgid "Message"
+msgstr "消息"
 
 #: data/resources/ui/components/timeframe_picker/date_picker_row.blp:15
 #: data/resources/ui/components/timeframe_picker/date_picker_row.blp:32
@@ -146,12 +156,12 @@ msgid "No Result"
 msgstr "无结果"
 
 #: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:15
-msgid "_All Day"
-msgstr "全天(_A)"
-
-#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:21
 msgid "_Time Slot"
 msgstr "时段(_T)"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:21
+msgid "_All Day"
+msgstr "全天(_A)"
 
 #: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:28
 msgid "Start Date"
@@ -173,13 +183,64 @@ msgstr "结束时间"
 msgid "Debug - timeframe:"
 msgstr "调试 - 时间范围："
 
-#: data/resources/ui/components/error_dialog.blp:7
-msgid "Error Details"
-msgstr "错误详情"
+#: data/resources/ui/event_creation_dialog.blp:6
+#: data/resources/ui/window.blp:93 data/resources/ui/window.blp:159
+#: data/resources/ui/window.blp:225 data/resources/ui/window.blp:289
+msgid "Create Event"
+msgstr "创建事件"
 
-#: data/resources/ui/components/error_dialog.blp:16
-msgid "Message"
-msgstr "消息"
+#: data/resources/ui/event_creation_dialog.blp:28
+msgid "No Calendar"
+msgstr "无日历"
+
+#: data/resources/ui/event_creation_dialog.blp:29
+msgid "There is no calendar to add an event to."
+msgstr "没有日历可供添加事件。"
+
+#: data/resources/ui/event_creation_dialog.blp:69
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:309
+msgid "Location"
+msgstr "位置"
+
+#: data/resources/ui/event_creation_dialog.blp:73
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:313
+msgid "Conference"
+msgstr "会议"
+
+#: data/resources/ui/event_creation_dialog.blp:85
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:169
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:336
+msgid "Description"
+msgstr "描述"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
+#: data/resources/ui/search_dialog/search_dialog.blp:24
+#: data/resources/ui/window.blp:62 data/resources/ui/window.blp:128
+#: data/resources/ui/window.blp:194 data/resources/ui/window.blp:296
+msgid "Search"
+msgstr "搜索"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:40
+msgid "Accepted"
+msgstr "已接受"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:45
+msgid "Tentative"
+msgstr "暂定"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:50
+msgid "Declined"
+msgstr "已拒绝"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:55
+msgid "Delegated"
+msgstr "已委托"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:60
+msgid "Needs Action"
+msgstr "需要操作"
 
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:16
 msgid "Event"
@@ -197,21 +258,9 @@ msgstr "导出"
 msgid "Show QR code"
 msgstr "显示二维码"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:309
-#: data/resources/ui/event_creation_dialog.blp:68
-msgid "Location"
-msgstr "位置"
-
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:84
 msgid "Open Map"
 msgstr "打开地图"
-
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:313
-#: data/resources/ui/event_creation_dialog.blp:72
-msgid "Conference"
-msgstr "会议"
 
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:105
 msgid "Join"
@@ -228,12 +277,6 @@ msgstr "参与者"
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:158
 msgid "Resources"
 msgstr "资源"
-
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:169
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:336
-#: data/resources/ui/event_creation_dialog.blp:84
-msgid "Description"
-msgstr "描述"
 
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:186
 msgid ""
@@ -269,32 +312,9 @@ msgstr "标题"
 msgid "Share Event"
 msgstr "分享事件"
 
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
-#: data/resources/ui/search_dialog/search_dialog.blp:24
-#: data/resources/ui/window.blp:62 data/resources/ui/window.blp:136
-#: data/resources/ui/window.blp:203 data/resources/ui/window.blp:279
-msgid "Search"
-msgstr "搜索"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:40
-msgid "Accepted"
-msgstr "已接受"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:45
-msgid "Tentative"
-msgstr "暂定"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:50
-msgid "Declined"
-msgstr "已拒绝"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:55
-msgid "Delegated"
-msgstr "已委托"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:60
-msgid "Needs Action"
-msgstr "需要操作"
+#: data/resources/ui/qr_code_dialog.blp:28
+msgid "Scan to Import"
+msgstr "扫描以导入"
 
 #: data/resources/ui/search_dialog/search_dialog.blp:6
 msgid "Search Events"
@@ -315,28 +335,6 @@ msgstr "无法搜索事件"
 #: data/resources/ui/search_dialog/search_dialog.blp:78
 msgid "An error occurred in the backend. Try searching again"
 msgstr "后端中发生了错误。请重试搜索"
-
-#: data/resources/ui/views/month_view/month_view_inner.blp:11
-msgid "Month view"
-msgstr "月视图"
-
-#: data/resources/ui/event_creation_dialog.blp:6
-#: data/resources/ui/window.blp:93 data/resources/ui/window.blp:167
-#: data/resources/ui/window.blp:234 data/resources/ui/window.blp:347
-msgid "Create Event"
-msgstr "创建事件"
-
-#: data/resources/ui/event_creation_dialog.blp:27
-msgid "No Calendar"
-msgstr "无日历"
-
-#: data/resources/ui/event_creation_dialog.blp:28
-msgid "There is no calendar to add an event to."
-msgstr "没有日历可供添加事件。"
-
-#: data/resources/ui/qr_code_dialog.blp:28
-msgid "Scan to Import"
-msgstr "扫描以导入"
 
 #: data/resources/ui/shortcuts_dialog.blp:6
 msgctxt "shortcut dialog"
@@ -383,6 +381,50 @@ msgctxt "shortcut dialog"
 msgid "Show Today"
 msgstr "显示今天"
 
+#: data/resources/ui/shortcuts_dialog.blp:49
+msgctxt "shortcut dialog"
+msgid "View"
+msgstr "视图"
+
+#: data/resources/ui/shortcuts_dialog.blp:52
+msgctxt "shortcut dialog"
+msgid "Scroll Up"
+msgstr "向上滚动"
+
+#: data/resources/ui/shortcuts_dialog.blp:57
+msgctxt "shortcut dialog"
+msgid "Scroll Down"
+msgstr "向下滚动"
+
+#: data/resources/ui/shortcuts_dialog.blp:62
+msgctxt "shortcut dialog"
+msgid "Zoom In"
+msgstr "放大"
+
+#: data/resources/ui/shortcuts_dialog.blp:67
+msgctxt "shortcut dialog"
+msgid "Zoom Out"
+msgstr "缩小"
+
+#: data/resources/ui/sidebar/sidebar.blp:20 data/resources/ui/window.blp:100
+#: data/resources/ui/window.blp:166 data/resources/ui/window.blp:232
+msgid "Manage Calendars"
+msgstr "管理日历"
+
+#: data/resources/ui/views/agenda_view/agenda_view.blp:33
+msgid "No events on this day"
+msgstr "这天没有事件"
+
+#: data/resources/ui/views/month_view/month_view_inner.blp:15
+msgid "Month view"
+msgstr "月视图"
+
+#: data/resources/ui/views/month_view/month_view_inner.blp:31
+#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:148
+#: data/resources/ui/window.blp:214
+msgid "_Today"
+msgstr "今天(_T)"
+
 #: data/resources/ui/window.blp:20
 msgid "About Era"
 msgstr "关于纪元"
@@ -399,25 +441,14 @@ msgstr "日历后端程序似乎不可用。"
 msgid "Year"
 msgstr "年"
 
-#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:129
-#: data/resources/ui/window.blp:196 data/resources/ui/window.blp:272
+#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:282
 msgid "Main Menu"
 msgstr "主菜单"
 
-#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:156
-#: data/resources/ui/window.blp:223 data/resources/ui/window.blp:330
-msgid "_Today"
-msgstr "今天(_T)"
-
-#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:160
-#: data/resources/ui/window.blp:227 data/resources/ui/window.blp:334
+#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:152
+#: data/resources/ui/window.blp:218
 msgid "Go to Today"
 msgstr "转到今天"
-
-#: data/resources/ui/window.blp:100 data/resources/ui/window.blp:174
-#: data/resources/ui/window.blp:241 data/resources/ui/window.blp:354
-msgid "Manage Calendars"
-msgstr "管理日历"
 
 #: data/resources/ui/window.blp:109
 msgid "Month"
@@ -427,37 +458,41 @@ msgstr "月"
 msgid "Year View"
 msgstr "年视图"
 
-#: data/resources/ui/window.blp:183
+#: data/resources/ui/window.blp:175
 msgid "Agenda"
 msgstr "日程"
 
-#: data/resources/ui/window.blp:265
+#: data/resources/ui/window.blp:183
+msgid "Month View"
+msgstr "月视图"
+
+#: data/resources/ui/window.blp:256
 msgid "Toggle Sidebar"
 msgstr "切换侧边栏"
 
-#: data/resources/ui/window.blp:291
+#: data/resources/ui/window.blp:308
 msgid "_Year"
 msgstr "年(_Y)"
 
-#: data/resources/ui/window.blp:302
+#: data/resources/ui/window.blp:318
 msgid "_Month"
 msgstr "月(_M)"
 
-#: data/resources/ui/window.blp:313
+#: data/resources/ui/window.blp:329
 msgid "_Agenda"
 msgstr "日程(_A)"
 
-#: data/resources/ui/window.blp:430
+#: data/resources/ui/window.blp:409
 msgid "_Keyboard Shortcuts"
 msgstr "键盘快捷键(_K)"
 
-#: data/resources/ui/window.blp:435
+#: data/resources/ui/window.blp:414
 msgid "_About Era"
 msgstr "关于纪元(_A)"
 
 #. Translators: Replace "translator-credits" with your name/username, and optionally an
 #. email or URL.
-#: src/application.rs:126
+#: src/application.rs:127
 msgid "translator-credits"
 msgstr "lumingzh <lumingzh@qq.com>, 2026"
 
@@ -517,51 +552,51 @@ msgstr "周六"
 msgid "SUN"
 msgstr "周日"
 
-#: src/utils/template_callbacks.rs:149
+#: src/utils/template_callbacks.rs:149 src/utils/template_callbacks.rs:217
 msgid "january"
 msgstr "一月"
 
-#: src/utils/template_callbacks.rs:150
+#: src/utils/template_callbacks.rs:150 src/utils/template_callbacks.rs:218
 msgid "february"
 msgstr "二月"
 
-#: src/utils/template_callbacks.rs:151
+#: src/utils/template_callbacks.rs:151 src/utils/template_callbacks.rs:219
 msgid "march"
 msgstr "三月"
 
-#: src/utils/template_callbacks.rs:152
+#: src/utils/template_callbacks.rs:152 src/utils/template_callbacks.rs:220
 msgid "april"
 msgstr "四月"
 
-#: src/utils/template_callbacks.rs:153
+#: src/utils/template_callbacks.rs:153 src/utils/template_callbacks.rs:221
 msgid "may"
 msgstr "五月"
 
-#: src/utils/template_callbacks.rs:154
+#: src/utils/template_callbacks.rs:154 src/utils/template_callbacks.rs:222
 msgid "june"
 msgstr "六月"
 
-#: src/utils/template_callbacks.rs:155
+#: src/utils/template_callbacks.rs:155 src/utils/template_callbacks.rs:223
 msgid "july"
 msgstr "七月"
 
-#: src/utils/template_callbacks.rs:156
+#: src/utils/template_callbacks.rs:156 src/utils/template_callbacks.rs:224
 msgid "august"
 msgstr "八月"
 
-#: src/utils/template_callbacks.rs:157
+#: src/utils/template_callbacks.rs:157 src/utils/template_callbacks.rs:225
 msgid "september"
 msgstr "九月"
 
-#: src/utils/template_callbacks.rs:158
+#: src/utils/template_callbacks.rs:158 src/utils/template_callbacks.rs:226
 msgid "october"
 msgstr "十月"
 
-#: src/utils/template_callbacks.rs:159
+#: src/utils/template_callbacks.rs:159 src/utils/template_callbacks.rs:227
 msgid "november"
 msgstr "十一月"
 
-#: src/utils/template_callbacks.rs:160
+#: src/utils/template_callbacks.rs:160 src/utils/template_callbacks.rs:228
 msgid "december"
 msgstr "十二月"
 
@@ -582,6 +617,7 @@ msgid "April"
 msgstr "四月"
 
 #: src/utils/template_callbacks.rs:174 src/utils/template_callbacks.rs:195
+#: src/utils/template_callbacks.rs:241
 msgid "May"
 msgstr "五月"
 
@@ -613,47 +649,47 @@ msgstr "十一月"
 msgid "December"
 msgstr "十二月"
 
-#: src/utils/template_callbacks.rs:191
+#: src/utils/template_callbacks.rs:191 src/utils/template_callbacks.rs:237
 msgid "Jan"
 msgstr "一月"
 
-#: src/utils/template_callbacks.rs:192
+#: src/utils/template_callbacks.rs:192 src/utils/template_callbacks.rs:238
 msgid "Feb"
 msgstr "二月"
 
-#: src/utils/template_callbacks.rs:193
+#: src/utils/template_callbacks.rs:193 src/utils/template_callbacks.rs:239
 msgid "Mar"
 msgstr "三月"
 
-#: src/utils/template_callbacks.rs:194
+#: src/utils/template_callbacks.rs:194 src/utils/template_callbacks.rs:240
 msgid "Apr"
 msgstr "四月"
 
-#: src/utils/template_callbacks.rs:196
+#: src/utils/template_callbacks.rs:196 src/utils/template_callbacks.rs:242
 msgid "Jun"
 msgstr "六月"
 
-#: src/utils/template_callbacks.rs:197
+#: src/utils/template_callbacks.rs:197 src/utils/template_callbacks.rs:243
 msgid "Jul"
 msgstr "七月"
 
-#: src/utils/template_callbacks.rs:198
+#: src/utils/template_callbacks.rs:198 src/utils/template_callbacks.rs:244
 msgid "Aug"
 msgstr "八月"
 
-#: src/utils/template_callbacks.rs:199
+#: src/utils/template_callbacks.rs:199 src/utils/template_callbacks.rs:245
 msgid "Sep"
 msgstr "九月"
 
-#: src/utils/template_callbacks.rs:200
+#: src/utils/template_callbacks.rs:200 src/utils/template_callbacks.rs:246
 msgid "Oct"
 msgstr "十月"
 
-#: src/utils/template_callbacks.rs:201
+#: src/utils/template_callbacks.rs:201 src/utils/template_callbacks.rs:247
 msgid "Nov"
 msgstr "十一月"
 
-#: src/utils/template_callbacks.rs:202
+#: src/utils/template_callbacks.rs:202 src/utils/template_callbacks.rs:248
 msgid "Dec"
 msgstr "十二月"
 
@@ -821,3 +857,7 @@ msgid ""
 msgstr ""
 "{year_start} {month_start} {day_start}，{time_start}（{tz_start}）– "
 "{year_end} {month_end} {day_end}，{time_end}（{tz_end}）"
+
+#: src/widgets/window.rs:441 src/widgets/window.rs:450
+msgid "%0B %Y"
+msgstr "%Y年%-m月"
