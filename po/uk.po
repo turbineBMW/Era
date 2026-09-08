@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-08-23 16:43+0000\n"
-"PO-Revision-Date: 2026-08-26 20:50+0300\n"
+"POT-Creation-Date: 2026-09-08 07:29+0000\n"
+"PO-Revision-Date: 2026-09-08 21:43+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -61,18 +61,18 @@ msgid "Flow Details"
 msgstr "Рухомі подробиці"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:42
+#: data/resources/ui/event_creation_dialog.blp:46
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:286
-#: data/resources/ui/event_creation_dialog.blp:45
 msgid "Cancel"
 msgstr "Скасувати"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:49
-#: data/resources/ui/event_creation_dialog.blp:52
+#: data/resources/ui/event_creation_dialog.blp:53
 msgid "Create"
 msgstr "Створити"
 
 #: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:16
-#: data/resources/ui/event_creation_dialog.blp:64
+#: data/resources/ui/event_creation_dialog.blp:65
 msgid "Name"
 msgstr "Назва"
 
@@ -97,6 +97,8 @@ msgid "Calendar details"
 msgstr "Подробиці щодо календаря"
 
 #: data/resources/ui/calendar_management_dialog/calendar_management_dialog.blp:6
+#: data/resources/ui/calendar_management_dialog/collections_list_page.blp:6
+#: data/resources/ui/sidebar/sidebar.blp:10
 msgid "Calendars"
 msgstr "Календарі"
 
@@ -116,6 +118,14 @@ msgstr "У цій збірці немає календарів"
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:115
 msgid "Calendar"
 msgstr "Календар"
+
+#: data/resources/ui/components/error_dialog.blp:7
+msgid "Error Details"
+msgstr "Подробиці щодо помилки"
+
+#: data/resources/ui/components/error_dialog.blp:16
+msgid "Message"
+msgstr "Повідомлення"
 
 #: data/resources/ui/components/timeframe_picker/date_picker_row.blp:15
 #: data/resources/ui/components/timeframe_picker/date_picker_row.blp:32
@@ -149,12 +159,12 @@ msgid "No Result"
 msgstr "Нічого не знайдено"
 
 #: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:15
-msgid "_All Day"
-msgstr "_Увесь день"
-
-#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:21
 msgid "_Time Slot"
 msgstr "_Часовий слот"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:21
+msgid "_All Day"
+msgstr "_Увесь день"
 
 #: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:28
 msgid "Start Date"
@@ -176,13 +186,64 @@ msgstr "Час завершення"
 msgid "Debug - timeframe:"
 msgstr "Діагностика — часові межі:"
 
-#: data/resources/ui/components/error_dialog.blp:7
-msgid "Error Details"
-msgstr "Подробиці щодо помилки"
+#: data/resources/ui/event_creation_dialog.blp:6
+#: data/resources/ui/window.blp:93 data/resources/ui/window.blp:152
+#: data/resources/ui/window.blp:211 data/resources/ui/window.blp:275
+msgid "Create Event"
+msgstr "Створити запис події"
 
-#: data/resources/ui/components/error_dialog.blp:16
-msgid "Message"
-msgstr "Повідомлення"
+#: data/resources/ui/event_creation_dialog.blp:28
+msgid "No Calendar"
+msgstr "Немає календаря"
+
+#: data/resources/ui/event_creation_dialog.blp:29
+msgid "There is no calendar to add an event to."
+msgstr "Немає календаря для додавання запису події."
+
+#: data/resources/ui/event_creation_dialog.blp:69
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:309
+msgid "Location"
+msgstr "Адреса"
+
+#: data/resources/ui/event_creation_dialog.blp:73
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:313
+msgid "Conference"
+msgstr "Конференція"
+
+#: data/resources/ui/event_creation_dialog.blp:85
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:169
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:336
+msgid "Description"
+msgstr "Опис"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
+#: data/resources/ui/search_dialog/search_dialog.blp:24
+#: data/resources/ui/window.blp:62 data/resources/ui/window.blp:121
+#: data/resources/ui/window.blp:180 data/resources/ui/window.blp:282
+msgid "Search"
+msgstr "Пошук"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:40
+msgid "Accepted"
+msgstr "Прийнято"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:45
+msgid "Tentative"
+msgstr "Умовно прийнято"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:50
+msgid "Declined"
+msgstr "Відхилено"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:55
+msgid "Delegated"
+msgstr "Доручено"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:60
+msgid "Needs Action"
+msgstr "Необхідна дія"
 
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:16
 msgid "Event"
@@ -200,21 +261,9 @@ msgstr "Експортувати"
 msgid "Show QR code"
 msgstr "Показати QR-код"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:309
-#: data/resources/ui/event_creation_dialog.blp:68
-msgid "Location"
-msgstr "Адреса"
-
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:84
 msgid "Open Map"
 msgstr "Відкрити карту"
-
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:313
-#: data/resources/ui/event_creation_dialog.blp:72
-msgid "Conference"
-msgstr "Конференція"
 
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:105
 msgid "Join"
@@ -232,19 +281,13 @@ msgstr "Учасники"
 msgid "Resources"
 msgstr "Ресурси"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:169
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:336
-#: data/resources/ui/event_creation_dialog.blp:84
-msgid "Description"
-msgstr "Опис"
-
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:186
 msgid ""
 "This event has recurrence properties. Such events are currently not editable "
 "in this app."
 msgstr ""
-"У цього запису події є властивості повторення. Такі записи подій у поточній в"
-"ерсії програми редагувати не можна."
+"У цього запису події є властивості повторення. Такі записи подій у поточній "
+"версії програми редагувати не можна."
 
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:218
 msgid "_Edit"
@@ -274,32 +317,9 @@ msgstr "Заголовок"
 msgid "Share Event"
 msgstr "Оприлюднити запис події"
 
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
-#: data/resources/ui/search_dialog/search_dialog.blp:24
-#: data/resources/ui/window.blp:62 data/resources/ui/window.blp:136
-#: data/resources/ui/window.blp:203 data/resources/ui/window.blp:279
-msgid "Search"
-msgstr "Пошук"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:40
-msgid "Accepted"
-msgstr "Прийнято"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:45
-msgid "Tentative"
-msgstr "Умовно прийнято"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:50
-msgid "Declined"
-msgstr "Відхилено"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:55
-msgid "Delegated"
-msgstr "Доручено"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:60
-msgid "Needs Action"
-msgstr "Необхідна дія"
+#: data/resources/ui/qr_code_dialog.blp:28
+msgid "Scan to Import"
+msgstr "Сканування для імпортування"
 
 #: data/resources/ui/search_dialog/search_dialog.blp:6
 msgid "Search Events"
@@ -320,28 +340,6 @@ msgstr "Не вдалося виконати пошук подій"
 #: data/resources/ui/search_dialog/search_dialog.blp:78
 msgid "An error occurred in the backend. Try searching again"
 msgstr "У модулі обробки сталася помилка. Спробуйте повторити пошук"
-
-#: data/resources/ui/views/month_view/month_view_inner.blp:11
-msgid "Month view"
-msgstr "Перегляд місяця"
-
-#: data/resources/ui/event_creation_dialog.blp:6
-#: data/resources/ui/window.blp:93 data/resources/ui/window.blp:167
-#: data/resources/ui/window.blp:234 data/resources/ui/window.blp:347
-msgid "Create Event"
-msgstr "Створити запис події"
-
-#: data/resources/ui/event_creation_dialog.blp:27
-msgid "No Calendar"
-msgstr "Немає календаря"
-
-#: data/resources/ui/event_creation_dialog.blp:28
-msgid "There is no calendar to add an event to."
-msgstr "Немає календаря для додавання запису події."
-
-#: data/resources/ui/qr_code_dialog.blp:28
-msgid "Scan to Import"
-msgstr "Сканування для імпортування"
 
 #: data/resources/ui/shortcuts_dialog.blp:6
 msgctxt "shortcut dialog"
@@ -388,6 +386,51 @@ msgctxt "shortcut dialog"
 msgid "Show Today"
 msgstr "Показати сьогодні"
 
+#: data/resources/ui/shortcuts_dialog.blp:49
+#| msgid "Year View"
+msgctxt "shortcut dialog"
+msgid "View"
+msgstr "Перегляд"
+
+#: data/resources/ui/shortcuts_dialog.blp:52
+msgctxt "shortcut dialog"
+msgid "Scroll Up"
+msgstr "Гортати вгору"
+
+#: data/resources/ui/shortcuts_dialog.blp:57
+msgctxt "shortcut dialog"
+msgid "Scroll Down"
+msgstr "Гортати вниз"
+
+#: data/resources/ui/shortcuts_dialog.blp:62
+msgctxt "shortcut dialog"
+msgid "Zoom In"
+msgstr "Збільшити"
+
+#: data/resources/ui/shortcuts_dialog.blp:67
+msgctxt "shortcut dialog"
+msgid "Zoom Out"
+msgstr "Зменшити"
+
+#: data/resources/ui/sidebar/sidebar.blp:20 data/resources/ui/window.blp:100
+#: data/resources/ui/window.blp:159 data/resources/ui/window.blp:218
+msgid "Manage Calendars"
+msgstr "Керування календарями"
+
+#: data/resources/ui/views/agenda_view/agenda_view.blp:33
+msgid "No events on this day"
+msgstr "Протягом цього дня подій немає"
+
+#: data/resources/ui/views/month_view/month_view_inner.blp:15
+msgid "Month view"
+msgstr "Перегляд місяця"
+
+#: data/resources/ui/views/month_view/month_view_inner.blp:31
+#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
+#: data/resources/ui/window.blp:200
+msgid "_Today"
+msgstr "_Сьогодні"
+
 #: data/resources/ui/window.blp:20
 msgid "About Era"
 msgstr "Про Era"
@@ -404,65 +447,50 @@ msgstr "Здається, модуль роботи з календарем не
 msgid "Year"
 msgstr "Рік"
 
-#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:129
-#: data/resources/ui/window.blp:196 data/resources/ui/window.blp:272
+#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:268
 msgid "Main Menu"
 msgstr "Головне меню"
 
-#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:156
-#: data/resources/ui/window.blp:223 data/resources/ui/window.blp:330
-msgid "_Today"
-msgstr "_Сьогодні"
-
-#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:160
-#: data/resources/ui/window.blp:227 data/resources/ui/window.blp:334
+#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:145
+#: data/resources/ui/window.blp:204
 msgid "Go to Today"
 msgstr "Перейти до сьогоднішнього дня"
-
-#: data/resources/ui/window.blp:100 data/resources/ui/window.blp:174
-#: data/resources/ui/window.blp:241 data/resources/ui/window.blp:354
-msgid "Manage Calendars"
-msgstr "Керування календарями"
 
 #: data/resources/ui/window.blp:109
 msgid "Month"
 msgstr "Місяць"
 
-#: data/resources/ui/window.blp:117
-msgid "Year View"
-msgstr "Перегляд року"
-
-#: data/resources/ui/window.blp:183
+#: data/resources/ui/window.blp:168
 msgid "Agenda"
 msgstr "Порядок денний"
 
-#: data/resources/ui/window.blp:265
+#: data/resources/ui/window.blp:242
 msgid "Toggle Sidebar"
 msgstr "Увімкнути або вимкнути бічну панель"
 
-#: data/resources/ui/window.blp:291
+#: data/resources/ui/window.blp:294
 msgid "_Year"
 msgstr "Р_ік"
 
-#: data/resources/ui/window.blp:302
+#: data/resources/ui/window.blp:304
 msgid "_Month"
 msgstr "_Місяць"
 
-#: data/resources/ui/window.blp:313
+#: data/resources/ui/window.blp:315
 msgid "_Agenda"
 msgstr "П_орядок денний"
 
-#: data/resources/ui/window.blp:430
+#: data/resources/ui/window.blp:425
 msgid "_Keyboard Shortcuts"
 msgstr "_Клавіатурні скорочення"
 
-#: data/resources/ui/window.blp:435
+#: data/resources/ui/window.blp:430
 msgid "_About Era"
 msgstr "_Про Era"
 
 #. Translators: Replace "translator-credits" with your name/username, and optionally an
 #. email or URL.
-#: src/application.rs:126
+#: src/application.rs:127
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>, 2026"
 
@@ -522,51 +550,51 @@ msgstr "Сб"
 msgid "SUN"
 msgstr "Нд"
 
-#: src/utils/template_callbacks.rs:149
+#: src/utils/template_callbacks.rs:149 src/utils/template_callbacks.rs:217
 msgid "january"
 msgstr "січень"
 
-#: src/utils/template_callbacks.rs:150
+#: src/utils/template_callbacks.rs:150 src/utils/template_callbacks.rs:218
 msgid "february"
 msgstr "лютий"
 
-#: src/utils/template_callbacks.rs:151
+#: src/utils/template_callbacks.rs:151 src/utils/template_callbacks.rs:219
 msgid "march"
 msgstr "березень"
 
-#: src/utils/template_callbacks.rs:152
+#: src/utils/template_callbacks.rs:152 src/utils/template_callbacks.rs:220
 msgid "april"
 msgstr "квітень"
 
-#: src/utils/template_callbacks.rs:153
+#: src/utils/template_callbacks.rs:153 src/utils/template_callbacks.rs:221
 msgid "may"
 msgstr "тра"
 
-#: src/utils/template_callbacks.rs:154
+#: src/utils/template_callbacks.rs:154 src/utils/template_callbacks.rs:222
 msgid "june"
 msgstr "червень"
 
-#: src/utils/template_callbacks.rs:155
+#: src/utils/template_callbacks.rs:155 src/utils/template_callbacks.rs:223
 msgid "july"
 msgstr "липень"
 
-#: src/utils/template_callbacks.rs:156
+#: src/utils/template_callbacks.rs:156 src/utils/template_callbacks.rs:224
 msgid "august"
 msgstr "серпень"
 
-#: src/utils/template_callbacks.rs:157
+#: src/utils/template_callbacks.rs:157 src/utils/template_callbacks.rs:225
 msgid "september"
 msgstr "вересень"
 
-#: src/utils/template_callbacks.rs:158
+#: src/utils/template_callbacks.rs:158 src/utils/template_callbacks.rs:226
 msgid "october"
 msgstr "жовтень"
 
-#: src/utils/template_callbacks.rs:159
+#: src/utils/template_callbacks.rs:159 src/utils/template_callbacks.rs:227
 msgid "november"
 msgstr "листопад"
 
-#: src/utils/template_callbacks.rs:160
+#: src/utils/template_callbacks.rs:160 src/utils/template_callbacks.rs:228
 msgid "december"
 msgstr "грудень"
 
@@ -587,6 +615,7 @@ msgid "April"
 msgstr "Квітень"
 
 #: src/utils/template_callbacks.rs:174 src/utils/template_callbacks.rs:195
+#: src/utils/template_callbacks.rs:241
 msgid "May"
 msgstr "Травень"
 
@@ -618,47 +647,47 @@ msgstr "Листопад"
 msgid "December"
 msgstr "Грудень"
 
-#: src/utils/template_callbacks.rs:191
+#: src/utils/template_callbacks.rs:191 src/utils/template_callbacks.rs:237
 msgid "Jan"
 msgstr "січ"
 
-#: src/utils/template_callbacks.rs:192
+#: src/utils/template_callbacks.rs:192 src/utils/template_callbacks.rs:238
 msgid "Feb"
 msgstr "лют"
 
-#: src/utils/template_callbacks.rs:193
+#: src/utils/template_callbacks.rs:193 src/utils/template_callbacks.rs:239
 msgid "Mar"
 msgstr "бер"
 
-#: src/utils/template_callbacks.rs:194
+#: src/utils/template_callbacks.rs:194 src/utils/template_callbacks.rs:240
 msgid "Apr"
 msgstr "кві"
 
-#: src/utils/template_callbacks.rs:196
+#: src/utils/template_callbacks.rs:196 src/utils/template_callbacks.rs:242
 msgid "Jun"
 msgstr "чер"
 
-#: src/utils/template_callbacks.rs:197
+#: src/utils/template_callbacks.rs:197 src/utils/template_callbacks.rs:243
 msgid "Jul"
 msgstr "лип"
 
-#: src/utils/template_callbacks.rs:198
+#: src/utils/template_callbacks.rs:198 src/utils/template_callbacks.rs:244
 msgid "Aug"
 msgstr "серп"
 
-#: src/utils/template_callbacks.rs:199
+#: src/utils/template_callbacks.rs:199 src/utils/template_callbacks.rs:245
 msgid "Sep"
 msgstr "вер"
 
-#: src/utils/template_callbacks.rs:200
+#: src/utils/template_callbacks.rs:200 src/utils/template_callbacks.rs:246
 msgid "Oct"
 msgstr "жовт"
 
-#: src/utils/template_callbacks.rs:201
+#: src/utils/template_callbacks.rs:201 src/utils/template_callbacks.rs:247
 msgid "Nov"
 msgstr "лист"
 
-#: src/utils/template_callbacks.rs:202
+#: src/utils/template_callbacks.rs:202 src/utils/template_callbacks.rs:248
 msgid "Dec"
 msgstr "груд"
 
@@ -826,3 +855,7 @@ msgid ""
 msgstr ""
 "{month_start} {day_start}, {year_start}, {time_start} ({tz_start}) – "
 "{month_end} {day_end}, {year_end}, {time_end} ({tz_end})"
+
+#: src/widgets/window.rs:489 src/widgets/window.rs:498
+msgid "%0B %Y"
+msgstr "%0B %Y"
