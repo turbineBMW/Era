@@ -1,7 +1,22 @@
-# Era
+<div align="center">
+  <img src="data/icons/io.gitlab.TitouanReal.Era.svg" width="128" height="128">
+    
+  # Era
 
-Era is a beautiful and performant calendar application.
+  Beautiful and performant calendar application
+</div>
 
-## Backend
 
-Era uses [Clepsydre](https://gitlab.gnome.org/TitouanReal/clepsydre), which makes it backend-agnostic. The application currently uses the EDS backend, but a one-line change is enough to uses another backend such as [ccmd](https://gitlab.gnome.org/TitouanReal/ccmd), provided there is a Clepsydre implementation.
+## Development
+
+Clone the repository and build the app in [GNOME Builder](https://flathub.org/apps/org.gnome.Builder).
+
+## Get Involved
+
+Find us on Matrix:
+
+- #era:gnome.org
+
+## Code Of Conduct
+
+This project follows the [GNOME Code of Conduct](https://conduct.gnome.org/).
