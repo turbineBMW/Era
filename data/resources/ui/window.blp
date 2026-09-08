@@ -378,10 +378,40 @@ template $EraWindow: Adw.ApplicationWindow {
               year_view.styling: narrow;
             }
           }
+
+          Adw.Breakpoint {
+            condition ("min-width: 1100sp")
+
+            setters {
+              year_view.styling: wide;
+            }
+          }
         }
 
         [agenda_view]
-        $AgendaView agenda_view {}
+        Adw.BreakpointBin {
+          width-request: 100;
+          height-request: 100;
+
+          $AgendaView agenda_view {}
+
+          Adw.Breakpoint {
+            condition ("max-width: 720sp")
+
+            setters {
+              month_view.styling: narrow;
+              year_view.styling: narrow;
+            }
+          }
+
+          Adw.Breakpoint {
+            condition ("min-width: 1100sp")
+
+            setters {
+              year_view.styling: wide;
+            }
+          }
+        }
       };
     }
   };
