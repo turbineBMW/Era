@@ -136,6 +136,8 @@ mod imp {
 
         event_layouts: RefCell<Vec<Vec<EventLayout>>>,
 
+        recompute_pending: Cell<bool>,
+
         connected_event_uris: RefCell<HashSet<GString>>,
     }
 
@@ -253,7 +255,22 @@ mod imp {
                     #[weak(rename_to = imp)]
                     self,
                     move |_model, _position, _removed, _added| {
-                        imp.recompute_event_layouts();
+                        // This does not invalidate current layouts, so we can afford to wait a bit
+                        // to recompute them to debounce rapidly fired signals.
+                        if imp.recompute_pending.get() {
+                            return;
+                        }
+
+                        imp.recompute_pending.set(true);
+
+                        glib::idle_add_local_once(clone!(
+                            #[weak]
+                            imp,
+                            move || {
+                                imp.recompute_pending.set(false);
+                                imp.recompute_event_layouts();
+                            }
+                        ));
                     }
                 ));
 
