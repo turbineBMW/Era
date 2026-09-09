@@ -4,5 +4,4 @@ pub const BASE_RESOURCE_PATH: &str = @BASE_RESOURCE_PATH@;
 pub const GETTEXT_PACKAGE: &str = @GETTEXT_PACKAGE@;
 pub const LOCALEDIR: &str = @LOCALEDIR@;
 pub const PROJECT_NAME: &str = @PROJECT_NAME@;
-pub const RESOURCES_FILE: &str = concat!(@PKGDATADIR@, "/", @PROJECT_NAME@, ".gresource");
 pub const VERSION: &str = @VERSION@;

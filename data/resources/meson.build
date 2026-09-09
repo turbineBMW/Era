@@ -1,32 +1,29 @@
-sass_bin = find_program('grass')
+grass = find_program('grass')
 
-stylesheet = custom_target(
-    'stylesheet',
+configure_file(
     input: 'style.scss',
     output: 'style.css',
-    command: [sass_bin, '@INPUT@', '@OUTPUT@'],
+    command: [grass, '@INPUT@', '@OUTPUT@'],
 )
 
-blueprints = custom_target(
-    'blueprints',
-    input: files(
-        'ui/shortcuts_dialog.blp',
-    ),
-    output: '.',
-    command: [
-        find_program('blueprint-compiler'),
-        'batch-compile',
-        '@OUTPUT@',
-        '@CURRENT_SOURCE_DIR@',
-        '@INPUT@',
-    ],
+run_command(
+    'cp',
+    meson.current_build_dir() / 'style.css',
+    meson.current_source_dir() / 'style.css',
+    check: true,
 )
 
-gnome.compile_resources(
-    meson.project_name(),
-    'resources.gresource.xml',
-    gresource_bundle: true,
-    dependencies: [blueprints, stylesheet],
-    install: true,
-    install_dir: pkgdatadir,
+blueprint_compiler = find_program('blueprint-compiler')
+
+configure_file(
+    input: 'ui/shortcuts_dialog.blp',
+    output: 'shortcuts_dialog.ui',
+    command: [blueprint_compiler, 'compile', '@INPUT@', '--output', '@OUTPUT@'],
+)
+
+run_command(
+    'cp',
+    meson.current_build_dir() / 'shortcuts_dialog.ui',
+    meson.current_source_dir() / 'ui/shortcuts_dialog.ui',
+    check: true,
 )

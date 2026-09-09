@@ -10,13 +10,15 @@ use tracing_subscriber::{EnvFilter, prelude::*};
 
 mod application;
 mod config;
+mod resources;
 mod system;
 mod utils;
 mod widgets;
 
 use self::{
     application::Application,
-    config::{APP_NAME, GETTEXT_PACKAGE, LOCALEDIR, PROJECT_NAME, RESOURCES_FILE},
+    config::{APP_NAME, GETTEXT_PACKAGE, LOCALEDIR, PROJECT_NAME},
+    resources::GRESOURCE_BYTES,
 };
 
 // Verify Clepsydre Backend
@@ -101,7 +103,8 @@ fn main() -> glib::ExitCode {
         .expect("Unable to set the text domain encoding");
     textdomain(GETTEXT_PACKAGE).expect("Unable to switch to the text domain");
 
-    let resources = gio::Resource::load(RESOURCES_FILE).expect("Could not load resources");
+    let resources = gio::Resource::from_data(&glib::Bytes::from_static(GRESOURCE_BYTES))
+        .expect("Could not load resources");
     gio::resources_register(&resources);
 
     let app = Application::new(&gio::ApplicationFlags::empty());

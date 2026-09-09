@@ -22,6 +22,7 @@ gio = { version = "0.22.2", features = ["v2_86"] }
 glib = { version = "0.22.2", features = ["v2_86"] }
 gdk = { package = "gdk4", version = "0.11.0", features = ["v4_22"] }
 gtk = { package = "gtk4", version = "0.11.0", features = ["gnome_49", "v4_22", "blueprint"] }
+gvdb-macros = "0.1.16"
 jiff = "0.2.22"
 qrcode = "0.14.1"
 serde = { version = "1.0.228", features = ["derive"] }
