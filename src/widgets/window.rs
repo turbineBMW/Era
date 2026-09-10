@@ -145,10 +145,13 @@ pub mod imp {
                     .expect("Narrow navigation view should have a visible page")
                     .as_str()
                 {
+                    "year" => {}
                     "month" => {
                         obj.imp().month_view.scroll_up();
                     }
-                    "year" | "agenda" => {}
+                    "agenda" => {
+                        obj.imp().agenda_view.scroll_up();
+                    }
                     name => panic!("Unknown narrow navigation view page tag: {name}"),
                 };
             });
@@ -162,10 +165,13 @@ pub mod imp {
                     .expect("Narrow navigation view should have a visible page")
                     .as_str()
                 {
+                    "year" => {}
                     "month" => {
                         obj.imp().month_view.scroll_down();
                     }
-                    "year" | "agenda" => {}
+                    "agenda" => {
+                        obj.imp().agenda_view.scroll_down();
+                    }
                     name => panic!("Unknown narrow navigation view page tag: {name}"),
                 };
             });

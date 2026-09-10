@@ -3,6 +3,7 @@ use std::cell::{OnceCell, RefCell};
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Event, Subscription, prelude::*};
 use glib::clone;
+use jiff::ToSpan;
 
 use crate::{
     Application,
@@ -34,7 +35,7 @@ mod imp {
     impl ObjectSubclass for AgendaView {
         const NAME: &'static str = "AgendaView";
         type Type = super::AgendaView;
-        type ParentType = gtk::Box;
+        type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
@@ -91,7 +92,7 @@ mod imp {
     }
 
     impl WidgetImpl for AgendaView {}
-    impl BoxImpl for AgendaView {}
+    impl BinImpl for AgendaView {}
 
     #[gtk::template_callbacks]
     impl AgendaView {
@@ -140,8 +141,20 @@ mod imp {
 
 glib::wrapper! {
     pub struct AgendaView(ObjectSubclass<imp::AgendaView>)
-        @extends gtk::Widget, gtk::Box,
-        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
+        @extends gtk::Widget, adw::Bin,
+        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
 
-impl AgendaView {}
+impl AgendaView {
+    pub fn scroll_up(&self) {
+        let current_day = self.date();
+        let day_before = current_day.to_jiff() - 1i32.day();
+        self.set_date(Date::from(day_before));
+    }
+
+    pub fn scroll_down(&self) {
+        let current_day = self.date();
+        let day_after = current_day.to_jiff() + 1i32.day();
+        self.set_date(Date::from(day_after));
+    }
+}

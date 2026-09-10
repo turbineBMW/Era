@@ -2,58 +2,104 @@ using Gtk 4.0;
 using Adw 1;
 using Clepsydre 0;
 
-template $AgendaView: Box {
+template $AgendaView: Adw.Bin {
   styles [
     "agenda-view",
   ]
 
-  orientation: vertical;
+  Overlay {
+    Box {
+      orientation: vertical;
 
-  Label {
-    label: bind $day_label(template, template.date);
+      Label {
+        label: bind $day_label(template, template.date);
 
-    styles [
-      "title-1",
-    ]
-  }
+        styles [
+          "title-1",
+        ]
+      }
 
-  Stack stack {
-    vexpand: true;
-    // TODO: Use this once Subscription has n-items property
-    // visible-child-name: bind $ternary(
-    //   $is_zero(events.model as <Gio.ListModel> as <Clepsydre.Subscription>.n-items) as <bool>,
-    //   "empty",
-    //   "events"
-    // );
-    StackPage {
-      name: "empty";
+      Stack stack {
+        vexpand: true;
+        // TODO: Use this once Subscription has n-items property
+        // visible-child-name: bind $ternary(
+        //   $is_zero(events.model as <Gio.ListModel> as <Clepsydre.Subscription>.n-items) as <bool>,
+        //   "empty",
+        //   "events"
+        // );
+        StackPage {
+          name: "empty";
 
-      child: Adw.StatusPage {
-        icon-name: "loupe-symbolic";
-        title: _("No events on this day");
-      };
+          child: Adw.StatusPage {
+            icon-name: "loupe-symbolic";
+            title: _("No events on this day");
+          };
+        }
+
+        StackPage {
+          name: "events";
+
+          child: ScrolledWindow {
+            Adw.ClampScrollable {
+              ListView events {
+                single-click-activate: true;
+
+                factory: BuilderListItemFactory {
+                  template ListItem {
+                    child: $SearchResultRow {
+                      event: bind template.item as <Clepsydre.Event>;
+                    };
+                  }
+                };
+
+                activate => $open_event_details(template);
+              }
+            }
+          };
+        }
+      }
     }
 
-    StackPage {
-      name: "events";
+    [overlay]
+    Box floating_controls {
+      halign: end;
+      valign: end;
 
-      child: ScrolledWindow {
-        Adw.ClampScrollable {
-          ListView events {
-            single-click-activate: true;
+      styles [
+        "floating-controls",
+      ]
 
-            factory: BuilderListItemFactory {
-              template ListItem {
-                child: $SearchResultRow {
-                  event: bind template.item as <Clepsydre.Event>;
-                };
-              }
-            };
+      Button {
+        action-name: "win.today";
 
-            activate => $open_event_details(template);
-          }
-        }
-      };
+        styles [
+          "flat",
+        ]
+
+        child: Adw.ButtonContent {
+          label: _("_Today");
+          use-underline: true;
+          icon-name: "today-symbolic";
+        };
+      }
+
+      Button {
+        icon-name: "go-down-symbolic";
+        action-name: "win.scroll-down";
+
+        styles [
+          "flat",
+        ]
+      }
+
+      Button {
+        icon-name: "go-up-symbolic";
+        action-name: "win.scroll-up";
+
+        styles [
+          "flat",
+        ]
+      }
     }
   }
 }
