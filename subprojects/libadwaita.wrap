@@ -1,6 +1,6 @@
 [wrap-git]
 url = https://gitlab.gnome.org/GNOME/libadwaita.git
-revision = 1.9.2
+revision = main
 depth = 1
 
 [provide]

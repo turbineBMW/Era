@@ -24,7 +24,8 @@ era_deps += dependency(
     version: '>= 0.1',
     default_options: {
         'libclepsydre': true,
-        'introspection': true,
+            # TODO: In theory it's needed, but Android cross-build don't handle it
+            # 'introspection': true,
     },
 )
 # TODO: Remove this once Meson handles git dependencies better
@@ -147,7 +148,11 @@ cargo_module = import('rust').workspace(
     features: features,
 )
 crate = cargo_module.package()
-crate.executable(install: true, dependencies: era_deps)
+crate.executable(
+    install: true,
+    android_exe_type: 'application',
+    dependencies: era_deps,
+)
 
 gnome.post_install(
     glib_compile_schemas: true,

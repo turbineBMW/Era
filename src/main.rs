@@ -55,7 +55,7 @@ compile_error!(
     "Multiple platform features enabled! Choose only ONE: `platform-flatpak` or `platform-android`."
 );
 
-fn main() -> glib::ExitCode {
+fn make_application() -> gio::Application {
     // TODO: Debug - scrollwheel after scrolling down with pad is bugged
     unsafe {
         //     std::env::set_var("GDK_DEBUG", "events");
@@ -107,7 +107,20 @@ fn main() -> glib::ExitCode {
         .expect("Could not load resources");
     gio::resources_register(&resources);
 
-    let app = Application::new(&gio::ApplicationFlags::empty());
+    let application = Application::new(&gio::ApplicationFlags::empty());
 
-    app.run()
+    application.upcast()
+}
+
+#[cfg(not(target_os = "android"))]
+fn main() -> glib::ExitCode {
+    let application = make_application();
+    application.run()
+}
+
+#[cfg(target_os = "android")]
+#[unsafe(no_mangle)]
+pub extern "C" fn main(argc: i32, argv: *mut *mut std::ffi::c_char) -> i32 {
+    let application = make_application();
+    unsafe { gio::ffi::g_application_run(application.as_ptr(), argc, argv) }
 }
