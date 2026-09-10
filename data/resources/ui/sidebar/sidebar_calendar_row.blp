@@ -9,10 +9,7 @@ template $SidebarCalendarRow: Box {
   CheckButton check {
     active: bind template.calendar as <Clepsydre.Calendar>.visible;
     can-focus: false;
-
-    styles [
-      "selection-mode",
-    ]
+    can-target: false;
   }
 
   Label {
