@@ -1,4 +1,4 @@
-use std::cell::{OnceCell, RefCell};
+use std::cell::{Cell, OnceCell, RefCell};
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Event, Subscription, prelude::*};
@@ -8,7 +8,7 @@ use jiff::ToSpan;
 use crate::{
     Application,
     utils::{Date, TemplateCallbacks},
-    widgets::event_details_dialog::EventDetailsDialog,
+    widgets::{event_details_dialog::EventDetailsDialog, window::Styling},
 };
 
 mod agenda_view_row;
@@ -22,6 +22,8 @@ mod imp {
     pub struct AgendaView {
         #[property(get, set = Self::set_date)]
         date: RefCell<Date>,
+        #[property(get, set = Self::set_styling, construct, builder(Styling::default()))]
+        styling: Cell<Styling>,
         #[property(get)]
         subscription: OnceCell<Subscription>,
 
@@ -29,6 +31,8 @@ mod imp {
         stack: TemplateChild<gtk::Stack>,
         #[template_child]
         events: TemplateChild<gtk::ListView>,
+        #[template_child]
+        floating_controls: TemplateChild<gtk::Box>,
     }
 
     #[glib::object_subclass]
@@ -106,6 +110,26 @@ mod imp {
             self.update_timeframe();
 
             self.obj().notify_date();
+        }
+
+        /// Sets the styling used for the view.
+        fn set_styling(&self, styling: Styling) {
+            if self.styling.get() == styling {
+                return;
+            }
+
+            self.styling.set(styling);
+
+            match styling {
+                Styling::Narrow => {
+                    self.floating_controls.set_visible(false);
+                }
+                Styling::Medium | Styling::Wide => {
+                    self.floating_controls.set_visible(true);
+                }
+            }
+
+            self.obj().notify_styling();
         }
 
         fn update_timeframe(&self) {
