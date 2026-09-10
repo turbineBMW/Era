@@ -2,4 +2,4 @@ target
 src/config.rs
 src/resources.rs
 data/resources/style.css
-data/resources/ui/shortcuts_dialog.ui
+data/resources/shortcuts-dialog.ui

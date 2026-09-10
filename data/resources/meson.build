@@ -17,13 +17,13 @@ blueprint_compiler = find_program('blueprint-compiler')
 
 configure_file(
     input: 'ui/shortcuts_dialog.blp',
-    output: 'shortcuts_dialog.ui',
+    output: 'shortcuts-dialog.ui',
     command: [blueprint_compiler, 'compile', '@INPUT@', '--output', '@OUTPUT@'],
 )
 
 run_command(
     'cp',
-    meson.current_build_dir() / 'shortcuts_dialog.ui',
-    meson.current_source_dir() / 'ui/shortcuts_dialog.ui',
+    meson.current_build_dir() / 'shortcuts-dialog.ui',
+    meson.current_source_dir() / 'shortcuts-dialog.ui',
     check: true,
 )
