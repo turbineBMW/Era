@@ -112,6 +112,7 @@ flatpak-eds@x86_64:
         - .rust-stable@x86_64
         - .eds
     stage: build
+    needs: []
     # Do the following to prepare for the lint-metainfo job.
     after_script:
         # Copy the metainfo file to the current directory.
@@ -130,6 +131,7 @@ flatpak-eds@aarch64:
         - .rust-stable@aarch64
         - .eds
     stage: build
+    needs: []
     when: manual
 
 flatpak-mock@x86_64:
@@ -138,6 +140,7 @@ flatpak-mock@x86_64:
         - .rust-stable@x86_64
         - .mock
     stage: build
+    needs: []
 
 flatpak-mock@aarch64:
     extends:
@@ -145,6 +148,7 @@ flatpak-mock@aarch64:
         - .rust-stable@aarch64
         - .mock
     stage: build
+    needs: []
     when: manual
 
 flatpak-p2panda@x86_64:
@@ -153,6 +157,7 @@ flatpak-p2panda@x86_64:
         - .rust-stable@x86_64
         - .p2panda
     stage: build
+    needs: []
 
 flatpak-p2panda@aarch64:
     extends:
@@ -160,11 +165,13 @@ flatpak-p2panda@aarch64:
         - .rust-stable@aarch64
         - .p2panda
     stage: build
+    needs: []
     when: manual
 
 android:
     stage: build
     image: debian:sid
+    needs: []
     variables:
         DEBIAN_FRONTEND: "noninteractive"
         ANDROID_HOME: "/opt/android"
