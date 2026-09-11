@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-09-08 07:29+0000\n"
-"PO-Revision-Date: 2026-09-08 21:43+0300\n"
+"POT-Creation-Date: 2026-09-11 14:57+0000\n"
+"PO-Revision-Date: 2026-09-11 21:33+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -37,11 +37,19 @@ msgstr "Керування вашим часом"
 
 #: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
 msgid ""
-"Era is a time management application designed to help you stay organized and "
-"productive."
+"Era is a calendar that grows with your needs - simple and calm for everyday "
+"use while revealing powerful tools when you need them. Use a small window "
+"side-by-side with other apps for multitasking or go fullscreen for complex "
+"planning. Your events can sync with most online providers, and Era keeps "
+"working without interruptions when you’re offline."
 msgstr ""
-"Era — програма для планування розподілу часу, яку створено, щоб допомгти вам "
-"з впорядкуванням порядку денного і продуктивністю."
+"Era — це календар, що адаптується до ваших потреб: він простий і зручний для "
+"щоденного використання, але водночас відкриває доступ до потужних інструменті"
+"в, коли вони вам потрібні. Ви можете розмістити його у компактному вікні пору"
+"ч із іншими програмами для багатозадачності або розгорнути на весь екран для "
+"складного планування. Ваші події синхронізуються з більшістю інтернет-служб, "
+"а сама програма продовжує працювати без перебоїв навіть без доступу до інтерн"
+"ету."
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:5
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:12
@@ -88,11 +96,11 @@ msgstr "Доброго способу зміни кольору в інтерф�
 msgid "Remove Calendar"
 msgstr "Вилучити календар"
 
-#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:50
+#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:51
 msgid "Read only"
 msgstr "Лише для читання"
 
-#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:57
+#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:58
 msgid "Calendar details"
 msgstr "Подробиці щодо календаря"
 
@@ -387,7 +395,6 @@ msgid "Show Today"
 msgstr "Показати сьогодні"
 
 #: data/resources/ui/shortcuts_dialog.blp:49
-#| msgid "Year View"
 msgctxt "shortcut dialog"
 msgid "View"
 msgstr "Перегляд"
@@ -417,19 +424,20 @@ msgstr "Зменшити"
 msgid "Manage Calendars"
 msgstr "Керування календарями"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:33
+#: data/resources/ui/views/agenda_view/agenda_view.blp:35
 msgid "No events on this day"
 msgstr "Протягом цього дня подій немає"
 
-#: data/resources/ui/views/month_view/month_view_inner.blp:15
-msgid "Month view"
-msgstr "Перегляд місяця"
-
+#: data/resources/ui/views/agenda_view/agenda_view.blp:80
 #: data/resources/ui/views/month_view/month_view_inner.blp:31
 #: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
 #: data/resources/ui/window.blp:200
 msgid "_Today"
 msgstr "_Сьогодні"
+
+#: data/resources/ui/views/month_view/month_view_inner.blp:15
+msgid "Month view"
+msgstr "Перегляд місяця"
 
 #: data/resources/ui/window.blp:20
 msgid "About Era"
@@ -480,11 +488,11 @@ msgstr "_Місяць"
 msgid "_Agenda"
 msgstr "П_орядок денний"
 
-#: data/resources/ui/window.blp:425
+#: data/resources/ui/window.blp:428
 msgid "_Keyboard Shortcuts"
 msgstr "_Клавіатурні скорочення"
 
-#: data/resources/ui/window.blp:430
+#: data/resources/ui/window.blp:433
 msgid "_About Era"
 msgstr "_Про Era"
 
@@ -856,6 +864,13 @@ msgstr ""
 "{month_start} {day_start}, {year_start}, {time_start} ({tz_start}) – "
 "{month_end} {day_end}, {year_end}, {time_end} ({tz_end})"
 
-#: src/widgets/window.rs:489 src/widgets/window.rs:498
+#: src/widgets/window.rs:495 src/widgets/window.rs:504
 msgid "%0B %Y"
 msgstr "%0B %Y"
+
+#~ msgid ""
+#~ "Era is a time management application designed to help you stay organized "
+#~ "and productive."
+#~ msgstr ""
+#~ "Era — програма для планування розподілу часу, яку створено, щоб допомгти "
+#~ "вам з впорядкуванням порядку денного і продуктивністю."
