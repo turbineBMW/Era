@@ -15,6 +15,7 @@ template $CalendarManagementCalendarRow: Adw.ActionRow {
       child: CheckButton check {
         active: bind template.calendar as <Clepsydre.Calendar>.visible;
         can-focus: false;
+        can-target: false;
 
         styles [
           "selection-mode",
