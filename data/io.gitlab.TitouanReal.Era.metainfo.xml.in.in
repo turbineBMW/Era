@@ -7,7 +7,12 @@
     <name>Era</name>
     <summary>Manage your time</summary>
     <description>
-        <p>Era is a time management application designed to help you stay organized and productive.</p>
+        <p>
+            Era is a calendar that grows with your needs - simple and calm for everyday use while
+            revealing powerful tools when you need them. Use a small window side-by-side with other
+            apps for multitasking or go fullscreen for complex planning. Your events can sync with
+            most online providers, and Era keeps working without interruptions when you’re offline.
+        </p>
     </description>
 
     <developer id="io.gitlab.titouanreal">
@@ -17,18 +22,9 @@
     <url type="homepage">https://gitlab.gnome.org/TitouanReal/era</url>
     <url type="vcs-browser">https://gitlab.gnome.org/TitouanReal/era</url>
     <url type="bugtracker">https://gitlab.gnome.org/TitouanReal/era/-/work_items</url>
-    <!-- Should link a FAQ page for this software, to answer some of the most-asked questions in detail -->
-    <!-- URLs of this type should point to a webpage where users can submit or modify translations of the upstream project -->
-    <!-- <url type="translate">https://example.org/translate</url> -->
-    <!-- <url type="faq">https://example.org/faq</url> -->
-    <!-- Should provide a web link to an online user's reference, a software manual or help page -->
-    <!-- <url type="help">https://example.org/help</url> -->
-    <!-- URLs of this type should point to a webpage showing information on how to donate to the described software project -->
-    <!-- <url type="donation">https://example.org/donate</url> -->
-    <!-- This could for example be an HTTPS URL to an online form or a page describing how to contact the developer -->
-    <!-- <url type="contact">https://example.org/contact</url> -->
-    <!-- URLs of this type should point to a webpage showing information on how to contribute to the described software project -->
-    <!-- <url type="contribute">https://example.org/contribute</url> -->
+    <url type="donation">https://ko-fi.com/titouanreal</url>
+    <url type="translate">https://l10n.gnome.org/module/era/</url>
+    <url type="contact">https://matrix.to/#/#era:gnome.org</url>
 
     <translation type="gettext">@gettext-package@</translation>
     <launchable type="desktop-id">@app-id@.desktop</launchable>
