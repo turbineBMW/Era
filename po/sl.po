@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-09-07 18:45+0000\n"
-"PO-Revision-Date: 2026-09-07 21:55+0200\n"
+"POT-Creation-Date: 2026-09-11 14:57+0000\n"
+"PO-Revision-Date: 2026-09-11 22:32+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
@@ -38,10 +38,19 @@ msgstr "Upravljajte svoj čas"
 
 #: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
 msgid ""
-"Era is a time management application designed to help you stay organized and "
-"productive."
+"Era is a calendar that grows with your needs - simple and calm for everyday "
+"use while revealing powerful tools when you need them. Use a small window "
+"side-by-side with other apps for multitasking or go fullscreen for complex "
+"planning. Your events can sync with most online providers, and Era keeps "
+"working without interruptions when you’re offline."
 msgstr ""
-"Era je program za upravljanje časa, da ostanete organizirani in produktivni."
+"Era je koledar, ki se prilagaja vašim potrebam – preprost in pregleden za "
+"vsakdanjo rabo, hkrati pa vam ob potrebi ponuja zmogljiva orodja. Uporabite "
+"majhno okno, ki ga lahko prikazujete vzporedno z drugimi programi za "
+"večopravilnost, ali pa preklopite na celozaslonski način za zahtevnejše "
+"načrtovanje. Vaši dogodki se lahko sinhronizirajo z večino spletnih "
+"ponudnikov, Era pa deluje brez prekinitev tudi takrat, ko niste povezani z "
+"internetom."
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:5
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:12
@@ -88,11 +97,11 @@ msgstr "Sprememba barv v vmesniku še ni na voljo"
 msgid "Remove Calendar"
 msgstr "Odstrani koledar"
 
-#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:50
+#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:51
 msgid "Read only"
 msgstr " Samo za branje"
 
-#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:57
+#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:58
 msgid "Calendar details"
 msgstr "Podrobnosti koledarja"
 
@@ -187,8 +196,8 @@ msgid "Debug - timeframe:"
 msgstr "Razhroščevanje - časovni okvir:"
 
 #: data/resources/ui/event_creation_dialog.blp:6
-#: data/resources/ui/window.blp:93 data/resources/ui/window.blp:159
-#: data/resources/ui/window.blp:225 data/resources/ui/window.blp:289
+#: data/resources/ui/window.blp:93 data/resources/ui/window.blp:152
+#: data/resources/ui/window.blp:211 data/resources/ui/window.blp:275
 msgid "Create Event"
 msgstr "Ustvari dogodek"
 
@@ -220,8 +229,8 @@ msgstr "Opis"
 
 #: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
 #: data/resources/ui/search_dialog/search_dialog.blp:24
-#: data/resources/ui/window.blp:62 data/resources/ui/window.blp:128
-#: data/resources/ui/window.blp:194 data/resources/ui/window.blp:296
+#: data/resources/ui/window.blp:62 data/resources/ui/window.blp:121
+#: data/resources/ui/window.blp:180 data/resources/ui/window.blp:282
 msgid "Search"
 msgstr "Išči"
 
@@ -412,23 +421,24 @@ msgid "Zoom Out"
 msgstr "Oddalji"
 
 #: data/resources/ui/sidebar/sidebar.blp:20 data/resources/ui/window.blp:100
-#: data/resources/ui/window.blp:166 data/resources/ui/window.blp:232
+#: data/resources/ui/window.blp:159 data/resources/ui/window.blp:218
 msgid "Manage Calendars"
 msgstr "Upravljanje s koledarji"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:33
+#: data/resources/ui/views/agenda_view/agenda_view.blp:35
 msgid "No events on this day"
 msgstr "Na ta dan ni dogodkov"
+
+#: data/resources/ui/views/agenda_view/agenda_view.blp:80
+#: data/resources/ui/views/month_view/month_view_inner.blp:31
+#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
+#: data/resources/ui/window.blp:200
+msgid "_Today"
+msgstr "_Danes"
 
 #: data/resources/ui/views/month_view/month_view_inner.blp:15
 msgid "Month view"
 msgstr "Mesečni pogled"
-
-#: data/resources/ui/views/month_view/month_view_inner.blp:31
-#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:148
-#: data/resources/ui/window.blp:214
-msgid "_Today"
-msgstr "_Danes"
 
 #: data/resources/ui/window.blp:20
 msgid "About Era"
@@ -446,12 +456,12 @@ msgstr "Zaledje koledarja očitno ni na voljo."
 msgid "Year"
 msgstr "Leto"
 
-#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:282
+#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:268
 msgid "Main Menu"
 msgstr "Glavni meni"
 
-#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:152
-#: data/resources/ui/window.blp:218
+#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:145
+#: data/resources/ui/window.blp:204
 msgid "Go to Today"
 msgstr "Pojdi na današnji dan"
 
@@ -459,39 +469,31 @@ msgstr "Pojdi na današnji dan"
 msgid "Month"
 msgstr "Mesec"
 
-#: data/resources/ui/window.blp:117
-msgid "Year View"
-msgstr "Letni pogled"
-
-#: data/resources/ui/window.blp:175
+#: data/resources/ui/window.blp:168
 msgid "Agenda"
 msgstr "Dnevni red"
 
-#: data/resources/ui/window.blp:183
-msgid "Month View"
-msgstr "Mesečni pogled"
-
-#: data/resources/ui/window.blp:256
+#: data/resources/ui/window.blp:242
 msgid "Toggle Sidebar"
 msgstr "Preklopi stransko okno"
 
-#: data/resources/ui/window.blp:308
+#: data/resources/ui/window.blp:294
 msgid "_Year"
 msgstr "_Leto"
 
-#: data/resources/ui/window.blp:318
+#: data/resources/ui/window.blp:304
 msgid "_Month"
 msgstr "_Mesec"
 
-#: data/resources/ui/window.blp:329
+#: data/resources/ui/window.blp:315
 msgid "_Agenda"
 msgstr "_Dnevni red"
 
-#: data/resources/ui/window.blp:409
+#: data/resources/ui/window.blp:428
 msgid "_Keyboard Shortcuts"
 msgstr "_Tipkovne bližnjice"
 
-#: data/resources/ui/window.blp:414
+#: data/resources/ui/window.blp:433
 msgid "_About Era"
 msgstr "_O programu Era"
 
@@ -864,6 +866,6 @@ msgstr ""
 "{day_start}. {month_start} {year_start} ob {time_start} ({tz_start}) – "
 "{day_end}. {month_end} {year_end} ob {time_end} ({tz_end})"
 
-#: src/widgets/window.rs:441 src/widgets/window.rs:450
+#: src/widgets/window.rs:495 src/widgets/window.rs:504
 msgid "%0B %Y"
 msgstr "%0B %Y"
