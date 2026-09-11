@@ -33,6 +33,17 @@ variables:
     before_script:
         - flatpak install flathub org.freedesktop.Sdk.Extension.rust-stable/aarch64/26.08 --user -y
 
+.aarch64-rules:
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+      allow_failure: true
+
 stages:
     - check
     - build
@@ -130,9 +141,9 @@ flatpak-eds@aarch64:
         - .flatpak@aarch64
         - .rust-stable@aarch64
         - .eds
+        - .aarch64-rules
     stage: build
     needs: []
-    when: manual
 
 flatpak-mock@x86_64:
     extends:
@@ -147,9 +158,9 @@ flatpak-mock@aarch64:
         - .flatpak@aarch64
         - .rust-stable@aarch64
         - .mock
+        - .aarch64-rules
     stage: build
     needs: []
-    when: manual
 
 flatpak-p2panda@x86_64:
     extends:
@@ -164,9 +175,9 @@ flatpak-p2panda@aarch64:
         - .flatpak@aarch64
         - .rust-stable@aarch64
         - .p2panda
+        - .aarch64-rules
     stage: build
     needs: []
-    when: manual
 
 android:
     stage: build
