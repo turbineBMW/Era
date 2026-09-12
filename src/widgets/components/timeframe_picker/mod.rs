@@ -64,6 +64,23 @@ mod imp {
                 #[weak(rename_to = imp)]
                 self,
                 move |_| {
+                    let new_end = if let Some(timeframe) = imp.timeframe.borrow().clone() {
+                        let old_start = timeframe.start().unwrap();
+                        let old_end = timeframe.end().unwrap();
+
+                        let diff = old_end.difference(&old_start);
+
+                        let new_start = imp.start.date_time();
+                        let new_end = new_start.add(diff).unwrap();
+                        Some(new_end)
+                    } else {
+                        None
+                    };
+
+                    if let Some(new_end) = new_end {
+                        imp.end.set_date_time(new_end);
+                    }
+
                     imp.update_timeframe();
                 }
             ));
