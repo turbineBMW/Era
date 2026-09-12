@@ -2,11 +2,8 @@ using Gtk 4.0;
 using Adw 1;
 
 template $DatePickerRow: Adw.EntryRow {
-  date: bind calendar.date bidirectional;
-  text: bind $format(template.date) as <string>;
-
   EventControllerFocus row_focus {
-    notify::contains-focus => $maybe_validate_entry(template);
+    notify::contains-focus => $update_calendar(template);
   }
 
   MenuButton {
@@ -15,7 +12,7 @@ template $DatePickerRow: Adw.EntryRow {
     tooltip-text: _("Edit Date");
 
     EventControllerFocus button_focus {
-      notify::contains-focus => $maybe_validate_entry(template);
+      notify::contains-focus => $update_calendar(template);
     }
 
     popover: Popover {
@@ -25,7 +22,9 @@ template $DatePickerRow: Adw.EntryRow {
       margin-start: 12;
       margin-end: 12;
 
-      Calendar calendar {}
+      Calendar calendar {
+        notify::date => $update_entry(template);
+      }
     };
 
     accessibility {

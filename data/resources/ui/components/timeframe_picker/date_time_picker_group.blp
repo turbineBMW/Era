@@ -8,11 +8,10 @@ template $DateTimePickerGroup: Adw.PreferencesGroup {
 
   Adw.EntryRow time {
     title: bind template.time-title;
-    text: bind $format(template.date-time) as <string>;
     visible: bind template.date-only inverted;
 
     EventControllerFocus row_focus {
-      notify::contains-focus => $maybe_validate_entry(template);
+      notify::contains-focus => $maybe_parse_time(template);
     }
 
     MenuButton {
@@ -21,7 +20,7 @@ template $DateTimePickerGroup: Adw.PreferencesGroup {
       tooltip-text: _("Edit Time");
 
       EventControllerFocus button_focus {
-        notify::contains-focus => $maybe_validate_entry(template);
+        notify::contains-focus => $maybe_parse_time(template);
       }
 
       popover: Popover popover {
@@ -50,10 +49,9 @@ template $DateTimePickerGroup: Adw.PreferencesGroup {
 
                 adjustment: Adjustment hour {
                   upper: 23;
-                  value: bind $hour(template.date-time) as <int>;
                   step-increment: 1;
                   page-increment: 5;
-                  value-changed => $update_time(template);
+                  value-changed => $update_date_time_from_spinner(template);
                 };
 
                 output => $format_spin_time(template);
@@ -69,10 +67,9 @@ template $DateTimePickerGroup: Adw.PreferencesGroup {
 
                 adjustment: Adjustment minute {
                   upper: 59;
-                  value: bind $minute(template.date-time) as <int>;
                   step-increment: 1;
                   page-increment: 10;
-                  value-changed => $update_time(template);
+                  value-changed => $update_date_time_from_spinner(template);
                 };
 
                 output => $format_spin_time(template);
@@ -100,9 +97,8 @@ template $DateTimePickerGroup: Adw.PreferencesGroup {
             tooltip-text: _("Change Timezone");
             clicked => $select_timezone(template);
 
-            Adw.ButtonContent {
+            Adw.ButtonContent timezone_button_content {
               icon-name: "globe-symbolic";
-              label: bind $timezone(template.date-time) as <string>;
             }
           }
         }

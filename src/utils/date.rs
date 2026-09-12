@@ -36,8 +36,8 @@ impl From<glib::Date> for Date {
     }
 }
 
-impl From<glib::DateTime> for Date {
-    fn from(value: glib::DateTime) -> Self {
+impl From<&glib::DateTime> for Date {
+    fn from(value: &glib::DateTime) -> Self {
         let year = value.year() as i16;
         let month = value.month() as i8;
         let day = value.day_of_month() as i8;

@@ -94,9 +94,8 @@ mod imp {
                     .expect("Datetime should exist"),
             );
 
-            self.update_timeframe();
-
-            self.obj().notify_timeframe();
+            // Notification is sent by the handlers of DateTimePickerGroup::notify_date_time or
+            // schedule_type::notify_active_name if necessary
         }
 
         fn update_timeframe(&self) {
