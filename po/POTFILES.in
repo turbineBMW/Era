@@ -20,6 +20,7 @@ data/resources/ui/search_dialog/search_dialog.blp
 data/resources/ui/shortcuts_dialog.blp
 data/resources/ui/sidebar/sidebar.blp
 data/resources/ui/views/agenda_view/agenda_view.blp
+data/resources/ui/views/month_view/month_view_floating_controls.blp
 data/resources/ui/views/month_view/month_view_inner.blp
 data/resources/ui/window.blp
 src/application.rs

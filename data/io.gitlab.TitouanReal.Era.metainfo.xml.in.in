@@ -35,6 +35,16 @@
         <color type="primary" scheme_preference="dark">#09636E</color>
     </branding>
 
+    <requires>
+        <display_length compare="ge">360</display_length>
+    </requires>
+
+    <supports>
+        <control>keyboard</control>
+        <control>pointing</control>
+        <control>touch</control>
+    </supports>
+
     <!-- <screenshots>
         <screenshot type="default">
         <image>https://example.org/example1.png</image>

@@ -1,5 +1,4 @@
 using Gtk 4.0;
-using Adw 1;
 
 template $MonthViewInner: Widget {
   overflow: hidden;
@@ -15,43 +14,7 @@ template $MonthViewInner: Widget {
     label: _("Month view");
   }
 
-  Box floating_controls {
-    styles [
-      "floating-controls",
-    ]
-
-    Button {
-      action-name: "win.today";
-
-      styles [
-        "flat",
-      ]
-
-      child: Adw.ButtonContent {
-        label: _("_Today");
-        use-underline: true;
-        icon-name: "today-symbolic";
-      };
-    }
-
-    Button {
-      icon-name: "go-down-symbolic";
-      action-name: "win.scroll-down";
-
-      styles [
-        "flat",
-      ]
-    }
-
-    Button {
-      icon-name: "go-up-symbolic";
-      action-name: "win.scroll-up";
-
-      styles [
-        "flat",
-      ]
-    }
-  }
+  $MonthViewFloatingControls floating_controls {}
 
   // Continuous scroll (touchpad or smooth mouse wheel) followed by kinetic deceleration
   EventControllerScroll {
@@ -95,5 +58,13 @@ template $MonthViewInner: Widget {
     enter => $motion_enter(template);
     motion => $motion(template);
     leave => $motion_leave(template);
+  }
+
+  // Mouse/touchpad click-drag to create a single or multi day event.
+  // Touch presses are denied immediately in the handler.
+  GestureDrag create_drag {
+    drag-begin => $create_drag_begin(template);
+    drag-update => $create_drag_update(template);
+    drag-end => $create_drag_end(template);
   }
 }

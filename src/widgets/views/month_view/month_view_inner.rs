@@ -9,7 +9,11 @@ use glib::{GString, clone};
 use jiff::ToSpan;
 use tracing::{error, warn};
 
-use crate::{application::Application, utils::Date, widgets::window::Styling};
+use crate::{
+    application::Application,
+    utils::{Date, EventPropertiesPreset},
+    widgets::window::Styling,
+};
 
 use super::{
     kinetic_scrolling::KineticScrolling,
@@ -18,6 +22,7 @@ use super::{
     },
     month_view_cell::MonthViewCell,
     month_view_event::MonthViewEvent,
+    month_view_floating_controls::MonthViewFloatingControls,
     month_view_overflow::MonthViewOverflow,
 };
 
@@ -86,6 +91,12 @@ enum Animation {
     },
 }
 
+#[derive(Debug, Clone, Copy)]
+struct CreateDrag {
+    anchor: Date,
+    hover: Date,
+}
+
 mod imp {
     use super::*;
 
@@ -100,7 +111,7 @@ mod imp {
         styling: Cell<Styling>,
 
         #[template_child]
-        floating_controls: TemplateChild<gtk::Box>,
+        floating_controls: TemplateChild<MonthViewFloatingControls>,
         #[template_child]
         scroll_drag: TemplateChild<gtk::GestureDrag>,
         #[template_child]
@@ -125,6 +136,7 @@ mod imp {
         cell_height: Cell<i32>,
 
         input: RefCell<Option<Input>>,
+        create_drag: Cell<Option<CreateDrag>>,
 
         /// Y position of the pointer to use for zooming with CTRL+scroll.
         pointer_y: Cell<Option<f64>>,
@@ -584,7 +596,7 @@ mod imp {
                 return;
             }
 
-            self.cancel_animation();
+            self.cancel_animation_and_clear_input();
             self.input.replace(None);
 
             let system = Application::default().system();
@@ -645,7 +657,7 @@ mod imp {
 
         #[template_callback]
         fn kinetic_scroll_begin(&self, _scroll_controller: gtk::EventControllerScroll) {
-            self.cancel_animation();
+            self.cancel_animation_and_clear_input();
             self.input.replace(Some(Input::ContinuousScroll));
         }
 
@@ -788,7 +800,7 @@ mod imp {
                 return;
             };
 
-            self.cancel_animation();
+            self.cancel_animation_and_clear_input();
             self.input.replace(Some(Input::Drag {
                 start_offset: self.scroll_offset.get(),
             }));
@@ -875,7 +887,7 @@ mod imp {
 
         #[template_callback]
         fn zoom_begin(&self, _event_sequence: gdk::EventSequence, gesture_zoom: gtk::GestureZoom) {
-            self.cancel_animation();
+            self.cancel_animation_and_clear_input();
 
             self.input.replace(Some(Input::ContinuousZoom {
                 last_scale_delta: 1.0,
@@ -917,6 +929,176 @@ mod imp {
             self.input.replace(None);
         }
 
+        #[template_callback]
+        fn create_drag_begin(&self, start_x: f64, start_y: f64, gesture_drag: gtk::GestureDrag) {
+            let Some(last_event) = gesture_drag.last_event(None) else {
+                return;
+            };
+
+            // Deny touchscreen presses. Creation of events on touchscreen should only happen after
+            // a long press.
+            if last_event.device().unwrap().source() == gdk::InputSource::Touchscreen {
+                gesture_drag.set_state(gtk::EventSequenceState::Denied);
+                return;
+            }
+
+            self.cancel_animation();
+
+            // Deny presses that land on an event widget, an overflow button or the floating controls.
+            let picked = self
+                .obj()
+                .pick(start_x, start_y, gtk::PickFlags::DEFAULT)
+                .expect("A widget should be picked");
+            let on_event_widget = picked.ancestor(MonthViewEvent::static_type()).is_some();
+            let on_overflow_widget = picked.ancestor(MonthViewOverflow::static_type()).is_some();
+            let on_floating_controls = picked
+                .ancestor(MonthViewFloatingControls::static_type())
+                .is_some();
+            if on_event_widget || on_overflow_widget || on_floating_controls {
+                gesture_drag.set_state(gtk::EventSequenceState::Denied);
+                return;
+            }
+
+            let anchor = self.date_at_coords(start_x, start_y);
+            self.create_drag.replace(Some(CreateDrag {
+                anchor,
+                hover: anchor,
+            }));
+
+            let cells = self.cells.get().unwrap();
+            let first_cell_index = self.first_cell_index.get();
+            let last_cell_index = (first_cell_index + NB_CELLS - 1) % NB_CELLS;
+            let first_cell_date = cells[first_cell_index].date();
+            let last_cell_date = cells[last_cell_index].date();
+
+            let anchor_cell_index = if anchor.to_jiff() < first_cell_date.to_jiff() {
+                first_cell_index
+            } else if anchor.to_jiff() > last_cell_date.to_jiff() {
+                last_cell_index
+            } else {
+                let difference = (anchor.to_jiff() - first_cell_date.to_jiff()).get_days() as usize;
+                (first_cell_index + difference) % NB_CELLS
+            };
+
+            cells[anchor_cell_index].set_state_flags(gtk::StateFlags::ACTIVE, false);
+        }
+
+        #[template_callback]
+        fn create_drag_update(&self, offset_x: f64, offset_y: f64, gesture_drag: gtk::GestureDrag) {
+            let Some(last_event) = gesture_drag.last_event(None) else {
+                return;
+            };
+
+            // Deny touchscreen presses. Creation of events on touchscreen should only happen after
+            // a long press.
+            if last_event.device().unwrap().source() == gdk::InputSource::Touchscreen {
+                gesture_drag.set_state(gtk::EventSequenceState::Denied);
+                return;
+            }
+
+            let Some(CreateDrag { anchor, .. }) = self.create_drag.get() else {
+                return;
+            };
+
+            if self.obj().drag_check_threshold(0, 0, 0, offset_y as i32) {
+                gesture_drag.set_state(gtk::EventSequenceState::Claimed);
+            }
+
+            let (start_x, start_y) = gesture_drag.start_point().unwrap();
+            let x = start_x + offset_x;
+            let y = start_y + offset_y;
+
+            let hover = self.date_at_coords(x, y);
+            self.create_drag.set(Some(CreateDrag { anchor, hover }));
+
+            let cells = self.cells.get().unwrap();
+            let first_cell_index = self.first_cell_index.get();
+            let last_cell_index_not_normalized = first_cell_index + NB_CELLS - 1;
+            let last_cell_index = last_cell_index_not_normalized % NB_CELLS;
+            let first_cell_date = cells[first_cell_index].date();
+            let last_cell_date = cells[last_cell_index].date();
+
+            let anchor_index_not_normalized = if anchor.to_jiff() < first_cell_date.to_jiff() {
+                first_cell_index
+            } else if anchor.to_jiff() > last_cell_date.to_jiff() {
+                last_cell_index_not_normalized
+            } else {
+                let anchor_difference = (anchor.to_jiff() - first_cell_date.to_jiff()).get_days();
+                assert!(anchor_difference >= 0);
+                first_cell_index + anchor_difference as usize
+            };
+
+            let hover_index_not_normalized = if hover.to_jiff() < first_cell_date.to_jiff() {
+                first_cell_index
+            } else if hover.to_jiff() > last_cell_date.to_jiff() {
+                last_cell_index_not_normalized
+            } else {
+                let hover_difference = (hover.to_jiff() - first_cell_date.to_jiff()).get_days();
+                assert!(hover_difference >= 0);
+                first_cell_index + hover_difference as usize
+            };
+
+            let (start_index_not_normalized, end_index_not_normalized) =
+                if anchor_index_not_normalized < hover_index_not_normalized {
+                    (anchor_index_not_normalized, hover_index_not_normalized)
+                } else {
+                    (hover_index_not_normalized, anchor_index_not_normalized)
+                };
+
+            for i in first_cell_index..start_index_not_normalized {
+                cells[i % NB_CELLS].unset_state_flags(gtk::StateFlags::ACTIVE);
+            }
+            for i in start_index_not_normalized..=end_index_not_normalized {
+                cells[i % NB_CELLS].set_state_flags(gtk::StateFlags::ACTIVE, false);
+            }
+            for i in end_index_not_normalized + 1..last_cell_index_not_normalized {
+                cells[i % NB_CELLS].unset_state_flags(gtk::StateFlags::ACTIVE);
+            }
+        }
+
+        #[template_callback]
+        fn create_drag_end(&self, _offset_x: f64, _offset_y: f64, _gesture_drag: gtk::GestureDrag) {
+            let cells = self.cells.get().unwrap();
+            for cell in cells {
+                cell.unset_state_flags(gtk::StateFlags::ACTIVE);
+            }
+
+            let Some(CreateDrag { anchor, hover }) = self.create_drag.get() else {
+                return;
+            };
+
+            let (start, end) = if anchor.to_jiff() < hover.to_jiff() {
+                (anchor.to_jiff(), hover.to_jiff())
+            } else {
+                (hover.to_jiff(), anchor.to_jiff())
+            };
+
+            self.create_drag.set(None);
+
+            let tzid = Application::default()
+                .system()
+                .datetime()
+                .timezone()
+                .identifier();
+            let jiff_tz = jiff::tz::TimeZone::get(&tzid).unwrap();
+
+            let preset = EventPropertiesPreset {
+                all_day: true,
+                start: start.to_zoned(jiff_tz.clone()).unwrap().to_string(),
+                end: end
+                    .tomorrow()
+                    .unwrap()
+                    .to_zoned(jiff_tz)
+                    .unwrap()
+                    .to_string(),
+                ..Default::default()
+            };
+
+            let _ = self
+                .obj()
+                .activate_action("win.create-event", Some(&preset.to_variant()));
+        }
+
         pub(super) fn accumulate_discrete_scroll(&self, up: bool) {
             // If a discrete animation was already running, we stack on top of where it was headed.
             let baseline =
@@ -928,7 +1110,7 @@ mod imp {
                     self.scroll_offset.get()
                 };
 
-            self.cancel_animation();
+            self.cancel_animation_and_clear_input();
 
             let height = self.obj().height() as f64;
             let row_height = (self.cell_height.get() + SEPARATOR_HEIGHT) as f64;
@@ -987,7 +1169,7 @@ mod imp {
                     self.cell_height.get()
                 };
 
-            self.cancel_animation();
+            self.cancel_animation_and_clear_input();
 
             let target_height =
                 ((baseline as f64 * scale) as i32).clamp(MINIMUM_CELL_HEIGHT, MAXIMUM_CELL_HEIGHT);
@@ -1109,8 +1291,24 @@ mod imp {
             glib::ControlFlow::Continue
         }
 
-        // Cancels any ongoing scroll animation, and reset the current input to None.
+        // Cancels any ongoing scroll animation, but if the input is not an animation, does nothing.
         fn cancel_animation(&self) {
+            let is_animation = matches!(*self.input.borrow(), Some(Input::Animation(_)));
+
+            if is_animation {
+                let Input::Animation(animation) = self.input.borrow_mut().take().unwrap() else {
+                    unreachable!()
+                };
+                match animation {
+                    Animation::KineticDeceleration { tick_id, .. } => tick_id.remove(),
+                    Animation::DiscreteScroll { tick_id, .. } => tick_id.remove(),
+                    Animation::DiscreteZoom { tick_id, .. } => tick_id.remove(),
+                }
+            }
+        }
+
+        // Cancels any ongoing scroll animation, and resets the current input to None.
+        fn cancel_animation_and_clear_input(&self) {
             if let Some(Input::Animation(animation)) = self.input.borrow_mut().take() {
                 match animation {
                     Animation::KineticDeceleration { tick_id, .. } => tick_id.remove(),
@@ -1135,6 +1333,42 @@ mod imp {
             self.recycle_if_needed();
 
             self.obj().queue_allocate();
+        }
+
+        fn date_at_coords(&self, x: f64, y: f64) -> Date {
+            let cells = self.cells.get().unwrap();
+            let x = x as i32;
+            let first_cell_index = self.first_cell_index.get();
+
+            let cell_height = self.cell_height.get();
+            let row_height = (cell_height + SEPARATOR_HEIGHT) as f64;
+            let scroll_offset = self.scroll_offset.get();
+
+            // Width is distributed evenly. Any remainder pixels are given to the leftmost columns,
+            // so the first (width % 7) columns are one pixel wider than the rest.
+            let column_widths: [i32; 7] = {
+                let width = self.obj().width() - 6 * SEPARATOR_WIDTH;
+                let base = width / 7;
+                let remainder = width % 7;
+
+                std::array::from_fn(|i| base + i32::from((i as i32) < remainder))
+            };
+            let column_separator_xs: [i32; 6] = {
+                std::array::from_fn(|i| {
+                    column_widths[..i + 1].iter().sum::<i32>() + i as i32 * SEPARATOR_WIDTH
+                })
+            };
+
+            let row_number = ((scroll_offset + y) / row_height) as usize;
+            let column_number = column_separator_xs
+                .iter()
+                .take_while(|column_separator| x > **column_separator)
+                .count();
+
+            let cell = cells
+                .get((first_cell_index + row_number * 7 + column_number) % NB_CELLS)
+                .unwrap();
+            cell.date()
         }
 
         fn recycle_if_needed(&self) {
