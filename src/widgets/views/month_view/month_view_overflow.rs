@@ -157,7 +157,7 @@ mod imp {
             let date = self.date.borrow().to_jiff();
 
             let _ = self.obj().activate_action(
-                "win.show-agenda-view",
+                "win.push-agenda-view",
                 Some(&(date.year() as i32, date.month() as i32, date.day() as i32).to_variant()),
             );
         }

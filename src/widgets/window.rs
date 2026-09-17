@@ -266,7 +266,7 @@ pub mod imp {
             );
 
             klass.install_action(
-                "win.show-agenda-view",
+                "win.push-agenda-view",
                 Some(&glib::VariantType::new("(iii)").unwrap()),
                 |obj, _action_name, parameter| {
                     let imp = obj.imp();
