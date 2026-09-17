@@ -1115,7 +1115,13 @@ mod imp {
             let row_height = (self.cell_height.get() + SEPARATOR_HEIGHT) as f64;
 
             let target = if row_height > height {
-                unimplemented!()
+                let number_of_slices_per_row = (row_height / height).ceil();
+                let slice_height = row_height / number_of_slices_per_row;
+                if up {
+                    baseline - slice_height
+                } else {
+                    baseline + slice_height
+                }
             } else {
                 // Advance by exactly one row in the scroll direction, aligning to the next row
                 // boundary.
@@ -1128,7 +1134,11 @@ mod imp {
                     }
                 } else {
                     let to_next = row_height - offset_into_row;
-                    baseline + if to_next < 0.1 { row_height } else { to_next }
+                    if to_next < 0.1 {
+                        baseline + row_height
+                    } else {
+                        baseline + to_next
+                    }
                 }
             };
 
