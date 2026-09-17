@@ -1512,7 +1512,20 @@ mod imp {
             let segments = compute_event_segments(&events, buffer_start_unix_days, &timezone);
 
             for segment in &segments {
-                self.connect_event_timeframe_notify(&segment.event);
+                let event = segment.event.clone();
+                let uri = event.uri().unwrap();
+
+                if !self.connected_event_uris.borrow_mut().insert(uri) {
+                    continue;
+                }
+
+                event.connect_timeframe_notify(clone!(
+                    #[weak(rename_to = imp)]
+                    self,
+                    move |_event| {
+                        imp.recompute_event_layouts();
+                    }
+                ));
             }
 
             let stacked_segments_by_row = stack_event_segments(&segments);
@@ -1538,22 +1551,6 @@ mod imp {
             self.event_layouts.replace(event_layouts);
 
             self.obj().queue_allocate();
-        }
-
-        fn connect_event_timeframe_notify(&self, event: &Event) {
-            let uri = event.uri().unwrap();
-
-            if !self.connected_event_uris.borrow_mut().insert(uri) {
-                return;
-            }
-
-            event.connect_timeframe_notify(clone!(
-                #[weak(rename_to = imp)]
-                self,
-                move |_event| {
-                    imp.recompute_event_layouts();
-                }
-            ));
         }
     }
 }
