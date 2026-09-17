@@ -22,6 +22,7 @@ data/resources/ui/sidebar/sidebar.blp
 data/resources/ui/views/agenda_view/agenda_view.blp
 data/resources/ui/views/month_view/month_view_floating_controls.blp
 data/resources/ui/views/month_view/month_view_inner.blp
+data/resources/ui/views/year_view/year_view_floating_controls.blp
 data/resources/ui/window.blp
 src/application.rs
 src/utils/template_callbacks.rs

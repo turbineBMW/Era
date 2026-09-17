@@ -12,11 +12,11 @@ use tracing::{error, warn};
 use crate::{
     application::Application,
     utils::{Date, EventPropertiesPreset},
+    widgets::views::kinetic_scrolling::KineticScrolling,
     widgets::window::Styling,
 };
 
 use super::{
-    kinetic_scrolling::KineticScrolling,
     layout_utils::{
         EventLayout, RowOverflow, build_event_layouts, compute_event_segments, stack_event_segments,
     },
@@ -597,7 +597,6 @@ mod imp {
             }
 
             self.cancel_animation_and_clear_input();
-            self.input.replace(None);
 
             let system = Application::default().system();
             let first_cell_date = {

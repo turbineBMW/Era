@@ -123,12 +123,9 @@ pub mod imp {
 
             klass.install_action("win.today", None, |obj, _, _| {
                 let today = Application::default().system().date();
+                obj.imp().year_view.set_date(today);
                 obj.imp().month_view.set_date(today);
                 obj.imp().agenda_view.set_date(today);
-
-                // TODO: Use date as well
-                let year = today.to_glib_date_time_utc().year();
-                obj.imp().year_view.set_year(year);
             });
             klass.add_binding_action(gdk::Key::T, gdk::ModifierType::CONTROL_MASK, "win.today");
             klass.add_binding_action(
@@ -145,7 +142,9 @@ pub mod imp {
                     .expect("Narrow navigation view should have a visible page")
                     .as_str()
                 {
-                    "year" => {}
+                    "year" => {
+                        obj.imp().year_view.scroll_up();
+                    }
                     "month" => {
                         obj.imp().month_view.scroll_up();
                     }
@@ -165,7 +164,9 @@ pub mod imp {
                     .expect("Narrow navigation view should have a visible page")
                     .as_str()
                 {
-                    "year" => {}
+                    "year" => {
+                        obj.imp().year_view.scroll_down();
+                    }
                     "month" => {
                         obj.imp().month_view.scroll_down();
                     }
@@ -234,7 +235,7 @@ pub mod imp {
             );
 
             klass.install_action(
-                "win.show-month-view",
+                "win.push-month-view",
                 Some(&glib::VariantType::new("(iii)").unwrap()),
                 |obj, _action_name, parameter| {
                     let imp = obj.imp();
@@ -476,16 +477,25 @@ pub mod imp {
         #[template_callback(function)]
         fn medium_view_title(
             view: &str,
-            year_year: i32,
+            year_view_date: &Date,
             month_view_date: &Date,
             agenda_view_date: &Date,
         ) -> String {
             match view {
-                "year" => year_year.to_string(),
+                "year" => Self::year_view_title(year_view_date),
                 "month" => Self::month_view_title(month_view_date),
                 "agenda" => Self::agenda_view_title(agenda_view_date),
                 _ => panic!("Unknown view: {view}"),
             }
+        }
+
+        #[template_callback(function)]
+        fn year_view_title(year_view_date: &Date) -> String {
+            year_view_date
+                .to_glib_date_time_utc()
+                .format(&gettext("%Y"))
+                .unwrap()
+                .to_string()
         }
 
         #[template_callback(function)]

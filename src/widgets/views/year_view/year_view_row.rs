@@ -1,7 +1,7 @@
-use std::{cell::Cell, cmp, sync::LazyLock};
+use std::{cell::Cell, cmp};
 
 use adw::{prelude::*, subclass::prelude::*};
-use glib::{clone, closure_local, subclass::Signal};
+use glib::clone;
 
 use crate::{Application, widgets::window::Styling};
 
@@ -39,8 +39,6 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
-
-            klass.set_css_name("year-view-row");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -87,18 +85,6 @@ mod imp {
             self.year_label.unparent();
             self.separator.unparent();
             self.month_flow_box.unparent();
-        }
-
-        fn signals() -> &'static [Signal] {
-            static SIGNALS: LazyLock<Vec<Signal>> = LazyLock::new(|| {
-                vec![
-                    Signal::builder("month-clicked")
-                        // Year, Month
-                        .param_types([i32::static_type(), i32::static_type()])
-                        .build(),
-                ]
-            });
-            SIGNALS.as_ref()
         }
     }
 
@@ -264,8 +250,10 @@ mod imp {
                 .expect("Flow box child should have a child")
                 .downcast::<YearViewCell>()
                 .expect("The child of flow box child should be a month cell");
-            self.obj()
-                .emit_by_name::<()>("month-clicked", &[&cell.year(), &cell.month()]);
+            let _ = self.obj().activate_action(
+                "win.push-month-view",
+                Some(&(cell.year(), cell.month(), 1).to_variant()),
+            );
         }
     }
 }
@@ -279,18 +267,5 @@ glib::wrapper! {
 impl YearViewRow {
     pub fn new(year: i32) -> Self {
         glib::Object::builder().property("year", year).build()
-    }
-
-    pub fn connect_month_clicked<F: Fn(&Self, i32, i32) + 'static>(
-        &self,
-        f: F,
-    ) -> glib::SignalHandlerId {
-        self.connect_closure(
-            "month-clicked",
-            true,
-            closure_local!(move |obj: Self, year: i32, month: i32| {
-                f(&obj, year, month);
-            }),
-        )
     }
 }

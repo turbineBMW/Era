@@ -1,4 +1,5 @@
 mod agenda_view;
+mod kinetic_scrolling;
 mod month_view;
 mod year_view;
 

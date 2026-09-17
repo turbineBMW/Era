@@ -41,8 +41,6 @@ mod imp {
             klass.bind_template();
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
-
-            klass.set_css_name("year-view-cell");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {

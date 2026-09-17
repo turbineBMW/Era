@@ -1,0 +1,40 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $YearViewFloatingControls: Box {
+  styles [
+    "floating-controls",
+  ]
+
+  Button {
+    action-name: "win.today";
+
+    styles [
+      "flat",
+    ]
+
+    child: Adw.ButtonContent {
+      label: _("_Today");
+      use-underline: true;
+      icon-name: "today-symbolic";
+    };
+  }
+
+  Button {
+    icon-name: "go-down-symbolic";
+    action-name: "win.scroll-down";
+
+    styles [
+      "flat",
+    ]
+  }
+
+  Button {
+    icon-name: "go-up-symbolic";
+    action-name: "win.scroll-up";
+
+    styles [
+      "flat",
+    ]
+  }
+}

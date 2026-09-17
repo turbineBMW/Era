@@ -5,7 +5,6 @@ use glib::clone;
 
 use crate::{utils::Date, widgets::window::Styling};
 
-mod kinetic_scrolling;
 mod layout_utils;
 mod month_view_cell;
 mod month_view_event;

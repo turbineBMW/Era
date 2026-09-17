@@ -3,19 +3,38 @@ using Gtk 4.0;
 template $YearView: Widget {
   overflow: hidden;
 
+  styles [
+    "year-view",
+  ]
+
+  $YearViewFloatingControls floating_controls {}
+
+  // Continuous scroll (touchpad or smooth mouse wheel) followed by kinetic deceleration
   EventControllerScroll {
     flags: vertical | kinetic;
     scroll-begin => $kinetic_scroll_begin(template);
     scroll => $kinetic_scroll(template);
-    decelerate => $kinetic_decelerate(template);
+    scroll-end => $kinetic_scroll_end(template);
+    decelerate => $kinetic_scroll_decelerate(template);
   }
 
+  // Discrete scroll (discrete mouse wheel)
   EventControllerScroll {
     flags: vertical | discrete;
     scroll => $discrete_scroll(template);
+    scroll-end => $discrete_scroll_end(template);
   }
 
-  GestureSwipe swipe_gesture {
+  // Continuous scroll (drag on touchscreen)
+  GestureDrag scroll_drag {
+    touch-only: true;
+    drag-begin => $scroll_drag_begin(template);
+    drag-update => $scroll_drag_update(template);
+    drag-end => $scroll_drag_end(template);
+  }
+
+  // Kinetic deceleration after drag on touchscreen
+  GestureSwipe scroll_swipe {
     touch-only: true;
     swipe => $swipe(template);
   }

@@ -45,7 +45,7 @@ template $EraWindow: Adw.ApplicationWindow {
                 [top]
                 Adw.HeaderBar {
                   title-widget: Adw.WindowTitle {
-                    title: bind $get_year_label(year_view.year) as <string>;
+                    title: bind $year_view_title(year_view.date) as <string>;
                   };
 
                   [start]
@@ -246,7 +246,7 @@ template $EraWindow: Adw.ApplicationWindow {
                 Label {
                   label: bind $medium_view_title(
                     wide_view_stack.visible-child-name,
-                    year_view.year,
+                    year_view.date,
                     month_view.date,
                     agenda_view.date
                     ) as <string>;

@@ -1,6 +1,10 @@
 using Gtk 4.0;
 
 template $YearViewRow: Widget {
+  styles [
+    "year-view-row",
+  ]
+
   Label year_label {
     label: bind $get_year_label_narrow(template.year) as <string>;
     xalign: 0.0;
