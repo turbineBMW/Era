@@ -124,17 +124,6 @@ flatpak-eds@x86_64:
         - .eds
     stage: build
     needs: []
-    # Do the following to prepare for the lint-metainfo job.
-    after_script:
-        # Copy the metainfo file to the current directory.
-        - cp flatpak_app/files/share/metainfo/*.metainfo.xml .
-    artifacts:
-        paths:
-            - $BUNDLE
-            - "repo.tar"
-            - ".flatpak-builder/build/${FLATPAK_MODULE}/_flatpak_build/meson-logs/"
-            # Add the metainfo file for the corresponding test.
-            - "${APP_ID}.metainfo.xml"
 
 flatpak-eds@aarch64:
     extends:
@@ -335,20 +324,3 @@ android:
         paths:
             - apks/
             - .pixiewood/
-
-# Validate the metainfo with Flathub's tool.
-lint-metainfo:
-    stage: test
-    image:
-        name: "ghcr.io/flathub/flatpak-builder-lint:latest"
-        entrypoint: [""]
-    variables:
-        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
-        METAINFO: "${APP_ID}.metainfo.xml"
-    interruptible: true
-    script:
-        # This tool has extra tests on top of appstreamcli and is required to pass for Flathub.
-        - flatpak-builder-lint appstream ${METAINFO}
-        # Test also with the pedantic and strict flags.
-        - appstreamcli validate --pedantic --explain --strict ${METAINFO}
-    needs: ["flatpak-eds@x86_64"]

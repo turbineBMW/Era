@@ -35,7 +35,14 @@ metainfo_file = i18n.merge_file(
 test(
     'Validate metainfo file',
     appstreamcli,
-    args: ['validate', '--no-net', '--explain', metainfo_file],
+    args: [
+        'validate',
+        '--pedantic',
+        '--no-net',
+        '--explain',
+        '--strict',
+        metainfo_file,
+    ],
 )
 
 gschema_conf = configuration_data()
