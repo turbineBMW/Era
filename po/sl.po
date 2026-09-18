@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-09-17 22:22+0000\n"
-"PO-Revision-Date: 2026-09-18 16:02+0200\n"
+"POT-Creation-Date: 2026-09-18 15:35+0000\n"
+"PO-Revision-Date: 2026-09-18 18:54+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
@@ -51,6 +51,23 @@ msgstr ""
 "načrtovanje. Vaši dogodki se lahko sinhronizirajo z večino spletnih "
 "ponudnikov, Era pa deluje brez prekinitev tudi takrat, ko niste povezani z "
 "internetom."
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:41
+#: data/resources/ui/views/month_view/month_view_inner.blp:14
+msgid "Month view"
+msgstr "Mesečni pogled"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:45
+msgid "Mobile month view"
+msgstr "Mobilni mesečni pogled"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:49
+msgid "Event details"
+msgstr "Podrobnosti dogodka"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:53
+msgid "Event editor"
+msgstr "Urejevalnik dogodkov"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:5
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:12
@@ -436,10 +453,6 @@ msgstr "Na ta dan ni dogodkov"
 #: data/resources/ui/window.blp:200
 msgid "_Today"
 msgstr "_Danes"
-
-#: data/resources/ui/views/month_view/month_view_inner.blp:14
-msgid "Month view"
-msgstr "Mesečni pogled"
 
 #: data/resources/ui/window.blp:20
 msgid "About Era"
