@@ -106,14 +106,18 @@ mod imp {
             let (minimum_event_height, natural_event_height, ..) =
                 obj.measure(gtk::Orientation::Vertical, width);
 
-            assert!(minimum_event_height <= height);
-
             let Some(event) = obj.event() else {
                 self.edge.set_child_visible(false);
                 self.name.set_child_visible(false);
                 self.time.set_child_visible(false);
                 return;
             };
+
+            assert!(
+                minimum_event_height <= height,
+                "event name: {}",
+                event.name().unwrap()
+            );
 
             self.edge.set_child_visible(true);
             // Allocate the full height to the edge, with the width it requests
@@ -284,6 +288,12 @@ mod imp {
         }
 
         #[template_callback]
+        fn open_details_if_contains(&self, _n_press: i32, x: f64, y: f64) {
+            if self.obj().contains(x, y) {
+                self.open_details();
+            }
+        }
+
         fn open_details(&self) {
             self.obj().grab_focus();
 

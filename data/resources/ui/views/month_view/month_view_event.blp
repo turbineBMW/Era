@@ -33,6 +33,6 @@ template $MonthViewEvent: Widget {
   }
 
   GestureClick {
-    released => $open_details(template);
+    released => $open_details_if_contains(template);
   }
 }
