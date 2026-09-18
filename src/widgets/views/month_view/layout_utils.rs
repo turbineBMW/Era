@@ -133,6 +133,7 @@ pub fn compute_event_segments(
                     as i64)
                 / SECONDS_PER_DAY;
 
+            let start_equals_end = start_unix_days == end_unix_days_inclusive;
             let ends_exactly_at_midnight = (end_unix_seconds
                 + timezone
                     .offset(timezone.find_interval(glib::TimeType::Universal, end_unix_seconds))
@@ -140,7 +141,7 @@ pub fn compute_event_segments(
                 % SECONDS_PER_DAY
                 == 0;
 
-            let end_unix_days_inclusive = if ends_exactly_at_midnight {
+            let end_unix_days_inclusive = if !start_equals_end && ends_exactly_at_midnight {
                 end_unix_days_inclusive - 1
             } else {
                 end_unix_days_inclusive
@@ -172,6 +173,12 @@ pub fn compute_event_segments(
 
             let column_start = first_day_offset.max(row_first_day_offset) - row_first_day_offset;
             let column_end = last_day_offset.min(row_last_day_offset) - row_first_day_offset;
+
+            assert!(
+                column_start <= column_end,
+                "event name: {}",
+                event.name().unwrap()
+            );
 
             let segment = EventSegment {
                 row_index,
