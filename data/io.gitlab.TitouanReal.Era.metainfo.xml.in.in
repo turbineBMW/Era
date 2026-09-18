@@ -35,6 +35,25 @@
         <color type="primary" scheme_preference="dark">#09636E</color>
     </branding>
 
+    <screenshots>
+        <screenshot type="default">
+            <image>https://gitlab.gnome.org/TitouanReal/era/raw/main/screenshots/month.png</image>
+            <caption>Month view</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://gitlab.gnome.org/TitouanReal/era/raw/main/screenshots/mobile-month.png</image>
+            <caption>Mobile month view</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://gitlab.gnome.org/TitouanReal/era/raw/main/screenshots/details.png</image>
+            <caption>Event details</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://gitlab.gnome.org/TitouanReal/era/raw/main/screenshots/editor.png</image>
+            <caption>Event editor</caption>
+        </screenshot>
+    </screenshots>
+
     <requires>
         <display_length compare="ge">360</display_length>
     </requires>
