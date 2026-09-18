@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-09-11 14:57+0000\n"
-"PO-Revision-Date: 2026-09-11 21:33+0300\n"
+"POT-Creation-Date: 2026-09-18 15:35+0000\n"
+"PO-Revision-Date: 2026-09-18 20:31+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -44,12 +44,31 @@ msgid ""
 "working without interruptions when you’re offline."
 msgstr ""
 "Era — це календар, що адаптується до ваших потреб: він простий і зручний для "
-"щоденного використання, але водночас відкриває доступ до потужних інструменті"
-"в, коли вони вам потрібні. Ви можете розмістити його у компактному вікні пору"
-"ч із іншими програмами для багатозадачності або розгорнути на весь екран для "
-"складного планування. Ваші події синхронізуються з більшістю інтернет-служб, "
-"а сама програма продовжує працювати без перебоїв навіть без доступу до інтерн"
-"ету."
+"щоденного використання, але водночас відкриває доступ до потужних "
+"інструментів, коли вони вам потрібні. Ви можете розмістити його у "
+"компактному вікні поруч із іншими програмами для багатозадачності або "
+"розгорнути на весь екран для складного планування. Ваші події "
+"синхронізуються з більшістю інтернет-служб, а сама програма продовжує "
+"працювати без перебоїв навіть без доступу до інтернету."
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:41
+#: data/resources/ui/views/month_view/month_view_inner.blp:14
+msgid "Month view"
+msgstr "Перегляд місяця"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:45
+#| msgid "Month view"
+msgid "Mobile month view"
+msgstr "Мобільний перегляд місяця"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:49
+#| msgid "Calendar details"
+msgid "Event details"
+msgstr "Подробиці щодо події"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:53
+msgid "Event editor"
+msgstr "Редактор подій"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:5
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:12
@@ -135,21 +154,21 @@ msgstr "Подробиці щодо помилки"
 msgid "Message"
 msgstr "Повідомлення"
 
-#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:15
-#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:32
+#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:12
+#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:31
 msgid "Edit Date"
 msgstr "Змінити дату"
 
-#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:21
-#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:112
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:20
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:108
 msgid "Edit Time"
 msgstr "Змінити час"
 
-#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:63
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:61
 msgid ":"
 msgstr ":"
 
-#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:100
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:97
 msgid "Change Timezone"
 msgstr "Змінити часовий пояс"
 
@@ -429,15 +448,12 @@ msgid "No events on this day"
 msgstr "Протягом цього дня подій немає"
 
 #: data/resources/ui/views/agenda_view/agenda_view.blp:80
-#: data/resources/ui/views/month_view/month_view_inner.blp:31
+#: data/resources/ui/views/month_view/month_view_floating_controls.blp:17
+#: data/resources/ui/views/year_view/year_view_floating_controls.blp:17
 #: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
 #: data/resources/ui/window.blp:200
 msgid "_Today"
 msgstr "_Сьогодні"
-
-#: data/resources/ui/views/month_view/month_view_inner.blp:15
-msgid "Month view"
-msgstr "Перегляд місяця"
 
 #: data/resources/ui/window.blp:20
 msgid "About Era"
@@ -864,7 +880,11 @@ msgstr ""
 "{month_start} {day_start}, {year_start}, {time_start} ({tz_start}) – "
 "{month_end} {day_end}, {year_end}, {time_end} ({tz_end})"
 
-#: src/widgets/window.rs:495 src/widgets/window.rs:504
+#: src/widgets/window.rs:496
+msgid "%Y"
+msgstr "%Y"
+
+#: src/widgets/window.rs:505 src/widgets/window.rs:514
 msgid "%0B %Y"
 msgstr "%0B %Y"
 
