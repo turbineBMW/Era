@@ -15,6 +15,26 @@
         </p>
     </description>
 
+    <keywords>
+        <keyword>calendar</keyword>
+        <keyword>calendaring</keyword>
+        <keyword>events</keyword>
+        <keyword>meetings</keyword>
+        <keyword>appointments</keyword>
+        <keyword>scheduling</keyword>
+        <keyword>planning</keyword>
+        <keyword>agenda</keyword>
+        <keyword>reminders</keyword>
+        <keyword>alarms</keyword>
+        <keyword translate="no">iCalendar</keyword>
+        <keyword translate="no">ics</keyword>
+        <keyword translate="no">CalDAV</keyword>
+        <keyword translate="no">WebDAV</keyword>
+        <keyword translate="no">Evolution</keyword>
+        <keyword translate="no">Nextcloud</keyword>
+        <keyword>Google Calendar</keyword>
+      </keywords>
+
     <developer id="io.gitlab.titouanreal">
         <name translate="no">Titouan Real</name>
     </developer>
@@ -64,21 +84,10 @@
         <control>touch</control>
     </supports>
 
-    <!-- <screenshots>
-        <screenshot type="default">
-        <image>https://example.org/example1.png</image>
-        <caption>A caption</caption>
-        </screenshot>
-        <screenshot>
-        <image>https://example.org/example2.png</image>
-        <caption>A caption</caption>
-        </screenshot>
-    </screenshots> -->
-
     <releases>
-        <release version="0.1.0" date="2025-08-15">
+        <release version="0.1.0" date="2026-09-20">
         <description>
-            <p>Nothing</p>
+            <p>The first beta release of Era.</p>
         </description>
         </release>
     </releases>
