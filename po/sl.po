@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-09-18 15:35+0000\n"
-"PO-Revision-Date: 2026-09-18 18:54+0200\n"
+"POT-Creation-Date: 2026-09-20 11:18+0000\n"
+"PO-Revision-Date: 2026-09-20 17:38+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
@@ -20,23 +20,23 @@ msgstr ""
 "n%100==4 ? 3 : 0);\n"
 "X-Generator: Poedit 3.8\n"
 
-#: data/io.gitlab.TitouanReal.Era.desktop.in.in:2
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:2
 msgid "@app-name@"
 msgstr "Era"
 
-#: data/io.gitlab.TitouanReal.Era.desktop.in.in:8
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:8
 msgid "GTK;"
 msgstr "GTK;"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
 msgid "Era"
 msgstr "Era"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
 msgid "Manage your time"
 msgstr "Upravljajte svoj čas"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
 msgid ""
 "Era is a calendar that grows with your needs - simple and calm for everyday "
 "use while revealing powerful tools when you need them. Use a small window "
@@ -52,20 +52,64 @@ msgstr ""
 "ponudnikov, Era pa deluje brez prekinitev tudi takrat, ko niste povezani z "
 "internetom."
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:41
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:19
+msgid "calendar"
+msgstr "koledar"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:20
+msgid "calendaring"
+msgstr "načrtovanje časa"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:21
+msgid "events"
+msgstr "dogodki"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:22
+msgid "meetings"
+msgstr "sestanki"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:23
+msgid "appointments"
+msgstr "srečanja"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:24
+msgid "scheduling"
+msgstr "časovno načrtovanje"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:25
+msgid "planning"
+msgstr "načrtovanje"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:26
+msgid "agenda"
+msgstr "dnevni red"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:27
+msgid "reminders"
+msgstr "opomniki"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:28
+msgid "alarms"
+msgstr "alarmi"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:35
+msgid "Google Calendar"
+msgstr "Koledar Google"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:61
 #: data/resources/ui/views/month_view/month_view_inner.blp:14
 msgid "Month view"
 msgstr "Mesečni pogled"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:45
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:65
 msgid "Mobile month view"
 msgstr "Mobilni mesečni pogled"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:49
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:69
 msgid "Event details"
 msgstr "Podrobnosti dogodka"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:53
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:73
 msgid "Event editor"
 msgstr "Urejevalnik dogodkov"
 
@@ -442,11 +486,11 @@ msgstr "Oddalji"
 msgid "Manage Calendars"
 msgstr "Upravljanje s koledarji"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:35
+#: data/resources/ui/views/agenda_view/agenda_view.blp:36
 msgid "No events on this day"
 msgstr "Na ta dan ni dogodkov"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:80
+#: data/resources/ui/views/agenda_view/agenda_view.blp:93
 #: data/resources/ui/views/month_view/month_view_floating_controls.blp:17
 #: data/resources/ui/views/year_view/year_view_floating_controls.blp:17
 #: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
