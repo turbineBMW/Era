@@ -13,10 +13,12 @@ use crate::{
 
 mod agenda_view_row;
 
+use self::agenda_view_row::AgendaViewRow;
+
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
+    #[derive(Debug, gtk::CompositeTemplate, glib::Properties)]
     #[template(file = "data/resources/ui/views/agenda_view/agenda_view.blp")]
     #[properties(wrapper_type = super::AgendaView)]
     pub struct AgendaView {
@@ -35,6 +37,27 @@ mod imp {
         floating_controls: TemplateChild<gtk::Box>,
     }
 
+    impl Default for AgendaView {
+        fn default() -> Self {
+            let application = Application::default();
+            let manager = application.manager();
+            let system = application.system();
+
+            let now = system.datetime();
+
+            let subscription = manager.new_subscription(&now, &now).unwrap();
+
+            Self {
+                date: RefCell::new(system.date()),
+                styling: Cell::new(Styling::default()),
+                subscription: OnceCell::from(subscription),
+                stack: TemplateChild::default(),
+                events: TemplateChild::default(),
+                floating_controls: TemplateChild::default(),
+            }
+        }
+    }
+
     #[glib::object_subclass]
     impl ObjectSubclass for AgendaView {
         const NAME: &'static str = "AgendaView";
@@ -42,6 +65,8 @@ mod imp {
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
+            AgendaViewRow::ensure_type();
+
             klass.bind_template();
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
@@ -58,32 +83,23 @@ mod imp {
             self.parent_constructed();
 
             let application = Application::default();
-            let manager = application.manager();
             let system = application.system();
 
-            let now = system.datetime();
-
-            let subscription = manager.new_subscription(&now, &now).unwrap();
-            self.subscription
-                .set(subscription.clone())
-                .expect("Subscription should not be initialized yet");
-
-            self.obj().set_date(system.date());
-
             self.events
-                .set_model(Some(&gtk::NoSelection::new(Some(subscription.clone()))));
-
-            subscription.connect_items_changed(clone!(
-                #[weak(rename_to = imp)]
-                self,
-                move |subscription, _, _, _| {
-                    if subscription.n_items() == 0 {
-                        imp.stack.set_visible_child_name("empty");
-                    } else {
-                        imp.stack.set_visible_child_name("events");
+                .model()
+                .unwrap()
+                .upcast::<gio::ListModel>()
+                .connect_items_changed(clone!(
+                    #[weak(rename_to = imp)]
+                    self,
+                    move |subscription, _, _, _| {
+                        if subscription.n_items() == 0 {
+                            imp.stack.set_visible_child_name("empty");
+                        } else {
+                            imp.stack.set_visible_child_name("events");
+                        }
                     }
-                }
-            ));
+                ));
 
             system.connect_datetime_notify(clone!(
                 #[weak(rename_to = imp)]
