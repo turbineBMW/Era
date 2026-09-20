@@ -1,97 +1,97 @@
 {
-  "id": "io.gitlab.TitouanReal.Era.P2panda.Devel",
-  "runtime": "org.gnome.Platform",
-  "runtime-version": "master",
-  "sdk": "org.gnome.Sdk",
-  "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
-  "command": "era",
-  "finish-args": [
-    "--share=ipc",
-    "--share=network",
-    "--device=dri",
-    "--socket=wayland",
-    "--system-talk-name=org.freedesktop.timedate1"
-  ],
-  "build-options": {
-    "append-path": "/usr/lib/sdk/rust-stable/bin",
-    "build-args": ["--share=network"],
-    "env": {
-      "RUST_BACKTRACE": "1",
-      "RUST_LOG": "era=debug"
-    }
-  },
-  "cleanup": [
-    "/include",
-    "/lib/pkgconfig",
-    "/man",
-    "/share/doc",
-    "/share/gtk-doc",
-    "/share/man",
-    "/share/pkgconfig",
-    "*.la",
-    "*.a"
-  ],
-  "modules": [
-    {
-      "name": "grass",
-      "buildsystem": "simple",
-      "build-options": {
+    "id": "io.gitlab.TitouanReal.Era.P2panda.Devel",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "master",
+    "sdk": "org.gnome.Sdk",
+    "command": "era",
+    "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
+    "finish-args": [
+        "--share=ipc",
+        "--share=network",
+        "--device=dri",
+        "--socket=wayland",
+        "--system-talk-name=org.freedesktop.timedate1"
+    ],
+    "cleanup": [
+        "/include",
+        "/lib/pkgconfig",
+        "/man",
+        "/share/doc",
+        "/share/gtk-doc",
+        "/share/man",
+        "/share/pkgconfig",
+        "*.la",
+        "*.a"
+    ],
+    "build-options": {
+        "append-path": "/usr/lib/sdk/rust-stable/bin",
+        "build-args": ["--share=network"],
         "env": {
-          "CARGO_HOME": "/run/build/grass/cargo"
+            "RUST_BACKTRACE": "1",
+            "RUST_LOG": "era=debug"
         }
-      },
-      "build-commands": [
-        "cargo build --release --locked",
-        "mkdir -p /app/bin",
-        "install -D ./target/release/grass /app/bin/"
-      ],
-      "cleanup": ["*"],
-      "sources": [
-        {
-          "type": "git",
-          "url": "https://github.com/connorskees/grass",
-          "tag": "0.13.4",
-          "commit": "e0bb9e2eabfc3a58e42b03089cd7b22c68d09d0b",
-          "disable-submodules": true
-        }
-      ]
     },
-    {
-      "name": "meson",
-      "buildsystem": "simple",
-      "build-commands": ["python3 setup.py install --prefix=/app"],
-      "cleanup": ["*"],
-      "sources": [
+    "modules": [
         {
-          "type": "git",
-          "url": "https://github.com/TitouanReal/meson",
-          "branch": "cargo-env"
-        }
-      ]
-    },
-    {
-      "name": "libclepsydre",
-      "buildsystem": "meson",
-      "sources": [
+            "name": "grass",
+            "buildsystem": "simple",
+            "build-options": {
+                "env": {
+                    "CARGO_HOME": "/run/build/grass/cargo"
+                }
+            },
+            "build-commands": [
+                "cargo build --release --locked",
+                "mkdir -p /app/bin",
+                "install -D ./target/release/grass /app/bin/"
+            ],
+            "cleanup": ["*"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/connorskees/grass",
+                    "tag": "0.13.4",
+                    "commit": "e0bb9e2eabfc3a58e42b03089cd7b22c68d09d0b",
+                    "disable-submodules": true
+                }
+            ]
+        },
         {
-          "type": "git",
-          "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-          "commit": "0d65b01d3e66d657137866ee836317d74753006c"
-        }
-      ],
-      "config-opts": ["-Dlibclepsydre=true", "-Dintrospection=true"]
-    },
-    {
-      "name": "era",
-      "builddir": true,
-      "buildsystem": "meson",
-      "sources": [
+            "name": "meson",
+            "buildsystem": "simple",
+            "build-commands": ["python3 setup.py install --prefix=/app"],
+            "cleanup": ["*"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/TitouanReal/meson",
+                    "branch": "cargo-env"
+                }
+            ]
+        },
         {
-          "type": "dir",
-          "path": "../"
+            "name": "libclepsydre",
+            "buildsystem": "meson",
+            "config-opts": ["-Dlibclepsydre=true", "-Dintrospection=true"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
+                    "commit": "0d65b01d3e66d657137866ee836317d74753006c"
+                }
+            ]
+        },
+        {
+            "name": "era",
+            "buildsystem": "meson",
+            "builddir": true,
+            "config-opts": ["-Dcalendar-backend=p2panda", "-Dplatform=flatpak"],
+            "sources": [
+                {
+                    "type": "dir",
+                    "path": "../"
+                }
+            ]
         }
-      ],
-      "config-opts": ["-Dcalendar-backend=p2panda", "-Dplatform=flatpak"]
-    }
-  ]
+    ]
 }
