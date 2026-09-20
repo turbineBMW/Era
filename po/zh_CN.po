@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-09-18 15:35+0000\n"
-"PO-Revision-Date: 2026-09-20 08:20+0800\n"
+"POT-Creation-Date: 2026-09-20 11:18+0000\n"
+"PO-Revision-Date: 2026-09-21 07:58+0800\n"
 "Last-Translator: lumingzh <lumingzh@qq.com>\n"
 "Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -18,23 +18,23 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Gtranslator 51.0\n"
 
-#: data/io.gitlab.TitouanReal.Era.desktop.in.in:2
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:2
 msgid "@app-name@"
 msgstr "@app-name@"
 
-#: data/io.gitlab.TitouanReal.Era.desktop.in.in:8
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:8
 msgid "GTK;"
 msgstr "GTK;"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
 msgid "Era"
 msgstr "纪元"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
 msgid "Manage your time"
 msgstr "管理您的时间"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
 msgid ""
 "Era is a calendar that grows with your needs - simple and calm for everyday "
 "use while revealing powerful tools when you need them. Use a small window "
@@ -46,20 +46,64 @@ msgstr ""
 "强大工具。使用与其他应用并排的小窗口进行多任务或全屏状态下进行复杂规划。您的"
 "事件可与大部分在线供应商同步，且“纪元”可在您离线时无缝持续工作。"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:41
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:19
+msgid "calendar"
+msgstr "日历"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:20
+msgid "calendaring"
+msgstr "日程安排"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:21
+msgid "events"
+msgstr "事件"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:22
+msgid "meetings"
+msgstr "会议"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:23
+msgid "appointments"
+msgstr "约会"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:24
+msgid "scheduling"
+msgstr "计划安排"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:25
+msgid "planning"
+msgstr "计划制订"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:26
+msgid "agenda"
+msgstr "议程"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:27
+msgid "reminders"
+msgstr "提醒"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:28
+msgid "alarms"
+msgstr "闹钟"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:35
+msgid "Google Calendar"
+msgstr "谷歌日历"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:61
 #: data/resources/ui/views/month_view/month_view_inner.blp:14
 msgid "Month view"
 msgstr "月视图"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:45
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:65
 msgid "Mobile month view"
 msgstr "移动设备月视图"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:49
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:69
 msgid "Event details"
 msgstr "事件详情"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:53
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:73
 msgid "Event editor"
 msgstr "事件编辑器"
 
@@ -434,11 +478,11 @@ msgstr "缩小"
 msgid "Manage Calendars"
 msgstr "管理日历"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:35
+#: data/resources/ui/views/agenda_view/agenda_view.blp:36
 msgid "No events on this day"
 msgstr "这天没有事件"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:80
+#: data/resources/ui/views/agenda_view/agenda_view.blp:93
 #: data/resources/ui/views/month_view/month_view_floating_controls.blp:17
 #: data/resources/ui/views/year_view/year_view_floating_controls.blp:17
 #: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
