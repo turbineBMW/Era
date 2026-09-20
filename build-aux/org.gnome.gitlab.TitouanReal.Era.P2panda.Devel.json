@@ -1,5 +1,5 @@
 {
-    "id": "io.gitlab.TitouanReal.Era.Mock.Devel",
+    "id": "org.gnome.gitlab.TitouanReal.Era.P2panda.Devel",
     "runtime": "org.gnome.Platform",
     "runtime-version": "master",
     "sdk": "org.gnome.Sdk",
@@ -7,6 +7,7 @@
     "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
     "finish-args": [
         "--share=ipc",
+        "--share=network",
         "--device=dri",
         "--socket=wayland",
         "--system-talk-name=org.freedesktop.timedate1"
@@ -84,7 +85,7 @@
             "name": "era",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Dcalendar-backend=mock", "-Dplatform=flatpak"],
+            "config-opts": ["-Dcalendar-backend=p2panda", "-Dplatform=flatpak"],
             "sources": [
                 {
                     "type": "dir",

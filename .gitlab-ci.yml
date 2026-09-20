@@ -9,20 +9,20 @@ variables:
 
 .eds:
     variables:
-        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
-        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
+        MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Eds.Devel.json"
+        APP_ID: "org.gnome.gitlab.TitouanReal.Era.Eds.Devel"
         BUNDLE: "era-eds-nightly.flatpak"
 
 .mock:
     variables:
-        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Mock.Devel.json"
-        APP_ID: "io.gitlab.TitouanReal.Era.Mock.Devel"
+        MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Mock.Devel.json"
+        APP_ID: "org.gnome.gitlab.TitouanReal.Era.Mock.Devel"
         BUNDLE: "era-mock-nightly.flatpak"
 
 .p2panda:
     variables:
-        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.P2panda.Devel.json"
-        APP_ID: "io.gitlab.TitouanReal.Era.P2panda.Devel"
+        MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.P2panda.Devel.json"
+        APP_ID: "org.gnome.gitlab.TitouanReal.Era.P2panda.Devel"
         BUNDLE: "era-p2panda-nightly.flatpak"
 
 .rust-stable@x86_64:
@@ -55,8 +55,8 @@ cargo-fmt:
     tags:
         - flatpak
     variables:
-        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
-        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
+        MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Eds.Devel.json"
+        APP_ID: "org.gnome.gitlab.TitouanReal.Era.Eds.Devel"
         COMMAND: "cargo fmt"
     script:
         - flatpak install --user org.freedesktop.Sdk.Extension.rust-stable/x86_64/26.08 -y
@@ -71,8 +71,8 @@ cargo-clippy:
     tags:
         - flatpak
     variables:
-        MANIFEST_PATH: "build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json"
-        APP_ID: "io.gitlab.TitouanReal.Era.Eds.Devel"
+        MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Eds.Devel.json"
+        APP_ID: "org.gnome.gitlab.TitouanReal.Era.Eds.Devel"
         COMMAND: "cargo clippy -- -D warnings"
     script:
         - flatpak install --user org.freedesktop.Sdk.Extension.rust-stable/x86_64/26.08 -y

@@ -100,7 +100,7 @@ elif backend == 'p2panda'
     backend_name = 'P2panda'
 endif
 
-base_id = 'io.gitlab.TitouanReal.' + application_name
+base_id = 'org.gnome.gitlab.TitouanReal.' + application_name
 application_id = base_id + '.' + backend_name
 version = meson.project_version()
 

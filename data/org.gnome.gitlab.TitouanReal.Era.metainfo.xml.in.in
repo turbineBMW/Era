@@ -35,7 +35,7 @@
         <keyword>Google Calendar</keyword>
       </keywords>
 
-    <developer id="io.gitlab.titouanreal">
+    <developer id="org.gnome.gitlab.titouanreal">
         <name translate="no">Titouan Real</name>
     </developer>
 

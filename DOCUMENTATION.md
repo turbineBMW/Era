@@ -75,11 +75,11 @@ For native (non-Flatpak) development you need the Clepsydre C libraries installe
 just install-clepsydre
 ```
 
-This reads the exact commit pinned in the Flatpak manifest (`build-aux/io.gitlab.TitouanReal.Era.Devel.json`), clones the Clepsydre repo, builds `libclepsydre` and `libclepsydre-eds` (or other backends) with Meson, and installs them under `/usr`.
+This reads the exact commit pinned in the Flatpak manifest (`build-aux/org.gnome.gitlab.TitouanReal.Era.Devel.json`), clones the Clepsydre repo, builds `libclepsydre` and `libclepsydre-eds` (or other backends) with Meson, and installs them under `/usr`.
 
 ### Flatpak (development)
 
-The Flatpak manifest lives at `build-aux/io.gitlab.TitouanReal.Era.Devel.json`. It pulls libical, Evolution Data Server, and Clepsydre as module dependencies before building Era itself. Use GNOME Builder or `flatpak-builder` as usual.
+The Flatpak manifest lives at `build-aux/org.gnome.gitlab.TitouanReal.Era.Devel.json`. It pulls libical, Evolution Data Server, and Clepsydre as module dependencies before building Era itself. Use GNOME Builder or `flatpak-builder` as usual.
 
 ### Native build
 

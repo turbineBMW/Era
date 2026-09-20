@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="data/icons/io.gitlab.TitouanReal.Era.svg" width="128" height="128">
+  <img src="data/icons/org.gnome.gitlab.TitouanReal.Era.svg" width="128" height="128">
     
   # Era
 

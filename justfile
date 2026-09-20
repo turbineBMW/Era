@@ -1,4 +1,4 @@
-commit := `jq -r '.modules[] | select(.name == "libclepsydre-eds") | .sources[] | select(.type == "git") | .commit' build-aux/io.gitlab.TitouanReal.Era.Eds.Devel.json`
+commit := `jq -r '.modules[] | select(.name == "libclepsydre-eds") | .sources[] | select(.type == "git") | .commit' build-aux/org.gnome.gitlab.TitouanReal.Era.Eds.Devel.json`
 clepsydre_build_dir := "/tmp/build-clepsydre"
 clepsydre_eds_build_dir := "/tmp/build-eds"
 

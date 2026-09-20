@@ -8,7 +8,7 @@
             xmlns="https://specifications.freedesktop.org/metainfo/1.0"
             type="desktop"
         >
-			<id>io.gitlab.TitouanReal.Era</id>
+			<id>org.gnome.gitlab.TitouanReal.Era</id>
 			<name>Era</name>
 			<releases>
 				<release version="0.1.0">
@@ -26,14 +26,14 @@
                 target="foreground"
                 scale=".5"
                 type="svg"
-                path="src://data/icons/io.gitlab.TitouanReal.Era.Android.svg"
+                path="src://data/icons/org.gnome.gitlab.TitouanReal.Era.Android.svg"
             />
 			<color target="background">#FFFFFF</color>
 			<drawable
                 target="monochrome"
                 scale=".5"
                 type="svg"
-                path="src://data/icons/io.gitlab.TitouanReal.Era-symbolic.svg"
+                path="src://data/icons/org.gnome.gitlab.TitouanReal.Era-symbolic.svg"
             />
 		</icon>
 	</style>
