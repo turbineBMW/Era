@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-09-11 14:57+0000\n"
-"PO-Revision-Date: 2026-09-12 07:38+0800\n"
+"POT-Creation-Date: 2026-09-18 15:35+0000\n"
+"PO-Revision-Date: 2026-09-20 08:20+0800\n"
 "Last-Translator: lumingzh <lumingzh@qq.com>\n"
 "Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Gtranslator 50.0\n"
+"X-Generator: Gtranslator 51.0\n"
 
 #: data/io.gitlab.TitouanReal.Era.desktop.in.in:2
 msgid "@app-name@"
@@ -45,6 +45,23 @@ msgstr ""
 "“纪元”是一款跟随您需求成长的日历——简约且易于日常使用的同时也能在您需要时显露"
 "强大工具。使用与其他应用并排的小窗口进行多任务或全屏状态下进行复杂规划。您的"
 "事件可与大部分在线供应商同步，且“纪元”可在您离线时无缝持续工作。"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:41
+#: data/resources/ui/views/month_view/month_view_inner.blp:14
+msgid "Month view"
+msgstr "月视图"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:45
+msgid "Mobile month view"
+msgstr "移动设备月视图"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:49
+msgid "Event details"
+msgstr "事件详情"
+
+#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:53
+msgid "Event editor"
+msgstr "事件编辑器"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:5
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:12
@@ -130,21 +147,21 @@ msgstr "错误详情"
 msgid "Message"
 msgstr "消息"
 
-#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:15
-#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:32
+#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:12
+#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:31
 msgid "Edit Date"
 msgstr "编辑日期"
 
-#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:21
-#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:112
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:20
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:108
 msgid "Edit Time"
 msgstr "编辑时间"
 
-#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:63
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:61
 msgid ":"
 msgstr ":"
 
-#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:100
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:97
 msgid "Change Timezone"
 msgstr "更改时区"
 
@@ -422,15 +439,12 @@ msgid "No events on this day"
 msgstr "这天没有事件"
 
 #: data/resources/ui/views/agenda_view/agenda_view.blp:80
-#: data/resources/ui/views/month_view/month_view_inner.blp:31
+#: data/resources/ui/views/month_view/month_view_floating_controls.blp:17
+#: data/resources/ui/views/year_view/year_view_floating_controls.blp:17
 #: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
 #: data/resources/ui/window.blp:200
 msgid "_Today"
 msgstr "今天(_T)"
-
-#: data/resources/ui/views/month_view/month_view_inner.blp:15
-msgid "Month view"
-msgstr "月视图"
 
 #: data/resources/ui/window.blp:20
 msgid "About Era"
@@ -553,144 +567,144 @@ msgstr "周日"
 
 #: src/utils/template_callbacks.rs:149 src/utils/template_callbacks.rs:217
 msgid "january"
-msgstr "一月"
+msgstr "01月"
 
 #: src/utils/template_callbacks.rs:150 src/utils/template_callbacks.rs:218
 msgid "february"
-msgstr "二月"
+msgstr "02月"
 
 #: src/utils/template_callbacks.rs:151 src/utils/template_callbacks.rs:219
 msgid "march"
-msgstr "三月"
+msgstr "03月"
 
 #: src/utils/template_callbacks.rs:152 src/utils/template_callbacks.rs:220
 msgid "april"
-msgstr "四月"
+msgstr "04月"
 
 #: src/utils/template_callbacks.rs:153 src/utils/template_callbacks.rs:221
 msgid "may"
-msgstr "五月"
+msgstr "05月"
 
 #: src/utils/template_callbacks.rs:154 src/utils/template_callbacks.rs:222
 msgid "june"
-msgstr "六月"
+msgstr "06月"
 
 #: src/utils/template_callbacks.rs:155 src/utils/template_callbacks.rs:223
 msgid "july"
-msgstr "七月"
+msgstr "07月"
 
 #: src/utils/template_callbacks.rs:156 src/utils/template_callbacks.rs:224
 msgid "august"
-msgstr "八月"
+msgstr "08月"
 
 #: src/utils/template_callbacks.rs:157 src/utils/template_callbacks.rs:225
 msgid "september"
-msgstr "九月"
+msgstr "09月"
 
 #: src/utils/template_callbacks.rs:158 src/utils/template_callbacks.rs:226
 msgid "october"
-msgstr "十月"
+msgstr "10月"
 
 #: src/utils/template_callbacks.rs:159 src/utils/template_callbacks.rs:227
 msgid "november"
-msgstr "十一月"
+msgstr "11月"
 
 #: src/utils/template_callbacks.rs:160 src/utils/template_callbacks.rs:228
 msgid "december"
-msgstr "十二月"
+msgstr "12月"
 
 #: src/utils/template_callbacks.rs:170
 msgid "January"
-msgstr "一月"
+msgstr "01月"
 
 #: src/utils/template_callbacks.rs:171
 msgid "February"
-msgstr "二月"
+msgstr "02月"
 
 #: src/utils/template_callbacks.rs:172
 msgid "March"
-msgstr "三月"
+msgstr "03月"
 
 #: src/utils/template_callbacks.rs:173
 msgid "April"
-msgstr "四月"
+msgstr "04月"
 
 #: src/utils/template_callbacks.rs:174 src/utils/template_callbacks.rs:195
 #: src/utils/template_callbacks.rs:241
 msgid "May"
-msgstr "五月"
+msgstr "05月"
 
 #: src/utils/template_callbacks.rs:175
 msgid "June"
-msgstr "六月"
+msgstr "06月"
 
 #: src/utils/template_callbacks.rs:176
 msgid "July"
-msgstr "七月"
+msgstr "07月"
 
 #: src/utils/template_callbacks.rs:177
 msgid "August"
-msgstr "八月"
+msgstr "08月"
 
 #: src/utils/template_callbacks.rs:178
 msgid "September"
-msgstr "九月"
+msgstr "09月"
 
 #: src/utils/template_callbacks.rs:179
 msgid "October"
-msgstr "十月"
+msgstr "10月"
 
 #: src/utils/template_callbacks.rs:180
 msgid "November"
-msgstr "十一月"
+msgstr "11月"
 
 #: src/utils/template_callbacks.rs:181
 msgid "December"
-msgstr "十二月"
+msgstr "12月"
 
 #: src/utils/template_callbacks.rs:191 src/utils/template_callbacks.rs:237
 msgid "Jan"
-msgstr "一月"
+msgstr "01月"
 
 #: src/utils/template_callbacks.rs:192 src/utils/template_callbacks.rs:238
 msgid "Feb"
-msgstr "二月"
+msgstr "02月"
 
 #: src/utils/template_callbacks.rs:193 src/utils/template_callbacks.rs:239
 msgid "Mar"
-msgstr "三月"
+msgstr "03月"
 
 #: src/utils/template_callbacks.rs:194 src/utils/template_callbacks.rs:240
 msgid "Apr"
-msgstr "四月"
+msgstr "04月"
 
 #: src/utils/template_callbacks.rs:196 src/utils/template_callbacks.rs:242
 msgid "Jun"
-msgstr "六月"
+msgstr "06月"
 
 #: src/utils/template_callbacks.rs:197 src/utils/template_callbacks.rs:243
 msgid "Jul"
-msgstr "七月"
+msgstr "07月"
 
 #: src/utils/template_callbacks.rs:198 src/utils/template_callbacks.rs:244
 msgid "Aug"
-msgstr "八月"
+msgstr "08月"
 
 #: src/utils/template_callbacks.rs:199 src/utils/template_callbacks.rs:245
 msgid "Sep"
-msgstr "九月"
+msgstr "09月"
 
 #: src/utils/template_callbacks.rs:200 src/utils/template_callbacks.rs:246
 msgid "Oct"
-msgstr "十月"
+msgstr "10月"
 
 #: src/utils/template_callbacks.rs:201 src/utils/template_callbacks.rs:247
 msgid "Nov"
-msgstr "十一月"
+msgstr "11月"
 
 #: src/utils/template_callbacks.rs:202 src/utils/template_callbacks.rs:248
 msgid "Dec"
-msgstr "十二月"
+msgstr "12月"
 
 #: src/utils/timeframe_label.rs:80
 msgid "Yesterday"
@@ -709,7 +723,7 @@ msgstr "明天"
 #: src/utils/timeframe_label.rs:91
 #, rust-format
 msgid "{month} {day}"
-msgstr "{month} {day}"
+msgstr "{month}{day}日"
 
 #. TRANSLATORS: date of a single all-day event.
 #. {month} is the month name (e.g. "June"), {day} is the day number (e.g. "12"),
@@ -717,7 +731,7 @@ msgstr "{month} {day}"
 #: src/utils/timeframe_label.rs:99
 #, rust-format
 msgid "{month} {day}, {year}"
-msgstr "{year} {month} {day}"
+msgstr "{year}年{month}{day}日"
 
 #. e.g. "June 12 – 15"
 #. TRANSLATORS: all-day event range within the same month of the current year.
@@ -725,7 +739,7 @@ msgstr "{year} {month} {day}"
 #: src/utils/timeframe_label.rs:112
 #, rust-format
 msgid "{month} {day_start} – {day_end}"
-msgstr "{month} {day_start} – {day_end}"
+msgstr "{month}{day_start}日 – {day_end}日"
 
 #. e.g. "June 12 – 15, 2025"
 #. TRANSLATORS: all-day event range within the same month of a past or future year.
@@ -733,7 +747,7 @@ msgstr "{month} {day_start} – {day_end}"
 #: src/utils/timeframe_label.rs:121
 #, rust-format
 msgid "{month} {day_start} – {day_end}, {year}"
-msgstr "{year} {month} {day_start} – {day_end}"
+msgstr "{year}年{month}{day_start}日 – {day_end}日"
 
 #. e.g. "June 12 – July 3"
 #. TRANSLATORS: all-day event range spanning different months in the current year.
@@ -741,7 +755,7 @@ msgstr "{year} {month} {day_start} – {day_end}"
 #: src/utils/timeframe_label.rs:135
 #, rust-format
 msgid "{month_start} {day_start} – {month_end} {day_end}"
-msgstr "{month_start} {day_start} – {month_end} {day_end}"
+msgstr "{month_start}{day_start}日 – {month_end}{day_end}日"
 
 #. e.g. "June 12 – July 3, 2025"
 #. TRANSLATORS: all-day event range spanning different months in a past or future year.
@@ -750,7 +764,7 @@ msgstr "{month_start} {day_start} – {month_end} {day_end}"
 #: src/utils/timeframe_label.rs:150
 #, rust-format
 msgid "{month_start} {day_start} – {month_end} {day_end}, {year}"
-msgstr "{year} {month_start} {day_start} – {month_end} {day_end}"
+msgstr "{year}年{month_start}{day_start}日 – {month_end}{day_end}日"
 
 #. e.g. "June 12, 2024 – January 3, 2025"
 #. TRANSLATORS: all-day event range spanning different years.
@@ -761,7 +775,7 @@ msgstr "{year} {month_start} {day_start} – {month_end} {day_end}"
 msgid ""
 "{month_start} {day_start}, {year_start} – {month_end} {day_end}, {year_end}"
 msgstr ""
-"{year_start} {month_start} {day_start} – {year_end} {month_end} {day_end}"
+"{year_start}年{month_start}{day_start}日 – {year_end}年{month_end}{day_end}日"
 
 #. e.g. "June 12, 14:00 – 15:30"
 #. TRANSLATORS: timed event on a single day, system timezone (not shown).
@@ -769,7 +783,7 @@ msgstr ""
 #: src/utils/timeframe_label.rs:233
 #, rust-format
 msgid "{month} {day}, {time_start} – {time_end}"
-msgstr "{month} {day}，{time_start} – {time_end}"
+msgstr "{month}{day}日，{time_start} – {time_end}"
 
 #. e.g. "June 12, 14:00 (America/New_York) – 15:30 (Europe/Paris)"
 #. TRANSLATORS: timed event on a single day, each time in a different non-system
@@ -778,7 +792,7 @@ msgstr "{month} {day}，{time_start} – {time_end}"
 #: src/utils/timeframe_label.rs:244
 #, rust-format
 msgid "{month} {day}, {time_start} ({tz_start}) – {time_end} ({tz_end})"
-msgstr "{month} {day}，{time_start}（{tz_start}）– {time_end}（{tz_end}）"
+msgstr "{month}{day}日，{time_start}（{tz_start}）– {time_end}（{tz_end}）"
 
 #. e.g. "June 12, 14:00 – July 3, 15:30"
 #. TRANSLATORS: timed event spanning months within the current year, system timezone.
@@ -789,7 +803,7 @@ msgstr "{month} {day}，{time_start}（{tz_start}）– {time_end}（{tz_end}）
 msgid ""
 "{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}"
 msgstr ""
-"{month_start} {day_start}，{time_start} – {month_end} {day_end}，{time_end}"
+"{month_start}{day_start}日，{time_start} – {month_end}{day_end}日，{time_end}"
 
 #. e.g. "June 12, 14:00 (America/New_York) – July 3, 15:30 (Europe/Paris)"
 #. TRANSLATORS: cross-month current-year range; each time in a different non-system
@@ -801,8 +815,8 @@ msgid ""
 "{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} "
 "{day_end}, {time_end} ({tz_end})"
 msgstr ""
-"{month_start} {day_start}，{time_start}（{tz_start}）– {month_end} "
-"{day_end}，{time_end}（{tz_end}）"
+"{month_start}{day_start}日，{time_start}（{tz_start}）– {month_end}{day_end}"
+"日，{time_end}（{tz_end}）"
 
 #. e.g. "June 12, 14:00 – July 3, 15:30, 2025"
 #. TRANSLATORS: timed event spanning months within a past or future year, system
@@ -814,7 +828,7 @@ msgid ""
 "{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}, "
 "{year}"
 msgstr ""
-"{year} {month_start} {day_start}，{time_start} – {month_end} {day_end}，"
+"{year}年{month_start}{day_start}日，{time_start} – {month_end}{day_end}日，"
 "{time_end}"
 
 #. e.g. "June 12, 14:00 (America/New_York) – July 3, 15:30 (Europe/Paris), 2025"
@@ -827,8 +841,8 @@ msgid ""
 "{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} "
 "{day_end}, {time_end} ({tz_end}), {year}"
 msgstr ""
-"{year} {month_start} {day_start}，{time_start}（{tz_start}）– {month_end} "
-"{day_end}，{time_end}（{tz_end}）"
+"{year}年{month_start}{day_start}日，{time_start}（{tz_start}）– {month_end}"
+"{day_end}日，{time_end}（{tz_end}）"
 
 #. e.g. "June 12, 2024, 14:00 – January 3, 2025, 15:30"
 #. TRANSLATORS: timed event spanning different years, system timezone.
@@ -840,8 +854,8 @@ msgid ""
 "{month_start} {day_start}, {year_start}, {time_start} – {month_end} "
 "{day_end}, {year_end}, {time_end}"
 msgstr ""
-"{year_start} {month_start} {day_start}，{time_start} – {year_end} "
-"{month_end} {day_end}，{time_end}"
+"{year_start}年{month_start}{day_start}日，{time_start} – {year_end}年"
+"{month_end}{day_end}日，{time_end}"
 
 #. e.g. "June 12, 2024, 14:00 (America/New_York) – January 3, 2025, 15:30
 #. (Europe/Paris)" TRANSLATORS: different-year range; each time in a
@@ -854,10 +868,14 @@ msgid ""
 "{month_start} {day_start}, {year_start}, {time_start} ({tz_start}) – "
 "{month_end} {day_end}, {year_end}, {time_end} ({tz_end})"
 msgstr ""
-"{year_start} {month_start} {day_start}，{time_start}（{tz_start}）– "
-"{year_end} {month_end} {day_end}，{time_end}（{tz_end}）"
+"{year_start}年{month_start}{day_start}日，{time_start}（{tz_start}）– "
+"{year_end}年{month_end}{day_end}日，{time_end}（{tz_end}）"
 
-#: src/widgets/window.rs:495 src/widgets/window.rs:504
+#: src/widgets/window.rs:496
+msgid "%Y"
+msgstr "%Y年"
+
+#: src/widgets/window.rs:505 src/widgets/window.rs:514
 msgid "%0B %Y"
 msgstr "%Y年%-m月"
 
