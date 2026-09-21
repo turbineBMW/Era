@@ -132,7 +132,7 @@ iconsdir = datadir / 'icons'
 podir = meson.project_source_root() / 'po'
 gettext_package = meson.project_name()
 
-if get_option('buildtype') == 'debug'
+if get_option('release-type') == 'devel'
     application_id += '.Devel'
 endif
 

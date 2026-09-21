@@ -145,7 +145,7 @@
             "name": "era",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Dcalendar-backend=eds", "-Dplatform=flatpak"],
+            "config-opts": ["-Dcalendar-backend=eds", "-Dplatform=flatpak", "-Drelease-type=devel"],
             "sources": [
                 {
                     "type": "dir",
