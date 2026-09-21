@@ -5,7 +5,7 @@ conf.set_quoted('APP_ID', application_id)
 conf.set_quoted('APP_NAME', application_name)
 conf.set_quoted('BASE_RESOURCE_PATH', base_resource_path)
 conf.set_quoted('GETTEXT_PACKAGE', gettext_package)
-conf.set_quoted('LOCALEDIR', prefix / get_option('localedir'))
+conf.set_quoted('LOCALEDIR', localedir)
 conf.set_quoted('PROJECT_NAME', meson.project_name())
 conf.set_quoted('VERSION', full_version)
 
