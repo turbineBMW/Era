@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-09-18 15:35+0000\n"
-"PO-Revision-Date: 2026-09-18 20:31+0300\n"
+"POT-Creation-Date: 2026-09-20 11:18+0000\n"
+"PO-Revision-Date: 2026-09-21 19:05+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -19,23 +19,23 @@ msgstr ""
 "2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Lokalize 25.12.1\n"
 
-#: data/io.gitlab.TitouanReal.Era.desktop.in.in:2
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:2
 msgid "@app-name@"
 msgstr "@app-name@"
 
-#: data/io.gitlab.TitouanReal.Era.desktop.in.in:8
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:8
 msgid "GTK;"
 msgstr "GTK;"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
 msgid "Era"
 msgstr "Era"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
 msgid "Manage your time"
 msgstr "Керування вашим часом"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
 msgid ""
 "Era is a calendar that grows with your needs - simple and calm for everyday "
 "use while revealing powerful tools when you need them. Use a small window "
@@ -51,22 +51,69 @@ msgstr ""
 "синхронізуються з більшістю інтернет-служб, а сама програма продовжує "
 "працювати без перебоїв навіть без доступу до інтернету."
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:41
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:19
+#| msgid "Calendar"
+msgid "calendar"
+msgstr "календар"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:20
+#| msgid "Calendar"
+msgid "calendaring"
+msgstr "ведення календаря"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:21
+#| msgid "Event"
+msgid "events"
+msgstr "події"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:22
+msgid "meetings"
+msgstr "зібрання"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:23
+msgid "appointments"
+msgstr "зустрічі"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:24
+msgid "scheduling"
+msgstr "ведення розкладів"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:25
+msgid "planning"
+msgstr "планування"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:26
+#| msgid "Agenda"
+msgid "agenda"
+msgstr "порядок денний"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:27
+msgid "reminders"
+msgstr "нагадування"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:28
+msgid "alarms"
+msgstr "будильники"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:35
+#| msgid "No Calendar"
+msgid "Google Calendar"
+msgstr "Календар Google"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:61
 #: data/resources/ui/views/month_view/month_view_inner.blp:14
 msgid "Month view"
 msgstr "Перегляд місяця"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:45
-#| msgid "Month view"
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:65
 msgid "Mobile month view"
 msgstr "Мобільний перегляд місяця"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:49
-#| msgid "Calendar details"
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:69
 msgid "Event details"
 msgstr "Подробиці щодо події"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:53
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:73
 msgid "Event editor"
 msgstr "Редактор подій"
 
@@ -443,11 +490,11 @@ msgstr "Зменшити"
 msgid "Manage Calendars"
 msgstr "Керування календарями"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:35
+#: data/resources/ui/views/agenda_view/agenda_view.blp:36
 msgid "No events on this day"
 msgstr "Протягом цього дня подій немає"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:80
+#: data/resources/ui/views/agenda_view/agenda_view.blp:93
 #: data/resources/ui/views/month_view/month_view_floating_controls.blp:17
 #: data/resources/ui/views/year_view/year_view_floating_controls.blp:17
 #: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
