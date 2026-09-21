@@ -37,7 +37,24 @@ era_deps += dependency(
     },
 )
 
-if backend == 'android'
+if backend == 'flatpak-release-set'
+    era_deps += dependency(
+        'clepsydre-eds-0',
+        version: '>= 0.1',
+        default_options: {
+            'libclepsydre-eds': true,
+            'introspection': true,
+        },
+    )
+    # TODO: Remove this once Meson handles git dependencies better
+    era_deps += dependency(
+        'clepsydre-eds-0.1-rs',
+        version: '>= 0.1',
+        default_options: {
+            'clepsydre-eds': true,
+        },
+    )
+elif backend == 'android'
     # TODO: Remove this once Meson handles git dependencies better
     era_deps += dependency(
         'clepsydre-android-0.1-rs',
