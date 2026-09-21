@@ -88,20 +88,22 @@ compile_schemas = find_program('glib-compile-schemas', required: true)
 desktop_file_validate = find_program('desktop-file-validate', required: true)
 
 application_name = 'Era'
-base_resource_path = '/io/gitlab/TitouanReal/' + application_name
-
-if backend == 'android'
-    backend_name = 'Android'
-elif backend == 'eds'
-    backend_name = 'Eds'
-elif backend == 'mock'
-    backend_name = 'Mock'
-elif backend == 'p2panda'
-    backend_name = 'P2panda'
-endif
+base_resource_path = '/io/gitlab/TitouanReal/' + application_name + '/'
 
 base_id = 'org.gnome.gitlab.TitouanReal.' + application_name
-application_id = base_id + '.' + backend_name
+
+if backend == 'flatpak-release-set'
+    application_id = base_id
+elif backend == 'android'
+    application_id = base_id + '.Android'
+elif backend == 'eds'
+    application_id = base_id + '.Eds'
+elif backend == 'mock'
+    application_id = base_id + '.Mock'
+elif backend == 'p2panda'
+    application_id = base_id + '.P2panda'
+endif
+
 version = meson.project_version()
 
 prefix = get_option('prefix')
@@ -123,7 +125,9 @@ subdir('po')
 
 features = []
 
-if backend == 'android'
+if backend == 'flatpak-release-set'
+    features += 'backend-eds'
+elif backend == 'android'
     features += 'backend-android'
 elif backend == 'eds'
     features += 'backend-eds'
