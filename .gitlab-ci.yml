@@ -11,19 +11,19 @@ variables:
     variables:
         MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Eds.Devel.json"
         APP_ID: "org.gnome.gitlab.TitouanReal.Era.Eds.Devel"
-        BUNDLE: "era-eds-nightly.flatpak"
+        BUNDLE: "era-eds-devel.flatpak"
 
 .mock:
     variables:
         MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Mock.Devel.json"
         APP_ID: "org.gnome.gitlab.TitouanReal.Era.Mock.Devel"
-        BUNDLE: "era-mock-nightly.flatpak"
+        BUNDLE: "era-mock-devel.flatpak"
 
 .p2panda:
     variables:
         MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.P2panda.Devel.json"
         APP_ID: "org.gnome.gitlab.TitouanReal.Era.P2panda.Devel"
-        BUNDLE: "era-p2panda-nightly.flatpak"
+        BUNDLE: "era-p2panda-devel.flatpak"
 
 .rust-stable@x86_64:
     before_script:
@@ -32,17 +32,6 @@ variables:
 .rust-stable@aarch64:
     before_script:
         - flatpak install flathub org.freedesktop.Sdk.Extension.rust-stable/aarch64/26.08 --user -y
-
-.aarch64-rules:
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: on_success
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
-      allow_failure: true
-    - if: $CI_COMMIT_BRANCH
-      when: manual
-      allow_failure: true
 
 stages:
     - check
@@ -54,6 +43,7 @@ cargo-fmt:
     stage: check
     tags:
         - flatpak
+    interruptible: true
     variables:
         MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Eds.Devel.json"
         APP_ID: "org.gnome.gitlab.TitouanReal.Era.Eds.Devel"
@@ -63,13 +53,13 @@ cargo-fmt:
         - flatpak-builder --user --disable-rofiles-fuse --keep-build-dirs --stop-at=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
         - flatpak build-finish --share=network flatpak_app
         - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
-    interruptible: true
 
 cargo-clippy:
     image: "${RUNTIME_IMAGE}"
     stage: check
     tags:
         - flatpak
+    interruptible: true
     variables:
         MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Eds.Devel.json"
         APP_ID: "org.gnome.gitlab.TitouanReal.Era.Eds.Devel"
@@ -79,7 +69,6 @@ cargo-clippy:
         - flatpak-builder --user --disable-rofiles-fuse --keep-build-dirs --stop-at=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
         - flatpak build-finish --share=network flatpak_app
         - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
-    interruptible: true
 
 meson-format:
     stage: check
@@ -92,6 +81,7 @@ meson-format:
 check-potfiles:
     stage: check
     image: quay.io/gnome_infrastructure/gnome-build-meta:core-nightly
+    interruptible: true
     script:
         - curl --proto '=https' --tlsv1.2 -sSf -O
             https://gitlab.gnome.org/msandova/check-potfiles/-/raw/master/check_potfiles.py
@@ -100,22 +90,22 @@ check-potfiles:
 blueprint-format:
     stage: check
     image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
+    interruptible: true
     before_script:
         - shopt -s globstar
     script:
         - blueprint-compiler format **/*.blp
-    interruptible: true
 
 blueprint-lint:
     stage: check
     image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
+    interruptible: true
     when: manual
     before_script:
         - shopt -s globstar
     script:
         - blueprint-compiler lint **/*.blp
     allow_failure: true
-    interruptible: true
 
 flatpak-eds@x86_64:
     extends:
@@ -130,7 +120,6 @@ flatpak-eds@aarch64:
         - .flatpak@aarch64
         - .rust-stable@aarch64
         - .eds
-        - .aarch64-rules
     stage: build
     needs: []
 
@@ -147,7 +136,6 @@ flatpak-mock@aarch64:
         - .flatpak@aarch64
         - .rust-stable@aarch64
         - .mock
-        - .aarch64-rules
     stage: build
     needs: []
 
@@ -164,7 +152,6 @@ flatpak-p2panda@aarch64:
         - .flatpak@aarch64
         - .rust-stable@aarch64
         - .p2panda
-        - .aarch64-rules
     stage: build
     needs: []
 

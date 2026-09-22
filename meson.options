@@ -1,9 +1,9 @@
 option(
     'calendar-backend',
     type: 'combo',
-    choices: ['flatpak-release-set', 'android', 'eds', 'mock', 'p2panda'],
+    choices: ['flathub-release-set', 'android', 'eds', 'mock', 'p2panda'],
 )
 
 option('platform', type: 'combo', choices: ['flatpak', 'android'])
 
-option('release-type', type: 'combo', choices: ['stable', 'nightly', 'devel'])
+option('release-type', type: 'combo', choices: ['stable', 'devel'])

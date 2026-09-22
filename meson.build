@@ -9,8 +9,9 @@ project(
     ],
 )
 
-backend = get_option('calendar-backend')
+calendar_backend = get_option('calendar-backend')
 platform = get_option('platform')
+release_type = get_option('release-type')
 
 i18n = import('i18n')
 gnome = import('gnome')
@@ -37,7 +38,7 @@ era_deps += dependency(
     },
 )
 
-if backend == 'flatpak-release-set'
+if calendar_backend == 'flathub-release-set'
     era_deps += dependency(
         'clepsydre-eds-0',
         version: '>= 0.1',
@@ -54,7 +55,7 @@ if backend == 'flatpak-release-set'
             'clepsydre-eds': true,
         },
     )
-elif backend == 'android'
+elif calendar_backend == 'android'
     # TODO: Remove this once Meson handles git dependencies better
     era_deps += dependency(
         'clepsydre-android-0.1-rs',
@@ -63,7 +64,7 @@ elif backend == 'android'
             'clepsydre-android': true,
         },
     )
-elif backend == 'eds'
+elif calendar_backend == 'eds'
     era_deps += dependency(
         'clepsydre-eds-0',
         version: '>= 0.1',
@@ -80,7 +81,7 @@ elif backend == 'eds'
             'clepsydre-eds': true,
         },
     )
-elif backend == 'mock'
+elif calendar_backend == 'mock'
     # TODO: Remove this once Meson handles git dependencies better
     era_deps += dependency(
         'clepsydre-mock-0.1-rs',
@@ -89,7 +90,7 @@ elif backend == 'mock'
             'clepsydre-mock': true,
         },
     )
-elif backend == 'p2panda'
+elif calendar_backend == 'p2panda'
     # TODO: Remove this once Meson handles git dependencies better
     era_deps += dependency(
         'clepsydre-p2panda-0.1-rs',
@@ -105,19 +106,19 @@ compile_schemas = find_program('glib-compile-schemas', required: true)
 desktop_file_validate = find_program('desktop-file-validate', required: true)
 
 application_name = 'Era'
-base_resource_path = '/io/gitlab/TitouanReal/' + application_name + '/'
+base_resource_path = '/org/gnome/gitlab/TitouanReal/' + application_name + '/'
 
 base_id = 'org.gnome.gitlab.TitouanReal.' + application_name
 
-if backend == 'flatpak-release-set'
+if calendar_backend == 'flathub-release-set'
     application_id = base_id
-elif backend == 'android'
+elif calendar_backend == 'android'
     application_id = base_id + '.Android'
-elif backend == 'eds'
+elif calendar_backend == 'eds'
     application_id = base_id + '.Eds'
-elif backend == 'mock'
+elif calendar_backend == 'mock'
     application_id = base_id + '.Mock'
-elif backend == 'p2panda'
+elif calendar_backend == 'p2panda'
     application_id = base_id + '.P2panda'
 endif
 
@@ -126,13 +127,12 @@ version = meson.project_version()
 prefix = get_option('prefix')
 bindir = prefix / get_option('bindir')
 localedir = prefix / get_option('localedir')
-
 datadir = prefix / get_option('datadir')
 iconsdir = datadir / 'icons'
 podir = meson.project_source_root() / 'po'
 gettext_package = meson.project_name()
 
-if get_option('release-type') == 'devel'
+if release_type == 'devel'
     application_id += '.Devel'
 endif
 
@@ -142,15 +142,15 @@ subdir('po')
 
 features = []
 
-if backend == 'flatpak-release-set'
+if calendar_backend == 'flathub-release-set'
     features += 'backend-eds'
-elif backend == 'android'
+elif calendar_backend == 'android'
     features += 'backend-android'
-elif backend == 'eds'
+elif calendar_backend == 'eds'
     features += 'backend-eds'
-elif backend == 'mock'
+elif calendar_backend == 'mock'
     features += 'backend-mock'
-elif backend == 'p2panda'
+elif calendar_backend == 'p2panda'
     features += 'backend-p2panda'
 endif
 
