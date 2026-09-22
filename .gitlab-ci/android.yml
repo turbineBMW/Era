@@ -1,0 +1,156 @@
+android:
+    stage: build-devel
+    image: debian:sid
+    needs: []
+    variables:
+        DEBIAN_FRONTEND: "noninteractive"
+        ANDROID_HOME: "/opt/android"
+        ANDROID_SDKVER: "35.0.0"
+        ANDROID_NDKVER: "29.0.14206865"
+        GOOGLE_RUST_BRANCH: "android-17.0.0_r1"
+        RUST_VERSION: "1.93.1"
+        LANG: "C.UTF-8"
+    before_script:
+        # 1. Install system packages
+        - apt-get -y update && apt-get -y upgrade
+        - apt-get -y install --no-install-recommends
+            build-essential gir1.2-appstream git glslc gobject-introspection
+            libglib2.0-dev-bin libglib-perl libglib-object-introspection-perl
+            libipc-run-perl libjson-perl libset-scalar-perl libxml2-utils
+            libxml-libxml-perl libxml-libxslt-perl meson ninja-build
+            openjdk-21-jre openjdk-21-jdk perl sassc sdkmanager
+            appstream desktop-file-utils gettext cargo python3 python3-gi
+            gir1.2-gtk-4.0 libadwaita-1-dev gir1.2-adw-1 pkg-config python3-dev
+        - apt-get -y clean
+
+        # 2. Set up Android SDK & Licenses
+        - mkdir -p "${HOME}/.android" "${ANDROID_HOME}/licenses"
+        - echo 'count=0' > "${HOME}/.android/repositories.cfg"
+        - |
+          cat <<EOF > "${HOME}/.android/sites-settings.cfg"
+          @version@=1
+          @disabled@https\://dl.google.com/android/repository/extras/intel/addon.xml=disabled
+          @disabled@https\://dl.google.com/android/repository/glass/addon.xml=disabled
+          @disabled@https\://dl.google.com/android/repository/sys-img/android/sys-img.xml=disabled
+          @disabled@https\://dl.google.com/android/repository/sys-img/android-tv/sys-img.xml=disabled
+          @disabled@https\://dl.google.com/android/repository/sys-img/android-wear/sys-img.xml=disabled
+          @disabled@https\://dl.google.com/android/repository/sys-img/google_apis/sys-img.xml=disabled
+          EOF
+        - |
+          cat <<EOF > "${ANDROID_HOME}/licenses/android-sdk-license"
+          8933bad161af4178b1185d1a37fbf41ea5269c55
+          d56f5187479451eabf01fb78af6dfcb131a6481e
+          24333f8a63b6825ea9c5514f83c2829b004d1fee
+          EOF
+        - |
+          cat <<EOF > "${ANDROID_HOME}/licenses/android-sdk-preview-license"
+          84831b9409646a918e30573bab4c9c91346d8abd
+          EOF
+        - |
+          cat <<EOF > "${ANDROID_HOME}/licenses/android-sdk-preview-license-old"
+          79120722343a6f314e0719f863036c702b0e6b2a
+          84831b9409646a918e30573bab4c9c91346d8abd
+          EOF
+        - |
+          cat <<EOF > "${ANDROID_HOME}/licenses/intel-android-extra-license"
+          d975f751698a77b662f1254ddbeed3901e976f5a
+          EOF
+        - ANDROID_SDKMAJOR=$(echo "${ANDROID_SDKVER}" | awk -F '.' '{print $1}')
+        - sdkmanager --sdk_root="${ANDROID_HOME}" "build-tools;${ANDROID_SDKVER}" "ndk;${ANDROID_NDKVER}" "platforms;android-${ANDROID_SDKMAJOR}"
+
+        # 3. Fetch prebuilt Android Rust Toolchain
+        - git clone --depth 1 --filter=blob:none --sparse https://android.googlesource.com/platform/prebuilts/rust-toolchain/linux-x86 --branch=${GOOGLE_RUST_BRANCH} /opt/rust/
+        - git -C /opt/rust/ sparse-checkout set ${RUST_VERSION}
+        - rm -rf /opt/rust/.git
+
+        # 4. Fetch mini-studio
+        - git clone https://github.com/sp1ritCS/mini-studio.git --depth 1 /opt/mini-studio
+
+        # 5. User environment setup
+        - cargo install grass
+        - export PATH="$HOME/.cargo/bin:$PATH"
+        - git clone https://github.com/TitouanReal/meson.git --branch cargo-env --depth 1 meson
+        - git clone https://github.com/sp1ritCS/gtk-android-builder.git --branch android35 --depth 1 pixiewood
+        - git clone https://gitlab.gnome.org/GNOME/blueprint-compiler.git
+        - cd blueprint-compiler
+        - meson setup build --prefix /usr
+        - meson install -C build
+        - cd ..
+        - git clone https://gitlab.gnome.org/TitouanReal/clepsydre
+        - cd clepsydre
+        - ../meson/meson.py setup build --prefix /usr -Dlibclepsydre=true -Dintrospection=true
+        - ../meson/meson.py install -C build
+        - cd ..
+    script:
+        - ./pixiewood/pixiewood prepare -a /opt/mini-studio --release -s "${ANDROID_HOME}" --meson ./meson/meson.py build-aux/android/era.xml
+        # Override gettext-sys bindings to use the ones provided by libintl
+        - |
+            cat << 'EOF' > subprojects/gettext-sys-0.26.0/lib.rs
+            use std::os::raw::{c_char, c_int, c_ulong};
+
+            #[cfg(windows)]
+            #[allow(non_camel_case_types)]
+            type wchar_t = u16;
+
+            extern "C" {
+                #[link_name = "g_libintl_gettext"]
+                pub fn gettext(s: *const c_char) -> *mut c_char;
+
+                #[link_name = "g_libintl_dgettext"]
+                pub fn dgettext(domain: *const c_char, s: *const c_char) -> *mut c_char;
+
+                #[link_name = "g_libintl_dcgettext"]
+                pub fn dcgettext(domain: *const c_char, s: *const c_char, category: c_int) -> *mut c_char;
+
+                #[link_name = "g_libintl_ngettext"]
+                pub fn ngettext(s1: *const c_char, s2: *const c_char, n: c_ulong) -> *mut c_char;
+
+                #[link_name = "g_libintl_dngettext"]
+                pub fn dngettext(
+                    domain: *const c_char,
+                    s1: *const c_char,
+                    s2: *const c_char,
+                    n: c_ulong,
+                ) -> *mut c_char;
+
+                #[link_name = "g_libintl_dcngettext"]
+                pub fn dcngettext(
+                    domain: *const c_char,
+                    s1: *const c_char,
+                    s2: *const c_char,
+                    n: c_ulong,
+                    category: c_int,
+                ) -> *mut c_char;
+
+                #[link_name = "g_libintl_bindtextdomain"]
+                pub fn bindtextdomain(domain: *const c_char, dir: *const c_char) -> *mut c_char;
+
+                #[cfg(windows)]
+                // The "wbindtextdomain" symbol is not exposed directly in the compiled
+                // .DLL file when building using MinGW. See: https://github.com/Koka/gettext-rs/pull/79
+                fn libintl_wbindtextdomain(domain: *const c_char, dir: *const wchar_t) -> *mut wchar_t;
+
+                #[link_name = "g_libintl_textdomain"]
+                pub fn textdomain(domain: *const c_char) -> *mut c_char;
+
+                #[link_name = "g_libintl_bind_textdomain_codeset"]
+                pub fn bind_textdomain_codeset(domain: *const c_char, codeset: *const c_char) -> *mut c_char;
+
+                #[link_name = "g_libintl_setlocale"]
+                pub fn setlocale(category: c_int, locale: *const c_char) -> *mut c_char;
+            }
+
+            #[cfg(windows)]
+            pub unsafe fn wbindtextdomain(domain: *const c_char, dir: *const wchar_t) -> *mut wchar_t {
+                libintl_wbindtextdomain(domain, dir)
+            }
+            EOF
+
+        - ./pixiewood/pixiewood generate
+        - ./pixiewood/pixiewood build
+        - mkdir -p apks/
+        - find .pixiewood/android/app/build/outputs/apk/release/ -type f -name '*.apk' -exec sh -c '${ANDROID_HOME}/build-tools/${ANDROID_SDKVER}/apksigner sign --ks "subprojects/gtk/.gitlab-ci/debug.keystore" --ks-pass "pass:android" --in "$0" --out "apks/$(basename "$0" | sed s/unsigned/debugsigned/g)"' {} \;
+    artifacts:
+        paths:
+            - apks/
+            - .pixiewood/

@@ -1,0 +1,68 @@
+cargo-fmt:
+    image: "${RUNTIME_IMAGE}"
+    stage: check
+    tags:
+        - flatpak
+    interruptible: true
+    variables:
+        MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Eds.Devel.json"
+        COMMAND: "cargo fmt"
+    script:
+        - flatpak install --user org.freedesktop.Sdk.Extension.rust-stable/x86_64/26.08 -y
+        - flatpak-builder --user --disable-rofiles-fuse --keep-build-dirs --stop-at=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
+        - flatpak build-finish --share=network flatpak_app
+        - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
+
+cargo-clippy:
+    image: "${RUNTIME_IMAGE}"
+    stage: check
+    tags:
+        - flatpak
+    interruptible: true
+    variables:
+        MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Eds.Devel.json"
+        COMMAND: "cargo clippy -- -D warnings"
+    script:
+        - flatpak install --user org.freedesktop.Sdk.Extension.rust-stable/x86_64/26.08 -y
+        - flatpak-builder --user --disable-rofiles-fuse --keep-build-dirs --stop-at=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
+        - flatpak build-finish --share=network flatpak_app
+        - echo "cd .. && ${COMMAND}" | flatpak-builder --user --disable-rofiles-fuse --build-shell=${FLATPAK_MODULE} flatpak_app ${MANIFEST_PATH}
+
+meson-format:
+    stage: check
+    image: quay.io/gnome_infrastructure/gnome-build-meta:core-nightly
+    interruptible: true
+    before_script:
+        - meson --version
+    script:
+        - git ls-files | grep -E 'meson.options$|meson.build$' | xargs -r meson fmt --check-diff
+
+check-potfiles:
+    stage: check
+    image: quay.io/gnome_infrastructure/gnome-build-meta:core-nightly
+    interruptible: true
+    before_script:
+        - curl --proto '=https' --tlsv1.2 -sSf -O
+            https://gitlab.gnome.org/msandova/check-potfiles/-/raw/master/check_potfiles.py
+    script:
+        - python3 check_potfiles.py --directory src --directory data
+
+blueprint-format:
+    stage: check
+    image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
+    interruptible: true
+    before_script:
+        - shopt -s globstar
+    script:
+        - blueprint-compiler format **/*.blp
+
+blueprint-lint:
+    stage: check
+    image: "quay.io/gnome_infrastructure/gnome-build-meta:core-nightly"
+    interruptible: true
+    when: manual
+    before_script:
+        - shopt -s globstar
+    script:
+        - blueprint-compiler lint **/*.blp
+    allow_failure: true

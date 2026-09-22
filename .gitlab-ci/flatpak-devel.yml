@@ -1,0 +1,59 @@
+.eds-devel:
+    variables:
+        MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Eds.Devel.json"
+        APP_ID: "org.gnome.gitlab.TitouanReal.Era.Eds.Devel"
+        BUNDLE: "era-eds-devel.flatpak"
+
+.mock-devel:
+    variables:
+        MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Mock.Devel.json"
+        APP_ID: "org.gnome.gitlab.TitouanReal.Era.Mock.Devel"
+        BUNDLE: "era-mock-devel.flatpak"
+
+.p2panda-devel:
+    variables:
+        MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.P2panda.Devel.json"
+        APP_ID: "org.gnome.gitlab.TitouanReal.Era.P2panda.Devel"
+        BUNDLE: "era-p2panda-devel.flatpak"
+
+flatpak-eds-devel@x86_64:
+    extends:
+        - .flatpak@x86_64
+        - .eds-devel
+    stage: build-devel
+    needs: []
+
+flatpak-eds-devel@aarch64:
+    extends:
+        - .flatpak@aarch64
+        - .eds-devel
+    stage: build-devel
+    needs: []
+
+flatpak-mock-devel@x86_64:
+    extends:
+        - .flatpak@x86_64
+        - .mock-devel
+    stage: build-devel
+    needs: []
+
+flatpak-mock-devel@aarch64:
+    extends:
+        - .flatpak@aarch64
+        - .mock-devel
+    stage: build-devel
+    needs: []
+
+flatpak-p2panda-devel@x86_64:
+    extends:
+        - .flatpak@x86_64
+        - .p2panda-devel
+    stage: build-devel
+    needs: []
+
+flatpak-p2panda-devel@aarch64:
+    extends:
+        - .flatpak@aarch64
+        - .p2panda-devel
+    stage: build-devel
+    needs: []
