@@ -9,6 +9,8 @@ use crate::{
     widgets::window::Styling,
 };
 
+use super::{event_drag_payload::EventDragPayload, month_view_inner::MonthViewInner};
+
 mod imp {
     use super::*;
 
@@ -29,6 +31,8 @@ mod imp {
         time: TemplateChild<gtk::Label>,
 
         css_class: RefCell<Option<String>>,
+
+        drag_hotspot: Cell<(i32, i32)>,
     }
 
     #[glib::object_subclass]
@@ -292,6 +296,95 @@ mod imp {
 
             let dialog = EventDetailsDialog::new(&event);
             dialog.present(Some(&*self.obj()));
+        }
+
+        #[template_callback]
+        fn drag_prepare(
+            &self,
+            x: f64,
+            y: f64,
+            _drag_source: gtk::DragSource,
+        ) -> Option<gdk::ContentProvider> {
+            self.drag_hotspot.set((x as i32, y as i32));
+
+            let event = self.obj().event().unwrap();
+
+            let ics = event.to_string_for_ics().unwrap();
+            let name = event.name().unwrap();
+            let file_name = format!("{}.ics", name);
+
+            let dir = glib::user_cache_dir().join("dnd-exports");
+            std::fs::create_dir_all(&dir).unwrap();
+            let path = dir.join(&file_name);
+            std::fs::write(&path, ics).unwrap();
+
+            let file = gio::File::for_path(&path);
+            let file_list = gdk::FileList::from_array(&[file]);
+
+            let export_provider = gdk::ContentProvider::for_value(&file_list.to_value());
+
+            if !event.is_editable() {
+                return Some(export_provider);
+            }
+
+            let month_view = self
+                .obj()
+                .ancestor(MonthViewInner::static_type())
+                .and_downcast::<MonthViewInner>()
+                .unwrap();
+
+            let point_in_event_widget_coords = gtk::graphene::Point::new(x as f32, y as f32);
+            let point_in_month_view_coords = self
+                .obj()
+                .compute_point(&month_view, &point_in_event_widget_coords)
+                .unwrap();
+            let anchor = month_view.date_at_coords(
+                point_in_month_view_coords.x() as f64,
+                point_in_month_view_coords.y() as f64,
+            );
+
+            let move_payload = EventDragPayload {
+                event: event.clone(),
+                anchor,
+            };
+            let move_provider = gdk::ContentProvider::for_value(&move_payload.to_value());
+
+            Some(gdk::ContentProvider::new_union(&[
+                move_provider,
+                export_provider,
+            ]))
+        }
+
+        #[template_callback]
+        fn drag_begin(&self, _drag: gdk::Drag, drag_source: gtk::DragSource) {
+            let paintable = gtk::WidgetPaintable::new(Some(&*self.obj()));
+            let (hot_x, hot_y) = self.drag_hotspot.get();
+            drag_source.set_icon(Some(&paintable), hot_x, hot_y);
+
+            let month_view = self
+                .obj()
+                .ancestor(MonthViewInner::static_type())
+                .and_downcast::<MonthViewInner>()
+                .unwrap();
+
+            month_view.set_overlays_targetable(false);
+        }
+
+        #[template_callback]
+        fn drag_end(&self, _drag: gdk::Drag, _delete_data: bool, _drag_source: gtk::DragSource) {
+            let month_view = self
+                .obj()
+                .ancestor(MonthViewInner::static_type())
+                .and_downcast::<MonthViewInner>()
+                .unwrap();
+
+            // FIXME: This is needed because after a dnd operation, those event controllers are left
+            // in a bad state for some reason. The symptom of the bad state is that a create
+            // drag operation, or a continuous zoom, will fail before the state is cleaned. Instead,
+            // we clean it here right away.
+            month_view.reset_gesture_state();
+
+            month_view.set_overlays_targetable(true);
         }
     }
 }

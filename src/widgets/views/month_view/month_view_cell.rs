@@ -1,7 +1,9 @@
 use std::cell::Cell;
 
 use adw::{prelude::*, subclass::prelude::*};
+use clepsydre::{Calendar, Timeframe};
 use glib::clone;
+use tracing::warn;
 
 use crate::{
     application::Application,
@@ -9,7 +11,14 @@ use crate::{
     widgets::window::Styling,
 };
 
+use super::{event_drag_payload::EventDragPayload, month_view_inner::MonthViewInner};
+
 mod imp {
+
+    use clepsydre::prelude::EventExt;
+
+    use crate::spawn;
+
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
@@ -29,6 +38,8 @@ mod imp {
         month_abbreviation: TemplateChild<gtk::Label>,
         #[template_child]
         month_name: TemplateChild<gtk::Label>,
+        #[template_child]
+        drop_target: TemplateChild<gtk::DropTarget>,
     }
 
     #[glib::object_subclass]
@@ -55,6 +66,9 @@ mod imp {
 
             self.update_header();
             self.update_style_classes();
+
+            self.drop_target
+                .set_types(&[EventDragPayload::static_type()]);
 
             Application::default()
                 .system()
@@ -156,6 +170,72 @@ mod imp {
                 self.header.measure(gtk::Orientation::Vertical, width);
 
             natural_header_height
+        }
+
+        #[template_callback]
+        fn event_drop(
+            &self,
+            _value: &glib::Value,
+            x: f64,
+            y: f64,
+            drop_target: gtk::DropTarget,
+        ) -> bool {
+            let EventDragPayload { event, anchor } =
+                drop_target.value_as::<EventDragPayload>().unwrap();
+
+            let month_view = self
+                .obj()
+                .ancestor(MonthViewInner::static_type())
+                .and_downcast::<MonthViewInner>()
+                .unwrap();
+
+            let point_in_cell_coords = gtk::graphene::Point::new(x as f32, y as f32);
+            let point_in_month_view_coords = self
+                .obj()
+                .compute_point(&month_view, &point_in_cell_coords)
+                .unwrap();
+
+            let drop_date = month_view.date_at_coords(
+                point_in_month_view_coords.x() as f64,
+                point_in_month_view_coords.y() as f64,
+            );
+
+            let day_delta = (drop_date.to_jiff() - anchor.to_jiff()).get_days();
+            if day_delta == 0 {
+                return true;
+            }
+
+            let timeframe = event.timeframe().unwrap();
+            let all_day = timeframe.is_all_day();
+            let start = timeframe.start().unwrap();
+            let end = timeframe.end().unwrap();
+
+            let new_start = start.add_days(day_delta).unwrap();
+            let new_end = end.add_days(day_delta).unwrap();
+            let new_timeframe = Timeframe::new(all_day, &new_start, &new_end).unwrap();
+
+            spawn!(clone!(
+                #[strong]
+                event,
+                async move {
+                    let uri = event.uri().unwrap();
+                    if let Err(error) = event
+                        .try_update_future(
+                            None::<&Calendar>,
+                            None,
+                            None,
+                            None,
+                            None,
+                            Some(&new_timeframe),
+                        )
+                        .await
+                    {
+                        warn!("Failed to move event {uri}: {}", error);
+                    }
+                }
+            ));
+
+            true
         }
     }
 }

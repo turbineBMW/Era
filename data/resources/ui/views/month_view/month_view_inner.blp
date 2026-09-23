@@ -47,7 +47,7 @@ template $MonthViewInner: Widget {
   }
 
   // Pinch to zoom (trackpad or touchscreen)
-  GestureZoom {
+  GestureZoom continuous_zoom {
     begin => $zoom_begin(template);
     scale-changed => $zoom_scale_changed(template);
     end => $zoom_end(template);

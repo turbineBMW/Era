@@ -218,10 +218,12 @@ sidebar {
             background-color: var(--bg-color);
         }
 
-        &:active {
+        &:active,
+        &:drop(active) {
             --bg-color: rgb(from var(--window-fg-color) r g b / 7.5%);
 
             background-color: var(--bg-color);
+            box-shadow: none;
         }
 
         &.narrow {

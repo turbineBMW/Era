@@ -125,6 +125,10 @@ mod imp {
         scroll_drag: TemplateChild<gtk::GestureDrag>,
         #[template_child]
         scroll_swipe: TemplateChild<gtk::GestureSwipe>,
+        #[template_child]
+        continuous_zoom: TemplateChild<gtk::GestureZoom>,
+        #[template_child]
+        create_drag: TemplateChild<gtk::GestureDrag>,
 
         // A collection of cells used to display the month. The first element might not be the first
         // cell displayed. This is used as a circular set for efficient recycling.
@@ -145,7 +149,7 @@ mod imp {
         cell_height: Cell<i32>,
 
         input: RefCell<Option<Input>>,
-        create_drag: Cell<Option<CreateDrag>>,
+        create_drag_state: Cell<Option<CreateDrag>>,
 
         /// Y position of the pointer to use for zooming with CTRL+scroll.
         pointer_y: Cell<Option<f64>>,
@@ -160,6 +164,10 @@ mod imp {
         recompute_pending: Cell<bool>,
 
         connected_event_uris: RefCell<HashSet<GString>>,
+
+        // During a drag, overlays should not be targetable so that cells receive drop events
+        // correctly.
+        overlays_targetable: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -182,6 +190,8 @@ mod imp {
     impl ObjectImpl for MonthViewInner {
         fn constructed(&self) {
             self.parent_constructed();
+
+            self.overlays_targetable.set(true);
 
             let application = Application::default();
             let manager = application.manager();
@@ -233,6 +243,7 @@ mod imp {
                 .map(|_| {
                     let event_widget = MonthViewEvent::new(None);
                     event_widget.set_child_visible(false);
+                    event_widget.set_can_target(self.overlays_targetable.get());
                     event_widget.insert_before(&*self.obj(), Some(&self.floating_controls.get()));
                     event_widget
                 })
@@ -968,7 +979,7 @@ mod imp {
             }
 
             let anchor = self.date_at_coords(start_x, start_y);
-            self.create_drag.replace(Some(CreateDrag {
+            self.create_drag_state.replace(Some(CreateDrag {
                 anchor,
                 hover: anchor,
             }));
@@ -1004,7 +1015,7 @@ mod imp {
                 return;
             }
 
-            let Some(CreateDrag { anchor, .. }) = self.create_drag.get() else {
+            let Some(CreateDrag { anchor, .. }) = self.create_drag_state.get() else {
                 return;
             };
 
@@ -1017,7 +1028,8 @@ mod imp {
             let y = start_y + offset_y;
 
             let hover = self.date_at_coords(x, y);
-            self.create_drag.set(Some(CreateDrag { anchor, hover }));
+            self.create_drag_state
+                .set(Some(CreateDrag { anchor, hover }));
 
             let cells = self.cells.get().unwrap();
             let first_cell_index = self.first_cell_index.get();
@@ -1071,7 +1083,7 @@ mod imp {
                 cell.unset_state_flags(gtk::StateFlags::ACTIVE);
             }
 
-            let Some(CreateDrag { anchor, hover }) = self.create_drag.get() else {
+            let Some(CreateDrag { anchor, hover }) = self.create_drag_state.get() else {
                 return;
             };
 
@@ -1081,7 +1093,7 @@ mod imp {
                 (hover.to_jiff(), anchor.to_jiff())
             };
 
-            self.create_drag.set(None);
+            self.create_drag_state.set(None);
 
             let tzid = Application::default()
                 .system()
@@ -1353,7 +1365,7 @@ mod imp {
             self.obj().queue_allocate();
         }
 
-        fn date_at_coords(&self, x: f64, y: f64) -> Date {
+        pub(super) fn date_at_coords(&self, x: f64, y: f64) -> Date {
             let cells = self.cells.get().unwrap();
             let x = x as i32;
             let first_cell_index = self.first_cell_index.get();
@@ -1561,6 +1573,7 @@ mod imp {
             while event_widgets.len() < total_segments {
                 let event_widget = MonthViewEvent::new(None);
                 event_widget.set_child_visible(false);
+                event_widget.set_can_target(self.overlays_targetable.get());
                 event_widget.insert_before(&*self.obj(), Some(&self.floating_controls.get()));
                 event_widgets.push(event_widget);
             }
@@ -1576,6 +1589,22 @@ mod imp {
             self.event_layouts.replace(event_layouts);
 
             self.obj().queue_allocate();
+        }
+
+        pub(super) fn reset_gesture_state(&self) {
+            self.create_drag.reset();
+            self.continuous_zoom.reset();
+        }
+
+        pub(super) fn set_overlays_targetable(&self, targetable: bool) {
+            self.overlays_targetable.set(targetable);
+
+            for event_widget in self.event_widgets.borrow().iter() {
+                event_widget.set_can_target(targetable);
+            }
+            for overflow_widget in self.overflow_widgets.get().unwrap() {
+                overflow_widget.set_can_target(targetable);
+            }
         }
     }
 }
@@ -1601,5 +1630,17 @@ impl MonthViewInner {
 
     pub fn zoom_out(&self) {
         self.imp().start_discrete_zoom_animation(9.0 / 10.0);
+    }
+
+    pub fn date_at_coords(&self, x: f64, y: f64) -> Date {
+        self.imp().date_at_coords(x, y)
+    }
+
+    pub fn reset_gesture_state(&self) {
+        self.imp().reset_gesture_state();
+    }
+
+    pub fn set_overlays_targetable(&self, targetable: bool) {
+        self.imp().set_overlays_targetable(targetable);
     }
 }

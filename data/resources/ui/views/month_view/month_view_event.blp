@@ -35,4 +35,11 @@ template $MonthViewEvent: Widget {
   GestureClick {
     released => $open_details_if_contains(template);
   }
+
+  DragSource {
+    actions: move | copy;
+    prepare => $drag_prepare(template);
+    drag-begin => $drag_begin(template);
+    drag-end => $drag_end(template);
+  }
 }
