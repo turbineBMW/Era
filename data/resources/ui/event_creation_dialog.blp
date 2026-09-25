@@ -6,7 +6,6 @@ template $EventCreationDialog: Adw.Dialog {
   title: _("Create Event");
   content-height: 1000;
   content-width: 600;
-  map => $name_grab_focus(template);
 
   Stack stack {
     visible-child-name: bind $ternary(
@@ -35,6 +34,8 @@ template $EventCreationDialog: Adw.Dialog {
       name: "event_creation";
 
       child: Adw.ToastOverlay toast_overlay {
+        map => $name_grab_focus(template);
+
         Adw.ToolbarView {
           [top]
           Adw.HeaderBar {
