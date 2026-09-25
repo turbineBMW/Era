@@ -17,6 +17,7 @@ template $ErrorDialog: Adw.Dialog {
 
           header-suffix: Button {
             icon-name: "edit-copy-symbolic";
+            tooltip-text: _("Copy");
             clicked => $copy(template);
 
             styles [
@@ -26,15 +27,18 @@ template $ErrorDialog: Adw.Dialog {
 
           Adw.PreferencesRow {
             activatable: false;
-            focusable: false;
 
             styles [
               "error-message",
             ]
 
             Box {
+              focusable: false;
+
               TextView text_view {
+                focusable: false;
                 hexpand: true;
+                editable: false;
                 top-margin: 6;
                 bottom-margin: 6;
                 left-margin: 6;
