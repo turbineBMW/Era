@@ -1,4 +1,5 @@
 use clepsydre::{Event, prelude::*};
+use gtk::prelude::WidgetExt;
 
 use super::{
     month_view_event::MonthViewEvent,
@@ -7,20 +8,44 @@ use super::{
 
 const SECONDS_PER_DAY: i64 = 86_400;
 
+/// A segment of an event.
+///
+/// When an event spans multiple weeks, it is split into multiple segments: one segment per week.
 #[derive(Debug, Clone)]
 pub struct EventSegment {
+    /// The row index of the segment.
     pub row_index: usize,
+    /// The column at which the segment starts, between 0 and 6.
     pub column_start: usize,
+    /// The inclusive column at which the segment ends, between 0 and 6.
     pub column_end: usize,
+    /// The event that this segment partially represents.
     pub event: Event,
+    /// Whether this segment is the first segment of the event, meaning there is no earlier segment
+    /// representing the same event.
+    pub is_first_segment_of_event: bool,
+    /// Whether this segment is the last segment of the event, meaning there is no later segment
+    /// representing the same event.
+    pub is_last_segment_of_event: bool,
 }
 
 #[derive(Debug, Clone)]
 pub struct StackedSegment {
+    /// The column at which the segment starts, between 0 and 6.
     pub column_start: usize,
+    /// The inclusive column at which the segment ends, between 0 and 6.
     pub column_end: usize,
+    /// Inside the row this segment is displayed in, the row index of the segment, for stacking
+    /// purposes of the segments belonging in the same week row.
     pub stack_row: usize,
+    /// The event that this segment partially represents.
     pub event: Event,
+    /// Whether this segment is the first segment of the event, meaning there is no earlier segment
+    /// representing the same event.
+    pub is_first_segment_of_event: bool,
+    /// Whether this segment is the last segment of the event, meaning there is no later segment
+    /// representing the same event.
+    pub is_last_segment_of_event: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -156,7 +181,6 @@ pub fn compute_event_segments(
         // Ignore events outside the range before casting to usize, as this can cause a
         // wraparound
         if last_day_offset < 0 || first_day_offset > NB_CELLS as i64 - 1 {
-            tracing::warn!("Subscription gave an event outside the range");
             continue;
         }
 
@@ -180,10 +204,15 @@ pub fn compute_event_segments(
                 event.name().unwrap()
             );
 
+            let is_first_segment_of_event = row_index == first_row_index;
+            let is_last_segment_of_event = row_index == last_row_index;
+
             let segment = EventSegment {
                 row_index,
                 column_start,
                 column_end,
+                is_first_segment_of_event,
+                is_last_segment_of_event,
                 event: event.clone(),
             };
             segments.push(segment);
@@ -241,6 +270,8 @@ pub fn stack_event_segments(segments: &[EventSegment]) -> Vec<Vec<StackedSegment
                 stacked_row.push(StackedSegment {
                     column_start: segment.column_start,
                     column_end: segment.column_end,
+                    is_first_segment_of_event: segment.is_first_segment_of_event,
+                    is_last_segment_of_event: segment.is_last_segment_of_event,
                     stack_row: assigned_stack_row,
                     event: segment.event.clone(),
                 });
@@ -266,6 +297,17 @@ pub fn build_event_layouts(
             event_widget_index += 1;
 
             event_widget.set_event(Some(&stacked_segment.event));
+
+            if stacked_segment.is_first_segment_of_event {
+                event_widget.add_css_class("start");
+            } else {
+                event_widget.remove_css_class("start");
+            }
+            if stacked_segment.is_last_segment_of_event {
+                event_widget.add_css_class("end");
+            } else {
+                event_widget.remove_css_class("end");
+            }
 
             row_layouts.push(EventLayout {
                 widget: event_widget.clone(),

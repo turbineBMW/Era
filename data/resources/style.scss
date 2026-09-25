@@ -286,9 +286,22 @@ sidebar {
             var(--view-fg-color)
         );
 
-        .edge {
-            background-color: oklab(from var(--calendar-color) 0.6 a b);
-            min-width: 6px;
+        padding-left: 6px;
+
+        &.start {
+            border-top-left-radius: 6px;
+            border-bottom-left-radius: 6px;
+            padding-left: 0;
+
+            .edge {
+                background-color: oklab(from var(--calendar-color) 0.6 a b);
+                min-width: 6px;
+            }
+        }
+
+        &.end {
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
         }
 
         label {
@@ -304,6 +317,8 @@ sidebar {
     }
 
     .overflow {
+        border-radius: 6px;
+
         &:hover {
             background-color: #88888888;
         }
@@ -312,7 +327,6 @@ sidebar {
     .event,
     .overflow {
         min-height: 8px;
-        border-radius: 6px;
 
         &:focus-visible {
             outline: 2px solid var(--accent-bg-color);
