@@ -1580,10 +1580,10 @@ impl MonthViewInner {
     }
 
     pub fn zoom_in(&self) {
-        self.imp().start_discrete_zoom_animation(1.1);
+        self.imp().start_discrete_zoom_animation(10.0 / 9.0);
     }
 
     pub fn zoom_out(&self) {
-        self.imp().start_discrete_zoom_animation(0.9);
+        self.imp().start_discrete_zoom_animation(9.0 / 10.0);
     }
 }
