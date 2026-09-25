@@ -240,6 +240,15 @@ template $EraWindow: Adw.ApplicationWindow {
                 ToggleButton sidebar_toggle {
                   icon-name: "sidebar-show-symbolic";
                   tooltip-text: _("Toggle Sidebar");
+
+                  ShortcutController {
+                    scope: managed;
+
+                    Shortcut {
+                      trigger: "F9";
+                      action: "activate";
+                    }
+                  }
                 }
 
                 [start]
