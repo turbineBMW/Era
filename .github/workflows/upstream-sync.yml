@@ -1,0 +1,82 @@
+# Fork-only. Daily: mirror upstream main into this repo's main, then check
+# whether the omarchy branch still rebases cleanly onto it. It never rewrites
+# omarchy itself -- that is scripts/sync-upstream.sh's job, run locally so the
+# result gets built and tested. It keeps one open issue labelled
+# upstream-sync up to date instead.
+name: Upstream sync
+
+on:
+  schedule:
+    - cron: "17 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: omarchy
+          fetch-depth: 0
+
+      - name: Mirror upstream main
+        run: |
+          git remote add upstream https://gitlab.gnome.org/TitouanReal/Era.git
+          git fetch upstream main
+          git fetch origin main
+          if ! git merge-base --is-ancestor origin/main upstream/main; then
+            echo "::error::main has commits upstream does not; it should be a pure mirror"
+            exit 1
+          fi
+          git push origin upstream/main:refs/heads/main
+
+      - name: Try the rebase
+        id: rebase
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          behind=$(git rev-list --count HEAD..upstream/main)
+          echo "behind=$behind" >> "$GITHUB_OUTPUT"
+          if [ "$behind" = 0 ]; then
+            echo "status=current" >> "$GITHUB_OUTPUT"
+          elif git rebase upstream/main >/dev/null 2>&1; then
+            echo "status=clean" >> "$GITHUB_OUTPUT"
+          else
+            {
+              echo "status=conflict"
+              echo "files<<EOF"
+              git diff --name-only --diff-filter=U
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+            git rebase --abort
+          fi
+
+      - name: Report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATUS: ${{ steps.rebase.outputs.status }}
+          BEHIND: ${{ steps.rebase.outputs.behind }}
+          FILES: ${{ steps.rebase.outputs.files }}
+        run: |
+          gh label create upstream-sync --color 0e8a16 2>/dev/null || true
+          issue=$(gh issue list --label upstream-sync --state open --json number --jq '.[0].number')
+          if [ "$STATUS" = current ]; then
+            [ -n "$issue" ] && gh issue close "$issue" --comment "omarchy is up to date with upstream."
+            exit 0
+          fi
+          if [ "$STATUS" = clean ]; then
+            title="Upstream has $BEHIND new commit(s); rebase applies cleanly"
+          else
+            title="Upstream has $BEHIND new commit(s); rebase CONFLICTS"
+          fi
+          body=$(printf 'Run `scripts/sync-upstream.sh` locally.\n\n%s\n\nConflicting files:\n```\n%s\n```\n\nNew upstream commits:\n```\n%s\n```\n' \
+            "$title" "${FILES:-none}" "$(git log --oneline origin/omarchy..upstream/main)")
+          if [ -n "$issue" ]; then
+            gh issue edit "$issue" --title "$title" --body "$body"
+          else
+            gh issue create --label upstream-sync --title "$title" --body "$body"
+          fi
