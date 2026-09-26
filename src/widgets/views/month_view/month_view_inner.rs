@@ -28,9 +28,18 @@ use super::{
 
 pub const NB_ROWS: usize = 100;
 pub const NB_CELLS: usize = 7 * NB_ROWS;
-const MINIMUM_NB_ROWS_BELOW: i32 = 10;
-const MINIMUM_NB_ROWS_ABOVE: i32 = 10;
-const NB_ROWS_ABOVE_AT_RESET: i32 = MINIMUM_NB_ROWS_ABOVE + 1;
+/// Number of rows of buffer that must remain above/below the visible area before a recycle is
+/// triggered. Kept well below `TARGET_NB_ROWS_ABOVE`/`TARGET_NB_ROWS_BELOW` so that scrolling
+/// continuously recycles a whole batch of rows at once instead of recycling on every single row
+/// crossed.
+const MINIMUM_NB_ROWS_ABOVE: i32 = 2;
+const MINIMUM_NB_ROWS_BELOW: i32 = 2;
+/// Number of rows of buffer restored above/below the visible area whenever a recycle is
+/// triggered. The gap between this and `MINIMUM_NB_ROWS_ABOVE`/`MINIMUM_NB_ROWS_BELOW` is how many
+/// rows get recycled per batch.
+const TARGET_NB_ROWS_ABOVE: i32 = 10;
+const TARGET_NB_ROWS_BELOW: i32 = 10;
+const NB_ROWS_ABOVE_AT_RESET: i32 = TARGET_NB_ROWS_ABOVE + 1;
 
 /// Minimum height of a cell in pixel. A cell can report a higher minimum and size_allocate will
 /// respect it, but will never allocate them less than this.
@@ -1392,83 +1401,90 @@ mod imp {
 
             let mut shifted = false;
 
-            loop {
-                let scroll_offset = self.scroll_offset.get();
-                let first_cell_index = self.first_cell_index.get();
+            let scroll_offset = self.scroll_offset.get();
+            let first_cell_index = self.first_cell_index.get();
 
-                if scroll_offset < top_threshold {
-                    shifted = true;
+            if scroll_offset < top_threshold {
+                shifted = true;
 
-                    let new_index = (first_cell_index + NB_CELLS - 7) % NB_CELLS;
-                    let old_first_date = cells[first_cell_index].date().to_jiff();
-                    let new_first_date = old_first_date - 7.days();
-                    for i in 0..7 {
-                        let date = Date::from(new_first_date + (i as i32).days());
-                        cells[(new_index + i) % NB_CELLS].set_date(date);
-                        overflow_widgets[(new_index + i) % NB_CELLS].set_date(date);
+                let rows_above = (scroll_offset / row_height).floor() as i32;
+                let nb_rows_to_recycle = TARGET_NB_ROWS_ABOVE - rows_above;
+                let nb_cells_to_recycle = nb_rows_to_recycle as usize * 7;
+                let pixel_shift = nb_rows_to_recycle as f64 * row_height;
+
+                let new_index = (first_cell_index + NB_CELLS - nb_cells_to_recycle) % NB_CELLS;
+                let old_first_date = cells[first_cell_index].date().to_jiff();
+                let new_first_date = old_first_date - (nb_cells_to_recycle as i32).days();
+                for i in 0..nb_cells_to_recycle {
+                    let date = Date::from(new_first_date + (i as i32).days());
+                    cells[(new_index + i) % NB_CELLS].set_date(date);
+                    overflow_widgets[(new_index + i) % NB_CELLS].set_date(date);
+                }
+
+                self.first_cell_index.set(new_index);
+                self.scroll_offset.set(scroll_offset + pixel_shift);
+
+                // Adjust all scroll_offset related variables
+                match &mut *self.input.borrow_mut() {
+                    Some(Input::Drag { start_offset }) => *start_offset += pixel_shift,
+                    Some(Input::Animation(Animation::KineticDeceleration {
+                        kinetic_scrolling,
+                        ..
+                    })) => {
+                        kinetic_scrolling.shift_origin(pixel_shift);
                     }
-
-                    self.first_cell_index.set(new_index);
-                    self.scroll_offset.set(scroll_offset + row_height);
-
-                    // Adjust all scroll_offset related variables
-                    match &mut *self.input.borrow_mut() {
-                        Some(Input::Drag { start_offset }) => *start_offset += row_height,
-                        Some(Input::Animation(Animation::KineticDeceleration {
-                            kinetic_scrolling,
-                            ..
-                        })) => {
-                            kinetic_scrolling.shift_origin(row_height);
-                        }
-                        Some(Input::Animation(Animation::DiscreteScroll {
-                            start_offset,
-                            target,
-                            ..
-                        })) => {
-                            *start_offset += row_height;
-                            *target += row_height;
-                        }
-                        _ => {}
+                    Some(Input::Animation(Animation::DiscreteScroll {
+                        start_offset,
+                        target,
+                        ..
+                    })) => {
+                        *start_offset += pixel_shift;
+                        *target += pixel_shift;
                     }
-                } else if scroll_offset + height > bottom_threshold {
-                    shifted = true;
+                    _ => {}
+                }
+            } else if scroll_offset + height > bottom_threshold {
+                shifted = true;
 
-                    let new_index = (first_cell_index + 7) % NB_CELLS;
-                    let old_last_date = cells[(first_cell_index + NB_CELLS - 1) % NB_CELLS]
-                        .date()
-                        .to_jiff();
-                    for i in 0..7 {
-                        let date = Date::from(old_last_date + (i as i32 + 1).days());
-                        cells[(first_cell_index + i) % NB_CELLS].set_date(date);
-                        overflow_widgets[(first_cell_index + i) % NB_CELLS].set_date(date);
+                let rows_below =
+                    NB_ROWS as i32 - ((scroll_offset + height) / row_height).ceil() as i32;
+                let nb_rows_to_recycle = TARGET_NB_ROWS_BELOW - rows_below;
+                let nb_cells_to_recycle = nb_rows_to_recycle as usize * 7;
+                let pixel_shift = nb_rows_to_recycle as f64 * row_height;
+
+                let new_index = (first_cell_index + nb_cells_to_recycle) % NB_CELLS;
+                let old_last_date = cells[(first_cell_index + NB_CELLS - 1) % NB_CELLS]
+                    .date()
+                    .to_jiff();
+                for i in 0..nb_cells_to_recycle {
+                    let date = Date::from(old_last_date + (i as i32 + 1).days());
+                    cells[(first_cell_index + i) % NB_CELLS].set_date(date);
+                    overflow_widgets[(first_cell_index + i) % NB_CELLS].set_date(date);
+                }
+
+                self.first_cell_index.set(new_index);
+                self.scroll_offset.set(scroll_offset - pixel_shift);
+
+                // Adjust all scroll_offset related variables
+                match &mut *self.input.borrow_mut() {
+                    Some(Input::Drag { start_offset, .. }) => {
+                        *start_offset -= pixel_shift;
                     }
-
-                    self.first_cell_index.set(new_index);
-                    self.scroll_offset.set(scroll_offset - row_height);
-
-                    // Adjust all scroll_offset related variables
-                    match &mut *self.input.borrow_mut() {
-                        Some(Input::Drag { start_offset, .. }) => {
-                            *start_offset -= row_height;
-                        }
-                        Some(Input::Animation(Animation::KineticDeceleration {
-                            kinetic_scrolling,
-                            ..
-                        })) => {
-                            kinetic_scrolling.shift_origin(-row_height);
-                        }
-                        Some(Input::Animation(Animation::DiscreteScroll {
-                            start_offset,
-                            target,
-                            ..
-                        })) => {
-                            *start_offset -= row_height;
-                            *target -= row_height;
-                        }
-                        _ => {}
+                    Some(Input::Animation(Animation::KineticDeceleration {
+                        kinetic_scrolling,
+                        ..
+                    })) => {
+                        kinetic_scrolling.shift_origin(-pixel_shift);
                     }
-                } else {
-                    break;
+                    Some(Input::Animation(Animation::DiscreteScroll {
+                        start_offset,
+                        target,
+                        ..
+                    })) => {
+                        *start_offset -= pixel_shift;
+                        *target -= pixel_shift;
+                    }
+                    _ => {}
                 }
             }
 
