@@ -10,6 +10,7 @@ use tracing_subscriber::{EnvFilter, prelude::*};
 
 mod application;
 mod config;
+mod omarchy; // fork: Omarchy theme support
 mod resources;
 mod system;
 mod utils;
@@ -108,6 +109,7 @@ fn make_application() -> gio::Application {
     gio::resources_register(&resources);
 
     let application = Application::new(&gio::ApplicationFlags::empty());
+    application.connect_startup(|app| omarchy::install(app.upcast_ref())); // fork
 
     application.upcast()
 }

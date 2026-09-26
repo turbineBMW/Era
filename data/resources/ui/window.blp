@@ -432,6 +432,15 @@ template $EraWindow: Adw.ApplicationWindow {
 }
 
 menu primary_menu {
+  // fork: Omarchy theme support; hidden unless an Omarchy theme is present
+  section {
+    item {
+      label: _("Follow _Omarchy Theme");
+      action: "app.follow-omarchy-theme";
+      hidden-when: "action-missing";
+    }
+  }
+
   section {
     item {
       label: _("_Keyboard Shortcuts");
