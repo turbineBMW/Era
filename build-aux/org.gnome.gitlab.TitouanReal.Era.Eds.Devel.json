@@ -11,7 +11,8 @@
         "--socket=wayland",
         "--system-talk-name=org.freedesktop.timedate1",
         "--talk-name=org.gnome.evolution.dataserver.Sources5",
-        "--talk-name=org.gnome.evolution.dataserver.Calendar8"
+        "--talk-name=org.gnome.evolution.dataserver.Calendar8",
+        "--filesystem=~/.local/state/omarchy:ro"
     ],
     "cleanup": [
         "/include",
