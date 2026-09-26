@@ -11,5 +11,11 @@
             <summary>Last shown view</summary>
             <description>The calendar view to display when opening the application.</description>
         </key>
+        <!-- fork: Omarchy theme support -->
+        <key name="follow-omarchy-theme" type="b">
+            <default>true</default>
+            <summary>Follow the Omarchy theme</summary>
+            <description>Take the window colours and light/dark style from the active Omarchy desktop theme, and follow every theme switch live. Has no effect where Omarchy isn't installed.</description>
+        </key>
     </schema>
 </schemalist>
