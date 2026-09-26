@@ -76,11 +76,13 @@ git log --oneline main.."$FORK_BRANCH" | sed 's/^/  /'
 
 # The fork's own tests need the full build (libclepsydre), so they run only
 # where that is available.
-if pkg-config --exists clepsydre-0 2>/dev/null; then
+stage="$PWD/target/native/stage"
+if [[ -f $stage/lib/pkgconfig/clepsydre-0.pc ]]; then
+    export PKG_CONFIG_PATH="$stage/lib/pkgconfig" GI_TYPELIB_PATH="$stage/lib/girepository-1.0" LD_LIBRARY_PATH="$stage/lib"
     echo "running omarchy tests"
     cargo test --quiet --no-default-features --features backend-mock,platform-flatpak omarchy
 else
-    echo "skipping tests: clepsydre-0 not found by pkg-config (see FORK.md)"
+    echo "skipping tests: run ./install.sh once first (see FORK.md)"
 fi
 
 if [[ $push == 1 ]] && git remote get-url origin >/dev/null 2>&1; then

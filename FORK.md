@@ -54,7 +54,7 @@ Everything substantial is in new files, which cannot conflict:
   (ported from Rustle's `rustle-core/src/omarchy.rs`; keep them in step)
 - `src/omarchy/mod.rs`: CSS provider, light/dark forcing, file monitor, and the
   toggle action
-- `scripts/sync-upstream.sh`, `.github/workflows/upstream-sync.yml`, this file
+- `install.sh`, `scripts/sync-upstream.sh`, `.github/workflows/upstream-sync.yml`, this file
 
 Upstream files carry only these hooks, each marked `fork`. When one conflicts,
 keep upstream's version and put the hook back:
@@ -69,26 +69,32 @@ keep upstream's version and put the hook back:
 If upstream ever gets a preferences dialog, the toggle could move there, but
 that would mean a larger hook.
 
-## Building outside Flatpak
+## Installing without Flatpak
 
-Upstream builds with Flatpak or meson. On Arch in September 2026, meson 1.12's
-Cargo-subproject support failed on newer `serde` (it doesn't run build
-scripts). Cargo works once the `libclepsydre` C library is available:
+```sh
+./install.sh                    # ~/.local; your calendars through evolution-data-server
+BACKEND=mock ./install.sh       # demo data, no evolution-data-server needed
+PREFIX=/usr sudo ./install.sh   # system-wide
+```
 
-1. `cargo build -p clepsydre --release` inside `subprojects/clepsydre` (meson
-   downloads it on first setup). Install `libclepsydre.so` as
-   `libclepsydre-0.so.0`, with `libclepsydre-0.so` and `libclepsydre.so`
-   symlinks, plus `clepsydre/include/clepsydre.h` and a `clepsydre-0.pc`.
-2. Generate the `Clepsydre-0` typelib with `g-ir-scanner` / `g-ir-compiler`
-   (package `gobject-introspection`) so the Blueprint templates compile.
-   Point `GI_TYPELIB_PATH` at it.
-3. Run `meson setup` once to generate `src/config.rs` and `src/resources.rs`,
-   then:
+The script names any missing packages (on Arch:
+`sudo pacman -S --needed gobject-introspection evolution-data-server`). It
+then builds Era's calendar libraries (clepsydre) at the commit `Cargo.lock`
+pins, installs them to `$PREFIX/lib/era` with the binary's rpath pointing
+there, and installs the desktop entry, D-Bus service, GSettings schema, icons
+and translations. Build intermediates go in `target/native`. Run it again after
+a sync to upgrade; clepsydre is rebuilt only when its pinned commit changes.
 
-   ```sh
-   cargo build --no-default-features --features backend-mock,platform-flatpak   # demo data
-   cargo test  --no-default-features --features backend-mock,platform-flatpak omarchy
-   ```
+Upstream's meson build can't be used here: meson 1.12's Cargo-subproject
+support doesn't run build scripts, which newer `serde` needs. So `install.sh`
+builds clepsydre's Rust library with cargo, and only its C part
+(`libclepsydre-eds`) with meson.
 
-Real calendars need the default `backend-eds` feature, which also needs
-`evolution-data-server` and `libclepsydre-eds`.
+For development after one `install.sh` run:
+
+```sh
+export PKG_CONFIG_PATH=$PWD/target/native/stage/lib/pkgconfig
+export GI_TYPELIB_PATH=$PWD/target/native/stage/lib/girepository-1.0
+export LD_LIBRARY_PATH=$PWD/target/native/stage/lib
+cargo test --no-default-features --features backend-mock,platform-flatpak omarchy
+```
