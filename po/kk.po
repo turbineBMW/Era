@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-08-23 16:43+0000\n"
-"PO-Revision-Date: 2026-08-26 22:16+0500\n"
+"POT-Creation-Date: 2026-09-20 11:18+0000\n"
+"PO-Revision-Date: 2026-09-27 17:04+0500\n"
 "Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
 "Language-Team: Kazakh <Kazakh>\n"
 "Language: kk\n"
@@ -17,29 +17,97 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.9\n"
 
-#: data/io.gitlab.TitouanReal.Era.desktop.in.in:2
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:2
 msgid "@app-name@"
 msgstr "@app-name@"
 
-#: data/io.gitlab.TitouanReal.Era.desktop.in.in:8
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:8
 msgid "GTK;"
 msgstr "GTK;"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
 msgid "Era"
 msgstr "Era"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
 msgid "Manage your time"
 msgstr "Уақытыңызды басқарыңыз"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
 msgid ""
-"Era is a time management application designed to help you stay organized "
-"and productive."
+"Era is a calendar that grows with your needs - simple and calm for everyday "
+"use while revealing powerful tools when you need them. Use a small window side-"
+"by-side with other apps for multitasking or go fullscreen for complex "
+"planning. Your events can sync with most online providers, and Era keeps "
+"working without interruptions when you’re offline."
 msgstr ""
-"Era — ұйымдасқан және өнімді болуға көмектесу үшін жасалған уақытты басқару "
-"қолданбасы."
+"Era — қажеттіліктеріңізге қарай бейімделетін күнтізбе: күнделікті пайдалану "
+"үшін қарапайым әрі қолайлы, ал қажет болған кезде қуатты саймандарды ұсынады. "
+"Көптапсырмалылық үшін басқа қолданбалармен қатар кіші терезені қолданыңыз "
+"немесе күрделі жоспарлау үшін толық экран режиміне өтіңіз. Оқиғаларыңыз "
+"көптеген онлайн провайдерлермен синхрондала алады, ал желіден тыс кезде Era "
+"үзіліссіз жұмыс істей береді."
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:19
+msgid "calendar"
+msgstr "күнтізбе"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:20
+msgid "calendaring"
+msgstr "күнтізбе жүргізу"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:21
+msgid "events"
+msgstr "оқиғалар"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:22
+msgid "meetings"
+msgstr "кездесулер"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:23
+msgid "appointments"
+msgstr "кездесулер"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:24
+msgid "scheduling"
+msgstr "кесте құру"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:25
+msgid "planning"
+msgstr "жоспарлау"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:26
+msgid "agenda"
+msgstr "күн тәртібі"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:27
+msgid "reminders"
+msgstr "еске салғыштар"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:28
+msgid "alarms"
+msgstr "оятқыштар"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:35
+msgid "Google Calendar"
+msgstr "Google Calendar"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:61
+#: data/resources/ui/views/month_view/month_view_inner.blp:14
+msgid "Month view"
+msgstr "Ай көрінісі"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:65
+msgid "Mobile month view"
+msgstr "Мобильді ай көрінісі"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:69
+msgid "Event details"
+msgstr "Оқиға туралы толық ақпарат"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:73
+msgid "Event editor"
+msgstr "Оқиға өңдегіші"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:5
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:12
@@ -59,18 +127,18 @@ msgid "Flow Details"
 msgstr "Ағын туралы толық ақпарат"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:42
+#: data/resources/ui/event_creation_dialog.blp:46
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:286
-#: data/resources/ui/event_creation_dialog.blp:45
 msgid "Cancel"
 msgstr "Бас тарту"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:49
-#: data/resources/ui/event_creation_dialog.blp:52
+#: data/resources/ui/event_creation_dialog.blp:53
 msgid "Create"
 msgstr "Жасау"
 
 #: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:16
-#: data/resources/ui/event_creation_dialog.blp:64
+#: data/resources/ui/event_creation_dialog.blp:65
 msgid "Name"
 msgstr "Аты"
 
@@ -86,15 +154,17 @@ msgstr "Әзірше пайдаланушы интерфейсінде түст�
 msgid "Remove Calendar"
 msgstr "Күнтізбені өшіру"
 
-#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:50
+#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:51
 msgid "Read only"
 msgstr "Тек оқу үшін"
 
-#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:57
+#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:58
 msgid "Calendar details"
 msgstr "Күнтізбенің толық ақпараты"
 
 #: data/resources/ui/calendar_management_dialog/calendar_management_dialog.blp:6
+#: data/resources/ui/calendar_management_dialog/collections_list_page.blp:6
+#: data/resources/ui/sidebar/sidebar.blp:10
 msgid "Calendars"
 msgstr "Күнтізбелер"
 
@@ -115,21 +185,29 @@ msgstr "Бұл жинақта күнтізбе жоқ"
 msgid "Calendar"
 msgstr "Күнтізбе"
 
-#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:15
-#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:32
+#: data/resources/ui/components/error_dialog.blp:7
+msgid "Error Details"
+msgstr "Қатенің толық ақпараты"
+
+#: data/resources/ui/components/error_dialog.blp:16
+msgid "Message"
+msgstr "Хабарлама"
+
+#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:12
+#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:31
 msgid "Edit Date"
 msgstr "Күнді түзету"
 
-#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:21
-#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:112
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:20
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:108
 msgid "Edit Time"
 msgstr "Уақытты түзету"
 
-#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:63
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:61
 msgid ":"
 msgstr ":"
 
-#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:100
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:97
 msgid "Change Timezone"
 msgstr "Уақыт белдеуін өзгерту"
 
@@ -147,12 +225,12 @@ msgid "No Result"
 msgstr "Нәтиже жоқ"
 
 #: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:15
-msgid "_All Day"
-msgstr "_Күні бойы"
-
-#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:21
 msgid "_Time Slot"
 msgstr "_Уақыт аралығы"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:21
+msgid "_All Day"
+msgstr "_Күні бойы"
 
 #: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:28
 msgid "Start Date"
@@ -174,13 +252,64 @@ msgstr "Аяқталу уақыты"
 msgid "Debug - timeframe:"
 msgstr "Жөндеу - уақыт шеңбері:"
 
-#: data/resources/ui/components/error_dialog.blp:7
-msgid "Error Details"
-msgstr "Қатенің толық ақпараты"
+#: data/resources/ui/event_creation_dialog.blp:6 data/resources/ui/window.blp:93
+#: data/resources/ui/window.blp:152 data/resources/ui/window.blp:211
+#: data/resources/ui/window.blp:275
+msgid "Create Event"
+msgstr "Оқиға жасау"
 
-#: data/resources/ui/components/error_dialog.blp:16
-msgid "Message"
-msgstr "Хабарлама"
+#: data/resources/ui/event_creation_dialog.blp:28
+msgid "No Calendar"
+msgstr "Күнтізбе жоқ"
+
+#: data/resources/ui/event_creation_dialog.blp:29
+msgid "There is no calendar to add an event to."
+msgstr "Оқиғаны қосатын күнтізбе жоқ."
+
+#: data/resources/ui/event_creation_dialog.blp:69
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:309
+msgid "Location"
+msgstr "Орналасуы"
+
+#: data/resources/ui/event_creation_dialog.blp:73
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:313
+msgid "Conference"
+msgstr "Конференция"
+
+#: data/resources/ui/event_creation_dialog.blp:85
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:169
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:336
+msgid "Description"
+msgstr "Сипаттамасы"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
+#: data/resources/ui/search_dialog/search_dialog.blp:24
+#: data/resources/ui/window.blp:62 data/resources/ui/window.blp:121
+#: data/resources/ui/window.blp:180 data/resources/ui/window.blp:282
+msgid "Search"
+msgstr "Іздеу"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:40
+msgid "Accepted"
+msgstr "Қабылданды"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:45
+msgid "Tentative"
+msgstr "Болжамды"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:50
+msgid "Declined"
+msgstr "Қабылданбады"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:55
+msgid "Delegated"
+msgstr "Өкілеттелді"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:60
+msgid "Needs Action"
+msgstr "Әрекет қажет"
 
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:16
 msgid "Event"
@@ -198,21 +327,9 @@ msgstr "Экспорттау"
 msgid "Show QR code"
 msgstr "QR-кодты көрсету"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:309
-#: data/resources/ui/event_creation_dialog.blp:68
-msgid "Location"
-msgstr "Орналасуы"
-
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:84
 msgid "Open Map"
 msgstr "Картаны ашу"
-
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:313
-#: data/resources/ui/event_creation_dialog.blp:72
-msgid "Conference"
-msgstr "Конференция"
 
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:105
 msgid "Join"
@@ -230,19 +347,13 @@ msgstr "Қатысушылар"
 msgid "Resources"
 msgstr "Ресурстар"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:169
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:336
-#: data/resources/ui/event_creation_dialog.blp:84
-msgid "Description"
-msgstr "Сипаттамасы"
-
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:186
 msgid ""
-"This event has recurrence properties. Such events are currently not "
-"editable in this app."
+"This event has recurrence properties. Such events are currently not editable "
+"in this app."
 msgstr ""
-"Бұл оқиғаның қайталану қасиеттері бар. Мұндай оқиғаларды қазіргі уақытта "
-"бұл қолданбада түзетуге болмайды."
+"Бұл оқиғаның қайталану қасиеттері бар. Мұндай оқиғаларды қазіргі уақытта бұл "
+"қолданбада түзетуге болмайды."
 
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:218
 msgid "_Edit"
@@ -272,32 +383,9 @@ msgstr "Атауы"
 msgid "Share Event"
 msgstr "Оқиғамен бөлісу"
 
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
-#: data/resources/ui/search_dialog/search_dialog.blp:24
-#: data/resources/ui/window.blp:62 data/resources/ui/window.blp:136
-#: data/resources/ui/window.blp:203 data/resources/ui/window.blp:279
-msgid "Search"
-msgstr "Іздеу"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:40
-msgid "Accepted"
-msgstr "Қабылданды"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:45
-msgid "Tentative"
-msgstr "Болжамды"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:50
-msgid "Declined"
-msgstr "Қабылданбады"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:55
-msgid "Delegated"
-msgstr "Өкілеттелді"
-
-#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:60
-msgid "Needs Action"
-msgstr "Әрекет қажет"
+#: data/resources/ui/qr_code_dialog.blp:28
+msgid "Scan to Import"
+msgstr "Импорттау үшін сканерлеу"
 
 #: data/resources/ui/search_dialog/search_dialog.blp:6
 msgid "Search Events"
@@ -318,28 +406,6 @@ msgstr "Оқиғаларды іздеу мүмкін емес"
 #: data/resources/ui/search_dialog/search_dialog.blp:78
 msgid "An error occurred in the backend. Try searching again"
 msgstr "Бэкендте қате орын алды. Қайта іздеп көріңіз"
-
-#: data/resources/ui/views/month_view/month_view_inner.blp:11
-msgid "Month view"
-msgstr "Ай көрінісі"
-
-#: data/resources/ui/event_creation_dialog.blp:6
-#: data/resources/ui/window.blp:93 data/resources/ui/window.blp:167
-#: data/resources/ui/window.blp:234 data/resources/ui/window.blp:347
-msgid "Create Event"
-msgstr "Оқиға жасау"
-
-#: data/resources/ui/event_creation_dialog.blp:27
-msgid "No Calendar"
-msgstr "Күнтізбе жоқ"
-
-#: data/resources/ui/event_creation_dialog.blp:28
-msgid "There is no calendar to add an event to."
-msgstr "Оқиғаны қосатын күнтізбе жоқ."
-
-#: data/resources/ui/qr_code_dialog.blp:28
-msgid "Scan to Import"
-msgstr "Импорттау үшін сканерлеу"
 
 #: data/resources/ui/shortcuts_dialog.blp:6
 msgctxt "shortcut dialog"
@@ -386,6 +452,48 @@ msgctxt "shortcut dialog"
 msgid "Show Today"
 msgstr "Бүгінгі күнді көрсету"
 
+#: data/resources/ui/shortcuts_dialog.blp:49
+msgctxt "shortcut dialog"
+msgid "View"
+msgstr "Көрініс"
+
+#: data/resources/ui/shortcuts_dialog.blp:52
+msgctxt "shortcut dialog"
+msgid "Scroll Up"
+msgstr "Жоғары айналдыру"
+
+#: data/resources/ui/shortcuts_dialog.blp:57
+msgctxt "shortcut dialog"
+msgid "Scroll Down"
+msgstr "Төмен айналдыру"
+
+#: data/resources/ui/shortcuts_dialog.blp:62
+msgctxt "shortcut dialog"
+msgid "Zoom In"
+msgstr "Үлкейту"
+
+#: data/resources/ui/shortcuts_dialog.blp:67
+msgctxt "shortcut dialog"
+msgid "Zoom Out"
+msgstr "Кішірейту"
+
+#: data/resources/ui/sidebar/sidebar.blp:20 data/resources/ui/window.blp:100
+#: data/resources/ui/window.blp:159 data/resources/ui/window.blp:218
+msgid "Manage Calendars"
+msgstr "Күнтізбелерді басқару"
+
+#: data/resources/ui/views/agenda_view/agenda_view.blp:36
+msgid "No events on this day"
+msgstr "Бұл күнге оқиғалар жоқ"
+
+#: data/resources/ui/views/agenda_view/agenda_view.blp:93
+#: data/resources/ui/views/month_view/month_view_floating_controls.blp:17
+#: data/resources/ui/views/year_view/year_view_floating_controls.blp:17
+#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
+#: data/resources/ui/window.blp:200
+msgid "_Today"
+msgstr "Бү_гін"
+
 #: data/resources/ui/window.blp:20
 msgid "About Era"
 msgstr "Era туралы"
@@ -402,66 +510,51 @@ msgstr "Күнтізбе бэкенді қолжетімсіз сияқты."
 msgid "Year"
 msgstr "Жыл"
 
-#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:129
-#: data/resources/ui/window.blp:196 data/resources/ui/window.blp:272
+#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:268
 msgid "Main Menu"
 msgstr "Негізгі мәзір"
 
-#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:156
-#: data/resources/ui/window.blp:223 data/resources/ui/window.blp:330
-msgid "_Today"
-msgstr "Бү_гін"
-
-#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:160
-#: data/resources/ui/window.blp:227 data/resources/ui/window.blp:334
+#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:145
+#: data/resources/ui/window.blp:204
 msgid "Go to Today"
 msgstr "Бүгінгі күнге өту"
-
-#: data/resources/ui/window.blp:100 data/resources/ui/window.blp:174
-#: data/resources/ui/window.blp:241 data/resources/ui/window.blp:354
-msgid "Manage Calendars"
-msgstr "Күнтізбелерді басқару"
 
 #: data/resources/ui/window.blp:109
 msgid "Month"
 msgstr "Ай"
 
-#: data/resources/ui/window.blp:117
-msgid "Year View"
-msgstr "Жыл көрінісі"
-
-#: data/resources/ui/window.blp:183
+#: data/resources/ui/window.blp:168
 msgid "Agenda"
 msgstr "Күн тәртібі"
 
-#: data/resources/ui/window.blp:265
+#: data/resources/ui/window.blp:242
 msgid "Toggle Sidebar"
 msgstr "Бүйірлік панельді ауыстырып-қосу"
 
-#: data/resources/ui/window.blp:291
+#: data/resources/ui/window.blp:294
 msgid "_Year"
 msgstr "_Жыл"
 
-#: data/resources/ui/window.blp:302
+#: data/resources/ui/window.blp:304
 msgid "_Month"
 msgstr "_Ай"
 
-#: data/resources/ui/window.blp:313
+#: data/resources/ui/window.blp:315
 msgid "_Agenda"
 msgstr "_Күн тәртібі"
 
-#: data/resources/ui/window.blp:430
+#: data/resources/ui/window.blp:428
 msgid "_Keyboard Shortcuts"
 msgstr "_Пернетақта жарлықтары"
 
-#: data/resources/ui/window.blp:435
+#: data/resources/ui/window.blp:433
 msgid "_About Era"
 msgstr "Era _туралы"
 
 #. Translators: Replace "translator-credits" with your name/username, and
 #. optionally an
 #. email or URL.
-#: src/application.rs:126
+#: src/application.rs:127
 msgid "translator-credits"
 msgstr "Baurzhan Muftakhidinov <baurthefirst@gmail.com>"
 
@@ -521,51 +614,51 @@ msgstr "СЕН"
 msgid "SUN"
 msgstr "ЖЕК"
 
-#: src/utils/template_callbacks.rs:149
+#: src/utils/template_callbacks.rs:149 src/utils/template_callbacks.rs:217
 msgid "january"
 msgstr "қаңтар"
 
-#: src/utils/template_callbacks.rs:150
+#: src/utils/template_callbacks.rs:150 src/utils/template_callbacks.rs:218
 msgid "february"
 msgstr "ақпан"
 
-#: src/utils/template_callbacks.rs:151
+#: src/utils/template_callbacks.rs:151 src/utils/template_callbacks.rs:219
 msgid "march"
 msgstr "наурыз"
 
-#: src/utils/template_callbacks.rs:152
+#: src/utils/template_callbacks.rs:152 src/utils/template_callbacks.rs:220
 msgid "april"
 msgstr "сәуір"
 
-#: src/utils/template_callbacks.rs:153
+#: src/utils/template_callbacks.rs:153 src/utils/template_callbacks.rs:221
 msgid "may"
 msgstr "мамыр"
 
-#: src/utils/template_callbacks.rs:154
+#: src/utils/template_callbacks.rs:154 src/utils/template_callbacks.rs:222
 msgid "june"
 msgstr "маусым"
 
-#: src/utils/template_callbacks.rs:155
+#: src/utils/template_callbacks.rs:155 src/utils/template_callbacks.rs:223
 msgid "july"
 msgstr "шілде"
 
-#: src/utils/template_callbacks.rs:156
+#: src/utils/template_callbacks.rs:156 src/utils/template_callbacks.rs:224
 msgid "august"
 msgstr "тамыз"
 
-#: src/utils/template_callbacks.rs:157
+#: src/utils/template_callbacks.rs:157 src/utils/template_callbacks.rs:225
 msgid "september"
 msgstr "қыркүйек"
 
-#: src/utils/template_callbacks.rs:158
+#: src/utils/template_callbacks.rs:158 src/utils/template_callbacks.rs:226
 msgid "october"
 msgstr "қазан"
 
-#: src/utils/template_callbacks.rs:159
+#: src/utils/template_callbacks.rs:159 src/utils/template_callbacks.rs:227
 msgid "november"
 msgstr "қараша"
 
-#: src/utils/template_callbacks.rs:160
+#: src/utils/template_callbacks.rs:160 src/utils/template_callbacks.rs:228
 msgid "december"
 msgstr "желтоқсан"
 
@@ -586,6 +679,7 @@ msgid "April"
 msgstr "Сәуір"
 
 #: src/utils/template_callbacks.rs:174 src/utils/template_callbacks.rs:195
+#: src/utils/template_callbacks.rs:241
 msgid "May"
 msgstr "Мамыр"
 
@@ -617,47 +711,47 @@ msgstr "Қараша"
 msgid "December"
 msgstr "Желтоқсан"
 
-#: src/utils/template_callbacks.rs:191
+#: src/utils/template_callbacks.rs:191 src/utils/template_callbacks.rs:237
 msgid "Jan"
 msgstr "Қаң"
 
-#: src/utils/template_callbacks.rs:192
+#: src/utils/template_callbacks.rs:192 src/utils/template_callbacks.rs:238
 msgid "Feb"
 msgstr "Ақп"
 
-#: src/utils/template_callbacks.rs:193
+#: src/utils/template_callbacks.rs:193 src/utils/template_callbacks.rs:239
 msgid "Mar"
 msgstr "Нау"
 
-#: src/utils/template_callbacks.rs:194
+#: src/utils/template_callbacks.rs:194 src/utils/template_callbacks.rs:240
 msgid "Apr"
 msgstr "Сәу"
 
-#: src/utils/template_callbacks.rs:196
+#: src/utils/template_callbacks.rs:196 src/utils/template_callbacks.rs:242
 msgid "Jun"
 msgstr "Мау"
 
-#: src/utils/template_callbacks.rs:197
+#: src/utils/template_callbacks.rs:197 src/utils/template_callbacks.rs:243
 msgid "Jul"
 msgstr "Шіл"
 
-#: src/utils/template_callbacks.rs:198
+#: src/utils/template_callbacks.rs:198 src/utils/template_callbacks.rs:244
 msgid "Aug"
 msgstr "Там"
 
-#: src/utils/template_callbacks.rs:199
+#: src/utils/template_callbacks.rs:199 src/utils/template_callbacks.rs:245
 msgid "Sep"
 msgstr "Қыр"
 
-#: src/utils/template_callbacks.rs:200
+#: src/utils/template_callbacks.rs:200 src/utils/template_callbacks.rs:246
 msgid "Oct"
 msgstr "Қаз"
 
-#: src/utils/template_callbacks.rs:201
+#: src/utils/template_callbacks.rs:201 src/utils/template_callbacks.rs:247
 msgid "Nov"
 msgstr "Қар"
 
-#: src/utils/template_callbacks.rs:202
+#: src/utils/template_callbacks.rs:202 src/utils/template_callbacks.rs:248
 msgid "Dec"
 msgstr "Жел"
 
@@ -779,11 +873,11 @@ msgstr ""
 #: src/utils/timeframe_label.rs:280
 #, rust-format
 msgid ""
-"{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} "
-"{day_end}, {time_end} ({tz_end})"
+"{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} {day_end}, "
+"{time_end} ({tz_end})"
 msgstr ""
-"{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} "
-"{day_end}, {time_end} ({tz_end})"
+"{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} {day_end}, "
+"{time_end} ({tz_end})"
 
 #. e.g. "June 12, 14:00 – July 3, 15:30, 2025"
 #. TRANSLATORS: timed event spanning months within a past or future year,
@@ -793,11 +887,11 @@ msgstr ""
 #: src/utils/timeframe_label.rs:300
 #, rust-format
 msgid ""
-"{month_start} {day_start}, {time_start} – {month_end} {day_end}, "
-"{time_end}, {year}"
+"{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}, "
+"{year}"
 msgstr ""
-"{month_start} {day_start}, {time_start} – {month_end} {day_end}, "
-"{time_end}, {year}"
+"{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}, "
+"{year}"
 
 #. e.g. "June 12, 14:00 (America/New_York) – July 3, 15:30 (Europe/Paris),
 #. 2025"
@@ -809,11 +903,11 @@ msgstr ""
 #: src/utils/timeframe_label.rs:319
 #, rust-format
 msgid ""
-"{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} "
-"{day_end}, {time_end} ({tz_end}), {year}"
+"{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} {day_end}, "
+"{time_end} ({tz_end}), {year}"
 msgstr ""
-"{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} "
-"{day_end}, {time_end} ({tz_end}), {year}"
+"{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} {day_end}, "
+"{time_end} ({tz_end}), {year}"
 
 #. e.g. "June 12, 2024, 14:00 – January 3, 2025, 15:30"
 #. TRANSLATORS: timed event spanning different years, system timezone.
@@ -822,11 +916,11 @@ msgstr ""
 #: src/utils/timeframe_label.rs:335
 #, rust-format
 msgid ""
-"{month_start} {day_start}, {year_start}, {time_start} – {month_end} "
-"{day_end}, {year_end}, {time_end}"
+"{month_start} {day_start}, {year_start}, {time_start} – {month_end} {day_end}, "
+"{year_end}, {time_end}"
 msgstr ""
-"{month_start} {day_start}, {year_start}, {time_start} – {month_end} "
-"{day_end}, {year_end}, {time_end}"
+"{month_start} {day_start}, {year_start}, {time_start} – {month_end} {day_end}, "
+"{year_end}, {time_end}"
 
 #. e.g. "June 12, 2024, 14:00 (America/New_York) – January 3, 2025, 15:30
 #. (Europe/Paris)" TRANSLATORS: different-year range; each time in a
@@ -841,3 +935,18 @@ msgid ""
 msgstr ""
 "{month_start} {day_start}, {year_start}, {time_start} ({tz_start}) – "
 "{month_end} {day_end}, {year_end}, {time_end} ({tz_end})"
+
+#: src/widgets/window.rs:496
+msgid "%Y"
+msgstr "%Y"
+
+#: src/widgets/window.rs:505 src/widgets/window.rs:514
+msgid "%0B %Y"
+msgstr "%0B %Y"
+
+#~ msgid ""
+#~ "Era is a time management application designed to help you stay organized "
+#~ "and productive."
+#~ msgstr ""
+#~ "Era — ұйымдасқан және өнімді болуға көмектесу үшін жасалған уақытты басқару "
+#~ "қолданбасы."
