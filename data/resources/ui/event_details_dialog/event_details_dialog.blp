@@ -111,24 +111,10 @@ template $EventDetailsDialog: Adw.Dialog {
             }
 
             Adw.PreferencesGroup {
-              Adw.ActionRow {
+              $CalendarDisplayRow {
                 title: _("Calendar");
-
-                [suffix]
-                Box {
-                  spacing: 6;
-
-                  Image {
-                    pixel-size: 16;
-                    paintable: bind $get_circle_paintable(template.event as <Clepsydre.Event>.calendar.color);
-                  }
-
-                  Label {
-                    ellipsize: end;
-                    xalign: 0.0;
-                    label: bind template.event as <Clepsydre.Event>.calendar.name;
-                  }
-                }
+                calendar: bind template.event as <Clepsydre.Event>.calendar;
+                show-name: true;
               }
             }
 

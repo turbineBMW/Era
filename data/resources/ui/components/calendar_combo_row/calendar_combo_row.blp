@@ -5,6 +5,10 @@ using Clepsydre 0;
 template $CalendarComboRow: Adw.ComboRow {
   title: _("Calendar");
 
+  styles [
+    "calendar-combo-row",
+  ]
+
   model: FilterListModel model {
     filter: bind template.filter;
 
@@ -27,19 +31,8 @@ template $CalendarComboRow: Adw.ComboRow {
 
   factory: BuilderListItemFactory {
     template ListItem {
-      child: Box {
-        spacing: 6;
-
-        Image {
-          pixel-size: 16;
-          paintable: bind $get_circle_paintable(template.item as <Clepsydre.Calendar>.color);
-        }
-
-        Label {
-          ellipsize: end;
-          xalign: 0.0;
-          label: bind template.item as <Clepsydre.Calendar>.name;
-        }
+      child: $CalendarComboRowSelectedItem {
+        calendar: bind template.item as <Clepsydre.Calendar>;
       };
     }
   };

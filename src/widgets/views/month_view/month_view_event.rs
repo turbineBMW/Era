@@ -264,17 +264,6 @@ mod imp {
 
             obj.add_css_class(&css_class);
             self.css_class.replace(Some(css_class));
-
-            // Add light/dark class based on color intensity
-            // TODO: Is that necessary?
-            let intensity = color.red() * 0.30 + color.green() * 0.59 + color.blue() * 0.11;
-            if intensity > 0.5 {
-                obj.remove_css_class("color-dark");
-                obj.add_css_class("color-light");
-            } else {
-                obj.remove_css_class("color-light");
-                obj.add_css_class("color-dark");
-            }
         }
 
         #[template_callback]

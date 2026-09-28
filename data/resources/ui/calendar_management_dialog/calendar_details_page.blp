@@ -18,14 +18,10 @@ template $CalendarDetailsPage: Adw.NavigationPage {
             apply => $update_calendar_name(template);
           }
 
-          Adw.ActionRow {
+          $CalendarDisplayRow {
             title: _("Color");
-            subtitle: _("No good way to change color in the UI yet");
-
-            Image {
-              pixel-size: 24;
-              paintable: bind $get_circle_paintable(template.calendar as <Clepsydre.Calendar>.color);
-            }
+            calendar: bind template.calendar;
+            show-name: false;
           }
         }
 

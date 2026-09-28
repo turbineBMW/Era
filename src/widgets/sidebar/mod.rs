@@ -5,7 +5,7 @@ use tracing::warn;
 
 mod sidebar_calendar_row;
 
-use crate::utils::{PaintableCallbacks, TemplateCallbacks};
+use crate::utils::TemplateCallbacks;
 
 use self::sidebar_calendar_row::SidebarCalendarRow;
 
@@ -29,7 +29,6 @@ mod imp {
             klass.bind_template();
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
-            PaintableCallbacks::bind_template_callbacks(klass);
 
             klass.set_css_name("sidebar");
         }

@@ -5,7 +5,7 @@ use clepsydre::{Calendar, prelude::*};
 use glib::{clone, translate::*};
 use tracing::{debug, warn};
 
-use crate::utils::{PaintableCallbacks, TemplateCallbacks};
+use crate::utils::TemplateCallbacks;
 
 mod imp {
     use super::*;
@@ -33,7 +33,6 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
-            PaintableCallbacks::bind_template_callbacks(klass);
             TemplateCallbacks::bind_template_callbacks(klass);
         }
 

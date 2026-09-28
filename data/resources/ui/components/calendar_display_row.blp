@@ -1,0 +1,29 @@
+using Gtk 4.0;
+using Adw 1;
+using Clepsydre 0;
+
+template $CalendarDisplayRow: Adw.ActionRow {
+  styles [
+    "calendar-display-row",
+  ]
+
+  [suffix]
+  Box {
+    spacing: 6;
+
+    Adw.Bin {
+      valign: center;
+
+      styles [
+        "circle",
+      ]
+    }
+
+    Label {
+      ellipsize: end;
+      xalign: 0.0;
+      label: bind template.calendar as <Clepsydre.Calendar>.name;
+      visible: bind template.show-name;
+    }
+  }
+}

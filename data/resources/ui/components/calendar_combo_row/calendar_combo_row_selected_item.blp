@@ -2,7 +2,7 @@ using Gtk 4.0;
 using Adw 1;
 using Clepsydre 0;
 
-template $CalendarComboRowListItem: Box {
+template $CalendarComboRowSelectedItem: Box {
   spacing: 6;
 
   Adw.Bin {
@@ -17,10 +17,5 @@ template $CalendarComboRowListItem: Box {
     ellipsize: end;
     xalign: 0.0;
     label: bind template.calendar as <Clepsydre.Calendar>.name;
-  }
-
-  Image {
-    icon-name: "object-select-symbolic";
-    visible: bind template.selected;
   }
 }

@@ -28,6 +28,16 @@ sidebar {
     }
 }
 
+.calendar-combo-row,
+.calendar-display-row {
+    .circle {
+        background-color: oklab(from var(--calendar-color) 0.6 a b);
+        min-width: 16px;
+        min-height: 16px;
+        border-radius: 16px;
+    }
+}
+
 .search-dialog {
     listview {
         background-color: transparent;

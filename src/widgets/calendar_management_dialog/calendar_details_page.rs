@@ -6,7 +6,7 @@ use glib::clone;
 use tracing::{debug, warn};
 
 use crate::{
-    utils::{PaintableCallbacks, TemplateCallbacks},
+    utils::TemplateCallbacks,
     widgets::components::{ErrorDialog, LoadingButtonRow},
 };
 
@@ -36,7 +36,6 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             klass.bind_template_callbacks();
-            PaintableCallbacks::bind_template_callbacks(klass);
             TemplateCallbacks::bind_template_callbacks(klass);
 
             klass.install_action(

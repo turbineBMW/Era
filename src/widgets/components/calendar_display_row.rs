@@ -8,24 +8,22 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[template(
-        file = "data/resources/ui/components/calendar_combo_row/calendar_combo_row_list_item.blp"
-    )]
-    #[properties(wrapper_type = super::CalendarComboRowListItem)]
-    pub struct CalendarComboRowListItem {
+    #[template(file = "data/resources/ui/components/calendar_display_row.blp")]
+    #[properties(wrapper_type = super::CalendarDisplayRow)]
+    pub struct CalendarDisplayRow {
         #[property(get, set = Self::set_calendar, nullable, construct)]
         calendar: RefCell<Option<Calendar>>,
         #[property(get, set)]
-        selected: Cell<bool>,
+        show_name: Cell<bool>,
 
         css_class: RefCell<Option<String>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for CalendarComboRowListItem {
-        const NAME: &'static str = "CalendarComboRowListItem";
-        type Type = super::CalendarComboRowListItem;
-        type ParentType = gtk::Box;
+    impl ObjectSubclass for CalendarDisplayRow {
+        const NAME: &'static str = "CalendarDisplayRow";
+        type Type = super::CalendarDisplayRow;
+        type ParentType = adw::ActionRow;
 
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
@@ -38,12 +36,15 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for CalendarComboRowListItem {}
-    impl WidgetImpl for CalendarComboRowListItem {}
-    impl BoxImpl for CalendarComboRowListItem {}
+    impl ObjectImpl for CalendarDisplayRow {}
+
+    impl WidgetImpl for CalendarDisplayRow {}
+    impl ListBoxRowImpl for CalendarDisplayRow {}
+    impl PreferencesRowImpl for CalendarDisplayRow {}
+    impl ActionRowImpl for CalendarDisplayRow {}
 
     #[gtk::template_callbacks]
-    impl CalendarComboRowListItem {
+    impl CalendarDisplayRow {
         fn set_calendar(&self, calendar: Option<&Calendar>) {
             if self.obj().calendar() == calendar.cloned() {
                 return;
@@ -88,16 +89,7 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct CalendarComboRowListItem(ObjectSubclass<imp::CalendarComboRowListItem>)
-    @extends gtk::Widget, gtk::Box,
-    @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
-}
-
-impl CalendarComboRowListItem {
-    pub fn new(calendar: &Calendar, selected: bool) -> Self {
-        glib::Object::builder()
-            .property("calendar", calendar)
-            .property("selected", selected)
-            .build()
-    }
+    pub struct CalendarDisplayRow(ObjectSubclass<imp::CalendarDisplayRow>)
+    @extends gtk::Widget, gtk::ListBoxRow, adw::PreferencesRow, adw::ActionRow,
+    @implements gtk::Accessible, gtk::Actionable, gtk::Buildable, gtk::ConstraintTarget;
 }

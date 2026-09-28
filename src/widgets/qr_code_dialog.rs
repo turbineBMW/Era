@@ -2,7 +2,7 @@ use std::cell::RefCell;
 
 use adw::{prelude::*, subclass::prelude::*};
 
-use crate::utils::{PaintableCallbacks, TemplateCallbacks};
+use crate::utils::TemplateCallbacks;
 
 mod imp {
     use super::*;
@@ -26,7 +26,6 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             klass.bind_template();
             TemplateCallbacks::bind_template_callbacks(klass);
-            PaintableCallbacks::bind_template_callbacks(klass);
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {

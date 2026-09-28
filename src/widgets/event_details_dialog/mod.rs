@@ -15,10 +15,12 @@ use tracing::{debug, warn};
 use crate::{
     spawn,
     system::ClockFormat,
-    utils::{self, EventPropertiesPreset, PaintableCallbacks, TemplateCallbacks},
+    utils::{self, EventPropertiesPreset, TemplateCallbacks},
     widgets::{
         QrCodeDialog,
-        components::{CalendarComboRow, ErrorDialog, LoadingButton, TimeframePicker},
+        components::{
+            CalendarComboRow, CalendarDisplayRow, ErrorDialog, LoadingButton, TimeframePicker,
+        },
     },
 };
 
@@ -76,11 +78,11 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             AttendeeListRow::ensure_type();
+            CalendarDisplayRow::ensure_type();
 
             klass.bind_template();
             klass.bind_template_callbacks();
             TemplateCallbacks::bind_template_callbacks(klass);
-            PaintableCallbacks::bind_template_callbacks(klass);
 
             klass.install_action("event-details-dialog.export", None, |obj, _, _| {
                 let imp = obj.imp();

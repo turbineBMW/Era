@@ -5,11 +5,13 @@ use clepsydre::{Calendar, Collection, prelude::*};
 use glib::clone;
 use gtk::{FilterListModel, MapListModel};
 
-use crate::utils::PaintableCallbacks;
-
 mod calendar_combo_row_list_item;
+mod calendar_combo_row_selected_item;
 
-use self::calendar_combo_row_list_item::CalendarComboRowListItem;
+use self::{
+    calendar_combo_row_list_item::CalendarComboRowListItem,
+    calendar_combo_row_selected_item::CalendarComboRowSelectedItem,
+};
 
 mod imp {
     use super::*;
@@ -33,9 +35,10 @@ mod imp {
         type ParentType = adw::ComboRow;
 
         fn class_init(klass: &mut Self::Class) {
+            CalendarComboRowSelectedItem::ensure_type();
+
             klass.bind_template();
             klass.bind_template_callbacks();
-            PaintableCallbacks::bind_template_callbacks(klass);
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
