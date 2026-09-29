@@ -8,7 +8,7 @@ mod calendar_management_calendar_row;
 mod collection_row;
 mod collections_list_page;
 
-use crate::{Application, utils::TemplateCallbacks};
+use crate::{Application, utils::TemplateCallbacks, widgets::components::CalendarDisplayRow};
 
 use self::{
     calendar_details_page::CalendarDetailsPage, collections_list_page::CollectionsListPage,
@@ -37,6 +37,8 @@ mod imp {
         type ParentType = adw::Dialog;
 
         fn class_init(klass: &mut Self::Class) {
+            CalendarDisplayRow::ensure_type();
+
             klass.bind_template();
             TemplateCallbacks::bind_template_callbacks(klass);
 
