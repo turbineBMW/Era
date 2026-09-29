@@ -961,8 +961,6 @@ mod imp {
                 return;
             }
 
-            self.cancel_animation();
-
             // Deny presses that land on an event widget, an overflow button or the floating controls.
             let picked = self
                 .obj()
@@ -973,7 +971,17 @@ mod imp {
             let on_floating_controls = picked
                 .ancestor(MonthViewFloatingControls::static_type())
                 .is_some();
-            if on_event_widget || on_overflow_widget || on_floating_controls {
+
+            if on_floating_controls {
+                gesture_drag.set_state(gtk::EventSequenceState::Denied);
+                return;
+            }
+
+            // Only cancel the animation if the drag is not on the floating controls ; else, this
+            // breaks the discrete scroll accumulation.
+            self.cancel_animation();
+
+            if on_event_widget || on_overflow_widget {
                 gesture_drag.set_state(gtk::EventSequenceState::Denied);
                 return;
             }
