@@ -1,16 +1,18 @@
 use std::cell::{Cell, OnceCell};
 
 use adw::{prelude::*, subclass::prelude::*};
+use ashpd::desktop::file_chooser;
 use clepsydre::{Calendar, prelude::*};
 use gettextrs::gettext;
 use glib::{clone, translate::*};
 use jiff::ToSpan;
+use tracing::warn;
 
 use crate::{
-    Application,
+    Application, spawn,
     utils::{Date, EventPropertiesPreset},
     widgets::{
-        CalendarManagementDialog, EventCreationDialog, SearchDialog, Sidebar,
+        CalendarManagementDialog, EventCreationDialog, ImportDialog, SearchDialog, Sidebar,
         views::{AgendaView, MonthView, YearView},
     },
 };
@@ -63,6 +65,8 @@ pub mod imp {
         calendar_management_dialog: TemplateChild<CalendarManagementDialog>,
         #[template_child]
         search_dialog: TemplateChild<SearchDialog>,
+        #[template_child]
+        import_dialog: TemplateChild<ImportDialog>,
 
         wide_view_stack_visible_child_name_handler_id: OnceCell<glib::SignalHandlerId>,
         colors_provider: gtk::CssProvider,
@@ -119,6 +123,17 @@ pub mod imp {
             klass.add_binding(gdk::Key::N, gdk::ModifierType::CONTROL_MASK, |obj| {
                 obj.imp().create_event();
                 glib::Propagation::Stop
+            });
+
+            klass.install_action("win.import", None, |obj, _, _| {
+                let imp = obj.imp();
+                spawn!(clone!(
+                    #[weak]
+                    imp,
+                    async move {
+                        imp.import().await;
+                    }
+                ));
             });
 
             klass.install_action("win.today", None, |obj, _, _| {
@@ -472,6 +487,37 @@ pub mod imp {
             }
 
             self.colors_provider.load_from_string(&css);
+        }
+
+        async fn import(&self) {
+            let request = match file_chooser::SelectedFiles::open_file()
+                .title("Import Event")
+                .accept_label("Import")
+                .modal(true)
+                .multiple(false)
+                .filter(file_chooser::FileFilter::new("iCalendar").glob("*.ics"))
+                .send()
+                .await
+            {
+                Ok(request) => request,
+                Err(e) => {
+                    warn!("Failed to open file picker portal: {}", e);
+                    return;
+                }
+            };
+
+            let Ok(files) = request.response() else {
+                return;
+            };
+
+            let file_uri = files.uris().first().unwrap();
+            let file = gio::File::for_uri(file_uri.as_str());
+
+            let bytes = file.load_bytes_future().await.unwrap().0;
+            let content = String::from_utf8(bytes.to_vec()).unwrap();
+
+            self.import_dialog.set_ics(content.as_str());
+            self.import_dialog.present(Some(&*self.obj()));
         }
 
         #[template_callback(function)]

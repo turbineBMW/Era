@@ -179,6 +179,7 @@ mod imp {
         }
 
         async fn create_event(&self) {
+            self.toast_overlay.dismiss_all();
             self.cancel.set_sensitive(false);
             self.create.set_is_loading(true);
             self.name.set_sensitive(false);
@@ -212,7 +213,6 @@ mod imp {
                 }
                 Err(error) => {
                     warn!("Failed to create event: {error}");
-                    self.toast_overlay.dismiss_all();
                     let toast = adw::Toast::new("An error occurred");
                     toast.set_button_label(Some("Details"));
                     toast.set_action_name(Some("create-event-dialog.show-error"));
@@ -220,6 +220,7 @@ mod imp {
                     self.toast_overlay.add_toast(toast);
                 }
             }
+
             self.cancel.set_sensitive(true);
             self.create.set_is_loading(false);
             self.name.set_sensitive(true);

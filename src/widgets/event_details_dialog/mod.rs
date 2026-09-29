@@ -3,10 +3,7 @@ use std::cell::RefCell;
 use adw::{prelude::*, subclass::prelude::*};
 use ashpd::{
     Uri,
-    desktop::{
-        file_chooser::{FileFilter, SelectedFiles},
-        open_uri::OpenFileRequest,
-    },
+    desktop::{file_chooser, open_uri::OpenFileRequest},
 };
 use clepsydre::{Event, prelude::*};
 use glib::{DateTime, clone};
@@ -257,12 +254,12 @@ mod imp {
             let event = self.obj().event().expect("event should be initialized");
             let ics_content = event.to_string_for_ics().unwrap();
 
-            let request = match SelectedFiles::save_file()
+            let request = match file_chooser::SelectedFiles::save_file()
                 .title("Export Event")
                 .accept_label("Export")
                 .current_name(format!("{}.ics", event.name().unwrap_or_default()).as_str())
                 .modal(true)
-                .filter(FileFilter::new("iCalendar").glob("*.ics"))
+                .filter(file_chooser::FileFilter::new("iCalendar").glob("*.ics"))
                 .send()
                 .await
             {

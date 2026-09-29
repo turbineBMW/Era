@@ -2,6 +2,7 @@ mod calendar_management_dialog;
 mod components;
 mod event_creation_dialog;
 mod event_details_dialog;
+mod import_dialog;
 mod qr_code_dialog;
 mod search_dialog;
 mod sidebar;
@@ -10,6 +11,6 @@ mod window;
 
 pub use self::{
     calendar_management_dialog::CalendarManagementDialog,
-    event_creation_dialog::EventCreationDialog, qr_code_dialog::QrCodeDialog,
-    search_dialog::SearchDialog, sidebar::Sidebar, window::Window,
+    event_creation_dialog::EventCreationDialog, import_dialog::ImportDialog,
+    qr_code_dialog::QrCodeDialog, search_dialog::SearchDialog, sidebar::Sidebar, window::Window,
 };

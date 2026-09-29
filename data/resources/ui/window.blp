@@ -434,6 +434,13 @@ template $EraWindow: Adw.ApplicationWindow {
 menu primary_menu {
   section {
     item {
+      label: _("Import…");
+      action: "win.import";
+    }
+  }
+
+  section {
+    item {
       label: _("_Keyboard Shortcuts");
       action: "app.shortcuts";
     }
@@ -450,3 +457,5 @@ $EventCreationDialog event_creation_dialog {}
 $CalendarManagementDialog calendar_management_dialog {}
 
 $SearchDialog search_dialog {}
+
+$ImportDialog import_dialog {}

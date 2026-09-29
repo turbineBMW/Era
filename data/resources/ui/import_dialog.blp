@@ -1,0 +1,41 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ImportDialog: Adw.Dialog {
+  title: _("Import");
+  content-height: 500;
+  content-width: 500;
+
+  Adw.ToastOverlay toast_overlay {
+    Adw.ToolbarView {
+      [top]
+      Adw.HeaderBar {
+        show-start-title-buttons: false;
+        show-end-title-buttons: false;
+
+        Button cancel {
+          icon-name: "cross-symbolic";
+          tooltip-text: _("Cancel");
+          action-name: "window.close";
+        }
+
+        [end]
+        $LoadingButton create {
+          content-icon-name: "object-select-symbolic";
+          tooltip-text: _("Import");
+          action-name: "import-dialog.import";
+
+          styles [
+            "suggested-action",
+          ]
+        }
+      }
+
+      content: Adw.PreferencesPage {
+        Adw.PreferencesGroup {
+          $CalendarComboRow calendar_choice {}
+        }
+      };
+    }
+  }
+}
