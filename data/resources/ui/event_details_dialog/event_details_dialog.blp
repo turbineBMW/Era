@@ -304,13 +304,15 @@ template $EventDetailsDialog: Adw.Dialog {
             // A calendar change does not require editing ; instead it requires event removal right,
             // and event creation right in the new calendar.
             Adw.PreferencesGroup {
-              visible: bind $both(
-                $both(
-                  template.event as <Clepsydre.Event>.editable,
-                  template.event as <Clepsydre.Event>.removable,
-                ) as <bool>,
-                template.event as <Clepsydre.Event>.calendar.event-creation-enabled,
-              );
+              // visible: bind $both(
+              //   $both(
+              //     template.event as <Clepsydre.Event>.editable,
+              //     template.event as <Clepsydre.Event>.removable,
+              //   ) as <bool>,
+              //   template.event as <Clepsydre.Event>.calendar.event-creation-enabled,
+              // );
+              // TODO: Enable again once clepsydre-eds supports calendar changes.
+              visible: false;
 
               $CalendarComboRow calendar_choice {}
             }
