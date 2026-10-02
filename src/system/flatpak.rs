@@ -16,6 +16,60 @@ const GNOME_DESKTOP_CALENDAR_NAMESPACE: &str = "org.gnome.desktop.calendar";
 const CLOCK_FORMAT_KEY: &str = "clock-format";
 const WEEK_START_DAY_KEY: &str = "week-start-day";
 
+/// Returns the first day of the week according to the current locale (`LC_TIME`).
+fn locale_first_week_day() -> WeekDay {
+    // These glibc items are not exposed by the `libc` crate. `_NL_ITEM(category, index)` is
+    // `(category << 16) | index`.
+    const NL_TIME_WEEK_1STDAY: libc::nl_item = ((libc::LC_TIME as libc::nl_item) << 16) | 102;
+    const NL_TIME_FIRST_WEEKDAY: libc::nl_item = ((libc::LC_TIME as libc::nl_item) << 16) | 104;
+
+    // SAFETY: `WEEK_1STDAY` returns a value stored in the pointer itself and `FIRST_WEEKDAY`
+    // returns a pointer to a single byte. Neither is null for valid items and the pointers are
+    // not retained.
+    let (week_1st_day, first_weekday) = unsafe {
+        (
+            libc::nl_langinfo(NL_TIME_WEEK_1STDAY) as usize,
+            *libc::nl_langinfo(NL_TIME_FIRST_WEEKDAY) as u8 as usize,
+        )
+    };
+
+    // `WEEK_1STDAY` is a reference date (YYYYMMDD) that tells which day `FIRST_WEEKDAY == 1`
+    // refers to. 1997-11-30 was a Sunday, 1997-12-01 was a Monday.
+    let reference_day = match week_1st_day {
+        19971130 => 0,
+        19971201 => 1,
+        _ => return WeekDay::Monday,
+    };
+
+    if !(1..=7).contains(&first_weekday) {
+        return WeekDay::Monday;
+    }
+
+    match (reference_day + first_weekday - 1) % 7 {
+        0 => WeekDay::Sunday,
+        1 => WeekDay::Monday,
+        2 => WeekDay::Tuesday,
+        3 => WeekDay::Wednesday,
+        4 => WeekDay::Thursday,
+        5 => WeekDay::Friday,
+        _ => WeekDay::Saturday,
+    }
+}
+
+impl TryFrom<&str> for ClockFormat {
+    type Error = zvariant::Error;
+
+    fn try_from(string: &str) -> Result<Self, Self::Error> {
+        match string {
+            "12h" => Ok(Self::TwelveHours),
+            "24h" => Ok(Self::TwentyFourHours),
+            _ => Err(zvariant::Error::Message(format!(
+                "Invalid string `{string}`, expected `12h` or `24h`"
+            ))),
+        }
+    }
+}
+
 impl TryFrom<&zvariant::OwnedValue> for ClockFormat {
     type Error = zvariant::Error;
 
@@ -24,13 +78,7 @@ impl TryFrom<&zvariant::OwnedValue> for ClockFormat {
             return Err(zvariant::Error::IncorrectType);
         };
 
-        match string {
-            "12h" => Ok(Self::TwelveHours),
-            "24h" => Ok(Self::TwentyFourHours),
-            _ => Err(zvariant::Error::Message(format!(
-                "Invalid string `{string}`, expected `12h` or `24h`"
-            ))),
-        }
+        Self::try_from(string)
     }
 }
 
@@ -42,14 +90,10 @@ impl TryFrom<zvariant::OwnedValue> for ClockFormat {
     }
 }
 
-impl TryFrom<&zvariant::OwnedValue> for WeekDay {
+impl TryFrom<&str> for WeekDay {
     type Error = zvariant::Error;
 
-    fn try_from(value: &zvariant::OwnedValue) -> Result<Self, Self::Error> {
-        let Ok(s) = <&str>::try_from(value) else {
-            return Err(zvariant::Error::IncorrectType);
-        };
-
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
         match s {
             "monday" => Ok(Self::Monday),
             "tuesday" => Ok(Self::Tuesday),
@@ -58,12 +102,23 @@ impl TryFrom<&zvariant::OwnedValue> for WeekDay {
             "friday" => Ok(Self::Friday),
             "saturday" => Ok(Self::Saturday),
             "sunday" => Ok(Self::Sunday),
-            // TODO: Retrieve from locale
-            "default" => Ok(Self::Monday),
+            "default" => Ok(locale_first_week_day()),
             _ => Err(zvariant::Error::Message(format!(
                 "Invalid string `{s}`, expected a week day"
             ))),
         }
+    }
+}
+
+impl TryFrom<&zvariant::OwnedValue> for WeekDay {
+    type Error = zvariant::Error;
+
+    fn try_from(value: &zvariant::OwnedValue) -> Result<Self, Self::Error> {
+        let Ok(s) = <&str>::try_from(value) else {
+            return Err(zvariant::Error::IncorrectType);
+        };
+
+        Self::try_from(s)
     }
 }
 
@@ -101,6 +156,15 @@ mod imp {
                 .expect("System bus should not already be initialized");
 
             self.update_datetime();
+
+            // The settings are read by blocking on the portal proxy, so that the UI is built with
+            // correct values directly.
+            let main_context = glib::MainContext::default();
+            let proxy = main_context
+                .block_on(ashpd::desktop::settings::Settings::new())
+                .expect("Could not connect to the settings portal");
+            self.read_initial_settings(&main_context, &proxy);
+
             glib::timeout_add_seconds_local(
                 1,
                 clone!(
@@ -120,28 +184,6 @@ mod imp {
                 self,
                 async move {
                     let system = imp.obj().clone().upcast::<System>();
-
-                    let proxy = ashpd::desktop::settings::Settings::new().await.unwrap();
-
-                    match proxy
-                        .read::<ClockFormat>(GNOME_DESKTOP_INTERFACE_NAMESPACE, CLOCK_FORMAT_KEY)
-                        .await
-                    {
-                        Ok(clock_format) => system.set_clock_format(clock_format),
-                        Err(error) => {
-                            error!("Could not access clock format system setting: {error}");
-                        }
-                    }
-
-                    match proxy
-                        .read::<WeekDay>(GNOME_DESKTOP_CALENDAR_NAMESPACE, WEEK_START_DAY_KEY)
-                        .await
-                    {
-                        Ok(first_week_day) => system.set_first_week_day(first_week_day),
-                        Err(error) => {
-                            error!("Could not access first day of week system setting: {error}");
-                        }
-                    }
 
                     proxy
                         .receive_setting_changed()
@@ -192,6 +234,36 @@ mod imp {
     impl SystemImpl for FlatpakSystem {}
 
     impl FlatpakSystem {
+        /// Reads the settings from the portal, blocking on the main context, so that they are
+        /// correct as soon as the object is constructed. Later changes are handled by the portal
+        /// subscription.
+        fn read_initial_settings(
+            &self,
+            main_context: &glib::MainContext,
+            proxy: &ashpd::desktop::settings::Settings,
+        ) {
+            let system = self.obj().clone().upcast::<System>();
+
+            match main_context.block_on(
+                proxy.read::<ClockFormat>(GNOME_DESKTOP_INTERFACE_NAMESPACE, CLOCK_FORMAT_KEY),
+            ) {
+                Ok(clock_format) => system.set_clock_format(clock_format),
+                Err(error) => {
+                    error!("Could not access clock format system setting: {error}");
+                }
+            }
+
+            match main_context.block_on(
+                proxy.read::<WeekDay>(GNOME_DESKTOP_CALENDAR_NAMESPACE, WEEK_START_DAY_KEY),
+            ) {
+                Ok(first_week_day) => system.set_first_week_day(first_week_day),
+                Err(error) => {
+                    error!("Could not access first day of week system setting: {error}");
+                    system.set_first_week_day(locale_first_week_day());
+                }
+            }
+        }
+
         /// Reads the system timezone from org.freedesktop.timedate1.
         fn read_system_timezone(&self) -> TimeZone {
             let connection = self

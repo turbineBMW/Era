@@ -1384,6 +1384,7 @@ dependencies = [
  "gvdb-macros",
  "jiff",
  "libadwaita",
+ "libc",
  "qrcode",
  "serde",
  "serde_json",
