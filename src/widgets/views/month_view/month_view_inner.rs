@@ -323,7 +323,7 @@ mod imp {
 
                     let difference =
                         (old_first_date.to_jiff() - new_first_date.to_jiff()).get_days() as usize;
-                    let new_index = first_cell_index - difference;
+                    let new_index = (first_cell_index + NB_CELLS - difference) % NB_CELLS;
                     imp.first_cell_index.set(new_index);
 
                     for i in 0..difference {
@@ -333,6 +333,7 @@ mod imp {
                     }
 
                     imp.recycle_if_needed();
+                    imp.update_subscription_timeframe();
                     imp.recompute_event_layouts();
                 }
             ));
