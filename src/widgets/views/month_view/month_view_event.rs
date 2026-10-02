@@ -303,8 +303,13 @@ mod imp {
             &self,
             x: f64,
             y: f64,
-            _drag_source: gtk::DragSource,
+            drag_source: gtk::DragSource,
         ) -> Option<gdk::ContentProvider> {
+            // DragSource claims the drag sequence to late, which can cause the touchscreen drag
+            // handler to see part of the drag operation. This can cause a flick on touchscreen at
+            // the start of a DnD. Claiming the drag early prevents this flick.
+            drag_source.set_state(gtk::EventSequenceState::Claimed);
+
             self.drag_hotspot.set((x as i32, y as i32));
 
             let event = self.obj().event().unwrap();
