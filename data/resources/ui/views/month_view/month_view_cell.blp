@@ -21,7 +21,7 @@ template $MonthViewCell: Adw.Bin {
 }
 
 Label day_number {
-  label: bind $date_get_day_in_month_number(template.date);
+  label: bind $date_format(template.date, "%-d");
 
   styles [
     "day",
@@ -29,7 +29,7 @@ Label day_number {
 }
 
 Label month_abbreviation {
-  label: bind $date_get_month_abbreviation(template.date);
+  label: bind $date_format(template.date, "%0b");
   ellipsize: end;
 
   styles [
@@ -38,7 +38,7 @@ Label month_abbreviation {
 }
 
 Label month_name {
-  label: bind $date_get_month_name(template.date);
+  label: bind $date_format(template.date, "%0B");
   ellipsize: end;
 
   styles [

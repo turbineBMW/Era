@@ -110,23 +110,6 @@ impl TemplateCallbacks {
 
     /// Returns the abbreviation of the day.
     #[template_callback]
-    pub fn day_name(first_week_day: WeekDay, offset: i32) -> String {
-        let base: i32 = first_week_day as i32;
-        let day = (base + offset) % 7;
-        match day {
-            1 => gettext("monday"),
-            2 => gettext("tuesday"),
-            3 => gettext("wednesday"),
-            4 => gettext("thursday"),
-            5 => gettext("friday"),
-            6 => gettext("saturday"),
-            0 => gettext("sunday"),
-            _ => panic!("Invalid day number: {day}"),
-        }
-    }
-
-    /// Returns the abbreviation of the day.
-    #[template_callback]
     pub fn day_abbreviation(first_week_day: WeekDay, offset: i32) -> String {
         let base: i32 = first_week_day as i32;
         let day = (base + offset) % 7;
@@ -139,27 +122,6 @@ impl TemplateCallbacks {
             6 => gettext("SAT"),
             0 => gettext("SUN"),
             _ => panic!("Invalid day number: {day}"),
-        }
-    }
-
-    /// Returns the name of the month.
-    #[template_callback]
-    pub fn month_name(month: i32) -> String {
-        match month {
-            1 => gettext("january"),
-            2 => gettext("february"),
-            3 => gettext("march"),
-            4 => gettext("april"),
-            5 => gettext("may"),
-            6 => gettext("june"),
-            7 => gettext("july"),
-            8 => gettext("august"),
-            9 => gettext("september"),
-            10 => gettext("october"),
-            11 => gettext("november"),
-            12 => gettext("december"),
-            // TODO: Fix the issues that stop us from panicking here.
-            _ => "invalid month".to_string(),
         }
     }
 
@@ -186,67 +148,10 @@ impl TemplateCallbacks {
 
     /// Returns the abbreviation of the month.
     #[template_callback]
-    pub fn month_abbreviation(month: i32) -> String {
-        match month {
-            1 => gettext("Jan"),
-            2 => gettext("Feb"),
-            3 => gettext("Mar"),
-            4 => gettext("Apr"),
-            5 => gettext("May"),
-            6 => gettext("Jun"),
-            7 => gettext("Jul"),
-            8 => gettext("Aug"),
-            9 => gettext("Sep"),
-            10 => gettext("Oct"),
-            11 => gettext("Nov"),
-            12 => gettext("Dec"),
-            // TODO: Fix the issues that stop us from panicking here.
-            _ => "invalid month".to_string(),
-        }
-    }
-
-    #[template_callback]
-    pub fn date_get_day_in_month_number(date: Date) -> String {
-        date.to_jiff().day().to_string()
-    }
-
-    /// Returns the name of the month.
-    #[template_callback]
-    pub fn date_get_month_name(date: Date) -> String {
-        match date.to_jiff().month() {
-            1 => gettext("january"),
-            2 => gettext("february"),
-            3 => gettext("march"),
-            4 => gettext("april"),
-            5 => gettext("may"),
-            6 => gettext("june"),
-            7 => gettext("july"),
-            8 => gettext("august"),
-            9 => gettext("september"),
-            10 => gettext("october"),
-            11 => gettext("november"),
-            12 => gettext("december"),
-            _ => unreachable!(),
-        }
-    }
-
-    /// Returns the abbreviation of the month.
-    #[template_callback]
-    pub fn date_get_month_abbreviation(date: Date) -> String {
-        match date.to_jiff().month() {
-            1 => gettext("Jan"),
-            2 => gettext("Feb"),
-            3 => gettext("Mar"),
-            4 => gettext("Apr"),
-            5 => gettext("May"),
-            6 => gettext("Jun"),
-            7 => gettext("Jul"),
-            8 => gettext("Aug"),
-            9 => gettext("Sep"),
-            10 => gettext("Oct"),
-            11 => gettext("Nov"),
-            12 => gettext("Dec"),
-            _ => unreachable!(),
-        }
+    pub fn date_format(date: Date, format: &str) -> String {
+        date.to_glib_date_time_utc()
+            .format(format)
+            .unwrap()
+            .to_string()
     }
 }
