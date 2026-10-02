@@ -625,7 +625,7 @@ mod imp {
                     let new_index = (first_row_index + 1) % NB_ROWS;
                     let old_last_year = rows[(first_row_index + NB_ROWS - 1) % NB_ROWS].year();
                     let new_last_year = old_last_year + 1;
-                    rows[new_index].set_year(new_last_year);
+                    rows[first_row_index].set_year(new_last_year);
 
                     self.first_row_index.set(new_index);
                     self.scroll_offset.set(scroll_offset - row_height);
