@@ -8,6 +8,11 @@ sidebar {
     }
 }
 
+.color-stripe {
+    background-color: oklab(from var(--calendar-color) 0.6 a b);
+    border-radius: 16px;
+}
+
 .calendar-row {
     check:not(:checked) {
         box-shadow: inset 0 0 0 2px oklab(from var(--calendar-color) 0.6 a b);

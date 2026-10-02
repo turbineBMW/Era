@@ -1,6 +1,7 @@
 use std::cell::RefCell;
 
-use gtk::{graphene, gsk, prelude::*, subclass::prelude::*};
+use adw::{prelude::*, subclass::prelude::*};
+use glib::translate::*;
 
 mod imp {
     use super::*;
@@ -10,12 +11,15 @@ mod imp {
     pub struct ColorStripe {
         #[property(get, set = Self::set_color)]
         color: RefCell<gdk::RGBA>,
+
+        css_class: RefCell<Option<String>>,
     }
 
     impl Default for ColorStripe {
         fn default() -> Self {
             Self {
                 color: RefCell::new(gdk::RGBA::WHITE),
+                css_class: RefCell::new(None),
             }
         }
     }
@@ -24,36 +28,58 @@ mod imp {
     impl ObjectSubclass for ColorStripe {
         const NAME: &'static str = "ColorStripe";
         type Type = super::ColorStripe;
-        type ParentType = gtk::Widget;
+        type ParentType = adw::Bin;
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for ColorStripe {}
+    impl ObjectImpl for ColorStripe {
+        fn constructed(&self) {
+            self.parent_constructed();
 
-    impl WidgetImpl for ColorStripe {
-        fn snapshot(&self, snapshot: &gtk::Snapshot) {
-            let obj = self.obj();
-            let width = obj.width() as f32;
-            let height = obj.height() as f32;
-
-            let rect = graphene::Rect::new(0., 0., width, height);
-            let rounded_rect = gsk::RoundedRect::from_rect(rect, height);
-            snapshot.push_rounded_clip(&rounded_rect);
-            snapshot.append_color(&self.color.borrow(), &rect);
-            snapshot.pop();
+            self.obj().add_css_class("color-stripe");
+            self.update_color();
         }
     }
 
+    impl WidgetImpl for ColorStripe {}
+    impl BinImpl for ColorStripe {}
+
     impl ColorStripe {
         fn set_color(&self, color: gdk::RGBA) {
+            if color == *self.color.borrow() {
+                return;
+            }
+
             self.color.replace(color);
+
+            self.update_color();
+
+            self.obj().notify_color();
+
             self.obj().queue_draw();
+        }
+
+        fn update_color(&self) {
+            let obj = self.obj();
+
+            if let Some(old_class) = self.css_class.borrow_mut().take() {
+                obj.remove_css_class(&old_class);
+            }
+
+            let color = obj.color();
+
+            let color_str = color.to_string();
+            let color_id = glib::Quark::from_str(&color_str);
+            let css_class = format!("color-{}", color_id.into_glib());
+
+            obj.add_css_class(&css_class);
+            self.css_class.replace(Some(css_class));
         }
     }
 }
 
 glib::wrapper! {
     pub struct ColorStripe(ObjectSubclass<imp::ColorStripe>)
-        @extends gtk::Widget,
+        @extends gtk::Widget, adw::Bin,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget;
 }
