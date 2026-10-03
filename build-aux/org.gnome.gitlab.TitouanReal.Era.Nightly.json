@@ -1,5 +1,5 @@
 {
-    "id": "org.gnome.gitlab.TitouanReal.Era.Eds.Devel",
+    "id": "org.gnome.gitlab.TitouanReal.Era.Nightly",
     "runtime": "org.gnome.Platform",
     "runtime-version": "master",
     "sdk": "org.gnome.Sdk",
@@ -9,6 +9,7 @@
         "--share=ipc",
         "--device=dri",
         "--socket=wayland",
+        "--socket=fallback-x11",
         "--system-talk-name=org.freedesktop.timedate1",
         "--talk-name=org.gnome.evolution.dataserver.Sources5",
         "--talk-name=org.gnome.evolution.dataserver.Calendar8"
@@ -146,7 +147,7 @@
             "name": "era",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Dcalendar-backend=eds", "-Dplatform=flatpak", "-Drelease-type=devel"],
+            "config-opts": ["-Dcalendar-backend=flathub-release-set", "-Dplatform=flatpak", "-Drelease-type=nightly"],
             "sources": [
                 {
                     "type": "dir",

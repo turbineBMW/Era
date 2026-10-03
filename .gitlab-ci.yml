@@ -1,6 +1,8 @@
 stages:
     - check
     - build-devel
+    - build-nightly
+    - deploy
 
 variables:
     FLATPAK_MODULE: "era"
@@ -10,6 +12,10 @@ include:
       file: "templates/default-rules.yml"
     - project: "GNOME/citemplates"
       file: "flatpak/flatpak_ci_initiative.yml"
+    - component: gitlab.gnome.org/GNOME/citemplates/release-service@master
+      inputs:
+          dist-job-name: "flatpak-nightly@x86_64"
     - local: .gitlab-ci/check.yml
     - local: .gitlab-ci/flatpak-devel.yml
+    - local: .gitlab-ci/flatpak-nightly.yml
     - local: .gitlab-ci/android.yml

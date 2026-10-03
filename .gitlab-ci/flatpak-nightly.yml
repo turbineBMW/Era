@@ -1,0 +1,27 @@
+.nightly:
+    variables:
+        MANIFEST_PATH: "build-aux/org.gnome.gitlab.TitouanReal.Era.Nightly.json"
+        APP_ID: "org.gnome.gitlab.TitouanReal.Era.Nightly"
+        BUNDLE: "era-nightly.flatpak"
+
+flatpak-nightly@x86_64:
+    extends:
+        - .flatpak@x86_64
+        - .nightly
+    stage: build-nightly
+    needs: []
+
+flatpak-nightly@aarch64:
+    extends:
+        - .flatpak@aarch64
+        - .nightly
+    stage: build-nightly
+    needs: []
+
+nightly@x86_64:
+  extends: '.publish_nightly'
+  needs: ['flatpak-nightly@x86_64']
+
+nightly@aarch64:
+  extends: '.publish_nightly'
+  needs: ['flatpak-nightly@aarch64']
