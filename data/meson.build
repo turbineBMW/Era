@@ -19,6 +19,7 @@ test('Validate desktop file', desktop_file_validate, args: [desktop_file])
 
 metainfo_conf = configuration_data()
 metainfo_conf.set('app-id', application_id)
+metainfo_conf.set('app-name', application_name)
 metainfo_conf.set('gettext-package', gettext_package)
 metainfo_file = i18n.merge_file(
     input: configure_file(

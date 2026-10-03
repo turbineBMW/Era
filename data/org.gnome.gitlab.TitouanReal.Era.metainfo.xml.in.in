@@ -4,7 +4,7 @@
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
 
-    <name>Era</name>
+    <name>@app-name@</name>
     <summary>Manage your time</summary>
     <description>
         <p>
