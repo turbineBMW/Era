@@ -1,7 +1,6 @@
 //! Collection of template callbacks.
 
 use clepsydre::{AttendeeRole, AttendeeType, ParticipationStatus};
-use gettextrs::gettext;
 use glib::Object;
 
 use crate::utils::{Date, WeekDay};
@@ -113,37 +112,18 @@ impl TemplateCallbacks {
     pub fn day_abbreviation(first_week_day: WeekDay, offset: i32) -> String {
         let base: i32 = first_week_day as i32;
         let day = (base + offset) % 7;
-        match day {
-            1 => gettext("MON"),
-            2 => gettext("TUE"),
-            3 => gettext("WED"),
-            4 => gettext("THU"),
-            5 => gettext("FRI"),
-            6 => gettext("SAT"),
-            0 => gettext("SUN"),
-            _ => panic!("Invalid day number: {day}"),
-        }
+        // January 2nd, 2000 is a Sunday
+        let date: Date = jiff::civil::Date::new(2000, 1, 2 + day as i8)
+            .unwrap()
+            .into();
+        Self::date_format(date, "%a")
     }
 
     /// Returns the capitalized name of the month.
     #[template_callback]
     pub fn capitalized_month_name(month: i32) -> String {
-        match month {
-            1 => gettext("January"),
-            2 => gettext("February"),
-            3 => gettext("March"),
-            4 => gettext("April"),
-            5 => gettext("May"),
-            6 => gettext("June"),
-            7 => gettext("July"),
-            8 => gettext("August"),
-            9 => gettext("September"),
-            10 => gettext("October"),
-            11 => gettext("November"),
-            12 => gettext("December"),
-            // TODO: Fix the issues that stop us from panicking here.
-            _ => "invalid month".to_string(),
-        }
+        let date: Date = jiff::civil::Date::new(1, month as i8, 1).unwrap().into();
+        Self::date_format(date, "%0B")
     }
 
     /// Returns the abbreviation of the month.

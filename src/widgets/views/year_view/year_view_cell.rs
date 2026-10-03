@@ -12,7 +12,7 @@ use crate::{
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
+    #[derive(Debug, gtk::CompositeTemplate, glib::Properties)]
     #[template(file = "data/resources/ui/views/year_view/year_view_cell.blp")]
     #[properties(wrapper_type = super::YearViewCell)]
     pub struct YearViewCell {
@@ -29,6 +29,19 @@ mod imp {
         days_grid: TemplateChild<gtk::Grid>,
 
         spacing: Cell<i32>,
+    }
+
+    impl Default for YearViewCell {
+        fn default() -> Self {
+            Self {
+                year: Cell::new(1),
+                month: Cell::new(1),
+                styling: Cell::new(Styling::default()),
+                month_label: TemplateChild::default(),
+                days_grid: TemplateChild::default(),
+                spacing: Cell::default(),
+            }
+        }
     }
 
     #[glib::object_subclass]
