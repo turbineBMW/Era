@@ -26,7 +26,7 @@
                 target="foreground"
                 scale=".5"
                 type="svg"
-                path="src://data/icons/org.gnome.gitlab.TitouanReal.Era.Android.svg"
+                path="src://data/icons/org.gnome.gitlab.TitouanReal.Era.Devel.svg"
             />
 			<color target="background">#FFFFFF</color>
 			<drawable

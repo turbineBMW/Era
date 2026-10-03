@@ -6,4 +6,4 @@ option(
 
 option('platform', type: 'combo', choices: ['flatpak', 'android'])
 
-option('release-type', type: 'combo', choices: ['stable', 'devel'])
+option('release-type', type: 'combo', choices: ['stable', 'nightly', 'devel'])

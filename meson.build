@@ -132,8 +132,14 @@ iconsdir = datadir / 'icons'
 podir = meson.project_source_root() / 'po'
 gettext_package = meson.project_name()
 
-if release_type == 'devel'
-    application_id += '.Devel'
+if release_type == 'stable'
+    application_id = application_id
+elif release_type == 'nightly'
+    application_name += ' Nightly'
+    application_id = application_id + '.Nightly'
+elif release_type == 'devel'
+    application_name += ' Devel'
+    application_id = application_id + '.Devel'
 endif
 
 subdir('data')
