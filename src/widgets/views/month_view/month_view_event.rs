@@ -18,7 +18,7 @@ mod imp {
     #[template(file = "data/resources/ui/views/month_view/month_view_event.blp")]
     #[properties(wrapper_type = super::MonthViewEvent)]
     pub struct MonthViewEvent {
-        #[property(get, set = Self::set_event, nullable, construct)]
+        #[property(get, set = Self::set_event, nullable, construct, explicit_notify)]
         event: RefCell<Option<Event>>,
         #[property(get, set = Self::set_styling, builder(Styling::default()))]
         styling: Cell<Styling>,
@@ -221,6 +221,8 @@ mod imp {
                     }
                 ));
             }
+
+            self.obj().notify_event();
         }
 
         fn set_styling(&self, styling: Styling) {
