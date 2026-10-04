@@ -1,8 +1,8 @@
 use std::cell::{Cell, RefCell};
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Event, Timeframe, prelude::*};
-use glib::{clone, translate::*};
+use clepsydre::{Calendar, Event, Timeframe, prelude::*};
+use glib::{SignalHandlerId, clone, translate::*};
 
 use crate::{
     utils::TemplateCallbacks, widgets::event_details_dialog::EventDetailsDialog,
@@ -30,8 +30,11 @@ mod imp {
         #[template_child]
         time: TemplateChild<gtk::Label>,
 
+        /// The CSS class for the event color.
         css_class: RefCell<Option<String>>,
-
+        /// The handler ID for the color change signal.
+        color_handler: RefCell<Option<(Calendar, SignalHandlerId)>>,
+        /// The hotspot where the drag started.
         drag_hotspot: Cell<(i32, i32)>,
     }
 
@@ -76,6 +79,10 @@ mod imp {
         }
 
         fn dispose(&self) {
+            if let Some((calendar, color_handler)) = self.color_handler.take() {
+                calendar.disconnect(color_handler);
+            }
+
             self.edge.unparent();
             self.name.unparent();
             self.time.unparent();
@@ -210,16 +217,23 @@ mod imp {
 
             self.event.replace(event.cloned());
 
+            if let Some((calendar, color_handler)) = self.color_handler.take() {
+                calendar.disconnect(color_handler);
+            }
+
             if let Some(event) = event {
                 self.update_color();
 
-                event.calendar().unwrap().connect_color_notify(clone!(
+                let calendar = event.calendar().unwrap();
+                let color_handler = calendar.connect_color_notify(clone!(
                     #[weak(rename_to=imp)]
                     self,
                     move |_| {
                         imp.update_color();
                     }
                 ));
+
+                self.color_handler.replace(Some((calendar, color_handler)));
             }
 
             self.obj().notify_event();
