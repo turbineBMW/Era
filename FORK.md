@@ -20,6 +20,14 @@ A theme can take full control by shipping an `era.css` (GTK CSS setting
 libadwaita's variables), either in the theme directory or generated from
 `~/.config/omarchy/themed/era.css.tpl`. That file replaces the derived palette.
 
+The month view shows one month at a time, like a desk calendar, instead of
+upstream's endless scroll. The days of the neighbouring months that complete the
+first and last week are greyed. *Today*, ‹ and › in the header bar (or the mouse
+wheel, a touchpad scroll, a swipe, Alt+↑/↓) move between months.
+
+The gear in the sidebar's header opens the settings: the view Era opens on, and
+*Week Starts on Sunday*, which overrides the desktop's first day of the week.
+
 ## Branches
 
 | Branch    | Contents                                                        |
@@ -54,6 +62,10 @@ Everything substantial is in new files, which cannot conflict:
   (ported from Rustle's `rustle-core/src/omarchy.rs`; keep them in step)
 - `src/omarchy/mod.rs`: CSS provider, light/dark forcing, file monitor, and the
   toggle action
+- `src/widgets/views/month_view/month_view_paged.rs` and `month_view_paged_cell.rs`
+  (with their `.blp` templates): the paged month view. It reuses upstream's
+  `layout_utils`, `MonthViewEvent` and `MonthViewOverflow` unchanged
+- `src/preferences/`, `data/resources/ui/preferences/`: the settings and their popover
 - `install.sh`, `scripts/sync-upstream.sh`, `.github/workflows/upstream-sync.yml`, this file
 
 Upstream files carry only these hooks, each marked `fork`. When one conflicts,
@@ -61,13 +73,19 @@ keep upstream's version and put the hook back:
 
 | File | Hook |
 |------|------|
-| `src/main.rs` | `mod omarchy;` and `application.connect_startup(... omarchy::install ...)` right after `Application::new` |
-| `data/org.gnome.gitlab.TitouanReal.Era.gschema.xml.in` | the `follow-omarchy-theme` key |
-| `data/resources/ui/window.blp` | first section of `menu primary_menu`: the *Follow Omarchy Theme* item |
+| `src/main.rs` | `mod omarchy;`, `mod preferences;` and the two `application.connect_startup(...)` lines right after `Application::new` |
+| `data/org.gnome.gitlab.TitouanReal.Era.gschema.xml.in` | the `follow-omarchy-theme`, `default-view` and `week-starts-on-sunday` keys |
+| `data/resources/ui/window.blp` | first section of `menu primary_menu`: the *Follow Omarchy Theme* item; *Today* and the ‹ › box before the title label in the medium layout's header bar, and the ‹ › box in the narrow month page's action bar |
+| `src/widgets/window.rs` | end of `constructed`: open on `preferences::default_view()` |
+| `src/system/mod.rs` | `set_first_week_day` is `pub(crate)` and passes the value through `preferences::first_week_day` |
+| `src/widgets/views/month_view/mod.rs` | the `mod` lines, `inner` typed `MonthViewPaged`, and `MonthView`'s `scroll_*`/`zoom_*` methods |
+| `data/resources/ui/views/month_view/month_view.blp` | `$MonthViewPaged inner` in place of `$MonthViewInner inner` |
+| `data/resources/ui/sidebar/sidebar.blp` | the settings `MenuButton` at the end of the header bar |
+| `data/resources/style.scss` | the `.month-view .paged` block at the end |
 | `build-aux/org.gnome.gitlab.TitouanReal.Era.Eds.Devel.json` | `--filesystem=~/.local/state/omarchy:ro` in `finish-args` |
 
-If upstream ever gets a preferences dialog, the toggle could move there, but
-that would mean a larger hook.
+If upstream ever gets a preferences dialog, these settings and the Omarchy
+toggle could move there, but that would mean a larger hook.
 
 ## Installing without Flatpak
 

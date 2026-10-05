@@ -1,0 +1,20 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $MonthViewPagedCell: Adw.Bin {
+  focusable: true;
+  accessible-role: grid_cell;
+
+  styles [
+    "cell",
+  ]
+
+  Label day {
+    halign: start;
+    valign: start;
+
+    styles [
+      "day",
+    ]
+  }
+}

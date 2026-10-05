@@ -106,7 +106,8 @@ impl System {
     }
 
     /// Sets the first day of the week setting.
-    fn set_first_week_day(&self, first_week_day: WeekDay) {
+    pub(crate) fn set_first_week_day(&self, first_week_day: WeekDay) {
+        let first_week_day = crate::preferences::first_week_day(first_week_day); // fork
         if self.first_week_day() == first_week_day {
             return;
         }
