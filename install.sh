@@ -140,7 +140,7 @@ EOF
   # libclepsydre-eds is plain C, which meson builds fine.
   if [[ $BACKEND == eds ]]; then
     rm -rf "$WORK/clepsydre-eds-build"
-    meson setup --quiet "$WORK/clepsydre-eds-build" "$SRC" \
+    meson setup "$WORK/clepsydre-eds-build" "$SRC" \
       --prefix="$STAGE" --libdir=lib --buildtype=release -Dlibclepsydre-eds=true >/dev/null
     meson install --quiet -C "$WORK/clepsydre-eds-build" >/dev/null
   fi
