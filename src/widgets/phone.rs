@@ -12,12 +12,12 @@
 //!   the bottom bar, which is the colour of the shell's bars.
 //! - Search, Manage Calendars, About and the settings are the app's menu (the
 //!   menubar, which the phone shell shows from its home bar).
-//! - `app.go-back`, the shell's back gesture, closes an open dialog, else goes
-//!   back a page (agenda to month to year); disabled on the first page, so
-//!   the shell goes home.
+//! - `app.go-back`, the shell's back gesture, goes back a page in an open
+//!   dialog, else closes it, else goes back a page (agenda to month to year);
+//!   disabled on the first page, so the shell goes home.
 //! - Dialogs are centred pop-ups that close on a tap outside, with their
-//!   header's buttons (Cancel, Create, an event's menu) moved to a bar at the
-//!   bottom.
+//!   header's buttons (Cancel, Create, an event's menu) and their other top
+//!   bars (the search field) moved to the bottom.
 
 use adw::prelude::*;
 use gtk::{gdk, gio, glib};
@@ -39,6 +39,12 @@ actionbar.phone-bar > revealer > box {
 actionbar.phone-bar button, .phone-dialog-bar button { min-height: 44px; min-width: 44px; }
 .phone-dialog-bar { padding: 8px 12px; background-color: var(--headerbar-bg-color); }
 toolbarview > .top-bar { background-color: var(--headerbar-bg-color); }
+/* On a touch screen the last widget touched stays :hover: no tint for it. */
+.month-view .cell:hover:not(:active) { background-color: transparent; }
+actionbar.phone-bar button:hover:not(:active) { background-color: transparent; }
+actionbar.phone-bar .linked > button:hover:not(:active) {
+  background-color: color-mix(in srgb, currentColor 10%, transparent);
+}
 ";
 
 /// A pop-up's size: 90 % of the window's width up to 640 px, and 2/3 of its
@@ -77,9 +83,15 @@ pub fn setup(window: &Window, navigation: &adw::NavigationView) {
             arrange_page(page.upcast_ref());
         }
     }
-    setup_menu(window);
-    setup_back(window, navigation);
     setup_dialogs(window);
+    // The window gets its application after it is constructed.
+    let navigation = navigation.clone();
+    window.connect_application_notify(move |window| {
+        if let Some(app) = window.application() {
+            setup_menu(window, &app);
+            setup_back(window, &app, &navigation);
+        }
+    });
 }
 
 /// A page's header bar shows only its title; its bottom bar gets Search.
@@ -110,7 +122,7 @@ fn title_only(header: &adw::HeaderBar) {
 
 /// The app's menu, for the shell: what the header buttons and the main menu
 /// held, and the settings, last.
-fn setup_menu(window: &Window) {
+fn setup_menu(window: &Window, app: &gtk::Application) {
     let settings = gio::SimpleAction::new("phone-settings", None);
     settings.connect_activate(glib::clone!(
         #[weak]
@@ -130,9 +142,7 @@ fn setup_menu(window: &Window) {
     let last = gio::Menu::new();
     last.append(Some("Settings"), Some("win.phone-settings"));
     menu.append_section(None, &last);
-    if let Some(app) = window.application() {
-        app.set_menubar(Some(&menu));
-    }
+    app.set_menubar(Some(&menu));
     window.set_show_menubar(false);
 }
 
@@ -151,12 +161,10 @@ fn show_settings(window: &Window) {
     dialog.present(Some(window));
 }
 
-/// `app.go-back`: an open dialog closes, else the navigation goes back a
-/// page; disabled on the first page with no dialog, so the shell goes home.
-fn setup_back(window: &Window, navigation: &adw::NavigationView) {
-    let Some(app) = window.application() else {
-        return;
-    };
+/// `app.go-back`: an open dialog goes back a page or closes, else the
+/// navigation goes back a page; disabled on the first page with no dialog,
+/// so the shell goes home.
+fn setup_back(window: &Window, app: &gtk::Application, navigation: &adw::NavigationView) {
     let action = gio::SimpleAction::new("go-back", None);
     action.connect_activate(glib::clone!(
         #[weak]
@@ -165,7 +173,18 @@ fn setup_back(window: &Window, navigation: &adw::NavigationView) {
         navigation,
         move |_, _| {
             if let Some(dialog) = window.visible_dialog() {
-                dialog.close();
+                // A page the dialog pushed (a calendar's details) goes first.
+                let inner = descendants::<adw::NavigationView>(dialog.upcast_ref())
+                    .into_iter()
+                    .find(can_pop);
+                match inner {
+                    Some(inner) => {
+                        inner.pop();
+                    }
+                    None => {
+                        dialog.close();
+                    }
+                }
             } else {
                 navigation.pop();
             }
@@ -179,10 +198,7 @@ fn setup_back(window: &Window, navigation: &adw::NavigationView) {
         #[weak]
         action,
         move || {
-            let can_pop = navigation
-                .visible_page()
-                .is_some_and(|page| navigation.previous_page(&page).is_some());
-            action.set_enabled(can_pop || window.visible_dialog().is_some());
+            action.set_enabled(can_pop(&navigation) || window.visible_dialog().is_some());
         }
     );
     update();
@@ -192,19 +208,19 @@ fn setup_back(window: &Window, navigation: &adw::NavigationView) {
     app.add_action(&action);
 }
 
+fn can_pop(navigation: &adw::NavigationView) -> bool {
+    navigation
+        .visible_page()
+        .is_some_and(|page| navigation.previous_page(&page).is_some())
+}
+
 /// Every dialog, as it is presented, becomes a phone dialog.
 fn setup_dialogs(window: &Window) {
-    window.dialogs().connect_items_changed(glib::clone!(
-        #[weak]
-        window,
-        move |model, position, _, added| {
-            for i in position..position + added {
-                if let Some(dialog) = model.item(i).and_downcast::<adw::Dialog>() {
-                    adapt_dialog(&window, &dialog);
-                }
-            }
+    window.connect_visible_dialog_notify(|window| {
+        if let Some(dialog) = window.visible_dialog() {
+            adapt_dialog(window, &dialog);
         }
-    ));
+    });
 }
 
 /// Centred, sized as a pop-up when it is a sheet, closed by a tap outside,
@@ -219,7 +235,7 @@ fn adapt_dialog(window: &Window, dialog: &adw::Dialog) {
     if dialog.content_height() >= SHEET_HEIGHT {
         fit_popup(window, dialog);
     }
-    rearrange_headers(dialog.upcast_ref());
+    rearrange_dialog(dialog);
     for navigation in descendants::<adw::NavigationView>(dialog.upcast_ref()) {
         navigation.connect_visible_page_notify(|navigation| {
             if let Some(page) = navigation.visible_page() {
@@ -232,7 +248,7 @@ fn adapt_dialog(window: &Window, dialog: &adw::Dialog) {
         #[weak]
         dialog,
         move || {
-            rearrange_headers(dialog.upcast_ref());
+            rearrange_dialog(&dialog);
             close_on_tap_outside(&dialog);
         }
     ));
@@ -276,10 +292,20 @@ fn fit_popup(window: &Window, dialog: &adw::Dialog) {
     ));
 }
 
+/// Rearrange a dialog's bars. A text field that was at the top (search)
+/// had the dialog's first focus, and keeps it at the bottom, with the
+/// keyboard up.
+fn rearrange_dialog(dialog: &adw::Dialog) {
+    for field in rearrange_headers(dialog.upcast_ref()) {
+        dialog.set_focus(Some(&field));
+    }
+}
+
 /// The header bars under `widget` show only their title, and the buttons
 /// packed into them move to a bar at the bottom of their toolbar view:
 /// start ones on the left, end ones on the right.
-fn rearrange_headers(widget: &gtk::Widget) {
+fn rearrange_headers(widget: &gtk::Widget) -> Vec<gtk::Widget> {
+    let fields = lower_top_bars(widget);
     for header in descendants::<adw::HeaderBar>(widget) {
         title_only(&header);
         if header.has_css_class(ADAPTED) {
@@ -304,8 +330,8 @@ fn rearrange_headers(widget: &gtk::Widget) {
             unparent_from_box(&child);
             left.append(&child);
         }
-        // End children are packed right to left; keep their visual order.
-        for child in end.into_iter().rev() {
+        // In the order they show (a header's end box lists them so).
+        for child in end {
             unparent_from_box(&child);
             right.append(&child);
         }
@@ -313,6 +339,54 @@ fn rearrange_headers(widget: &gtk::Widget) {
         bar.set_end_widget(Some(&right));
         toolbar.add_bottom_bar(&bar);
     }
+    fields
+}
+
+/// A toolbar view's top bars other than its header (a search field) move to
+/// its bottom, above the keyboard. Returns the text fields that moved.
+fn lower_top_bars(widget: &gtk::Widget) -> Vec<gtk::Widget> {
+    let mut fields = Vec::new();
+    for toolbar in descendants::<adw::ToolbarView>(widget) {
+        if toolbar.has_css_class(ADAPTED) {
+            continue;
+        }
+        toolbar.add_css_class(ADAPTED);
+        let mut bars = Vec::new();
+        for top in descendants::<gtk::Widget>(toolbar.upcast_ref()) {
+            let own = top
+                .ancestor(adw::ToolbarView::static_type())
+                .is_some_and(|t| t == *toolbar.upcast_ref::<gtk::Widget>());
+            if !own || !top.has_css_class("top-bar") {
+                continue;
+            }
+            // The bars sit in a box, inside a window handle, inside the
+            // top-bar revealer.
+            let mut container = top;
+            while !container.is::<gtk::Box>() {
+                let Some(inner) = container.first_child() else {
+                    break;
+                };
+                container = inner;
+            }
+            let mut child = container.first_child();
+            while let Some(bar) = child {
+                child = bar.next_sibling();
+                if !bar.is::<adw::HeaderBar>() {
+                    bars.push(bar);
+                }
+            }
+        }
+        for bar in bars {
+            toolbar.remove(&bar);
+            toolbar.add_bottom_bar(&bar);
+            fields.extend(
+                descendants::<gtk::Text>(&bar)
+                    .into_iter()
+                    .map(|t| t.upcast()),
+            );
+        }
+    }
+    fields
 }
 
 fn unparent_from_box(child: &gtk::Widget) {
@@ -337,8 +411,10 @@ fn packed_sides(header: &adw::HeaderBar) -> (Vec<gtk::Widget>, Vec<gtk::Widget>)
         let mut child = container.first_child();
         while let Some(widget) = child {
             child = widget.next_sibling();
-            // The window buttons have their own box; skip it.
-            if widget.css_name() != "windowcontrols" {
+            // The window buttons and the back button are the header's own.
+            if widget.css_name() != "windowcontrols"
+                && !widget.type_().name().ends_with("BackButton")
+            {
                 side.push(widget);
             }
         }

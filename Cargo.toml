@@ -43,5 +43,6 @@ platform-flatpak = []
 platform-android = []
 
 # fork: the phone layout (src/widgets/phone.rs), for phone shells such as
-# omarchy-mobile's: one page at a time, nothing to press at the top.
+# omarchy-mobile's: one page at a time, nothing to press at the top; a tap on
+# a day opens its agenda (month_view_paged.rs).
 phone = []

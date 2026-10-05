@@ -33,10 +33,10 @@ The `phone` cargo feature builds Era for a phone shell
 called Calendar): the narrow layout always, header bars with only the title,
 Search in the bottom bar with Today, ‹ › and New Event, the main menu, Manage
 Calendars and the settings as the app's menu (the menubar, which the shell
-shows), `app.go-back` for the shell's back gesture, dialogs as centred pop-ups
-that close on a tap outside with their header buttons at the bottom, and the
-theme's corner radius from its `hyprland.lua`. Without the feature nothing
-changes.
+shows), `app.go-back` for the shell's back gesture, a tap on a day opening its
+agenda, dialogs as centred pop-ups that close on a tap outside with their header
+buttons and search field at the bottom, and the theme's corner radius from its
+`hyprland.lua`. Without the feature nothing changes.
 
 ## Branches
 
@@ -93,6 +93,7 @@ keep upstream's version and put the hook back:
 | `data/resources/ui/views/month_view/month_view.blp` | `$MonthViewPaged inner` in place of `$MonthViewInner inner` |
 | `data/resources/ui/sidebar/sidebar.blp` | the settings `MenuButton` at the end of the header bar |
 | `data/resources/style.scss` | the `.month-view .paged` block at the end |
+| `src/system/flatpak.rs` | the system bus is optional, and without it (or timedate1) the time zone is the local one: a sandbox may have no system bus (omarchy-mobile's has none) |
 | `Cargo.toml` | the `phone` feature |
 | `src/widgets/mod.rs` | `mod phone;` under `#[cfg(feature = "phone")]` |
 | `src/widgets/window.rs` | end of `constructed`, after the default view: `phone::setup(...)` under `#[cfg(feature = "phone")]` |
