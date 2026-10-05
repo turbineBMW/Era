@@ -80,7 +80,8 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub struct FlatpakSystem {
-        system_bus: OnceCell<DBusConnection>,
+        // fork: none in a sandbox without the system bus (omarchy-mobile's)
+        system_bus: OnceCell<Option<DBusConnection>>,
     }
 
     #[glib::object_subclass]
@@ -94,8 +95,8 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
 
-            let system_bus = gio::bus_get_sync(gio::BusType::System, gio::Cancellable::NONE)
-                .expect("Failed to connect to system D-Bus");
+            // fork: without a system bus, the time zone is the local one
+            let system_bus = gio::bus_get_sync(gio::BusType::System, gio::Cancellable::NONE).ok();
             self.system_bus
                 .set(system_bus)
                 .expect("System bus should not already be initialized");
@@ -194,10 +195,15 @@ mod imp {
     impl FlatpakSystem {
         /// Reads the system timezone from org.freedesktop.timedate1.
         fn read_system_timezone(&self) -> TimeZone {
-            let connection = self
+            // fork: the local time zone (/etc/localtime, which timedate1
+            // reports too) when the system bus or timedate1 isn't there
+            let Some(connection) = self
                 .system_bus
                 .get()
-                .expect("System bus should be initialized");
+                .expect("System bus should be initialized")
+            else {
+                return TimeZone::local();
+            };
 
             let result = connection.call_sync(
                 Some("org.freedesktop.timedate1"),
@@ -214,8 +220,10 @@ mod imp {
                 gio::Cancellable::NONE,
             );
 
+            let Ok(result) = result else {
+                return TimeZone::local();
+            };
             let iana_name = result
-                .expect("Failed to read Timezone from timedate1")
                 .child_value(0)
                 .as_variant()
                 .expect("Variant should contain another variant")
