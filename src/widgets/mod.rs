@@ -3,6 +3,8 @@ mod components;
 mod event_creation_dialog;
 mod event_details_dialog;
 mod import_dialog;
+#[cfg(feature = "phone")]
+mod phone; // fork: the phone build
 mod qr_code_dialog;
 mod search_dialog;
 mod sidebar;
