@@ -119,6 +119,8 @@ textview, .osd, dialog.floating sheet, switch, scale > trough, scale > trough > 
   border-radius: {radius}px;
 }}
 switch > slider {{ border-radius: {inner}px; }}
+.linked > button:not(:first-child) {{ border-top-left-radius: 0; border-bottom-left-radius: 0; }}
+.linked > button:not(:last-child) {{ border-top-right-radius: 0; border-bottom-right-radius: 0; }}
 row {{ border-radius: 0; }}
 list.boxed-list > row:first-child {{ border-top-left-radius: {radius}px; border-top-right-radius: {radius}px; }}
 list.boxed-list > row:last-child {{ border-bottom-left-radius: {radius}px; border-bottom-right-radius: {radius}px; }}

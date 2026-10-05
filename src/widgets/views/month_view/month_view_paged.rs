@@ -151,6 +151,38 @@ mod imp {
             let today = system.date();
             self.date.set(first_of_month(today));
 
+            // A phone build opens a day's agenda on a tap on the day (not on
+            // its events or its overflow, which open themselves). A swipe
+            // cancels the tap, so it still turns the page.
+            if cfg!(feature = "phone") {
+                let tap = gtk::GestureClick::new();
+                tap.connect_released(clone!(
+                    #[weak(rename_to = imp)]
+                    self,
+                    move |_, n_press, x, y| {
+                        if n_press != 1 {
+                            return;
+                        }
+                        let picked = imp.obj().pick(x, y, gtk::PickFlags::DEFAULT);
+                        if picked.is_some_and(|widget| {
+                            widget.ancestor(MonthViewEvent::static_type()).is_some()
+                                || widget.ancestor(MonthViewOverflow::static_type()).is_some()
+                        }) {
+                            return;
+                        }
+                        let date = imp.date_at_coords(x, y).to_jiff();
+                        let _ = imp.obj().activate_action(
+                            "win.push-agenda-view",
+                            Some(
+                                &(date.year() as i32, date.month() as i32, date.day() as i32)
+                                    .to_variant(),
+                            ),
+                        );
+                    }
+                ));
+                obj.add_controller(tap);
+            }
+
             let cells = std::array::from_fn(|_| {
                 let cell = MonthViewPagedCell::new(today);
                 cell.set_parent(&*obj);
