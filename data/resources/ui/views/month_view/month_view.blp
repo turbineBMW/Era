@@ -11,5 +11,6 @@ template $MonthView: Box {
 
   $MonthViewHeader header {}
 
-  $MonthViewInner inner {}
+  // fork: one month at a time instead of upstream's $MonthViewInner
+  $MonthViewPaged inner {}
 }

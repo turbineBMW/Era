@@ -389,3 +389,21 @@ sidebar {
         }
     }
 }
+
+// fork: paged month view. Days of the neighbouring months are greyed. The
+// shade is an inset shadow so the hover and drag tints still show through.
+.month-view .paged {
+    .cell.other-month {
+        box-shadow: inset 0 0 0 10000px
+            color-mix(in srgb, var(--shade-color) 40%, transparent);
+
+        label.day {
+            opacity: var(--dim-opacity);
+        }
+    }
+
+    .event.other-month,
+    .overflow.other-month {
+        opacity: 0.55;
+    }
+}

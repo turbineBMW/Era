@@ -425,6 +425,10 @@ pub mod imp {
             self.wide_view_stack_visible_child_name_handler_id
                 .set(wide_view_stack_visible_child_name_handler_id)
                 .unwrap();
+
+            // fork: open on the view chosen in the settings
+            self.wide_view_stack
+                .set_visible_child_name(&crate::preferences::default_view());
         }
     }
 

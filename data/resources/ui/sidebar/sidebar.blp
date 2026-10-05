@@ -20,6 +20,17 @@ template $Sidebar: Adw.Bin {
         tooltip-text: _("Manage Calendars");
         action-name: "win.manage-calendars";
       }
+
+      // fork: settings
+      [end]
+      MenuButton {
+        icon-name: "emblem-system-symbolic";
+        tooltip-text: _("Settings");
+
+        popover: Popover {
+          child: $PreferencesPanel {};
+        };
+      }
     }
 
     content: ScrolledWindow {

@@ -1,0 +1,49 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $PreferencesPanel: Adw.Bin {
+  width-request: 320;
+
+  Box {
+    orientation: vertical;
+    spacing: 12;
+    margin-top: 6;
+    margin-bottom: 6;
+    margin-start: 6;
+    margin-end: 6;
+
+    Label {
+      label: _("Settings");
+      xalign: 0;
+
+      styles [
+        "heading",
+      ]
+    }
+
+    ListBox {
+      selection-mode: none;
+
+      styles [
+        "boxed-list",
+      ]
+
+      Adw.ComboRow default_view_row {
+        title: _("Default View");
+        subtitle: _("Shown when Era opens");
+
+        model: StringList {
+          strings [
+            _("Year"),
+            _("Month"),
+            _("Agenda"),
+          ]
+        };
+      }
+
+      Adw.SwitchRow week_starts_on_sunday_row {
+        title: _("Week Starts on Sunday");
+      }
+    }
+  }
+}

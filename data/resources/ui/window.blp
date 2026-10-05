@@ -146,6 +146,26 @@ template $EraWindow: Adw.ApplicationWindow {
                     };
                   }
 
+                  // fork: month-to-month navigation
+                  [start]
+                  Box {
+                    styles [
+                      "linked",
+                    ]
+
+                    Button {
+                      icon-name: "go-previous-symbolic";
+                      tooltip-text: _("Previous Month");
+                      action-name: "win.scroll-up";
+                    }
+
+                    Button {
+                      icon-name: "go-next-symbolic";
+                      tooltip-text: _("Next Month");
+                      action-name: "win.scroll-down";
+                    }
+                  }
+
                   [end]
                   Button {
                     icon-name: "list-add-symbolic";
@@ -248,6 +268,35 @@ template $EraWindow: Adw.ApplicationWindow {
                       trigger: "F9";
                       action: "activate";
                     }
+                  }
+                }
+
+                // fork: month-to-month navigation
+                [start]
+                Button {
+                  label: _("_Today");
+                  use-underline: true;
+                  tooltip-text: _("Go to Today");
+                  action-name: "win.today";
+                }
+
+                // fork
+                [start]
+                Box {
+                  styles [
+                    "linked",
+                  ]
+
+                  Button {
+                    icon-name: "go-previous-symbolic";
+                    tooltip-text: _("Previous");
+                    action-name: "win.scroll-up";
+                  }
+
+                  Button {
+                    icon-name: "go-next-symbolic";
+                    tooltip-text: _("Next");
+                    action-name: "win.scroll-down";
                   }
                 }
 

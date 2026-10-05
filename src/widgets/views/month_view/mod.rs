@@ -10,10 +10,13 @@ mod month_view_cell;
 mod month_view_event;
 mod month_view_floating_controls;
 mod month_view_header;
+#[allow(dead_code)] // fork: replaced by month_view_paged
 mod month_view_inner;
 mod month_view_overflow;
+mod month_view_paged; // fork: one month at a time
+mod month_view_paged_cell; // fork
 
-use self::{month_view_header::MonthViewHeader, month_view_inner::MonthViewInner};
+use self::{month_view_header::MonthViewHeader, month_view_paged::MonthViewPaged};
 
 mod imp {
     use super::*;
@@ -30,7 +33,7 @@ mod imp {
         #[template_child]
         header: TemplateChild<MonthViewHeader>,
         #[template_child]
-        pub(super) inner: TemplateChild<MonthViewInner>,
+        pub(super) inner: TemplateChild<MonthViewPaged>, // fork: was MonthViewInner
     }
 
     #[glib::object_subclass]
@@ -105,20 +108,18 @@ glib::wrapper! {
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
 }
 
+// fork: the paged view turns months instead of scrolling, and always fills
+// the view, so there is nothing to zoom.
 impl MonthView {
     pub fn scroll_up(&self) {
-        self.imp().inner.scroll_up();
+        self.imp().inner.previous_month();
     }
 
     pub fn scroll_down(&self) {
-        self.imp().inner.scroll_down();
+        self.imp().inner.next_month();
     }
 
-    pub fn zoom_in(&self) {
-        self.imp().inner.zoom_in();
-    }
+    pub fn zoom_in(&self) {}
 
-    pub fn zoom_out(&self) {
-        self.imp().inner.zoom_out();
-    }
+    pub fn zoom_out(&self) {}
 }

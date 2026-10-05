@@ -7,5 +7,21 @@
 			<summary>Follow the Omarchy theme</summary>
 			<description>Take the window colours and light/dark style from the active Omarchy desktop theme, and follow every theme switch live. Has no effect where Omarchy isn't installed.</description>
 		</key>
+		<!-- fork: preferences -->
+		<key name="default-view" type="s">
+			<choices>
+				<choice value="year"/>
+				<choice value="month"/>
+				<choice value="agenda"/>
+			</choices>
+			<default>'month'</default>
+			<summary>Default view</summary>
+			<description>The view shown when Era opens.</description>
+		</key>
+		<key name="week-starts-on-sunday" type="b">
+			<default>false</default>
+			<summary>Week starts on Sunday</summary>
+			<description>Start weeks on Sunday instead of following the desktop's first day of the week.</description>
+		</key>
 	</schema>
 </schemalist>
