@@ -429,6 +429,10 @@ pub mod imp {
             // fork: open on the view chosen in the settings
             self.wide_view_stack
                 .set_visible_child_name(&crate::preferences::default_view());
+
+            // fork: the phone layout
+            #[cfg(feature = "phone")]
+            super::super::phone::setup(&self.obj(), &self.narrow_navigation_view);
         }
     }
 

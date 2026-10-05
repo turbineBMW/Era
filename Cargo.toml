@@ -41,3 +41,7 @@ backend-p2panda = ["dep:clepsydre-p2panda"]
 
 platform-flatpak = []
 platform-android = []
+
+# fork: the phone layout (src/widgets/phone.rs), for phone shells such as
+# omarchy-mobile's: one page at a time, nothing to press at the top.
+phone = []
