@@ -25,7 +25,10 @@ template $MonthViewEvent: Widget {
 
   Label time {
     visible: bind $not(template.event as <Clepsydre.Event>.timeframe as <Clepsydre.Timeframe>.all-day);
-    label: bind $start_label(template.event as <Clepsydre.Event>.timeframe);
+    label: bind $start_label(
+      template.event as <Clepsydre.Event>.timeframe,
+      template.root as <Window>.application as <$EraApplication>.system as <$EraSystem>.datetime
+      );
 
     styles [
       "dimmed",

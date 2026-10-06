@@ -2,7 +2,7 @@ use std::cell::{Cell, RefCell};
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Calendar, Event, Timeframe, prelude::*};
-use glib::{SignalHandlerId, clone, translate::*};
+use glib::{DateTime, SignalHandlerId, clone, translate::*};
 
 use crate::{
     utils::TemplateCallbacks, widgets::event_details_dialog::EventDetailsDialog,
@@ -287,13 +287,10 @@ mod imp {
         }
 
         #[template_callback]
-        fn start_label(&self, timeframe: &Timeframe) -> String {
-            timeframe
-                .start()
-                .unwrap()
-                .format("%H:%M")
-                .unwrap()
-                .to_string()
+        fn start_label(&self, timeframe: &Timeframe, datetime: &DateTime) -> String {
+            let start = timeframe.start().unwrap();
+            let start_converted = start.to_timezone(&datetime.timezone()).unwrap();
+            start_converted.format("%H:%M").unwrap().to_string()
         }
 
         #[template_callback]

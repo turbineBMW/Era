@@ -342,6 +342,8 @@ mod imp {
                 #[weak(rename_to = imp)]
                 self,
                 move |_system| {
+                    // TODO: Recompute only on timezone change
+                    imp.recompute_event_layouts();
                     imp.update_subscription_timeframe();
                 }
             ));
