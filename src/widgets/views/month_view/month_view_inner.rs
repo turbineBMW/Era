@@ -470,7 +470,7 @@ mod imp {
                 let cell_y = -scroll_offset + row_index as i32 * row_height;
                 let separator_y = cell_y + cell_height;
 
-                let row_visible = (cell_y + row_height) > 0;
+                let row_visible = (cell_y + row_height) > 0 && cell_y < height;
 
                 for column_index in 0..7 {
                     let cell = &cells[(row_index * 7 + column_index + first_cell_index) % NB_CELLS];
