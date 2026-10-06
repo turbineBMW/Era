@@ -151,12 +151,12 @@ pub fn compute_event_segments(
                 + timezone
                     .offset(timezone.find_interval(glib::TimeType::Universal, start_unix_seconds))
                     as i64)
-                / SECONDS_PER_DAY;
+                .div_euclid(SECONDS_PER_DAY);
             let end_unix_days_inclusive = (end_unix_seconds
                 + timezone
                     .offset(timezone.find_interval(glib::TimeType::Universal, end_unix_seconds))
                     as i64)
-                / SECONDS_PER_DAY;
+                .div_euclid(SECONDS_PER_DAY);
 
             let start_equals_end = start_unix_days == end_unix_days_inclusive;
             let ends_exactly_at_midnight = (end_unix_seconds
