@@ -85,10 +85,32 @@
     </supports>
 
     <releases>
+        <release version="0.2.0" date="2026-10-07">
+            <description>
+                <p>
+                    Era 0.2.0 is now available!
+                </p>
+                <p>
+                    The highlight of this release is the support of drag and drop in the month
+                    view. Grab any event, and drop it elsewhere to move it. You can also drop the
+                    event on a different application that supports receiving files, to quickly
+                    export your event to an ICS file in your favorite file explorer or messaging
+                    app.
+                </p>
+                <p>Additional changes include:</p>
+                <ul>
+                    <li>Import support</li>
+                    <li>Performance improvements in the month view</li>
+                    <li>Follow the first week day from your locale</li>
+                </ul>
+            </description>
+        </release>
         <release version="0.1.0" date="2026-09-20">
-        <description>
-            <p>The first beta release of Era.</p>
-        </description>
+            <description>
+                <p>
+                    The first beta release of Era.
+                </p>
+            </description>
         </release>
     </releases>
 
