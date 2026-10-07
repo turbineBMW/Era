@@ -1,7 +1,7 @@
 project(
     'era',
     'rust',
-    version: '0.1.0',
+    version: '0.2.0',
     meson_version: '>= 1.12.0',
     default_options: [
         'warning_level=2',
@@ -22,7 +22,7 @@ era_deps += dependency('gtk4', version: '>= 4.22')
 era_deps += dependency('libadwaita-1', version: '>= 1.9')
 era_deps += dependency(
     'clepsydre-0',
-    version: '>= 0.1',
+    version: '>= 0.2',
     default_options: {
         'libclepsydre': true,
             # TODO: In theory it's needed, but Android cross-build don't handle it
@@ -31,8 +31,8 @@ era_deps += dependency(
 )
 # TODO: Remove this once Meson handles git dependencies better
 era_deps += dependency(
-    'clepsydre-rebind-0.1-rs',
-    version: '>= 0.1',
+    'clepsydre-rebind-0.2-rs',
+    version: '>= 0.2',
     default_options: {
         'clepsydre-rebind': true,
     },
@@ -41,7 +41,7 @@ era_deps += dependency(
 if calendar_backend == 'flathub-release-set'
     era_deps += dependency(
         'clepsydre-eds-0',
-        version: '>= 0.1',
+        version: '>= 0.2',
         default_options: {
             'libclepsydre-eds': true,
             'introspection': true,
@@ -49,8 +49,8 @@ if calendar_backend == 'flathub-release-set'
     )
     # TODO: Remove this once Meson handles git dependencies better
     era_deps += dependency(
-        'clepsydre-eds-0.1-rs',
-        version: '>= 0.1',
+        'clepsydre-eds-0.2-rs',
+        version: '>= 0.2',
         default_options: {
             'clepsydre-eds': true,
         },
@@ -58,8 +58,8 @@ if calendar_backend == 'flathub-release-set'
 elif calendar_backend == 'android'
     # TODO: Remove this once Meson handles git dependencies better
     era_deps += dependency(
-        'clepsydre-android-0.1-rs',
-        version: '>= 0.1',
+        'clepsydre-android-0.2-rs',
+        version: '>= 0.2',
         default_options: {
             'clepsydre-android': true,
         },
@@ -67,7 +67,7 @@ elif calendar_backend == 'android'
 elif calendar_backend == 'eds'
     era_deps += dependency(
         'clepsydre-eds-0',
-        version: '>= 0.1',
+        version: '>= 0.2',
         default_options: {
             'libclepsydre-eds': true,
             'introspection': true,
@@ -75,8 +75,8 @@ elif calendar_backend == 'eds'
     )
     # TODO: Remove this once Meson handles git dependencies better
     era_deps += dependency(
-        'clepsydre-eds-0.1-rs',
-        version: '>= 0.1',
+        'clepsydre-eds-0.2-rs',
+        version: '>= 0.2',
         default_options: {
             'clepsydre-eds': true,
         },
@@ -84,8 +84,8 @@ elif calendar_backend == 'eds'
 elif calendar_backend == 'mock'
     # TODO: Remove this once Meson handles git dependencies better
     era_deps += dependency(
-        'clepsydre-mock-0.1-rs',
-        version: '>= 0.1',
+        'clepsydre-mock-0.2-rs',
+        version: '>= 0.2',
         default_options: {
             'clepsydre-mock': true,
         },
@@ -93,8 +93,8 @@ elif calendar_backend == 'mock'
 elif calendar_backend == 'p2panda'
     # TODO: Remove this once Meson handles git dependencies better
     era_deps += dependency(
-        'clepsydre-p2panda-0.1-rs',
-        version: '>= 0.1',
+        'clepsydre-p2panda-0.2-rs',
+        version: '>= 0.2',
         default_options: {
             'clepsydre-p2panda': true,
         },

@@ -615,8 +615,8 @@ dependencies = [
 
 [[package]]
 name = "clepsydre-android"
-version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#1c930e190a828e33803b774ff8264e2ddcac3b06"
+version = "0.2.0"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#219974f6dbfbc63b9f85572aa76848ed6233cc6a"
 dependencies = [
  "clepsydre-rebind",
  "glib",
@@ -624,8 +624,8 @@ dependencies = [
 
 [[package]]
 name = "clepsydre-eds"
-version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#1c930e190a828e33803b774ff8264e2ddcac3b06"
+version = "0.2.0"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#219974f6dbfbc63b9f85572aa76848ed6233cc6a"
 dependencies = [
  "bitflags 2.13.1",
  "clepsydre-eds-sys",
@@ -636,8 +636,8 @@ dependencies = [
 
 [[package]]
 name = "clepsydre-eds-sys"
-version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#1c930e190a828e33803b774ff8264e2ddcac3b06"
+version = "0.2.0"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#219974f6dbfbc63b9f85572aa76848ed6233cc6a"
 dependencies = [
  "clepsydre-sys",
  "glib-sys",
@@ -647,8 +647,8 @@ dependencies = [
 
 [[package]]
 name = "clepsydre-mock"
-version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#1c930e190a828e33803b774ff8264e2ddcac3b06"
+version = "0.2.0"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#219974f6dbfbc63b9f85572aa76848ed6233cc6a"
 dependencies = [
  "clepsydre-rebind",
  "gdk4",
@@ -664,8 +664,8 @@ dependencies = [
 
 [[package]]
 name = "clepsydre-p2panda"
-version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#1c930e190a828e33803b774ff8264e2ddcac3b06"
+version = "0.2.0"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#219974f6dbfbc63b9f85572aa76848ed6233cc6a"
 dependencies = [
  "clepsydre-rebind",
  "futures",
@@ -684,8 +684,8 @@ dependencies = [
 
 [[package]]
 name = "clepsydre-rebind"
-version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#1c930e190a828e33803b774ff8264e2ddcac3b06"
+version = "0.2.0"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#219974f6dbfbc63b9f85572aa76848ed6233cc6a"
 dependencies = [
  "bitflags 2.13.1",
  "clepsydre-sys",
@@ -698,8 +698,8 @@ dependencies = [
 
 [[package]]
 name = "clepsydre-sys"
-version = "0.1.0"
-source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#1c930e190a828e33803b774ff8264e2ddcac3b06"
+version = "0.2.0"
+source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#219974f6dbfbc63b9f85572aa76848ed6233cc6a"
 dependencies = [
  "gdk4-sys",
  "gio-sys",
@@ -1367,7 +1367,7 @@ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
 name = "era"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "ashpd",
  "clepsydre-android",

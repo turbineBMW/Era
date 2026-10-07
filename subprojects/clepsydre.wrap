@@ -1,6 +1,6 @@
 [wrap-git]
 url = https://gitlab.gnome.org/TitouanReal/clepsydre.git
-revision = 1c930e190a828e33803b774ff8264e2ddcac3b06
+revision = 219974f6dbfbc63b9f85572aa76848ed6233cc6a
 depth = 1
 
 [provide]

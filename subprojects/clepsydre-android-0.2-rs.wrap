@@ -4,4 +4,4 @@ revision = 219974f6dbfbc63b9f85572aa76848ed6233cc6a
 depth = 1
 
 [provide]
-dependency_names = clepsydre-eds-0
+dependency_names = clepsydre-android-0.2-rs
