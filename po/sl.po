@@ -8,29 +8,25 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-09-20 11:18+0000\n"
-"PO-Revision-Date: 2026-09-20 17:38+0200\n"
+"POT-Creation-Date: 2026-10-08 16:44+0000\n"
+"PO-Revision-Date: 2026-10-11 23:30+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
-"n%100==4 ? 3 : 0);\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
 "X-Generator: Poedit 3.8\n"
 
-#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:2
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:2 data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
 msgid "@app-name@"
 msgstr "Era"
 
-#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:8
-msgid "GTK;"
-msgstr "GTK;"
-
-#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
-msgid "Era"
-msgstr "Era"
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:9
+msgid "calendar;planner;schedule;agenda;appointment;appointments;organizer;meeting;meetings;event;events;reminder;reminders;caldav;"
+msgstr "koledar;planer;urnik;dnevni red;termin;termini;organizator;sestanek;sestanki;dogodek;dogodki;opomnik;opomniki;caldav;"
 
 #: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
 msgid "Manage your time"
@@ -38,19 +34,14 @@ msgstr "Upravljajte svoj čas"
 
 #: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
 msgid ""
-"Era is a calendar that grows with your needs - simple and calm for everyday "
-"use while revealing powerful tools when you need them. Use a small window "
-"side-by-side with other apps for multitasking or go fullscreen for complex "
-"planning. Your events can sync with most online providers, and Era keeps "
-"working without interruptions when you’re offline."
+"Era is a calendar that grows with your needs - simple and calm for everyday use while revealing powerful tools when you need "
+"them. Use a small window side-by-side with other apps for multitasking or go fullscreen for complex planning. Your events can "
+"sync with most online providers, and Era keeps working without interruptions when you’re offline."
 msgstr ""
-"Era je koledar, ki se prilagaja vašim potrebam – preprost in pregleden za "
-"vsakdanjo rabo, hkrati pa vam ob potrebi ponuja zmogljiva orodja. Uporabite "
-"majhno okno, ki ga lahko prikazujete vzporedno z drugimi programi za "
-"večopravilnost, ali pa preklopite na celozaslonski način za zahtevnejše "
-"načrtovanje. Vaši dogodki se lahko sinhronizirajo z večino spletnih "
-"ponudnikov, Era pa deluje brez prekinitev tudi takrat, ko niste povezani z "
-"internetom."
+"Era je koledar, ki se prilagaja vašim potrebam – preprost in pregleden za vsakdanjo rabo, hkrati pa vam ob potrebi ponuja "
+"zmogljiva orodja. Uporabite majhno okno, ki ga lahko prikazujete vzporedno z drugimi programi za večopravilnost, ali pa "
+"preklopite na celozaslonski način za zahtevnejše načrtovanje. Vaši dogodki se lahko sinhronizirajo z večino spletnih ponudnikov, "
+"Era pa deluje brez prekinitev tudi takrat, ko niste povezani z internetom."
 
 #: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:19
 msgid "calendar"
@@ -96,8 +87,7 @@ msgstr "alarmi"
 msgid "Google Calendar"
 msgstr "Koledar Google"
 
-#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:61
-#: data/resources/ui/views/month_view/month_view_inner.blp:14
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:61 data/resources/ui/views/month_view/month_view_inner.blp:14
 msgid "Month view"
 msgstr "Mesečni pogled"
 
@@ -130,19 +120,16 @@ msgstr "Izberite, kako želite ustvariti koledar."
 msgid "Flow Details"
 msgstr "Podrobnosti poteka"
 
-#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:42
-#: data/resources/ui/event_creation_dialog.blp:46
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:286
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:42 data/resources/ui/event_creation_dialog.blp:47
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:272 data/resources/ui/import_dialog.blp:18
 msgid "Cancel"
 msgstr "Prekliči"
 
-#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:49
-#: data/resources/ui/event_creation_dialog.blp:53
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:49 data/resources/ui/event_creation_dialog.blp:54
 msgid "Create"
 msgstr "Ustvari"
 
-#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:16
-#: data/resources/ui/event_creation_dialog.blp:65
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:16 data/resources/ui/event_creation_dialog.blp:66
 msgid "Name"
 msgstr "Ime"
 
@@ -150,11 +137,7 @@ msgstr "Ime"
 msgid "Color"
 msgstr "Barva"
 
-#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:23
-msgid "No good way to change color in the UI yet"
-msgstr "Sprememba barv v vmesniku še ni na voljo"
-
-#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:36
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:32
 msgid "Remove Calendar"
 msgstr "Odstrani koledar"
 
@@ -167,8 +150,7 @@ msgid "Calendar details"
 msgstr "Podrobnosti koledarja"
 
 #: data/resources/ui/calendar_management_dialog/calendar_management_dialog.blp:6
-#: data/resources/ui/calendar_management_dialog/collections_list_page.blp:6
-#: data/resources/ui/sidebar/sidebar.blp:10
+#: data/resources/ui/calendar_management_dialog/collections_list_page.blp:6 data/resources/ui/sidebar/sidebar.blp:10
 msgid "Calendars"
 msgstr "Koledarji"
 
@@ -196,6 +178,10 @@ msgstr "Podrobnosti o napaki"
 #: data/resources/ui/components/error_dialog.blp:16
 msgid "Message"
 msgstr "Sporočilo"
+
+#: data/resources/ui/components/error_dialog.blp:20
+msgid "Copy"
+msgstr "Kopiraj"
 
 #: data/resources/ui/components/timeframe_picker/date_picker_row.blp:12
 #: data/resources/ui/components/timeframe_picker/date_picker_row.blp:31
@@ -256,42 +242,37 @@ msgstr "Čas konca"
 msgid "Debug - timeframe:"
 msgstr "Razhroščevanje - časovni okvir:"
 
-#: data/resources/ui/event_creation_dialog.blp:6
-#: data/resources/ui/window.blp:93 data/resources/ui/window.blp:152
-#: data/resources/ui/window.blp:211 data/resources/ui/window.blp:275
+#: data/resources/ui/event_creation_dialog.blp:6 data/resources/ui/window.blp:93 data/resources/ui/window.blp:152
+#: data/resources/ui/window.blp:211 data/resources/ui/window.blp:284
 msgid "Create Event"
 msgstr "Ustvari dogodek"
 
-#: data/resources/ui/event_creation_dialog.blp:28
+#: data/resources/ui/event_creation_dialog.blp:27
 msgid "No Calendar"
 msgstr "Ni koledarjev"
 
-#: data/resources/ui/event_creation_dialog.blp:29
+#: data/resources/ui/event_creation_dialog.blp:28
 msgid "There is no calendar to add an event to."
 msgstr "Ni koledarja, v katerega bi lahko dodali dogodek."
 
-#: data/resources/ui/event_creation_dialog.blp:69
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:309
+#: data/resources/ui/event_creation_dialog.blp:70 data/resources/ui/event_details_dialog/event_details_dialog.blp:71
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:295
 msgid "Location"
 msgstr "Kraj"
 
-#: data/resources/ui/event_creation_dialog.blp:73
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:313
+#: data/resources/ui/event_creation_dialog.blp:74 data/resources/ui/event_details_dialog/event_details_dialog.blp:94
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:299
 msgid "Conference"
 msgstr "Konferenca"
 
-#: data/resources/ui/event_creation_dialog.blp:85
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:169
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:336
+#: data/resources/ui/event_creation_dialog.blp:86 data/resources/ui/event_details_dialog/event_details_dialog.blp:155
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:324
 msgid "Description"
 msgstr "Opis"
 
 #: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
-#: data/resources/ui/search_dialog/search_dialog.blp:24
-#: data/resources/ui/window.blp:62 data/resources/ui/window.blp:121
-#: data/resources/ui/window.blp:180 data/resources/ui/window.blp:282
+#: data/resources/ui/search_dialog/search_dialog.blp:24 data/resources/ui/window.blp:62 data/resources/ui/window.blp:121
+#: data/resources/ui/window.blp:180 data/resources/ui/window.blp:291
 msgid "Search"
 msgstr "Išči"
 
@@ -339,53 +320,53 @@ msgstr "Odpri zemljevid"
 msgid "Join"
 msgstr "Pridruži se"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:140
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:126
 msgid "Organizer"
 msgstr "Organizator"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:150
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:136
 msgid "Participants"
 msgstr "Udeleženci"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:158
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:144
 msgid "Resources"
 msgstr "Viri"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:186
-msgid ""
-"This event has recurrence properties. Such events are currently not editable "
-"in this app."
-msgstr ""
-"Ta dogodek ima lastnosti ponavljanja. Takšnih dogodkov trenutno v tem "
-"programu ni možno urejati."
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:172
+msgid "This event has recurrence properties. Such events are currently not editable in this app."
+msgstr "Ta dogodek ima lastnosti ponavljanja. Takšnih dogodkov trenutno v tem programu ni možno urejati."
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:218
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:204
 msgid "_Edit"
 msgstr "Ur_edi"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:238
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:224
 msgid "_Remove"
 msgstr "O_dstrani"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:254
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:240
 msgid "_Duplicate"
 msgstr "_Podvoji"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:273
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:259
 msgid "Edit Event"
 msgstr "Uredi dogodek"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:293
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:279
 msgid "Save"
 msgstr "Shrani"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:305
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:291
 msgid "Title"
 msgstr "Naziv"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:347
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:335
 msgid "Share Event"
 msgstr "Deli dogodek"
+
+#: data/resources/ui/import_dialog.blp:5 data/resources/ui/import_dialog.blp:25
+msgid "Import"
+msgstr "Uvozi"
 
 #: data/resources/ui/qr_code_dialog.blp:28
 msgid "Scan to Import"
@@ -423,78 +404,81 @@ msgstr "Odpre glavni meni"
 
 #: data/resources/ui/shortcuts_dialog.blp:14
 msgctxt "shortcut dialog"
+msgid "Toggle Sidebar"
+msgstr "Preklopi stransko okno"
+
+#: data/resources/ui/shortcuts_dialog.blp:19
+msgctxt "shortcut dialog"
 msgid "New Event"
 msgstr "Nov dogodek"
 
-#: data/resources/ui/shortcuts_dialog.blp:19
+#: data/resources/ui/shortcuts_dialog.blp:24
 msgctxt "shortcut dialog"
 msgid "Manage Calendars"
 msgstr "Upravljanje s koledarji"
 
-#: data/resources/ui/shortcuts_dialog.blp:24
+#: data/resources/ui/shortcuts_dialog.blp:29
 msgctxt "shortcut dialog"
 msgid "Close Window"
 msgstr "Zapre okno"
 
-#: data/resources/ui/shortcuts_dialog.blp:29
+#: data/resources/ui/shortcuts_dialog.blp:34
 msgctxt "shortcut dialog"
 msgid "Search"
 msgstr "Išči"
 
-#: data/resources/ui/shortcuts_dialog.blp:34
+#: data/resources/ui/shortcuts_dialog.blp:39
 msgctxt "shortcut dialog"
 msgid "Shortcuts"
 msgstr "Tipkovne bližnjice"
 
-#: data/resources/ui/shortcuts_dialog.blp:40
+#: data/resources/ui/shortcuts_dialog.blp:45
 msgctxt "shortcut dialog"
 msgid "Navigation"
 msgstr "Krmarjenje"
 
-#: data/resources/ui/shortcuts_dialog.blp:43
+#: data/resources/ui/shortcuts_dialog.blp:48
 msgctxt "shortcut dialog"
 msgid "Show Today"
 msgstr "Pokaže današnji dan"
 
-#: data/resources/ui/shortcuts_dialog.blp:49
+#: data/resources/ui/shortcuts_dialog.blp:54
 msgctxt "shortcut dialog"
 msgid "View"
 msgstr "Pogled"
 
-#: data/resources/ui/shortcuts_dialog.blp:52
+#: data/resources/ui/shortcuts_dialog.blp:57
 msgctxt "shortcut dialog"
 msgid "Scroll Up"
 msgstr "Drsenje navzgor"
 
-#: data/resources/ui/shortcuts_dialog.blp:57
+#: data/resources/ui/shortcuts_dialog.blp:62
 msgctxt "shortcut dialog"
 msgid "Scroll Down"
 msgstr "Drsenje navzdol"
 
-#: data/resources/ui/shortcuts_dialog.blp:62
+#: data/resources/ui/shortcuts_dialog.blp:67
 msgctxt "shortcut dialog"
 msgid "Zoom In"
 msgstr "Približaj"
 
-#: data/resources/ui/shortcuts_dialog.blp:67
+#: data/resources/ui/shortcuts_dialog.blp:72
 msgctxt "shortcut dialog"
 msgid "Zoom Out"
 msgstr "Oddalji"
 
-#: data/resources/ui/sidebar/sidebar.blp:20 data/resources/ui/window.blp:100
-#: data/resources/ui/window.blp:159 data/resources/ui/window.blp:218
+#: data/resources/ui/sidebar/sidebar.blp:20 data/resources/ui/window.blp:100 data/resources/ui/window.blp:159
+#: data/resources/ui/window.blp:218
 msgid "Manage Calendars"
 msgstr "Upravljanje s koledarji"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:36
+#: data/resources/ui/views/agenda_view/agenda_view.blp:35
 msgid "No events on this day"
 msgstr "Na ta dan ni dogodkov"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:93
-#: data/resources/ui/views/month_view/month_view_floating_controls.blp:17
-#: data/resources/ui/views/year_view/year_view_floating_controls.blp:17
-#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
-#: data/resources/ui/window.blp:200
+#: data/resources/ui/views/agenda_view/agenda_view.blp:93 data/resources/ui/views/month_view/month_view_floating_controls.blp:19
+#: data/resources/ui/views/year_view/year_view_floating_controls.blp:19 data/resources/ui/window.blp:82
+#: data/resources/ui/window.blp:141 data/resources/ui/window.blp:200
 msgid "_Today"
 msgstr "_Danes"
 
@@ -514,12 +498,11 @@ msgstr "Zaledje koledarja očitno ni na voljo."
 msgid "Year"
 msgstr "Leto"
 
-#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:268
+#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:277
 msgid "Main Menu"
 msgstr "Glavni meni"
 
-#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:145
-#: data/resources/ui/window.blp:204
+#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:145 data/resources/ui/window.blp:204
 msgid "Go to Today"
 msgstr "Pojdi na današnji dan"
 
@@ -535,23 +518,27 @@ msgstr "Dnevni red"
 msgid "Toggle Sidebar"
 msgstr "Preklopi stransko okno"
 
-#: data/resources/ui/window.blp:294
+#: data/resources/ui/window.blp:303
 msgid "_Year"
 msgstr "_Leto"
 
-#: data/resources/ui/window.blp:304
+#: data/resources/ui/window.blp:313
 msgid "_Month"
 msgstr "_Mesec"
 
-#: data/resources/ui/window.blp:315
+#: data/resources/ui/window.blp:324
 msgid "_Agenda"
 msgstr "_Dnevni red"
 
-#: data/resources/ui/window.blp:428
+#: data/resources/ui/window.blp:437
+msgid "Import…"
+msgstr "Uvozi …"
+
+#: data/resources/ui/window.blp:444
 msgid "_Keyboard Shortcuts"
 msgstr "_Tipkovne bližnjice"
 
-#: data/resources/ui/window.blp:433
+#: data/resources/ui/window.blp:449
 msgid "_About Era"
 msgstr "_O programu Era"
 
@@ -560,203 +547,6 @@ msgstr "_O programu Era"
 #: src/application.rs:127
 msgid "translator-credits"
 msgstr "Martin Srebotnjak <miles@filmsi.net>"
-
-#: src/utils/template_callbacks.rs:117
-msgid "monday"
-msgstr "v ponedeljek"
-
-#: src/utils/template_callbacks.rs:118
-msgid "tuesday"
-msgstr "v torek"
-
-#: src/utils/template_callbacks.rs:119
-msgid "wednesday"
-msgstr "v sredo"
-
-#: src/utils/template_callbacks.rs:120
-msgid "thursday"
-msgstr "v četrtek"
-
-#: src/utils/template_callbacks.rs:121
-msgid "friday"
-msgstr "v petek"
-
-#: src/utils/template_callbacks.rs:122
-msgid "saturday"
-msgstr "v soboto"
-
-#: src/utils/template_callbacks.rs:123
-msgid "sunday"
-msgstr "v nedeljo"
-
-#: src/utils/template_callbacks.rs:134
-msgid "MON"
-msgstr "PO"
-
-#: src/utils/template_callbacks.rs:135
-msgid "TUE"
-msgstr "TO"
-
-#: src/utils/template_callbacks.rs:136
-msgid "WED"
-msgstr "SR"
-
-#: src/utils/template_callbacks.rs:137
-msgid "THU"
-msgstr "ČE"
-
-#: src/utils/template_callbacks.rs:138
-msgid "FRI"
-msgstr "PE"
-
-#: src/utils/template_callbacks.rs:139
-msgid "SAT"
-msgstr "SO"
-
-#: src/utils/template_callbacks.rs:140
-msgid "SUN"
-msgstr "NE"
-
-#: src/utils/template_callbacks.rs:149 src/utils/template_callbacks.rs:217
-msgid "january"
-msgstr "januar"
-
-#: src/utils/template_callbacks.rs:150 src/utils/template_callbacks.rs:218
-msgid "february"
-msgstr "februar"
-
-#: src/utils/template_callbacks.rs:151 src/utils/template_callbacks.rs:219
-msgid "march"
-msgstr "marec"
-
-#: src/utils/template_callbacks.rs:152 src/utils/template_callbacks.rs:220
-msgid "april"
-msgstr "april"
-
-#: src/utils/template_callbacks.rs:153 src/utils/template_callbacks.rs:221
-msgid "may"
-msgstr "maj"
-
-#: src/utils/template_callbacks.rs:154 src/utils/template_callbacks.rs:222
-msgid "june"
-msgstr "junij"
-
-#: src/utils/template_callbacks.rs:155 src/utils/template_callbacks.rs:223
-msgid "july"
-msgstr "julij"
-
-#: src/utils/template_callbacks.rs:156 src/utils/template_callbacks.rs:224
-msgid "august"
-msgstr "avgust"
-
-#: src/utils/template_callbacks.rs:157 src/utils/template_callbacks.rs:225
-msgid "september"
-msgstr "september"
-
-#: src/utils/template_callbacks.rs:158 src/utils/template_callbacks.rs:226
-msgid "october"
-msgstr "oktober"
-
-#: src/utils/template_callbacks.rs:159 src/utils/template_callbacks.rs:227
-msgid "november"
-msgstr "november"
-
-#: src/utils/template_callbacks.rs:160 src/utils/template_callbacks.rs:228
-msgid "december"
-msgstr "december"
-
-#: src/utils/template_callbacks.rs:170
-msgid "January"
-msgstr "januar"
-
-#: src/utils/template_callbacks.rs:171
-msgid "February"
-msgstr "februar"
-
-#: src/utils/template_callbacks.rs:172
-msgid "March"
-msgstr "marec"
-
-#: src/utils/template_callbacks.rs:173
-msgid "April"
-msgstr "april"
-
-#: src/utils/template_callbacks.rs:174 src/utils/template_callbacks.rs:195
-#: src/utils/template_callbacks.rs:241
-msgid "May"
-msgstr "maj"
-
-#: src/utils/template_callbacks.rs:175
-msgid "June"
-msgstr "junij"
-
-#: src/utils/template_callbacks.rs:176
-msgid "July"
-msgstr "julij"
-
-#: src/utils/template_callbacks.rs:177
-msgid "August"
-msgstr "avgust"
-
-#: src/utils/template_callbacks.rs:178
-msgid "September"
-msgstr "september"
-
-#: src/utils/template_callbacks.rs:179
-msgid "October"
-msgstr "oktober"
-
-#: src/utils/template_callbacks.rs:180
-msgid "November"
-msgstr "november"
-
-#: src/utils/template_callbacks.rs:181
-msgid "December"
-msgstr "december"
-
-#: src/utils/template_callbacks.rs:191 src/utils/template_callbacks.rs:237
-msgid "Jan"
-msgstr "jan"
-
-#: src/utils/template_callbacks.rs:192 src/utils/template_callbacks.rs:238
-msgid "Feb"
-msgstr "feb"
-
-#: src/utils/template_callbacks.rs:193 src/utils/template_callbacks.rs:239
-msgid "Mar"
-msgstr "mar"
-
-#: src/utils/template_callbacks.rs:194 src/utils/template_callbacks.rs:240
-msgid "Apr"
-msgstr "apr"
-
-#: src/utils/template_callbacks.rs:196 src/utils/template_callbacks.rs:242
-msgid "Jun"
-msgstr "jun"
-
-#: src/utils/template_callbacks.rs:197 src/utils/template_callbacks.rs:243
-msgid "Jul"
-msgstr "jul"
-
-#: src/utils/template_callbacks.rs:198 src/utils/template_callbacks.rs:244
-msgid "Aug"
-msgstr "avg"
-
-#: src/utils/template_callbacks.rs:199 src/utils/template_callbacks.rs:245
-msgid "Sep"
-msgstr "sep"
-
-#: src/utils/template_callbacks.rs:200 src/utils/template_callbacks.rs:246
-msgid "Oct"
-msgstr "okt"
-
-#: src/utils/template_callbacks.rs:201 src/utils/template_callbacks.rs:247
-msgid "Nov"
-msgstr "nov"
-
-#: src/utils/template_callbacks.rs:202 src/utils/template_callbacks.rs:248
-msgid "Dec"
-msgstr "dec"
 
 #: src/utils/timeframe_label.rs:80
 msgid "Yesterday"
@@ -824,10 +614,8 @@ msgstr "{day_start}. {month_start} – {day_end}. {month_end} {year}"
 #. {year_start} and {year_end} years.
 #: src/utils/timeframe_label.rs:162
 #, rust-format
-msgid ""
-"{month_start} {day_start}, {year_start} – {month_end} {day_end}, {year_end}"
-msgstr ""
-"{day_start}. {month_start} {year_start} – {day_end}. {month_end} {year_end}"
+msgid "{month_start} {day_start}, {year_start} – {month_end} {day_end}, {year_end}"
+msgstr "{day_start}. {month_start} {year_start} – {day_end}. {month_end} {year_end}"
 
 #. e.g. "June 12, 14:00 – 15:30"
 #. TRANSLATORS: timed event on a single day, system timezone (not shown).
@@ -852,11 +640,8 @@ msgstr "{day}. {month} od {time_start} ({tz_start}) do {time_end} ({tz_end})"
 #. {month_end}, {day_end}, {time_end} end date/time.
 #: src/utils/timeframe_label.rs:262
 #, rust-format
-msgid ""
-"{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}"
-msgstr ""
-"{day_start}. {month_start} ob {time_start} – {day_end}. {month_end} ob "
-"{time_end}"
+msgid "{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}"
+msgstr "{day_start}. {month_start} ob {time_start} – {day_end}. {month_end} ob {time_end}"
 
 #. e.g. "June 12, 14:00 (America/New_York) – July 3, 15:30 (Europe/Paris)"
 #. TRANSLATORS: cross-month current-year range; each time in a different non-system
@@ -864,12 +649,8 @@ msgstr ""
 #. {time_end} as above; {tz_start} and {tz_end} respective IANA timezones.
 #: src/utils/timeframe_label.rs:280
 #, rust-format
-msgid ""
-"{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} "
-"{day_end}, {time_end} ({tz_end})"
-msgstr ""
-"{day_start}. {month_start} ob {time_start} ({tz_start}) – {day_end}. "
-"{month_end} ob {time_end} ({tz_end})"
+msgid "{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} {day_end}, {time_end} ({tz_end})"
+msgstr "{day_start}. {month_start} ob {time_start} ({tz_start}) – {day_end}. {month_end} ob {time_end} ({tz_end})"
 
 #. e.g. "June 12, 14:00 – July 3, 15:30, 2025"
 #. TRANSLATORS: timed event spanning months within a past or future year, system
@@ -877,12 +658,8 @@ msgstr ""
 #. {time_end} as above; {year} the shared year.
 #: src/utils/timeframe_label.rs:300
 #, rust-format
-msgid ""
-"{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}, "
-"{year}"
-msgstr ""
-"{day_start}. {month_start} ob {time_start} – {day_end}. {month_end} {year} "
-"ob {time_end}"
+msgid "{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}, {year}"
+msgstr "{day_start}. {month_start} ob {time_start} – {day_end}. {month_end} {year} ob {time_end}"
 
 #. e.g. "June 12, 14:00 (America/New_York) – July 3, 15:30 (Europe/Paris), 2025"
 #. TRANSLATORS: cross-month past/future-year range; each time in a different non-system
@@ -890,12 +667,8 @@ msgstr ""
 #. {time_end}, {year} as above; {tz_start} and {tz_end} respective IANA timezones.
 #: src/utils/timeframe_label.rs:319
 #, rust-format
-msgid ""
-"{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} "
-"{day_end}, {time_end} ({tz_end}), {year}"
-msgstr ""
-"{day_start}. {month_start} ob {time_start} ({tz_start}) – {day_end}. "
-"{month_end} {year} ob {time_end} ({tz_end})"
+msgid "{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} {day_end}, {time_end} ({tz_end}), {year}"
+msgstr "{day_start}. {month_start} ob {time_start} ({tz_start}) – {day_end}. {month_end} {year} ob {time_end} ({tz_end})"
 
 #. e.g. "June 12, 2024, 14:00 – January 3, 2025, 15:30"
 #. TRANSLATORS: timed event spanning different years, system timezone.
@@ -903,12 +676,8 @@ msgstr ""
 #. {month_end}, {day_end}, {year_end}, {time_end} end date/time.
 #: src/utils/timeframe_label.rs:335
 #, rust-format
-msgid ""
-"{month_start} {day_start}, {year_start}, {time_start} – {month_end} "
-"{day_end}, {year_end}, {time_end}"
-msgstr ""
-"{day_start}. {month_start} {year_start} ob {time_start} – {day_end}. "
-"{month_end} {year_end} ob {time_end}"
+msgid "{month_start} {day_start}, {year_start}, {time_start} – {month_end} {day_end}, {year_end}, {time_end}"
+msgstr "{day_start}. {month_start} {year_start} ob {time_start} – {day_end}. {month_end} {year_end} ob {time_end}"
 
 #. e.g. "June 12, 2024, 14:00 (America/New_York) – January 3, 2025, 15:30
 #. (Europe/Paris)" TRANSLATORS: different-year range; each time in a
@@ -918,16 +687,14 @@ msgstr ""
 #: src/utils/timeframe_label.rs:351
 #, rust-format
 msgid ""
-"{month_start} {day_start}, {year_start}, {time_start} ({tz_start}) – "
-"{month_end} {day_end}, {year_end}, {time_end} ({tz_end})"
+"{month_start} {day_start}, {year_start}, {time_start} ({tz_start}) – {month_end} {day_end}, {year_end}, {time_end} ({tz_end})"
 msgstr ""
-"{day_start}. {month_start} {year_start} ob {time_start} ({tz_start}) – "
-"{day_end}. {month_end} {year_end} ob {time_end} ({tz_end})"
+"{day_start}. {month_start} {year_start} ob {time_start} ({tz_start}) – {day_end}. {month_end} {year_end} ob {time_end} ({tz_end})"
 
-#: src/widgets/window.rs:496
+#: src/widgets/window.rs:542
 msgid "%Y"
 msgstr "%Y"
 
-#: src/widgets/window.rs:505 src/widgets/window.rs:514
+#: src/widgets/window.rs:551 src/widgets/window.rs:560
 msgid "%0B %Y"
 msgstr "%0B %Y"
