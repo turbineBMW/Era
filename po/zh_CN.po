@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-09-20 11:18+0000\n"
-"PO-Revision-Date: 2026-09-21 07:58+0800\n"
+"POT-Creation-Date: 2026-10-08 16:44+0000\n"
+"PO-Revision-Date: 2026-10-11 09:36+0800\n"
 "Last-Translator: lumingzh <lumingzh@qq.com>\n"
 "Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -19,16 +19,16 @@ msgstr ""
 "X-Generator: Gtranslator 51.0\n"
 
 #: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:2
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
 msgid "@app-name@"
 msgstr "@app-name@"
 
-#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:8
-msgid "GTK;"
-msgstr "GTK;"
-
-#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
-msgid "Era"
-msgstr "纪元"
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:9
+msgid "calendar;planner;schedule;agenda;appointment;appointments;organizer;meeting;meetings;event;events;reminder;reminders;caldav;"
+msgstr ""
+"calendar;planner;schedule;agenda;appointment;appointments;organizer;meeting;meetings;event;events;reminder;reminders;caldav;"
+"日历;计划;规划;日程;安排;约会;组织者;会议;见面;事件;提醒;"
 
 #: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
 msgid "Manage your time"
@@ -125,18 +125,19 @@ msgid "Flow Details"
 msgstr "流详情"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:42
-#: data/resources/ui/event_creation_dialog.blp:46
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:286
+#: data/resources/ui/event_creation_dialog.blp:47
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:272
+#: data/resources/ui/import_dialog.blp:18
 msgid "Cancel"
 msgstr "取消"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:49
-#: data/resources/ui/event_creation_dialog.blp:53
+#: data/resources/ui/event_creation_dialog.blp:54
 msgid "Create"
 msgstr "创建"
 
 #: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:16
-#: data/resources/ui/event_creation_dialog.blp:65
+#: data/resources/ui/event_creation_dialog.blp:66
 msgid "Name"
 msgstr "名称"
 
@@ -144,11 +145,7 @@ msgstr "名称"
 msgid "Color"
 msgstr "颜色"
 
-#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:23
-msgid "No good way to change color in the UI yet"
-msgstr "尚未有在用户界面中更改颜色的更好方式"
-
-#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:36
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:32
 msgid "Remove Calendar"
 msgstr "移除日历"
 
@@ -190,6 +187,10 @@ msgstr "错误详情"
 #: data/resources/ui/components/error_dialog.blp:16
 msgid "Message"
 msgstr "消息"
+
+#: data/resources/ui/components/error_dialog.blp:20
+msgid "Copy"
+msgstr "复制"
 
 #: data/resources/ui/components/timeframe_picker/date_picker_row.blp:12
 #: data/resources/ui/components/timeframe_picker/date_picker_row.blp:31
@@ -252,40 +253,40 @@ msgstr "调试 - 时间范围："
 
 #: data/resources/ui/event_creation_dialog.blp:6
 #: data/resources/ui/window.blp:93 data/resources/ui/window.blp:152
-#: data/resources/ui/window.blp:211 data/resources/ui/window.blp:275
+#: data/resources/ui/window.blp:211 data/resources/ui/window.blp:284
 msgid "Create Event"
 msgstr "创建事件"
 
-#: data/resources/ui/event_creation_dialog.blp:28
+#: data/resources/ui/event_creation_dialog.blp:27
 msgid "No Calendar"
 msgstr "无日历"
 
-#: data/resources/ui/event_creation_dialog.blp:29
+#: data/resources/ui/event_creation_dialog.blp:28
 msgid "There is no calendar to add an event to."
 msgstr "没有日历可供添加事件。"
 
-#: data/resources/ui/event_creation_dialog.blp:69
+#: data/resources/ui/event_creation_dialog.blp:70
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:309
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:295
 msgid "Location"
 msgstr "位置"
 
-#: data/resources/ui/event_creation_dialog.blp:73
+#: data/resources/ui/event_creation_dialog.blp:74
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:313
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:299
 msgid "Conference"
 msgstr "会议"
 
-#: data/resources/ui/event_creation_dialog.blp:85
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:169
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:336
+#: data/resources/ui/event_creation_dialog.blp:86
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:155
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:324
 msgid "Description"
 msgstr "描述"
 
 #: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
 #: data/resources/ui/search_dialog/search_dialog.blp:24
 #: data/resources/ui/window.blp:62 data/resources/ui/window.blp:121
-#: data/resources/ui/window.blp:180 data/resources/ui/window.blp:282
+#: data/resources/ui/window.blp:180 data/resources/ui/window.blp:291
 msgid "Search"
 msgstr "搜索"
 
@@ -333,51 +334,55 @@ msgstr "打开地图"
 msgid "Join"
 msgstr "加入"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:140
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:126
 msgid "Organizer"
 msgstr "组织者"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:150
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:136
 msgid "Participants"
 msgstr "参与者"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:158
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:144
 msgid "Resources"
 msgstr "资源"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:186
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:172
 msgid ""
 "This event has recurrence properties. Such events are currently not editable "
 "in this app."
 msgstr "此事件具有再发生属性。像这样的事件当前在此应用中是不可编辑的。"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:218
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:204
 msgid "_Edit"
 msgstr "编辑(_E)"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:238
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:224
 msgid "_Remove"
 msgstr "移除(_R)"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:254
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:240
 msgid "_Duplicate"
 msgstr "制作副本(_D)"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:273
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:259
 msgid "Edit Event"
 msgstr "编辑事件"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:293
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:279
 msgid "Save"
 msgstr "保存"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:305
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:291
 msgid "Title"
 msgstr "标题"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:347
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:335
 msgid "Share Event"
 msgstr "分享事件"
+
+#: data/resources/ui/import_dialog.blp:5 data/resources/ui/import_dialog.blp:25
+msgid "Import"
+msgstr "导入"
 
 #: data/resources/ui/qr_code_dialog.blp:28
 msgid "Scan to Import"
@@ -415,60 +420,65 @@ msgstr "打开主菜单"
 
 #: data/resources/ui/shortcuts_dialog.blp:14
 msgctxt "shortcut dialog"
+msgid "Toggle Sidebar"
+msgstr "切换侧边栏"
+
+#: data/resources/ui/shortcuts_dialog.blp:19
+msgctxt "shortcut dialog"
 msgid "New Event"
 msgstr "新建事件"
 
-#: data/resources/ui/shortcuts_dialog.blp:19
+#: data/resources/ui/shortcuts_dialog.blp:24
 msgctxt "shortcut dialog"
 msgid "Manage Calendars"
 msgstr "管理日历"
 
-#: data/resources/ui/shortcuts_dialog.blp:24
+#: data/resources/ui/shortcuts_dialog.blp:29
 msgctxt "shortcut dialog"
 msgid "Close Window"
 msgstr "关闭窗口"
 
-#: data/resources/ui/shortcuts_dialog.blp:29
+#: data/resources/ui/shortcuts_dialog.blp:34
 msgctxt "shortcut dialog"
 msgid "Search"
 msgstr "搜索"
 
-#: data/resources/ui/shortcuts_dialog.blp:34
+#: data/resources/ui/shortcuts_dialog.blp:39
 msgctxt "shortcut dialog"
 msgid "Shortcuts"
 msgstr "快捷键"
 
-#: data/resources/ui/shortcuts_dialog.blp:40
+#: data/resources/ui/shortcuts_dialog.blp:45
 msgctxt "shortcut dialog"
 msgid "Navigation"
 msgstr "导航"
 
-#: data/resources/ui/shortcuts_dialog.blp:43
+#: data/resources/ui/shortcuts_dialog.blp:48
 msgctxt "shortcut dialog"
 msgid "Show Today"
 msgstr "显示今天"
 
-#: data/resources/ui/shortcuts_dialog.blp:49
+#: data/resources/ui/shortcuts_dialog.blp:54
 msgctxt "shortcut dialog"
 msgid "View"
 msgstr "视图"
 
-#: data/resources/ui/shortcuts_dialog.blp:52
+#: data/resources/ui/shortcuts_dialog.blp:57
 msgctxt "shortcut dialog"
 msgid "Scroll Up"
 msgstr "向上滚动"
 
-#: data/resources/ui/shortcuts_dialog.blp:57
+#: data/resources/ui/shortcuts_dialog.blp:62
 msgctxt "shortcut dialog"
 msgid "Scroll Down"
 msgstr "向下滚动"
 
-#: data/resources/ui/shortcuts_dialog.blp:62
+#: data/resources/ui/shortcuts_dialog.blp:67
 msgctxt "shortcut dialog"
 msgid "Zoom In"
 msgstr "放大"
 
-#: data/resources/ui/shortcuts_dialog.blp:67
+#: data/resources/ui/shortcuts_dialog.blp:72
 msgctxt "shortcut dialog"
 msgid "Zoom Out"
 msgstr "缩小"
@@ -478,13 +488,13 @@ msgstr "缩小"
 msgid "Manage Calendars"
 msgstr "管理日历"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:36
+#: data/resources/ui/views/agenda_view/agenda_view.blp:35
 msgid "No events on this day"
 msgstr "这天没有事件"
 
 #: data/resources/ui/views/agenda_view/agenda_view.blp:93
-#: data/resources/ui/views/month_view/month_view_floating_controls.blp:17
-#: data/resources/ui/views/year_view/year_view_floating_controls.blp:17
+#: data/resources/ui/views/month_view/month_view_floating_controls.blp:19
+#: data/resources/ui/views/year_view/year_view_floating_controls.blp:19
 #: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
 #: data/resources/ui/window.blp:200
 msgid "_Today"
@@ -506,7 +516,7 @@ msgstr "日历后端程序似乎不可用。"
 msgid "Year"
 msgstr "年"
 
-#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:268
+#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:277
 msgid "Main Menu"
 msgstr "主菜单"
 
@@ -527,23 +537,27 @@ msgstr "日程"
 msgid "Toggle Sidebar"
 msgstr "切换侧边栏"
 
-#: data/resources/ui/window.blp:294
+#: data/resources/ui/window.blp:303
 msgid "_Year"
 msgstr "年(_Y)"
 
-#: data/resources/ui/window.blp:304
+#: data/resources/ui/window.blp:313
 msgid "_Month"
 msgstr "月(_M)"
 
-#: data/resources/ui/window.blp:315
+#: data/resources/ui/window.blp:324
 msgid "_Agenda"
 msgstr "日程(_A)"
 
-#: data/resources/ui/window.blp:428
+#: data/resources/ui/window.blp:437
+msgid "Import…"
+msgstr "导入…"
+
+#: data/resources/ui/window.blp:444
 msgid "_Keyboard Shortcuts"
 msgstr "键盘快捷键(_K)"
 
-#: data/resources/ui/window.blp:433
+#: data/resources/ui/window.blp:449
 msgid "_About Era"
 msgstr "关于纪元(_A)"
 
@@ -552,203 +566,6 @@ msgstr "关于纪元(_A)"
 #: src/application.rs:127
 msgid "translator-credits"
 msgstr "lumingzh <lumingzh@qq.com>, 2026"
-
-#: src/utils/template_callbacks.rs:117
-msgid "monday"
-msgstr "星期一"
-
-#: src/utils/template_callbacks.rs:118
-msgid "tuesday"
-msgstr "星期二"
-
-#: src/utils/template_callbacks.rs:119
-msgid "wednesday"
-msgstr "星期三"
-
-#: src/utils/template_callbacks.rs:120
-msgid "thursday"
-msgstr "星期四"
-
-#: src/utils/template_callbacks.rs:121
-msgid "friday"
-msgstr "星期五"
-
-#: src/utils/template_callbacks.rs:122
-msgid "saturday"
-msgstr "星期六"
-
-#: src/utils/template_callbacks.rs:123
-msgid "sunday"
-msgstr "星期日"
-
-#: src/utils/template_callbacks.rs:134
-msgid "MON"
-msgstr "周一"
-
-#: src/utils/template_callbacks.rs:135
-msgid "TUE"
-msgstr "周二"
-
-#: src/utils/template_callbacks.rs:136
-msgid "WED"
-msgstr "周三"
-
-#: src/utils/template_callbacks.rs:137
-msgid "THU"
-msgstr "周四"
-
-#: src/utils/template_callbacks.rs:138
-msgid "FRI"
-msgstr "周五"
-
-#: src/utils/template_callbacks.rs:139
-msgid "SAT"
-msgstr "周六"
-
-#: src/utils/template_callbacks.rs:140
-msgid "SUN"
-msgstr "周日"
-
-#: src/utils/template_callbacks.rs:149 src/utils/template_callbacks.rs:217
-msgid "january"
-msgstr "01月"
-
-#: src/utils/template_callbacks.rs:150 src/utils/template_callbacks.rs:218
-msgid "february"
-msgstr "02月"
-
-#: src/utils/template_callbacks.rs:151 src/utils/template_callbacks.rs:219
-msgid "march"
-msgstr "03月"
-
-#: src/utils/template_callbacks.rs:152 src/utils/template_callbacks.rs:220
-msgid "april"
-msgstr "04月"
-
-#: src/utils/template_callbacks.rs:153 src/utils/template_callbacks.rs:221
-msgid "may"
-msgstr "05月"
-
-#: src/utils/template_callbacks.rs:154 src/utils/template_callbacks.rs:222
-msgid "june"
-msgstr "06月"
-
-#: src/utils/template_callbacks.rs:155 src/utils/template_callbacks.rs:223
-msgid "july"
-msgstr "07月"
-
-#: src/utils/template_callbacks.rs:156 src/utils/template_callbacks.rs:224
-msgid "august"
-msgstr "08月"
-
-#: src/utils/template_callbacks.rs:157 src/utils/template_callbacks.rs:225
-msgid "september"
-msgstr "09月"
-
-#: src/utils/template_callbacks.rs:158 src/utils/template_callbacks.rs:226
-msgid "october"
-msgstr "10月"
-
-#: src/utils/template_callbacks.rs:159 src/utils/template_callbacks.rs:227
-msgid "november"
-msgstr "11月"
-
-#: src/utils/template_callbacks.rs:160 src/utils/template_callbacks.rs:228
-msgid "december"
-msgstr "12月"
-
-#: src/utils/template_callbacks.rs:170
-msgid "January"
-msgstr "01月"
-
-#: src/utils/template_callbacks.rs:171
-msgid "February"
-msgstr "02月"
-
-#: src/utils/template_callbacks.rs:172
-msgid "March"
-msgstr "03月"
-
-#: src/utils/template_callbacks.rs:173
-msgid "April"
-msgstr "04月"
-
-#: src/utils/template_callbacks.rs:174 src/utils/template_callbacks.rs:195
-#: src/utils/template_callbacks.rs:241
-msgid "May"
-msgstr "05月"
-
-#: src/utils/template_callbacks.rs:175
-msgid "June"
-msgstr "06月"
-
-#: src/utils/template_callbacks.rs:176
-msgid "July"
-msgstr "07月"
-
-#: src/utils/template_callbacks.rs:177
-msgid "August"
-msgstr "08月"
-
-#: src/utils/template_callbacks.rs:178
-msgid "September"
-msgstr "09月"
-
-#: src/utils/template_callbacks.rs:179
-msgid "October"
-msgstr "10月"
-
-#: src/utils/template_callbacks.rs:180
-msgid "November"
-msgstr "11月"
-
-#: src/utils/template_callbacks.rs:181
-msgid "December"
-msgstr "12月"
-
-#: src/utils/template_callbacks.rs:191 src/utils/template_callbacks.rs:237
-msgid "Jan"
-msgstr "01月"
-
-#: src/utils/template_callbacks.rs:192 src/utils/template_callbacks.rs:238
-msgid "Feb"
-msgstr "02月"
-
-#: src/utils/template_callbacks.rs:193 src/utils/template_callbacks.rs:239
-msgid "Mar"
-msgstr "03月"
-
-#: src/utils/template_callbacks.rs:194 src/utils/template_callbacks.rs:240
-msgid "Apr"
-msgstr "04月"
-
-#: src/utils/template_callbacks.rs:196 src/utils/template_callbacks.rs:242
-msgid "Jun"
-msgstr "06月"
-
-#: src/utils/template_callbacks.rs:197 src/utils/template_callbacks.rs:243
-msgid "Jul"
-msgstr "07月"
-
-#: src/utils/template_callbacks.rs:198 src/utils/template_callbacks.rs:244
-msgid "Aug"
-msgstr "08月"
-
-#: src/utils/template_callbacks.rs:199 src/utils/template_callbacks.rs:245
-msgid "Sep"
-msgstr "09月"
-
-#: src/utils/template_callbacks.rs:200 src/utils/template_callbacks.rs:246
-msgid "Oct"
-msgstr "10月"
-
-#: src/utils/template_callbacks.rs:201 src/utils/template_callbacks.rs:247
-msgid "Nov"
-msgstr "11月"
-
-#: src/utils/template_callbacks.rs:202 src/utils/template_callbacks.rs:248
-msgid "Dec"
-msgstr "12月"
 
 #: src/utils/timeframe_label.rs:80
 msgid "Yesterday"
@@ -915,13 +732,169 @@ msgstr ""
 "{year_start}年{month_start}{day_start}日，{time_start}（{tz_start}）– "
 "{year_end}年{month_end}{day_end}日，{time_end}（{tz_end}）"
 
-#: src/widgets/window.rs:496
+#: src/widgets/window.rs:542
 msgid "%Y"
 msgstr "%Y年"
 
-#: src/widgets/window.rs:505 src/widgets/window.rs:514
+#: src/widgets/window.rs:551 src/widgets/window.rs:560
 msgid "%0B %Y"
 msgstr "%Y年%-m月"
+
+#~ msgid "GTK;"
+#~ msgstr "GTK;"
+
+#~ msgid "Era"
+#~ msgstr "纪元"
+
+#~ msgid "No good way to change color in the UI yet"
+#~ msgstr "尚未有在用户界面中更改颜色的更好方式"
+
+#~ msgid "monday"
+#~ msgstr "星期一"
+
+#~ msgid "tuesday"
+#~ msgstr "星期二"
+
+#~ msgid "wednesday"
+#~ msgstr "星期三"
+
+#~ msgid "thursday"
+#~ msgstr "星期四"
+
+#~ msgid "friday"
+#~ msgstr "星期五"
+
+#~ msgid "saturday"
+#~ msgstr "星期六"
+
+#~ msgid "sunday"
+#~ msgstr "星期日"
+
+#~ msgid "MON"
+#~ msgstr "周一"
+
+#~ msgid "TUE"
+#~ msgstr "周二"
+
+#~ msgid "WED"
+#~ msgstr "周三"
+
+#~ msgid "THU"
+#~ msgstr "周四"
+
+#~ msgid "FRI"
+#~ msgstr "周五"
+
+#~ msgid "SAT"
+#~ msgstr "周六"
+
+#~ msgid "SUN"
+#~ msgstr "周日"
+
+#~ msgid "january"
+#~ msgstr "01月"
+
+#~ msgid "february"
+#~ msgstr "02月"
+
+#~ msgid "march"
+#~ msgstr "03月"
+
+#~ msgid "april"
+#~ msgstr "04月"
+
+#~ msgid "may"
+#~ msgstr "05月"
+
+#~ msgid "june"
+#~ msgstr "06月"
+
+#~ msgid "july"
+#~ msgstr "07月"
+
+#~ msgid "august"
+#~ msgstr "08月"
+
+#~ msgid "september"
+#~ msgstr "09月"
+
+#~ msgid "october"
+#~ msgstr "10月"
+
+#~ msgid "november"
+#~ msgstr "11月"
+
+#~ msgid "december"
+#~ msgstr "12月"
+
+#~ msgid "January"
+#~ msgstr "01月"
+
+#~ msgid "February"
+#~ msgstr "02月"
+
+#~ msgid "March"
+#~ msgstr "03月"
+
+#~ msgid "April"
+#~ msgstr "04月"
+
+#~ msgid "May"
+#~ msgstr "05月"
+
+#~ msgid "June"
+#~ msgstr "06月"
+
+#~ msgid "July"
+#~ msgstr "07月"
+
+#~ msgid "August"
+#~ msgstr "08月"
+
+#~ msgid "September"
+#~ msgstr "09月"
+
+#~ msgid "October"
+#~ msgstr "10月"
+
+#~ msgid "November"
+#~ msgstr "11月"
+
+#~ msgid "December"
+#~ msgstr "12月"
+
+#~ msgid "Jan"
+#~ msgstr "01月"
+
+#~ msgid "Feb"
+#~ msgstr "02月"
+
+#~ msgid "Mar"
+#~ msgstr "03月"
+
+#~ msgid "Apr"
+#~ msgstr "04月"
+
+#~ msgid "Jun"
+#~ msgstr "06月"
+
+#~ msgid "Jul"
+#~ msgstr "07月"
+
+#~ msgid "Aug"
+#~ msgstr "08月"
+
+#~ msgid "Sep"
+#~ msgstr "09月"
+
+#~ msgid "Oct"
+#~ msgstr "10月"
+
+#~ msgid "Nov"
+#~ msgstr "11月"
+
+#~ msgid "Dec"
+#~ msgstr "12月"
 
 #~ msgid ""
 #~ "Era is a time management application designed to help you stay organized "
