@@ -1,5 +1,4 @@
 use clepsydre::{Event, prelude::*};
-use gtk::prelude::WidgetExt;
 
 use super::{
     month_view_event::MonthViewEvent,
@@ -280,45 +279,4 @@ pub fn stack_event_segments(segments: &[EventSegment]) -> Vec<Vec<StackedSegment
             stacked_row
         })
         .collect()
-}
-
-pub fn build_event_layouts(
-    event_widgets: &[MonthViewEvent],
-    stacked_segments_by_row: &[Vec<StackedSegment>],
-) -> Vec<Vec<EventLayout>> {
-    let mut event_widget_index = 0;
-    let mut layouts_by_row = Vec::with_capacity(stacked_segments_by_row.len());
-
-    for row_stacked_segments in stacked_segments_by_row {
-        let mut row_layouts = Vec::with_capacity(row_stacked_segments.len());
-
-        for stacked_segment in row_stacked_segments {
-            let event_widget = &event_widgets[event_widget_index];
-            event_widget_index += 1;
-
-            event_widget.set_event(Some(&stacked_segment.event));
-
-            if stacked_segment.is_first_segment_of_event {
-                event_widget.add_css_class("start");
-            } else {
-                event_widget.remove_css_class("start");
-            }
-            if stacked_segment.is_last_segment_of_event {
-                event_widget.add_css_class("end");
-            } else {
-                event_widget.remove_css_class("end");
-            }
-
-            row_layouts.push(EventLayout {
-                widget: event_widget.clone(),
-                column_start: stacked_segment.column_start,
-                column_end: stacked_segment.column_end,
-                stack_row: stacked_segment.stack_row,
-            });
-        }
-
-        layouts_by_row.push(row_layouts);
-    }
-
-    layouts_by_row
 }

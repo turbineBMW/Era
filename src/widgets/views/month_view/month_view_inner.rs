@@ -1,11 +1,12 @@
 use std::{
     cell::{Cell, OnceCell, RefCell},
-    collections::HashSet,
+    collections::HashMap,
+    sync::Mutex,
 };
 
 use adw::{prelude::*, subclass::prelude::*};
 use clepsydre::{Calendar, Event, Subscription, prelude::*};
-use glib::{GString, clone};
+use glib::{SignalHandlerId, clone};
 use jiff::ToSpan;
 use tracing::{error, warn};
 
@@ -17,9 +18,8 @@ use crate::{
 };
 
 use super::{
-    layout_utils::{
-        EventLayout, RowOverflow, build_event_layouts, compute_event_segments, stack_event_segments,
-    },
+    event_widget_pool::EventWidgetPool,
+    layout_utils::{EventLayout, RowOverflow, compute_event_segments, stack_event_segments},
     month_view_cell::MonthViewCell,
     month_view_event::MonthViewEvent,
     month_view_floating_controls::MonthViewFloatingControls,
@@ -63,8 +63,6 @@ const DISCRETE_SCROLL_ANIMATION_MS: u32 = 200;
 
 /// Duration of the discrete-zoom animation in milliseconds.
 const DISCRETE_ZOOM_ANIMATION_MS: u32 = 200;
-
-const INITIAL_EVENT_WIDGET_POOL_SIZE: usize = 100;
 
 const UNIX_EPOCH_DATE: jiff::civil::Date = jiff::civil::date(1970, 1, 1);
 
@@ -156,14 +154,15 @@ mod imp {
 
         subscription: OnceCell<Subscription>,
 
-        event_widgets: RefCell<Vec<MonthViewEvent>>,
+        event_widgets: OnceCell<Mutex<EventWidgetPool>>,
         overflow_widgets: OnceCell<[MonthViewOverflow; NB_CELLS]>,
 
         event_layouts: RefCell<Vec<Vec<EventLayout>>>,
 
         recompute_pending: Cell<bool>,
 
-        connected_event_uris: RefCell<HashSet<GString>>,
+        /// Handlers of the timeframe notifications of the events of the subscription.
+        timeframe_handlers: RefCell<HashMap<Event, SignalHandlerId>>,
 
         // During a drag, overlays should not be targetable so that cells receive drop events
         // correctly.
@@ -239,15 +238,18 @@ mod imp {
                 .to_glib_date_time(&timezone);
             let subscription = manager.new_subscription(&start, &end).unwrap();
 
-            let event_widgets = (0..INITIAL_EVENT_WIDGET_POOL_SIZE)
-                .map(|_| {
-                    let event_widget = MonthViewEvent::new(None);
-                    event_widget.set_child_visible(false);
-                    event_widget.set_can_target(self.overlays_targetable.get());
-                    event_widget.insert_before(&*self.obj(), Some(&self.floating_controls.get()));
-                    event_widget
-                })
-                .collect::<Vec<_>>();
+            let obj = self.obj().clone();
+            let event_widgets = EventWidgetPool::new(move || {
+                let imp = obj.imp();
+
+                let event_widget = MonthViewEvent::new(None);
+                event_widget.set_styling(imp.styling.get());
+                event_widget.set_child_visible(false);
+                event_widget.set_can_target(imp.overlays_targetable.get());
+                event_widget.insert_before(&obj, Some(&imp.floating_controls.get()));
+
+                event_widget
+            });
 
             let overflow_widgets = std::array::from_fn(|i| {
                 let date = (first_cell_date + (i as i32).days()).into();
@@ -258,7 +260,7 @@ mod imp {
             });
 
             let (_minimum_event_height, natural_event_height, ..) =
-                event_widgets[0].measure(gtk::Orientation::Vertical, -1);
+                event_widgets.widgets()[0].measure(gtk::Orientation::Vertical, -1);
             let header_height = cells[0].header_height(-1);
 
             // TODO: CSS isn't applied yet. We should do this initialisation in the first
@@ -275,7 +277,7 @@ mod imp {
 
             self.subscription.set(subscription).unwrap();
 
-            self.event_widgets.replace(event_widgets);
+            self.event_widgets.set(Mutex::new(event_widgets)).unwrap();
             self.overflow_widgets.set(overflow_widgets).unwrap();
 
             self.scroll_swipe.group_with(&*self.scroll_drag);
@@ -289,20 +291,7 @@ mod imp {
                     move |_model, _position, _removed, _added| {
                         // This does not invalidate current layouts, so we can afford to wait a bit
                         // to recompute them to debounce rapidly fired signals.
-                        if imp.recompute_pending.get() {
-                            return;
-                        }
-
-                        imp.recompute_pending.set(true);
-
-                        glib::idle_add_local_once(clone!(
-                            #[weak]
-                            imp,
-                            move || {
-                                imp.recompute_pending.set(false);
-                                imp.recompute_event_layouts();
-                            }
-                        ));
+                        imp.schedule_recompute();
                     }
                 ));
 
@@ -397,7 +386,10 @@ mod imp {
             for separator in self.row_separators.get().unwrap() {
                 separator.unparent();
             }
-            for event_widget in self.event_widgets.borrow().iter() {
+            for (event, handler) in self.timeframe_handlers.take() {
+                event.disconnect(handler);
+            }
+            for event_widget in self.event_widgets.get().unwrap().lock().unwrap().widgets() {
                 event_widget.unparent();
             }
             for overflow_widget in self.overflow_widgets.get().unwrap() {
@@ -458,8 +450,8 @@ mod imp {
             let first_cell_index = self.first_cell_index.get();
 
             let (minimum_event_height, natural_event_height, ..) = {
-                let event_widgets = self.event_widgets.borrow();
-                event_widgets[0].measure(gtk::Orientation::Vertical, column_widths[6])
+                let event_widgets = self.event_widgets.get().unwrap().lock().unwrap();
+                event_widgets.widgets()[0].measure(gtk::Orientation::Vertical, column_widths[6])
             };
             let header_height = cells[0].header_height(column_widths[6]);
 
@@ -667,7 +659,7 @@ mod imp {
             for cell in self.cells.get().unwrap() {
                 cell.set_styling(styling);
             }
-            for event_widget in self.event_widgets.borrow().iter() {
+            for event_widget in self.event_widgets.get().unwrap().lock().unwrap().widgets() {
                 event_widget.set_styling(styling);
             }
             for overflow_widget in self.overflow_widgets.get().unwrap() {
@@ -1544,6 +1536,25 @@ mod imp {
             self.subscription.get().unwrap().set_timeframe(&start, &end);
         }
 
+        /// Recomputes the event layouts on idle, coalescing all requests made until then.
+        fn schedule_recompute(&self) {
+            let already_scheduled = self.recompute_pending.get();
+            self.recompute_pending.set(true);
+
+            if already_scheduled {
+                return;
+            }
+
+            glib::idle_add_local_once(clone!(
+                #[weak(rename_to = imp)]
+                self,
+                move || {
+                    imp.recompute_pending.set(false);
+                    imp.recompute_event_layouts();
+                }
+            ));
+        }
+
         fn recompute_event_layouts(&self) {
             let cells = self.cells.get().unwrap();
             let subscription = self.subscription.get().unwrap();
@@ -1559,41 +1570,38 @@ mod imp {
 
             let segments = compute_event_segments(&events, buffer_start_unix_days, &timezone);
 
-            for segment in &segments {
-                let event = segment.event.clone();
-                let uri = event.uri().unwrap();
+            {
+                let mut previous_handlers = self.timeframe_handlers.take();
+                let mut handlers = HashMap::with_capacity(events.len());
 
-                if !self.connected_event_uris.borrow_mut().insert(uri) {
-                    continue;
+                for event in &events {
+                    if handlers.contains_key(event) {
+                        continue;
+                    }
+
+                    let handler = previous_handlers.remove(event).unwrap_or_else(|| {
+                        event.connect_timeframe_notify(clone!(
+                            #[weak(rename_to = imp)]
+                            self,
+                            move |_event| imp.recompute_event_layouts()
+                        ))
+                    });
+                    handlers.insert(event.clone(), handler);
                 }
 
-                event.connect_timeframe_notify(clone!(
-                    #[weak(rename_to = imp)]
-                    self,
-                    move |_event| {
-                        imp.recompute_event_layouts();
-                    }
-                ));
+                // Events that left the subscription
+                for (event, handler) in previous_handlers {
+                    event.disconnect(handler);
+                }
+
+                self.timeframe_handlers.replace(handlers);
             }
 
             let stacked_segments_by_row = stack_event_segments(&segments);
-            let total_segments = stacked_segments_by_row.iter().map(Vec::len).sum();
 
-            let mut event_widgets = self.event_widgets.borrow_mut();
-
-            while event_widgets.len() < total_segments {
-                let event_widget = MonthViewEvent::new(None);
-                event_widget.set_child_visible(false);
-                event_widget.set_can_target(self.overlays_targetable.get());
-                event_widget.insert_before(&*self.obj(), Some(&self.floating_controls.get()));
-                event_widgets.push(event_widget);
-            }
-
-            let event_layouts = build_event_layouts(&event_widgets, &stacked_segments_by_row);
-
-            for event_widget in event_widgets.iter().skip(total_segments) {
-                event_widget.set_child_visible(false);
-            }
+            let mut event_widgets = self.event_widgets.get().unwrap().lock().unwrap();
+            let event_layouts =
+                event_widgets.bind(&stacked_segments_by_row, buffer_start_unix_days);
 
             drop(event_widgets);
 
@@ -1610,7 +1618,7 @@ mod imp {
         pub(super) fn set_overlays_targetable(&self, targetable: bool) {
             self.overlays_targetable.set(targetable);
 
-            for event_widget in self.event_widgets.borrow().iter() {
+            for event_widget in self.event_widgets.get().unwrap().lock().unwrap().widgets() {
                 event_widget.set_can_target(targetable);
             }
             for overflow_widget in self.overflow_widgets.get().unwrap() {
