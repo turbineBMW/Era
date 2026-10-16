@@ -66,7 +66,14 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for SearchDialog {}
+    impl ObjectImpl for SearchDialog {
+        fn constructed(&self) {
+            self.parent_constructed();
+
+            self.stack.set_visible_child_name("search-empty");
+        }
+    }
+
     impl WidgetImpl for SearchDialog {}
     impl AdwDialogImpl for SearchDialog {}
 
@@ -77,13 +84,20 @@ mod imp {
             let manager = Application::default().manager();
 
             self.toast_overlay.dismiss_all();
-            self.stack.set_visible_child_name("loading");
 
             let text = self.search_entry.text();
+            if text.is_empty() {
+                self.stack.set_visible_child_name("search-empty");
+                return;
+            }
+
+            self.stack.set_visible_child_name("loading");
+
             match manager.search_events_future(&text).await {
                 Ok(results) => {
                     self.results_view
                         .set_model(Some(&gtk::NoSelection::new(Some(results.clone()))));
+
                     self.stack
                         .set_visible_child_name(if results.clone().n_items() == 0 {
                             "no-results"
@@ -98,6 +112,7 @@ mod imp {
                     toast.set_action_name(Some("search-dialog.show-error"));
                     toast.set_action_target(Some(&error.message()));
                     self.toast_overlay.add_toast(toast);
+
                     self.stack.set_visible_child_name("error");
                 }
             }

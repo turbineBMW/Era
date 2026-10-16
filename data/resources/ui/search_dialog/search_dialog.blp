@@ -32,6 +32,31 @@ template $SearchDialog: Adw.Dialog {
 
       content: Stack stack {
         StackPage {
+          name: "search-empty";
+
+          child: Adw.StatusPage {
+            icon-name: "loupe-symbolic";
+            title: _("Search events");
+          };
+        }
+
+        StackPage {
+          name: "loading";
+
+          child: Adw.Spinner {};
+        }
+
+        StackPage {
+          name: "no-results";
+
+          child: Adw.StatusPage {
+            icon-name: "loupe-symbolic";
+            title: _("No Results Found");
+            description: _("Try a different search term");
+          };
+        }
+
+        StackPage {
           name: "results";
 
           child: ScrolledWindow {
@@ -50,22 +75,6 @@ template $SearchDialog: Adw.Dialog {
                 activate => $open_event_details(template);
               }
             }
-          };
-        }
-
-        StackPage {
-          name: "loading";
-
-          child: Adw.Spinner {};
-        }
-
-        StackPage {
-          name: "no-results";
-
-          child: Adw.StatusPage {
-            icon-name: "loupe-symbolic";
-            title: _("No Results Found");
-            description: _("Try a different search term");
           };
         }
 
