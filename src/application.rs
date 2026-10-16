@@ -79,6 +79,25 @@ mod imp {
 
             window.present();
         }
+
+        fn open(&self, files: &[gio::File], _hint: &str) {
+            self.obj().activate();
+
+            if files.len() > 1 {
+                panic!(
+                    "Only one calendar file can be imported at a time; ignoring the remaining files"
+                )
+            }
+
+            let file = files[0].clone();
+            let window = self
+                .obj()
+                .active_window()
+                .unwrap()
+                .downcast::<Window>()
+                .unwrap();
+            window.import_file(file);
+        }
     }
 
     impl GtkApplicationImpl for Application {}
@@ -97,7 +116,7 @@ impl Application {
     pub fn new(flags: &gio::ApplicationFlags) -> Self {
         glib::Object::builder()
             .property("application-id", APP_ID)
-            .property("flags", flags)
+            .property("flags", *flags | gio::ApplicationFlags::HANDLES_OPEN)
             .property("resource-base-path", BASE_RESOURCE_PATH)
             .build()
     }

@@ -513,6 +513,12 @@ pub mod imp {
             let file_uri = files.uris().first().unwrap();
             let file = gio::File::for_uri(file_uri.as_str());
 
+            self.import_file(&file).await;
+        }
+
+        pub(super) async fn import_file(&self, file: &gio::File) {
+            // TODO: Those steps can take some time, and it should be communicated in the UI that
+            // something is ongoing
             let bytes = file.load_bytes_future().await.unwrap().0;
             let content = String::from_utf8(bytes.to_vec()).unwrap();
 
@@ -614,5 +620,17 @@ impl Window {
         glib::Object::builder()
             .property("application", application)
             .build()
+    }
+
+    pub fn import_file(&self, file: gio::File) {
+        let imp = self.imp();
+
+        spawn!(clone!(
+            #[weak]
+            imp,
+            async move {
+                imp.import_file(&file).await;
+            }
+        ));
     }
 }
