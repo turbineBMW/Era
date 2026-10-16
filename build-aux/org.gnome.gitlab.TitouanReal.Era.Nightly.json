@@ -127,7 +127,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-                    "commit": "fa86acbeca455b9f18abd5d0f00ba89bfd8610d3"
+                    "commit": "f1902673b414acee1b92cf18e888f5b1d2033c76"
                 }
             ]
         },
@@ -139,7 +139,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-                    "commit": "fa86acbeca455b9f18abd5d0f00ba89bfd8610d3"
+                    "commit": "f1902673b414acee1b92cf18e888f5b1d2033c76"
                 }
             ]
         },

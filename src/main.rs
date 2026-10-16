@@ -1,10 +1,4 @@
-use std::{
-    ffi::{CString, c_char},
-    ptr,
-};
-
 use gettextrs::{bind_textdomain_codeset, bindtextdomain, textdomain};
-use glib::ffi::g_log_writer_default_set_debug_domains;
 use gtk::prelude::*;
 use tracing_subscriber::{EnvFilter, prelude::*};
 
@@ -56,14 +50,9 @@ compile_error!(
 );
 
 fn make_application() -> gio::Application {
-    // TODO: Debug - scrollwheel after scrolling down with pad is bugged
-    unsafe {
-        //     std::env::set_var("GDK_DEBUG", "events");
-        std::env::set_var("RUST_BACKTRACE", "full");
-    }
     let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| {
         EnvFilter::new(format!(
-            "{PROJECT_NAME}=trace,clepsydre=trace,clepsydre-eds=trace,clepsydre-mock=trace,clepsydre-p2panda=trace,warn"
+            "{PROJECT_NAME}=info,clepsydre=info,clepsydre-eds=info,clepsydre-mock=info,clepsydre-p2panda=info,warn"
         ))
     });
 
@@ -71,30 +60,31 @@ fn make_application() -> gio::Application {
         .with(tracing_subscriber::fmt::layer().with_filter(env_filter))
         .init();
 
-    {
-        // Inside your init function:
-        let domains = [
-            PROJECT_NAME,
-            "clepsydre",
-            "clepsydre-eds",
-            "clepsydre-mock",
-            "clepsydre-p2panda",
-        ];
+    glib::log_set_writer_func(|level, fields| {
+        let level = match level {
+            glib::LogLevel::Error | glib::LogLevel::Critical => tracing_log::log::Level::Error,
+            glib::LogLevel::Warning => tracing_log::log::Level::Warn,
+            glib::LogLevel::Message | glib::LogLevel::Info => tracing_log::log::Level::Info,
+            glib::LogLevel::Debug => tracing_log::log::Level::Debug,
+        };
 
-        // 1. Convert &str to CString (adds \0)
-        let c_strings: Vec<CString> = domains.iter().map(|&s| CString::new(s).unwrap()).collect();
+        let domain = fields
+            .iter()
+            .find(|field| field.key() == "GLIB_DOMAIN")
+            .unwrap()
+            .value_str()
+            .unwrap();
+        let message = fields
+            .iter()
+            .find(|field| field.key() == "MESSAGE")
+            .unwrap()
+            .value_str()
+            .unwrap();
 
-        // 2. Create a list of raw pointers to those CStrings
-        let mut ptrs: Vec<*const c_char> = c_strings.iter().map(|cs| cs.as_ptr()).collect();
+        tracing_log::log::log!(target: domain, level, "{message}");
 
-        // 3. Add a null terminator at the end so C knows where to stop
-        ptrs.push(ptr::null());
-
-        unsafe {
-            // 4. Pass the pointer to the start of the pointer array
-            g_log_writer_default_set_debug_domains(ptrs.as_ptr());
-        }
-    }
+        glib::LogWriterOutput::Handled
+    });
 
     glib::set_application_name(APP_NAME);
 
