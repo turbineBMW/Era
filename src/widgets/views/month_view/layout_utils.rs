@@ -238,6 +238,14 @@ pub fn stack_event_segments(segments: &[EventSegment]) -> Vec<Vec<StackedSegment
                 span_b
                     .cmp(&span_a)
                     .then_with(|| a.column_start.cmp(&b.column_start))
+                    .then_with(|| {
+                        let timeframe_a = a.event.timeframe().unwrap();
+                        let timeframe_b = b.event.timeframe().unwrap();
+                        timeframe_b
+                            .is_all_day()
+                            .cmp(&timeframe_a.is_all_day())
+                            .then_with(|| timeframe_a.start_unix().cmp(&timeframe_b.start_unix()))
+                    })
             });
 
             // First-fit packing: each stack row tracks the half-open column intervals it
