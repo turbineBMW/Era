@@ -1,9 +1,12 @@
-use std::cell::RefCell;
+use std::{cell::RefCell, fs::File, os::fd::AsFd};
 
 use adw::{prelude::*, subclass::prelude::*};
 use ashpd::{
     Uri,
-    desktop::{file_chooser, open_uri::OpenFileRequest},
+    desktop::{
+        file_chooser,
+        open_uri::{OpenDirectoryRequest, OpenFileRequest},
+    },
 };
 use clepsydre::{Event, prelude::*};
 use glib::{DateTime, clone};
@@ -274,17 +277,32 @@ mod imp {
                 return;
             };
 
-            if let Some(file_uri) = files.uris().first() {
-                let file = gio::File::for_uri(file_uri.as_str());
-                file.replace_contents_future(
-                    ics_content,
-                    None,
-                    false,
-                    gio::FileCreateFlags::REPLACE_DESTINATION,
-                )
-                .await
-                .unwrap();
-            }
+            let Some(file_uri) = files.uris().first() else {
+                return;
+            };
+
+            let file = gio::File::for_uri(file_uri.as_str());
+            file.replace_contents_future(
+                ics_content,
+                None,
+                false,
+                gio::FileCreateFlags::REPLACE_DESTINATION,
+            )
+            .await
+            .unwrap();
+
+            self.details_toast_overlay.dismiss_all();
+            let toast = adw::Toast::new("Event exported");
+            toast.set_button_label(Some("Open Folder"));
+            toast.connect_button_clicked(move |_toast| {
+                let path = file.path().unwrap();
+                let file = File::open(&path).unwrap();
+
+                spawn!(async move {
+                    let _ = OpenDirectoryRequest::default().send(&file.as_fd()).await;
+                });
+            });
+            self.details_toast_overlay.add_toast(toast);
         }
 
         #[template_callback]
