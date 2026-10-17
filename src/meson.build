@@ -1,4 +1,13 @@
-full_version = version
+git_prog = find_program('git')
+
+git_cmd = run_command(git_prog, 'rev-parse', '--short', 'HEAD', check: true)
+git_commit = git_cmd.stdout().strip()
+
+if release_type == 'stable'
+    version = meson.project_version()
+elif release_type == 'nightly' or release_type == 'devel'
+    version = git_commit
+endif
 
 conf = configuration_data()
 conf.set_quoted('APP_ID', application_id)
@@ -7,7 +16,7 @@ conf.set_quoted('BASE_RESOURCE_PATH', base_resource_path)
 conf.set_quoted('GETTEXT_PACKAGE', gettext_package)
 conf.set_quoted('LOCALEDIR', localedir)
 conf.set_quoted('PROJECT_NAME', meson.project_name())
-conf.set_quoted('VERSION', full_version)
+conf.set_quoted('VERSION', version)
 
 configure_file(input: 'config.rs.in', output: 'config.rs', configuration: conf)
 

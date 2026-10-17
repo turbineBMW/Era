@@ -122,8 +122,6 @@ elif calendar_backend == 'p2panda'
     application_id = base_id + '.P2panda'
 endif
 
-version = meson.project_version()
-
 prefix = get_option('prefix')
 bindir = prefix / get_option('bindir')
 localedir = prefix / get_option('localedir')
