@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-10-08 16:44+0000\n"
-"PO-Revision-Date: 2026-10-11 23:30+0200\n"
+"POT-Creation-Date: 2026-10-16 18:25+0000\n"
+"PO-Revision-Date: 2026-10-17 20:58+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
@@ -24,7 +24,7 @@ msgid "@app-name@"
 msgstr "Era"
 
 #. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
-#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:9
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:10
 msgid "calendar;planner;schedule;agenda;appointment;appointments;organizer;meeting;meetings;event;events;reminder;reminders;caldav;"
 msgstr "koledar;planer;urnik;dnevni red;termin;termini;organizator;sestanek;sestanki;dogodek;dogodki;opomnik;opomniki;caldav;"
 
@@ -376,19 +376,23 @@ msgstr "Optično preberi za uvoz"
 msgid "Search Events"
 msgstr "Iskanje dogodkov"
 
-#: data/resources/ui/search_dialog/search_dialog.blp:67
+#: data/resources/ui/search_dialog/search_dialog.blp:39
+msgid "Search events"
+msgstr "Iskanje dogodkov"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:54
 msgid "No Results Found"
 msgstr "Ni najdenih zadetkov"
 
-#: data/resources/ui/search_dialog/search_dialog.blp:68
+#: data/resources/ui/search_dialog/search_dialog.blp:55
 msgid "Try a different search term"
 msgstr "Poskusite znova z drugačnim iskalnim nizom"
 
-#: data/resources/ui/search_dialog/search_dialog.blp:77
+#: data/resources/ui/search_dialog/search_dialog.blp:86
 msgid "Unable to Search Events"
 msgstr "Iskanje dogodkov ni možno"
 
-#: data/resources/ui/search_dialog/search_dialog.blp:78
+#: data/resources/ui/search_dialog/search_dialog.blp:87
 msgid "An error occurred in the backend. Try searching again"
 msgstr "Prišlo je do napake v zaledju, poskusite z novim iskanjem."
 
@@ -544,7 +548,7 @@ msgstr "_O programu Era"
 
 #. Translators: Replace "translator-credits" with your name/username, and optionally an
 #. email or URL.
-#: src/application.rs:127
+#: src/application.rs:146
 msgid "translator-credits"
 msgstr "Martin Srebotnjak <miles@filmsi.net>"
 
@@ -691,10 +695,10 @@ msgid ""
 msgstr ""
 "{day_start}. {month_start} {year_start} ob {time_start} ({tz_start}) – {day_end}. {month_end} {year_end} ob {time_end} ({tz_end})"
 
-#: src/widgets/window.rs:542
+#: src/widgets/window.rs:548
 msgid "%Y"
 msgstr "%Y"
 
-#: src/widgets/window.rs:551 src/widgets/window.rs:560
+#: src/widgets/window.rs:557 src/widgets/window.rs:566
 msgid "%0B %Y"
 msgstr "%0B %Y"
