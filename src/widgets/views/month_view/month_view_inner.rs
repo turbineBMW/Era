@@ -26,7 +26,7 @@ use super::{
     month_view_overflow::MonthViewOverflow,
 };
 
-pub const NB_ROWS: usize = 100;
+pub const NB_ROWS: usize = 60;
 pub const NB_CELLS: usize = 7 * NB_ROWS;
 /// Number of rows of buffer that must remain above/below the visible area before a recycle is
 /// triggered. Kept well below `TARGET_NB_ROWS_ABOVE`/`TARGET_NB_ROWS_BELOW` so that scrolling
