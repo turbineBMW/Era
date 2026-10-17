@@ -78,13 +78,14 @@
                 "-DCMAKE_INSTALL_LIBDIR:PATH=/app/lib",
                 "-DBUILD_SHARED_LIBS=On",
                 "-DICAL_BUILD_DOCS=False",
-                "-DWITH_CXX_BINDINGS=False"
+                "-DLIBICAL_CXX_BINDINGS=False",
+                "-DLIBICAL_JAVA_BINDINGS=False"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/libical/libical/releases/download/v3.0.20/libical-3.0.20.tar.gz",
-                    "sha256": "e73de92f5a6ce84c1b00306446b290a2b08cdf0a80988eca0a2c9d5c3510b4c2"
+                    "url": "https://github.com/libical/libical/releases/download/v4.0.6/libical-4.0.6.tar.gz",
+                    "sha256": "2e3729cb69c282d3bb17a8d2b198af6e4bc7502fd3621c9adf573921fe9dceb0"
                 }
             ]
         },
@@ -114,7 +115,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/evolution-data-server.git",
-                    "commit": "99edc087f1207979d951295f1a01f9b010e176ca"
+                    "commit": "757672184698ec9f46cc16cf8860ec312d1e9d36"
                 }
             ]
         },
@@ -126,7 +127,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-                    "commit": "f1902673b414acee1b92cf18e888f5b1d2033c76"
+                    "commit": "04d20ed3dde7efada35728947e6d3bea41141476"
                 }
             ]
         },
@@ -138,7 +139,7 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-                    "commit": "f1902673b414acee1b92cf18e888f5b1d2033c76"
+                    "commit": "04d20ed3dde7efada35728947e6d3bea41141476"
                 }
             ]
         },
