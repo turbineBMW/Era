@@ -288,7 +288,7 @@ mod imp {
 
             match collection.try_create_calendar_future(&answer).await {
                 Ok(calendar) => {
-                    debug!("Calendar created: {}", calendar.uri().unwrap());
+                    debug!("Calendar created: {}", calendar.uri());
                     self.obj().close();
                 }
                 Err(error) => {

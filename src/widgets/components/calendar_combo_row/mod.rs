@@ -61,7 +61,7 @@ mod imp {
                     .downcast_ref::<Collection>()
                     .expect("Collections model should only contain Collections");
                 gtk::SortListModel::new(
-                    Some(collection.calendars().unwrap()),
+                    Some(collection.calendars()),
                     Some(gtk::StringSorter::new(Some(Calendar::this_expression(
                         "name",
                     )))),

@@ -208,7 +208,7 @@ mod imp {
                 .await
             {
                 Ok(event) => {
-                    debug!("Event created: {}", event.uri().unwrap());
+                    debug!("Event created: {}", event.uri());
                     self.obj().close();
                 }
                 Err(error) => {

@@ -260,7 +260,7 @@ mod imp {
             let request = match file_chooser::SelectedFiles::save_file()
                 .title("Export Event")
                 .accept_label("Export")
-                .current_name(format!("{}.ics", event.name().unwrap_or_default()).as_str())
+                .current_name(format!("{}.ics", event.name()).as_str())
                 .modal(true)
                 .filter(file_chooser::FileFilter::new("iCalendar").glob("*.ics"))
                 .send()
@@ -377,17 +377,17 @@ mod imp {
         #[template_callback]
         fn edit(&self) {
             let event = self.obj().event().expect("event should be initialized");
-            let timeframe = event.timeframe().unwrap();
+            let timeframe = event.timeframe();
             let all_day = timeframe.is_all_day();
-            let start = timeframe.start().unwrap();
-            let end = timeframe.end().unwrap();
+            let start = timeframe.start();
+            let end = timeframe.end();
 
-            self.name_entry.set_text(&event.name().unwrap());
+            self.name_entry.set_text(&event.name());
             self.location_entry.set_text(&event.location().unwrap());
             self.conference_entry.set_text(&event.conference().unwrap());
             self.timeframe_picker.set_data(all_day, &start, &end);
             self.calendar_choice
-                .set_selected_calendar(&event.calendar().unwrap());
+                .set_selected_calendar(&event.calendar());
             self.description_entry
                 .set_text(&event.description().unwrap());
 
@@ -431,7 +431,7 @@ mod imp {
                 .await
             {
                 Ok(()) => {
-                    debug!("Event updated: {}", event.uri().unwrap());
+                    debug!("Event updated: {}", event.uri());
                     let _ = self.navigation_view.pop();
                 }
                 Err(error) => {
@@ -461,7 +461,7 @@ mod imp {
             let event = self.obj().event().expect("event should be initialized");
             match event.try_remove_future().await {
                 Ok(()) => {
-                    debug!("Event removed: {}", event.uri().unwrap());
+                    debug!("Event removed: {}", event.uri());
                 }
                 Err(error) => {
                     warn!("Failed to remove event: {}", error);
@@ -482,15 +482,15 @@ mod imp {
         #[template_callback]
         fn duplicate(&self) {
             let event = self.obj().event().expect("event should be initialized");
-            let timeframe = event.timeframe().unwrap();
+            let timeframe = event.timeframe();
 
-            let name = event.name().unwrap().to_string();
+            let name = event.name().to_string();
             let description = event.description().unwrap().to_string();
             let location = event.location().unwrap().to_string();
             let conference = event.conference().unwrap().to_string();
             let all_day = timeframe.is_all_day();
-            let start_glib = timeframe.start().unwrap();
-            let end_glib = timeframe.end().unwrap();
+            let start_glib = timeframe.start();
+            let end_glib = timeframe.end();
 
             let start_tzid = start_glib.timezone().identifier();
             let start_jiff_tz = jiff::tz::TimeZone::get(&start_tzid).unwrap();

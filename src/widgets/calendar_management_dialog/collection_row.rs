@@ -65,7 +65,7 @@ mod imp {
                 return;
             };
 
-            let calendars_model = collection.calendars().unwrap();
+            let calendars_model = collection.calendars();
             let sorted_calendars_model = gtk::SortListModel::new(
                 Some(calendars_model),
                 Some(gtk::StringSorter::new(Some(Calendar::this_expression(

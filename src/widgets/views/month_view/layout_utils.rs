@@ -131,11 +131,11 @@ pub fn compute_event_segments(
     let mut segments = Vec::new();
 
     for event in events {
-        if !event.calendar().unwrap().is_visible() {
+        if !event.calendar().is_visible() {
             continue;
         }
 
-        let timeframe = event.timeframe().unwrap();
+        let timeframe = event.timeframe();
 
         let start_unix_seconds = timeframe.start_unix();
         let end_unix_seconds = timeframe.end_unix();
@@ -197,11 +197,7 @@ pub fn compute_event_segments(
             let column_start = first_day_offset.max(row_first_day_offset) - row_first_day_offset;
             let column_end = last_day_offset.min(row_last_day_offset) - row_first_day_offset;
 
-            assert!(
-                column_start <= column_end,
-                "event name: {}",
-                event.name().unwrap()
-            );
+            assert!(column_start <= column_end, "event name: {}", event.name());
 
             let is_first_segment_of_event = row_index == first_row_index;
             let is_last_segment_of_event = row_index == last_row_index;
@@ -239,8 +235,8 @@ pub fn stack_event_segments(segments: &[EventSegment]) -> Vec<Vec<StackedSegment
                     .cmp(&span_a)
                     .then_with(|| a.column_start.cmp(&b.column_start))
                     .then_with(|| {
-                        let timeframe_a = a.event.timeframe().unwrap();
-                        let timeframe_b = b.event.timeframe().unwrap();
+                        let timeframe_a = a.event.timeframe();
+                        let timeframe_b = b.event.timeframe();
                         timeframe_b
                             .is_all_day()
                             .cmp(&timeframe_a.is_all_day())

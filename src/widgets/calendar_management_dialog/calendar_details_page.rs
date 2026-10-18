@@ -63,13 +63,13 @@ mod imp {
 
             let calendar = self.obj().calendar().unwrap();
 
-            self.name.set_text(&calendar.name().unwrap());
+            self.name.set_text(&calendar.name());
 
             calendar.connect_name_notify(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 move |calendar| {
-                    let name = calendar.name().unwrap();
+                    let name = calendar.name();
                     let old_name = imp.name.text();
                     if name != old_name {
                         imp.name.set_text(&name);
@@ -102,7 +102,7 @@ mod imp {
 
             match calendar.try_set_name_future(&name).await {
                 Ok(()) => {
-                    debug!("Calendar name updated: {}", calendar.uri().unwrap());
+                    debug!("Calendar name updated: {}", calendar.uri());
                 }
                 Err(error) => {
                     warn!("Failed to update calendar name: {}", error);
@@ -125,7 +125,7 @@ mod imp {
                 .expect("calendar should be initialized");
             match calendar.try_remove_future().await {
                 Ok(()) => {
-                    debug!("Calendar removed: {}", calendar.uri().unwrap());
+                    debug!("Calendar removed: {}", calendar.uri());
                 }
                 Err(error) => {
                     warn!("Failed to remove calendar: {}", error);

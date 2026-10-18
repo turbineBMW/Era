@@ -80,7 +80,7 @@ mod imp {
                 return;
             };
 
-            let color = calendar.color().unwrap();
+            let color = calendar.color();
 
             let color_str = color.to_string();
             let color_id = glib::Quark::from_str(&color_str);
@@ -106,7 +106,7 @@ mod imp {
 
             match calendar.try_set_visible_future(visible).await {
                 Ok(()) => {
-                    debug!("Calendar visibility updated: {}", calendar.uri().unwrap());
+                    debug!("Calendar visibility updated: {}", calendar.uri());
                 }
                 Err(error) => {
                     warn!("Failed to update calendar visibility: {}", error);

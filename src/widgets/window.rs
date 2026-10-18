@@ -475,15 +475,14 @@ pub mod imp {
 
             for i in 0..calendars_model.n_items() {
                 let calendar: Calendar = calendars_model.item(i).unwrap().downcast().unwrap();
-                if let Some(color) = calendar.color() {
-                    let color_str = color.to_string();
-                    let color_id = glib::Quark::from_str(&color_str);
-                    css.push_str(&format!(
-                        ".color-{} {{ --calendar-color: {}; }}\n",
-                        color_id.into_glib(),
-                        color_str
-                    ));
-                }
+                let color = calendar.color();
+                let color_str = color.to_string();
+                let color_id = glib::Quark::from_str(&color_str);
+                css.push_str(&format!(
+                    ".color-{} {{ --calendar-color: {}; }}\n",
+                    color_id.into_glib(),
+                    color_str
+                ));
             }
 
             self.colors_provider.load_from_string(&css);

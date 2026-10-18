@@ -127,7 +127,7 @@ mod imp {
             assert!(
                 minimum_event_height <= height,
                 "event name: {}",
-                event.name().unwrap()
+                event.name()
             );
 
             self.edge.set_child_visible(true);
@@ -162,7 +162,7 @@ mod imp {
                 if width_for_name < minimum_name_width {
                     tracing::warn!(
                         "Name label of event {} is allocated {}px, but it needs at least {}px",
-                        event.name().unwrap(),
+                        event.name(),
                         width_for_name,
                         minimum_name_width
                     );
@@ -224,7 +224,7 @@ mod imp {
             if let Some(event) = event {
                 self.update_color();
 
-                let calendar = event.calendar().unwrap();
+                let calendar = event.calendar();
                 let color_handler = calendar.connect_color_notify(clone!(
                     #[weak(rename_to=imp)]
                     self,
@@ -276,7 +276,7 @@ mod imp {
                 return;
             };
 
-            let color = event.calendar().unwrap().color().unwrap();
+            let color = event.calendar().color();
 
             let color_str = color.to_string();
             let color_id = glib::Quark::from_str(&color_str);
@@ -288,7 +288,7 @@ mod imp {
 
         #[template_callback]
         fn start_label(&self, timeframe: &Timeframe, datetime: &DateTime) -> String {
-            let start = timeframe.start().unwrap();
+            let start = timeframe.start();
             let start_converted = start.to_timezone(&datetime.timezone()).unwrap();
             start_converted.format("%H:%M").unwrap().to_string()
         }
@@ -328,7 +328,7 @@ mod imp {
             let event = self.obj().event().unwrap();
 
             let ics = event.to_string_for_ics().unwrap();
-            let name = event.name().unwrap();
+            let name = event.name();
             let file_name = format!("{}.ics", name);
 
             let dir = glib::user_cache_dir().join("dnd-exports");

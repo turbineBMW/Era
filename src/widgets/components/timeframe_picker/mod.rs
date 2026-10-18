@@ -65,8 +65,8 @@ mod imp {
                 self,
                 move |_| {
                     let new_end = if let Some(timeframe) = imp.timeframe.borrow().clone() {
-                        let old_start = timeframe.start().unwrap();
-                        let old_end = timeframe.end().unwrap();
+                        let old_start = timeframe.start();
+                        let old_end = timeframe.end();
 
                         let diff = old_end.difference(&old_start);
 

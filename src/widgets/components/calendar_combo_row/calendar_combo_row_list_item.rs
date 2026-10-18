@@ -75,7 +75,7 @@ mod imp {
                 return;
             };
 
-            let color = calendar.color().unwrap();
+            let color = calendar.color();
 
             let color_str = color.to_string();
             let color_id = glib::Quark::from_str(&color_str);

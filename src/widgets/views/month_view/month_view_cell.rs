@@ -217,10 +217,10 @@ mod imp {
                 return true;
             }
 
-            let timeframe = event.timeframe().unwrap();
+            let timeframe = event.timeframe();
             let all_day = timeframe.is_all_day();
-            let start = timeframe.start().unwrap();
-            let end = timeframe.end().unwrap();
+            let start = timeframe.start();
+            let end = timeframe.end();
 
             let new_start = start.add_days(day_delta).unwrap();
             let new_end = end.add_days(day_delta).unwrap();
@@ -230,7 +230,7 @@ mod imp {
                 #[strong]
                 event,
                 async move {
-                    let uri = event.uri().unwrap();
+                    let uri = event.uri();
                     if let Err(error) = event
                         .try_update_future(
                             None::<&Calendar>,
