@@ -9,7 +9,7 @@ use ashpd::{
     },
 };
 use clepsydre::{Event, prelude::*};
-use glib::{DateTime, clone};
+use glib::{DateTime, SignalHandlerId, clone};
 use tracing::{debug, warn};
 
 use crate::{
@@ -68,6 +68,8 @@ mod imp {
         description_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
         qr_code_dialog: TemplateChild<QrCodeDialog>,
+
+        event_removal_handler: RefCell<Option<SignalHandlerId>>,
     }
 
     #[glib::object_subclass]
@@ -135,23 +137,36 @@ mod imp {
 
     #[glib::derived_properties]
     impl ObjectImpl for EventDetailsDialog {}
-
     impl WidgetImpl for EventDetailsDialog {}
     impl AdwDialogImpl for EventDetailsDialog {}
 
     #[gtk::template_callbacks]
     impl EventDetailsDialog {
-        fn set_event(&self, event: Event) {
-            self.event.replace(Some(event.clone()));
+        fn set_event(&self, event: Option<Event>) {
+            if event == *self.event.borrow() {
+                return;
+            }
 
-            // TODO: Doesn't work if a subdialog is shown
-            event.connect_removed(clone!(
+            if let Some(old_event) = self.event.take() {
+                let event_removal_handler = self.event_removal_handler.take().unwrap();
+                old_event.disconnect(event_removal_handler);
+            }
+
+            self.event.replace(event.clone());
+
+            let Some(event) = event else {
+                return;
+            };
+
+            let event_removal_handler = event.connect_removed(clone!(
                 #[weak(rename_to = imp)]
                 self,
                 move |_| {
                     let _ = imp.obj().activate_action("window.close", None);
                 }
             ));
+            self.event_removal_handler
+                .replace(Some(event_removal_handler));
 
             self.name_entry.connect_changed(clone!(
                 #[weak(rename_to = imp)]
@@ -406,11 +421,6 @@ mod imp {
 
             let event = self.obj().event().expect("event should be initialized");
 
-            let _calendar = if self.calendar_choice.is_visible() {
-                Some(self.calendar_choice.selected_calendar())
-            } else {
-                None
-            };
             let name = self.name_entry.text();
             let description = self.description_entry.text();
             let location = self.location_entry.text();
@@ -419,28 +429,77 @@ mod imp {
                 "A timeframe should be set if the user was able to activate the event update",
             );
 
-            match event
-                .try_update_future(
-                    Some(&name),
-                    Some(&description),
-                    Some(&location),
-                    Some(&conference),
-                    Some(&timeframe),
-                )
-                .await
-            {
-                Ok(()) => {
-                    debug!("Event updated: {}", event.uri());
-                    let _ = self.navigation_view.pop();
+            let calendar = self.calendar_choice.selected_calendar();
+
+            if calendar == event.calendar() {
+                match event
+                    .try_update_future(
+                        Some(&name),
+                        Some(&description),
+                        Some(&location),
+                        Some(&conference),
+                        Some(&timeframe),
+                    )
+                    .await
+                {
+                    Ok(()) => {
+                        debug!("Event updated: {}", event.uri());
+                        let _ = self.navigation_view.pop();
+                    }
+                    Err(error) => {
+                        warn!("Failed to create event: {error}");
+                        self.editor_toast_overlay.dismiss_all();
+
+                        let toast = adw::Toast::new("An error occurred");
+                        toast.set_button_label(Some("Details"));
+                        toast.set_action_name(Some("event-details-dialog.show-error"));
+                        toast.set_action_target(Some(&error.message()));
+
+                        self.editor_toast_overlay.add_toast(toast);
+                    }
                 }
-                Err(error) => {
-                    warn!("Failed to create event: {error}");
-                    self.editor_toast_overlay.dismiss_all();
-                    let toast = adw::Toast::new("An error occurred");
-                    toast.set_button_label(Some("Details"));
-                    toast.set_action_name(Some("event-details-dialog.show-error"));
-                    toast.set_action_target(Some(&error.message()));
-                    self.editor_toast_overlay.add_toast(toast);
+            } else {
+                match calendar
+                    .try_create_event_future(
+                        &name,
+                        &description,
+                        &location,
+                        &conference,
+                        &timeframe,
+                    )
+                    .await
+                {
+                    Ok(new_event) => {
+                        self.obj().set_event(Some(new_event));
+                        match event.try_remove_future().await {
+                            Ok(()) => {
+                                debug!("Event updated: {}", event.uri());
+                                let _ = self.navigation_view.pop();
+                            }
+                            Err(error) => {
+                                warn!("Failed to update event: {error}");
+                                self.editor_toast_overlay.dismiss_all();
+
+                                let toast = adw::Toast::new("An error occurred");
+                                toast.set_button_label(Some("Details"));
+                                toast.set_action_name(Some("event-details-dialog.show-error"));
+                                toast.set_action_target(Some(&error.message()));
+
+                                self.editor_toast_overlay.add_toast(toast);
+                            }
+                        };
+                    }
+                    Err(error) => {
+                        warn!("Failed to update event: {error}");
+                        self.editor_toast_overlay.dismiss_all();
+
+                        let toast = adw::Toast::new("An error occurred");
+                        toast.set_button_label(Some("Details"));
+                        toast.set_action_name(Some("event-details-dialog.show-error"));
+                        toast.set_action_target(Some(&error.message()));
+
+                        self.editor_toast_overlay.add_toast(toast);
+                    }
                 }
             }
 
