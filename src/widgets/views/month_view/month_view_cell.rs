@@ -1,7 +1,7 @@
 use std::cell::Cell;
 
 use adw::{prelude::*, subclass::prelude::*};
-use clepsydre::{Calendar, Timeframe, prelude::EventExt};
+use clepsydre::{Timeframe, prelude::EventExt};
 use glib::clone;
 use tracing::warn;
 
@@ -232,14 +232,7 @@ mod imp {
                 async move {
                     let uri = event.uri();
                     if let Err(error) = event
-                        .try_update_future(
-                            None::<&Calendar>,
-                            None,
-                            None,
-                            None,
-                            None,
-                            Some(&new_timeframe),
-                        )
+                        .try_update_future(None, None, None, None, Some(&new_timeframe))
                         .await
                     {
                         warn!("Failed to move event {uri}: {}", error);

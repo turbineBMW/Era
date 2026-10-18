@@ -38,7 +38,6 @@ template $CalendarManagementCalendarRow: Adw.ActionRow {
   title: bind template.calendar as <Clepsydre.Calendar>.name;
   activatable: true;
   selectable: false;
-  // TODO: The binding is probably done before the deactivation of markup, leading to a GTK warning if the name contains '&'
   use-markup: false;
   activated => $toggle_calendar_visible(template);
 

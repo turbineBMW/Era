@@ -406,7 +406,7 @@ mod imp {
 
             let event = self.obj().event().expect("event should be initialized");
 
-            let calendar = if self.calendar_choice.is_visible() {
+            let _calendar = if self.calendar_choice.is_visible() {
                 Some(self.calendar_choice.selected_calendar())
             } else {
                 None
@@ -421,7 +421,6 @@ mod imp {
 
             match event
                 .try_update_future(
-                    calendar.as_ref(),
                     Some(&name),
                     Some(&description),
                     Some(&location),
