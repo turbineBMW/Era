@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-10-08 16:44+0000\n"
-"PO-Revision-Date: 2026-10-10 20:22+0300\n"
+"POT-Creation-Date: 2026-10-18 12:42+0000\n"
+"PO-Revision-Date: 2026-10-18 22:31+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -25,15 +25,16 @@ msgid "@app-name@"
 msgstr "@app-name@"
 
 #. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
-#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:9
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:10
 msgid ""
 "calendar;planner;schedule;agenda;appointment;appointments;organizer;meeting;m"
 "eetings;event;events;reminder;reminders;caldav;"
 msgstr ""
 "calendar;planner;schedule;agenda;appointment;appointments;organizer;meeting;m"
 "eetings;event;events;reminder;reminders;caldav;календар;планувальник;розклад;"
-"порядок денний;зустріч;зустрічі;органайзер;нарада;наради;подія;події;нагадува"
-"ння;калдав;"
+"порядок "
+"денний;зустріч;зустрічі;органайзер;нарада;наради;подія;події;нагадування;калд"
+"ав;"
 
 #: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
 msgid "Manage your time"
@@ -392,7 +393,6 @@ msgid "Share Event"
 msgstr "Оприлюднити запис події"
 
 #: data/resources/ui/import_dialog.blp:5 data/resources/ui/import_dialog.blp:25
-#| msgid "Export"
 msgid "Import"
 msgstr "Імпортувати"
 
@@ -404,19 +404,24 @@ msgstr "Сканування для імпортування"
 msgid "Search Events"
 msgstr "Пошук подій"
 
-#: data/resources/ui/search_dialog/search_dialog.blp:67
+#: data/resources/ui/search_dialog/search_dialog.blp:39
+#| msgid "Search Events"
+msgid "Search events"
+msgstr "Пошук подій"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:54
 msgid "No Results Found"
 msgstr "Нічого не знайдено"
 
-#: data/resources/ui/search_dialog/search_dialog.blp:68
+#: data/resources/ui/search_dialog/search_dialog.blp:55
 msgid "Try a different search term"
 msgstr "Спробуйте інший критерій пошуку."
 
-#: data/resources/ui/search_dialog/search_dialog.blp:77
+#: data/resources/ui/search_dialog/search_dialog.blp:86
 msgid "Unable to Search Events"
 msgstr "Не вдалося виконати пошук подій"
 
-#: data/resources/ui/search_dialog/search_dialog.blp:78
+#: data/resources/ui/search_dialog/search_dialog.blp:87
 msgid "An error occurred in the backend. Try searching again"
 msgstr "У модулі обробки сталася помилка. Спробуйте повторити пошук"
 
@@ -431,7 +436,6 @@ msgid "Open Main Menu"
 msgstr "Відкрити головне меню"
 
 #: data/resources/ui/shortcuts_dialog.blp:14
-#| msgid "Toggle Sidebar"
 msgctxt "shortcut dialog"
 msgid "Toggle Sidebar"
 msgstr "Увімкнути або вимкнути бічну панель"
@@ -576,7 +580,7 @@ msgstr "_Про Era"
 
 #. Translators: Replace "translator-credits" with your name/username, and optionally an
 #. email or URL.
-#: src/application.rs:127
+#: src/application.rs:146
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>, 2026"
 
@@ -745,11 +749,11 @@ msgstr ""
 "{month_start} {day_start}, {year_start}, {time_start} ({tz_start}) – "
 "{month_end} {day_end}, {year_end}, {time_end} ({tz_end})"
 
-#: src/widgets/window.rs:542
+#: src/widgets/window.rs:547
 msgid "%Y"
 msgstr "%Y"
 
-#: src/widgets/window.rs:551 src/widgets/window.rs:560
+#: src/widgets/window.rs:556 src/widgets/window.rs:565
 msgid "%0B %Y"
 msgstr "%0B %Y"
 
