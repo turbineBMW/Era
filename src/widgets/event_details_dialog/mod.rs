@@ -162,7 +162,25 @@ mod imp {
                 #[weak(rename_to = imp)]
                 self,
                 move |_| {
-                    let _ = imp.obj().activate_action("window.close", None);
+                    let obj = imp.obj().clone();
+                    let dialogs = obj
+                        .root()
+                        .unwrap()
+                        .downcast::<adw::ApplicationWindow>()
+                        .unwrap()
+                        .dialogs();
+                    let index = dialogs
+                        .iter::<adw::Dialog>()
+                        .position(|dialog| dialog.unwrap() == obj)
+                        .unwrap();
+                    let dialogs_to_remove: Vec<_> = dialogs
+                        .iter::<adw::Dialog>()
+                        .skip(index)
+                        .map(|dialog| dialog.unwrap())
+                        .collect();
+                    for dialog in dialogs_to_remove {
+                        dialog.close();
+                    }
                 }
             ));
             self.event_removal_handler
