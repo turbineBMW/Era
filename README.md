@@ -15,7 +15,7 @@ Clone the repository and build the app in [GNOME Builder](https://flathub.org/ap
 
 Find us on Matrix:
 
-- #era:gnome.org
+- https://matrix.to/#/%23era:gnome.org
 
 ## Code Of Conduct
 
