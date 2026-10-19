@@ -345,8 +345,7 @@ mod imp {
                 .borrow()
                 .clone()
                 .expect("event should be set")
-                .location()
-                .expect("Map button should not be available if no location is set");
+                .location();
             let uri = Uri::parse(&location)
                 .or_else(|_error| Uri::parse(&format!("geo:0,0?q={}", location)))
                 .expect("should be a geo URI");
@@ -357,10 +356,12 @@ mod imp {
                 Err(error) => {
                     warn!("Failed to open map: {error}");
                     self.editor_toast_overlay.dismiss_all();
+
                     let toast = adw::Toast::new("An error occurred");
                     toast.set_button_label(Some("Details"));
                     toast.set_action_name(Some("event-details-dialog.show-error"));
                     toast.set_action_target(Some(&error.to_string()));
+
                     self.editor_toast_overlay.add_toast(toast);
                 }
             }
@@ -369,12 +370,8 @@ mod imp {
         #[template_callback]
         async fn join(&self) {
             let event = self.obj().event().expect("event should be initialized");
-            let uri = Uri::parse(
-                &event
-                    .conference()
-                    .expect("join should not be callable if conference is not a URI"),
-            )
-            .expect("join should not be callable if conference is not a URI");
+            let uri = Uri::parse(&event.conference())
+                .expect("join should not be callable if conference is not a URI");
             match OpenFileRequest::default().send_uri(&uri).await {
                 Ok(_) => {}
                 Err(err) => {
@@ -416,13 +413,12 @@ mod imp {
             let end = timeframe.end();
 
             self.name_entry.set_text(&event.name());
-            self.location_entry.set_text(&event.location().unwrap());
-            self.conference_entry.set_text(&event.conference().unwrap());
+            self.location_entry.set_text(&event.location());
+            self.conference_entry.set_text(&event.conference());
             self.timeframe_picker.set_data(all_day, &start, &end);
             self.calendar_choice
                 .set_selected_calendar(&event.calendar());
-            self.description_entry
-                .set_text(&event.description().unwrap());
+            self.description_entry.set_text(&event.description());
 
             self.navigation_view.push_by_tag("editor");
 
@@ -447,16 +443,48 @@ mod imp {
                 "A timeframe should be set if the user was able to activate the event update",
             );
 
+            let old_name = event.name();
+            let old_description = event.description();
+            let old_location = event.location();
+            let old_conference = event.conference();
+            let old_timeframe = event.timeframe();
+
             let calendar = self.calendar_choice.selected_calendar();
 
             if calendar == event.calendar() {
+                let maybe_name = if name.trim() == old_name.trim() {
+                    None
+                } else {
+                    Some(name.trim())
+                };
+                let maybe_description = if description.trim() == old_description.trim() {
+                    None
+                } else {
+                    Some(description.trim())
+                };
+                let maybe_location = if location.trim() == old_location.trim() {
+                    None
+                } else {
+                    Some(location.trim())
+                };
+                let maybe_conference = if conference.trim() == old_conference.trim() {
+                    None
+                } else {
+                    Some(conference.trim())
+                };
+                let maybe_timeframe = if timeframe.equal(&old_timeframe) {
+                    None
+                } else {
+                    Some(&timeframe)
+                };
+
                 match event
                     .try_update_future(
-                        Some(&name),
-                        Some(&description),
-                        Some(&location),
-                        Some(&conference),
-                        Some(&timeframe),
+                        maybe_name,
+                        maybe_description,
+                        maybe_location,
+                        maybe_conference,
+                        maybe_timeframe,
                     )
                     .await
                 {
@@ -561,9 +589,9 @@ mod imp {
             let timeframe = event.timeframe();
 
             let name = event.name().to_string();
-            let description = event.description().unwrap().to_string();
-            let location = event.location().unwrap().to_string();
-            let conference = event.conference().unwrap().to_string();
+            let description = event.description().to_string();
+            let location = event.location().to_string();
+            let conference = event.conference().to_string();
             let all_day = timeframe.is_all_day();
             let start_glib = timeframe.start();
             let end_glib = timeframe.end();

@@ -204,7 +204,13 @@ mod imp {
             );
 
             match calendar
-                .try_create_event_future(&name, &description, &location, &conference, &timeframe)
+                .try_create_event_future(
+                    name.trim(),
+                    description.trim(),
+                    location.trim(),
+                    conference.trim(),
+                    &timeframe,
+                )
                 .await
             {
                 Ok(event) => {
@@ -213,10 +219,13 @@ mod imp {
                 }
                 Err(error) => {
                     warn!("Failed to create event: {error}");
+                    self.toast_overlay.dismiss_all();
+
                     let toast = adw::Toast::new("An error occurred");
                     toast.set_button_label(Some("Details"));
                     toast.set_action_name(Some("create-event-dialog.show-error"));
                     toast.set_action_target(Some(&error.message()));
+
                     self.toast_overlay.add_toast(toast);
                 }
             }
