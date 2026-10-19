@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-10-08 16:44+0000\n"
-"PO-Revision-Date: 2026-10-11 09:36+0800\n"
+"POT-Creation-Date: 2026-10-18 12:42+0000\n"
+"PO-Revision-Date: 2026-10-19 08:24+0800\n"
 "Last-Translator: lumingzh <lumingzh@qq.com>\n"
 "Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -24,7 +24,7 @@ msgid "@app-name@"
 msgstr "@app-name@"
 
 #. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
-#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:9
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:10
 msgid "calendar;planner;schedule;agenda;appointment;appointments;organizer;meeting;meetings;event;events;reminder;reminders;caldav;"
 msgstr ""
 "calendar;planner;schedule;agenda;appointment;appointments;organizer;meeting;meetings;event;events;reminder;reminders;caldav;"
@@ -392,19 +392,23 @@ msgstr "扫描以导入"
 msgid "Search Events"
 msgstr "搜索事件"
 
-#: data/resources/ui/search_dialog/search_dialog.blp:67
+#: data/resources/ui/search_dialog/search_dialog.blp:39
+msgid "Search events"
+msgstr "搜索事件"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:54
 msgid "No Results Found"
 msgstr "未找到结果"
 
-#: data/resources/ui/search_dialog/search_dialog.blp:68
+#: data/resources/ui/search_dialog/search_dialog.blp:55
 msgid "Try a different search term"
 msgstr "尝试不同的搜索关键字"
 
-#: data/resources/ui/search_dialog/search_dialog.blp:77
+#: data/resources/ui/search_dialog/search_dialog.blp:86
 msgid "Unable to Search Events"
 msgstr "无法搜索事件"
 
-#: data/resources/ui/search_dialog/search_dialog.blp:78
+#: data/resources/ui/search_dialog/search_dialog.blp:87
 msgid "An error occurred in the backend. Try searching again"
 msgstr "后端中发生了错误。请重试搜索"
 
@@ -563,7 +567,7 @@ msgstr "关于纪元(_A)"
 
 #. Translators: Replace "translator-credits" with your name/username, and optionally an
 #. email or URL.
-#: src/application.rs:127
+#: src/application.rs:146
 msgid "translator-credits"
 msgstr "lumingzh <lumingzh@qq.com>, 2026"
 
@@ -732,11 +736,11 @@ msgstr ""
 "{year_start}年{month_start}{day_start}日，{time_start}（{tz_start}）– "
 "{year_end}年{month_end}{day_end}日，{time_end}（{tz_end}）"
 
-#: src/widgets/window.rs:542
+#: src/widgets/window.rs:547
 msgid "%Y"
 msgstr "%Y年"
 
-#: src/widgets/window.rs:551 src/widgets/window.rs:560
+#: src/widgets/window.rs:556 src/widgets/window.rs:565
 msgid "%0B %Y"
 msgstr "%Y年%-m月"
 
