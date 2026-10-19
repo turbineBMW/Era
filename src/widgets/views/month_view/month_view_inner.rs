@@ -265,7 +265,8 @@ mod imp {
 
             // TODO: CSS isn't applied yet. We should do this initialisation in the first
             // size_allocate? We could use widget margins?
-            let initial_cell_height = header_height + 4 * natural_event_height + 3 * EVENT_GAP;
+            let _initial_cell_height = header_height + 4 * natural_event_height + 3 * EVENT_GAP;
+            let initial_cell_height = 120;
             self.cell_height.set(initial_cell_height);
 
             self.scroll_offset
