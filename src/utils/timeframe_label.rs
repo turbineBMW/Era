@@ -1,6 +1,6 @@
 use gettextrs::gettext;
 
-use crate::system::ClockFormat;
+use crate::{system::ClockFormat, utils::Date};
 
 #[derive(Debug)]
 enum TzCase {
@@ -41,19 +41,21 @@ enum YearCase {
 }
 
 /// Returns a human-readable label for an event timeframe.
-pub fn all_day_timeframe_label(
-    start: jiff::civil::Date,
-    end: jiff::civil::Date,
-    today: jiff::civil::Date,
-) -> String {
-    let day_case = if start == end {
-        let yesterday = today.yesterday().unwrap();
-        let tomorrow = today.tomorrow().unwrap();
-        if start == yesterday {
+pub fn all_day_timeframe_label(start: Date, end: Date, today: Date) -> String {
+    let start_jiff = start.to_jiff();
+    let end_jiff = end.to_jiff();
+    let today_jiff = today.to_jiff();
+    let start_glib = start.to_glib_date_time_utc();
+    let end_glib = end.to_glib_date_time_utc();
+
+    let day_case = if start_jiff == end_jiff {
+        let yesterday_jiff = today_jiff.yesterday().unwrap();
+        let tomorrow_jiff = today_jiff.tomorrow().unwrap();
+        if start_jiff == yesterday_jiff {
             DayCase::SameDay(SameDayCase::Yesterday)
-        } else if start == today {
+        } else if start_jiff == today_jiff {
             DayCase::SameDay(SameDayCase::Today)
-        } else if start == tomorrow {
+        } else if start_jiff == tomorrow_jiff {
             DayCase::SameDay(SameDayCase::Tomorrow)
         } else {
             DayCase::SameDay(SameDayCase::NothingSpecial)
@@ -62,15 +64,16 @@ pub fn all_day_timeframe_label(
         DayCase::MultiDay
     };
 
-    let month_case = if start.year() == end.year() && start.month() == end.month() {
-        MonthCase::SameMonth
-    } else {
-        MonthCase::DifferentMonth
-    };
+    let month_case =
+        if start_jiff.year() == end_jiff.year() && start_jiff.month() == end_jiff.month() {
+            MonthCase::SameMonth
+        } else {
+            MonthCase::DifferentMonth
+        };
 
-    let year_case = if start.year() != end.year() {
+    let year_case = if start_jiff.year() != end_jiff.year() {
         YearCase::DifferentYears
-    } else if start.year() == today.year() {
+    } else if start_jiff.year() == today_jiff.year() {
         YearCase::SameYear(SameYearCase::CurrentYear)
     } else {
         YearCase::SameYear(SameYearCase::OtherYear)
@@ -89,17 +92,17 @@ pub fn all_day_timeframe_label(
             // TRANSLATORS: date of a single all-day event, of the current year.
             // {month} is the month name (e.g. "June"), {day} is the day number (e.g. "12").
             gettext("{month} {day}")
-                .replace("{month}", &start.strftime("%B").to_string())
-                .replace("{day}", &start.strftime("%-d").to_string())
+                .replace("{month}", &start_glib.format("%B").unwrap())
+                .replace("{day}", &start_glib.format("%-d").unwrap())
         }
         (DayCase::SameDay(SameDayCase::NothingSpecial), _, _) => {
             // TRANSLATORS: date of a single all-day event.
             // {month} is the month name (e.g. "June"), {day} is the day number (e.g. "12"),
             // {year} is the year (e.g. "2025").
             gettext("{month} {day}, {year}")
-                .replace("{month}", &start.strftime("%B").to_string())
-                .replace("{day}", &start.strftime("%-d").to_string())
-                .replace("{year}", &start.strftime("%Y").to_string())
+                .replace("{month}", &start_glib.format("%B").unwrap())
+                .replace("{day}", &start_glib.format("%-d").unwrap())
+                .replace("{year}", &start_glib.format("%Y").unwrap())
         }
         (
             DayCase::MultiDay,
@@ -110,19 +113,19 @@ pub fn all_day_timeframe_label(
             // TRANSLATORS: all-day event range within the same month of the current year.
             // {month} month name, {day_start} and {day_end} day numbers.
             gettext("{month} {day_start} \u{2013} {day_end}")
-                .replace("{month}", &start.strftime("%B").to_string())
-                .replace("{day_start}", &start.strftime("%-d").to_string())
-                .replace("{day_end}", &end.strftime("%-d").to_string())
+                .replace("{month}", &start_glib.format("%B").unwrap())
+                .replace("{day_start}", &start_glib.format("%-d").unwrap())
+                .replace("{day_end}", &end_glib.format("%-d").unwrap())
         }
         (DayCase::MultiDay, MonthCase::SameMonth, YearCase::SameYear(SameYearCase::OtherYear)) => {
             // e.g. "June 12 – 15, 2025"
             // TRANSLATORS: all-day event range within the same month of a past or future year.
             // {month} month name, {day_start} and {day_end} day numbers, {year} year.
             gettext("{month} {day_start} \u{2013} {day_end}, {year}")
-                .replace("{month}", &start.strftime("%B").to_string())
-                .replace("{day_start}", &start.strftime("%-d").to_string())
-                .replace("{day_end}", &end.strftime("%-d").to_string())
-                .replace("{year}", &start.strftime("%Y").to_string())
+                .replace("{month}", &start_glib.format("%B").unwrap())
+                .replace("{day_start}", &start_glib.format("%-d").unwrap())
+                .replace("{day_end}", &end_glib.format("%-d").unwrap())
+                .replace("{year}", &start_glib.format("%Y").unwrap())
         }
         (
             DayCase::MultiDay,
@@ -133,10 +136,10 @@ pub fn all_day_timeframe_label(
             // TRANSLATORS: all-day event range spanning different months in the current year.
             // {month_start} and {month_end} month names, {day_start} and {day_end} day numbers.
             gettext("{month_start} {day_start} \u{2013} {month_end} {day_end}")
-                .replace("{month_start}", &start.strftime("%B").to_string())
-                .replace("{day_start}", &start.strftime("%-d").to_string())
-                .replace("{month_end}", &end.strftime("%B").to_string())
-                .replace("{day_end}", &end.strftime("%-d").to_string())
+                .replace("{month_start}", &start_glib.format("%B").unwrap())
+                .replace("{day_start}", &start_glib.format("%-d").unwrap())
+                .replace("{month_end}", &end_glib.format("%B").unwrap())
+                .replace("{day_end}", &end_glib.format("%-d").unwrap())
         }
         (
             DayCase::MultiDay,
@@ -148,11 +151,11 @@ pub fn all_day_timeframe_label(
             // {month_start} and {month_end} month names, {day_start} and {day_end} day numbers,
             // {year} the shared year.
             gettext("{month_start} {day_start} \u{2013} {month_end} {day_end}, {year}")
-                .replace("{month_start}", &start.strftime("%B").to_string())
-                .replace("{day_start}", &start.strftime("%-d").to_string())
-                .replace("{month_end}", &end.strftime("%B").to_string())
-                .replace("{day_end}", &end.strftime("%-d").to_string())
-                .replace("{year}", &start.strftime("%Y").to_string())
+                .replace("{month_start}", &start_glib.format("%B").unwrap())
+                .replace("{day_start}", &start_glib.format("%-d").unwrap())
+                .replace("{month_end}", &end_glib.format("%B").unwrap())
+                .replace("{day_end}", &end_glib.format("%-d").unwrap())
+                .replace("{year}", &start_glib.format("%Y").unwrap())
         }
         (DayCase::MultiDay, _, YearCase::DifferentYears) => {
             // e.g. "June 12, 2024 – January 3, 2025"
@@ -160,12 +163,12 @@ pub fn all_day_timeframe_label(
             // {month_start} and {month_end} month names, {day_start} and {day_end} day numbers,
             // {year_start} and {year_end} years.
             gettext("{month_start} {day_start}, {year_start} \u{2013} {month_end} {day_end}, {year_end}")
-                    .replace("{month_start}", &start.strftime("%B").to_string())
-                    .replace("{day_start}", &start.strftime("%-d").to_string())
-                    .replace("{year_start}", &start.strftime("%Y").to_string())
-                    .replace("{month_end}", &end.strftime("%B").to_string())
-                    .replace("{day_end}", &end.strftime("%-d").to_string())
-                    .replace("{year_end}", &end.strftime("%Y").to_string())
+                    .replace("{month_start}", &start_glib.format("%B").unwrap())
+                    .replace("{day_start}", &start_glib.format("%-d").unwrap())
+                    .replace("{year_start}", &start_glib.format("%Y").unwrap())
+                    .replace("{month_end}", &end_glib.format("%B").unwrap())
+                    .replace("{day_end}", &end_glib.format("%-d").unwrap())
+                    .replace("{year_end}", &end_glib.format("%Y").unwrap())
         }
     }
 }
@@ -225,14 +228,45 @@ pub fn timeslot_timeframe_label(
     let time_start = start.strftime(time_fmt).to_string();
     let time_end = end.strftime(time_fmt).to_string();
 
+    let start_glib = {
+        let start_timezone =
+            glib::TimeZone::from_identifier(start.time_zone().iana_name()).unwrap();
+
+        glib::DateTime::new(
+            &start_timezone,
+            start.year() as i32,
+            start.month() as i32,
+            start.day() as i32,
+            start.hour() as i32,
+            start.minute() as i32,
+            0.0,
+        )
+        .unwrap()
+    };
+
+    let end_glib = {
+        let end_timezone = glib::TimeZone::from_identifier(end.time_zone().iana_name()).unwrap();
+
+        glib::DateTime::new(
+            &end_timezone,
+            end.year() as i32,
+            end.month() as i32,
+            end.day() as i32,
+            end.hour() as i32,
+            end.minute() as i32,
+            0.0,
+        )
+        .unwrap()
+    };
+
     match (&day_case, &month_case, &year_case, &tz_case) {
         (DayCase::SameDay(_), _, _, TzCase::BothSystem) => {
             // e.g. "June 12, 14:00 – 15:30"
             // TRANSLATORS: timed event on a single day, system timezone (not shown).
             // {month} month name, {day} day number, {time_start} and {time_end} clock times.
             gettext("{month} {day}, {time_start} \u{2013} {time_end}")
-                .replace("{month}", &start.strftime("%B").to_string())
-                .replace("{day}", &start.strftime("%-d").to_string())
+                .replace("{month}", &start_glib.format("%B").unwrap())
+                .replace("{day}", &start_glib.format("%-d").unwrap())
                 .replace("{time_start}", &time_start)
                 .replace("{time_end}", &time_end)
         }
@@ -242,8 +276,8 @@ pub fn timeslot_timeframe_label(
             // timezone. {month}, {day}, {time_start}, {time_end} as above;
             // {tz_start} and {tz_end} the respective IANA timezones.
             gettext("{month} {day}, {time_start} ({tz_start}) \u{2013} {time_end} ({tz_end})")
-                .replace("{month}", &start.strftime("%B").to_string())
-                .replace("{day}", &start.strftime("%-d").to_string())
+                .replace("{month}", &start_glib.format("%B").unwrap())
+                .replace("{day}", &start_glib.format("%-d").unwrap())
                 .replace("{time_start}", &time_start)
                 .replace("{time_end}", &time_end)
                 .replace("{tz_start}", tz_start)
@@ -260,11 +294,11 @@ pub fn timeslot_timeframe_label(
             // {month_start}, {day_start}, {time_start} start date/time;
             // {month_end}, {day_end}, {time_end} end date/time.
             gettext("{month_start} {day_start}, {time_start} \u{2013} {month_end} {day_end}, {time_end}")
-                .replace("{month_start}", &start.strftime("%B").to_string())
-                .replace("{day_start}", &start.strftime("%-d").to_string())
+                .replace("{month_start}", &start_glib.format("%B").unwrap())
+                .replace("{day_start}", &start_glib.format("%-d").unwrap())
                 .replace("{time_start}", &time_start)
-                .replace("{month_end}", &end.strftime("%B").to_string())
-                .replace("{day_end}", &end.strftime("%-d").to_string())
+                .replace("{month_end}", &end_glib.format("%B").unwrap())
+                .replace("{day_end}", &end_glib.format("%-d").unwrap())
                 .replace("{time_end}", &time_end)
         }
         (
@@ -278,12 +312,12 @@ pub fn timeslot_timeframe_label(
             // timezone. {month_start}, {day_start}, {time_start}, {month_end}, {day_end},
             // {time_end} as above; {tz_start} and {tz_end} respective IANA timezones.
             gettext("{month_start} {day_start}, {time_start} ({tz_start}) \u{2013} {month_end} {day_end}, {time_end} ({tz_end})")
-                .replace("{month_start}", &start.strftime("%B").to_string())
-                .replace("{day_start}", &start.strftime("%-d").to_string())
+                .replace("{month_start}", &start_glib.format("%B").unwrap())
+                .replace("{day_start}", &start_glib.format("%-d").unwrap())
                 .replace("{time_start}", &time_start)
                 .replace("{tz_start}", tz_start)
-                .replace("{month_end}", &end.strftime("%B").to_string())
-                .replace("{day_end}", &end.strftime("%-d").to_string())
+                .replace("{month_end}", &end_glib.format("%B").unwrap())
+                .replace("{day_end}", &end_glib.format("%-d").unwrap())
                 .replace("{time_end}", &time_end)
                 .replace("{tz_end}", tz_end)
         }
@@ -298,13 +332,13 @@ pub fn timeslot_timeframe_label(
             // timezone. {month_start}, {day_start}, {time_start}, {month_end}, {day_end},
             // {time_end} as above; {year} the shared year.
             gettext("{month_start} {day_start}, {time_start} \u{2013} {month_end} {day_end}, {time_end}, {year}")
-                .replace("{month_start}", &start.strftime("%B").to_string())
-                .replace("{day_start}", &start.strftime("%-d").to_string())
+                .replace("{month_start}", &start_glib.format("%B").unwrap())
+                .replace("{day_start}", &start_glib.format("%-d").unwrap())
                 .replace("{time_start}", &time_start)
-                .replace("{month_end}", &end.strftime("%B").to_string())
-                .replace("{day_end}", &end.strftime("%-d").to_string())
+                .replace("{month_end}", &end_glib.format("%B").unwrap())
+                .replace("{day_end}", &end_glib.format("%-d").unwrap())
                 .replace("{time_end}", &time_end)
-                .replace("{year}", &start.strftime("%Y").to_string())
+                .replace("{year}", &start_glib.format("%Y").unwrap())
         }
         (
             DayCase::MultiDay,
@@ -317,14 +351,14 @@ pub fn timeslot_timeframe_label(
             // timezone. {month_start}, {day_start}, {time_start}, {month_end}, {day_end},
             // {time_end}, {year} as above; {tz_start} and {tz_end} respective IANA timezones.
             gettext("{month_start} {day_start}, {time_start} ({tz_start}) \u{2013} {month_end} {day_end}, {time_end} ({tz_end}), {year}")
-                .replace("{month_start}", &start.strftime("%B").to_string())
-                .replace("{day_start}", &start.strftime("%-d").to_string())
+                .replace("{month_start}", &start_glib.format("%B").unwrap())
+                .replace("{day_start}", &start_glib.format("%-d").unwrap())
                 .replace("{time_start}", &time_start)
                 .replace("{tz_start}", tz_start)
-                .replace("{month_end}", &end.strftime("%B").to_string())
-                .replace("{day_end}", &end.strftime("%-d").to_string())
+                .replace("{month_end}", &end_glib.format("%B").unwrap())
+                .replace("{day_end}", &end_glib.format("%-d").unwrap())
                 .replace("{time_end}", &time_end)
-                .replace("{year}", &start.strftime("%Y").to_string())
+                .replace("{year}", &start_glib.format("%Y").unwrap())
                 .replace("{tz_end}", tz_end)
         }
         (DayCase::MultiDay, _, YearCase::DifferentYears, TzCase::BothSystem) => {
@@ -333,13 +367,13 @@ pub fn timeslot_timeframe_label(
             // {month_start}, {day_start}, {year_start}, {time_start} start date/time;
             // {month_end}, {day_end}, {year_end}, {time_end} end date/time.
             gettext("{month_start} {day_start}, {year_start}, {time_start} \u{2013} {month_end} {day_end}, {year_end}, {time_end}")
-                .replace("{month_start}", &start.strftime("%B").to_string())
-                .replace("{day_start}", &start.strftime("%-d").to_string())
-                .replace("{year_start}", &start.strftime("%Y").to_string())
+                .replace("{month_start}", &start_glib.format("%B").unwrap())
+                .replace("{day_start}", &start_glib.format("%-d").unwrap())
+                .replace("{year_start}", &start_glib.format("%Y").unwrap())
                 .replace("{time_start}", &time_start)
-                .replace("{month_end}", &end.strftime("%B").to_string())
-                .replace("{day_end}", &end.strftime("%-d").to_string())
-                .replace("{year_end}", &end.strftime("%Y").to_string())
+                .replace("{month_end}", &end_glib.format("%B").unwrap())
+                .replace("{day_end}", &end_glib.format("%-d").unwrap())
+                .replace("{year_end}", &end_glib.format("%Y").unwrap())
                 .replace("{time_end}", &time_end)
         }
         (DayCase::MultiDay, _, YearCase::DifferentYears, TzCase::AtLeastOneNotSystem) => {
@@ -349,14 +383,14 @@ pub fn timeslot_timeframe_label(
             // {time_start}, {month_end}, {day_end}, {year_end}, {time_end} as above;
             // {tz_start} and {tz_end} respective IANA timezones.
             gettext("{month_start} {day_start}, {year_start}, {time_start} ({tz_start}) \u{2013} {month_end} {day_end}, {year_end}, {time_end} ({tz_end})")
-                .replace("{month_start}", &start.strftime("%B").to_string())
-                .replace("{day_start}", &start.strftime("%-d").to_string())
-                .replace("{year_start}", &start.strftime("%Y").to_string())
+                .replace("{month_start}", &start_glib.format("%B").unwrap())
+                .replace("{day_start}", &start_glib.format("%-d").unwrap())
+                .replace("{year_start}", &start_glib.format("%Y").unwrap())
                 .replace("{time_start}", &time_start)
                 .replace("{tz_start}", tz_start)
-                .replace("{month_end}", &end.strftime("%B").to_string())
-                .replace("{day_end}", &end.strftime("%-d").to_string())
-                .replace("{year_end}", &end.strftime("%Y").to_string())
+                .replace("{month_end}", &end_glib.format("%B").unwrap())
+                .replace("{day_end}", &end_glib.format("%-d").unwrap())
+                .replace("{year_end}", &end_glib.format("%Y").unwrap())
                 .replace("{time_end}", &time_end)
                 .replace("{tz_end}", tz_end)
         }

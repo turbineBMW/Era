@@ -230,7 +230,7 @@ mod imp {
                 .unwrap()
                 .yesterday()
                 .unwrap();
-                utils::all_day_timeframe_label(start, end, today)
+                utils::all_day_timeframe_label(start.into(), end.into(), today.into())
             } else {
                 let today_iana = today.timezone().identifier();
                 let today_tz =
