@@ -328,7 +328,7 @@ mod imp {
             let event = self.obj().event().unwrap();
 
             let ics = event.to_string_for_ics().unwrap();
-            let name = event.name();
+            let name = event.name().replace('/', "-");
             let file_name = format!("{}.ics", name);
 
             let dir = glib::user_cache_dir().join("dnd-exports");
