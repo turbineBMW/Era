@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-09-20 10:09+0000\n"
-"PO-Revision-Date: 2026-09-11 15:07-0300\n"
+"POT-Creation-Date: 2026-10-08 16:44+0000\n"
+"PO-Revision-Date: 2026-10-11 16:12-0300\n"
 "Last-Translator: Vanessa Miranda <mvsmirs@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <https://br.gnome.org/traducao>\n"
 "Language: pt_BR\n"
@@ -18,23 +18,21 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Gtranslator 50.0\n"
 
-#: data/io.gitlab.TitouanReal.Era.desktop.in.in:2
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:2
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
 msgid "@app-name@"
 msgstr "@app-name@"
 
-#: data/io.gitlab.TitouanReal.Era.desktop.in.in:8
-msgid "GTK;"
-msgstr "GTK;"
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:9
+msgid "calendar;planner;schedule;agenda;appointment;appointments;organizer;meeting;meetings;event;events;reminder;reminders;caldav;"
+msgstr "calendário;planejador;cronograma;agenda;compromisso;compromissos;organizador;reunião;reuniões;evento;eventos;lembrete;lembretes;caldav;"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
-msgid "Era"
-msgstr "Era"
-
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
 msgid "Manage your time"
 msgstr "Gerencie seu tempo"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
 msgid ""
 "Era is a calendar that grows with your needs - simple and calm for everyday "
 "use while revealing powerful tools when you need them. Use a small window "
@@ -43,70 +41,70 @@ msgid ""
 "working without interruptions when you’re offline."
 msgstr ""
 "O Era é uma agenda que cresce de acordo com as suas necessidades - simples e "
-"suave para uso diário enquanto revela funcionalidades poderosasquando se "
+"suave para uso diário enquanto revela funcionalidades poderosas quando se "
 "fazem necessárias. Use uma pequena janela lado a lado com outros aplicativos "
-"para multitarefas ou vai de tela cheia para planejamentos complexos. Seus "
+"para multitarefas ou vá para a tela cheia para planejamentos complexos. Seus "
 "eventos são sincronizados com a maioria dos provedores on-line, e o Era "
 "continua funcionando sem interrupções quando está off-line."
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:19
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:19
 msgid "calendar"
 msgstr "calendário"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:20
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:20
 msgid "calendaring"
 msgstr "calendário"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:21
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:21
 msgid "events"
 msgstr "eventos"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:22
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:22
 msgid "meetings"
 msgstr "reuniões"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:23
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:23
 msgid "appointments"
 msgstr "apontamentos"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:24
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:24
 msgid "scheduling"
 msgstr "agendando"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:25
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:25
 msgid "planning"
 msgstr "planejando"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:26
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:26
 msgid "agenda"
 msgstr "agenda"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:27
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:27
 msgid "reminders"
 msgstr "lembretes"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:28
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:28
 msgid "alarms"
 msgstr "alarmes"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:35
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:35
 msgid "Google Calendar"
-msgstr "Calendário do Google"
+msgstr "Google Agenda"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:61
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:61
 #: data/resources/ui/views/month_view/month_view_inner.blp:14
 msgid "Month view"
 msgstr "Visualização mensal"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:65
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:65
 msgid "Mobile month view"
 msgstr "Visualização mensal móvel"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:69
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:69
 msgid "Event details"
 msgstr "Detalhes do evento"
 
-#: data/io.gitlab.TitouanReal.Era.metainfo.xml.in.in:73
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:73
 msgid "Event editor"
 msgstr "Editor de evento"
 
@@ -128,18 +126,19 @@ msgid "Flow Details"
 msgstr "Detalhes do fluxo"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:42
-#: data/resources/ui/event_creation_dialog.blp:46
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:286
+#: data/resources/ui/event_creation_dialog.blp:47
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:272
+#: data/resources/ui/import_dialog.blp:18
 msgid "Cancel"
 msgstr "Cancelar"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:49
-#: data/resources/ui/event_creation_dialog.blp:53
+#: data/resources/ui/event_creation_dialog.blp:54
 msgid "Create"
 msgstr "Criar"
 
 #: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:16
-#: data/resources/ui/event_creation_dialog.blp:65
+#: data/resources/ui/event_creation_dialog.blp:66
 msgid "Name"
 msgstr "Nome"
 
@@ -147,11 +146,7 @@ msgstr "Nome"
 msgid "Color"
 msgstr "Cor"
 
-#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:23
-msgid "No good way to change color in the UI yet"
-msgstr "Ainda não há uma boa maneira de alterar a cor na interface"
-
-#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:36
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:32
 msgid "Remove Calendar"
 msgstr "Remover calendário"
 
@@ -193,6 +188,10 @@ msgstr "Detalhes do erro"
 #: data/resources/ui/components/error_dialog.blp:16
 msgid "Message"
 msgstr "Mensagem"
+
+#: data/resources/ui/components/error_dialog.blp:20
+msgid "Copy"
+msgstr "Copiar"
 
 #: data/resources/ui/components/timeframe_picker/date_picker_row.blp:12
 #: data/resources/ui/components/timeframe_picker/date_picker_row.blp:31
@@ -255,40 +254,40 @@ msgstr "Depuração - intervalo de tempo:"
 
 #: data/resources/ui/event_creation_dialog.blp:6
 #: data/resources/ui/window.blp:93 data/resources/ui/window.blp:152
-#: data/resources/ui/window.blp:211 data/resources/ui/window.blp:275
+#: data/resources/ui/window.blp:211 data/resources/ui/window.blp:284
 msgid "Create Event"
 msgstr "Criar evento"
 
-#: data/resources/ui/event_creation_dialog.blp:28
+#: data/resources/ui/event_creation_dialog.blp:27
 msgid "No Calendar"
 msgstr "Nenhum calendário"
 
-#: data/resources/ui/event_creation_dialog.blp:29
+#: data/resources/ui/event_creation_dialog.blp:28
 msgid "There is no calendar to add an event to."
 msgstr "Não há calendário para adicionar um evento."
 
-#: data/resources/ui/event_creation_dialog.blp:69
+#: data/resources/ui/event_creation_dialog.blp:70
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:309
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:295
 msgid "Location"
 msgstr "Localização"
 
-#: data/resources/ui/event_creation_dialog.blp:73
+#: data/resources/ui/event_creation_dialog.blp:74
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:313
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:299
 msgid "Conference"
 msgstr "Conferência"
 
-#: data/resources/ui/event_creation_dialog.blp:85
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:169
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:336
+#: data/resources/ui/event_creation_dialog.blp:86
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:155
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:324
 msgid "Description"
 msgstr "Descrição"
 
 #: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
 #: data/resources/ui/search_dialog/search_dialog.blp:24
 #: data/resources/ui/window.blp:62 data/resources/ui/window.blp:121
-#: data/resources/ui/window.blp:180 data/resources/ui/window.blp:282
+#: data/resources/ui/window.blp:180 data/resources/ui/window.blp:291
 msgid "Search"
 msgstr "Pesquisar"
 
@@ -336,19 +335,19 @@ msgstr "Abrir mapa"
 msgid "Join"
 msgstr "Participar"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:140
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:126
 msgid "Organizer"
 msgstr "Organizador"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:150
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:136
 msgid "Participants"
 msgstr "Participantes"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:158
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:144
 msgid "Resources"
 msgstr "Recursos"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:186
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:172
 msgid ""
 "This event has recurrence properties. Such events are currently not editable "
 "in this app."
@@ -356,33 +355,37 @@ msgstr ""
 "Este evento possui propriedades de recorrência. Esses eventos atualmente não "
 "são editáveis neste aplicativo."
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:218
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:204
 msgid "_Edit"
 msgstr "_Editar"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:238
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:224
 msgid "_Remove"
 msgstr "_Remover"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:254
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:240
 msgid "_Duplicate"
 msgstr "_Duplicar"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:273
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:259
 msgid "Edit Event"
 msgstr "Editar evento"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:293
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:279
 msgid "Save"
 msgstr "Salvar"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:305
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:291
 msgid "Title"
 msgstr "Título"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:347
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:335
 msgid "Share Event"
 msgstr "Compartilhar evento"
+
+#: data/resources/ui/import_dialog.blp:5 data/resources/ui/import_dialog.blp:25
+msgid "Import"
+msgstr "Importar"
 
 #: data/resources/ui/qr_code_dialog.blp:28
 msgid "Scan to Import"
@@ -420,60 +423,65 @@ msgstr "Abrir menu principal"
 
 #: data/resources/ui/shortcuts_dialog.blp:14
 msgctxt "shortcut dialog"
+msgid "Toggle Sidebar"
+msgstr "Alternar barra lateral"
+
+#: data/resources/ui/shortcuts_dialog.blp:19
+msgctxt "shortcut dialog"
 msgid "New Event"
 msgstr "Novo evento"
 
-#: data/resources/ui/shortcuts_dialog.blp:19
+#: data/resources/ui/shortcuts_dialog.blp:24
 msgctxt "shortcut dialog"
 msgid "Manage Calendars"
 msgstr "Gerenciar calendários"
 
-#: data/resources/ui/shortcuts_dialog.blp:24
+#: data/resources/ui/shortcuts_dialog.blp:29
 msgctxt "shortcut dialog"
 msgid "Close Window"
 msgstr "Fechar janela"
 
-#: data/resources/ui/shortcuts_dialog.blp:29
+#: data/resources/ui/shortcuts_dialog.blp:34
 msgctxt "shortcut dialog"
 msgid "Search"
 msgstr "Pesquisar"
 
-#: data/resources/ui/shortcuts_dialog.blp:34
+#: data/resources/ui/shortcuts_dialog.blp:39
 msgctxt "shortcut dialog"
 msgid "Shortcuts"
 msgstr "Atalhos"
 
-#: data/resources/ui/shortcuts_dialog.blp:40
+#: data/resources/ui/shortcuts_dialog.blp:45
 msgctxt "shortcut dialog"
 msgid "Navigation"
 msgstr "Navegação"
 
-#: data/resources/ui/shortcuts_dialog.blp:43
+#: data/resources/ui/shortcuts_dialog.blp:48
 msgctxt "shortcut dialog"
 msgid "Show Today"
 msgstr "Mostrar hoje"
 
-#: data/resources/ui/shortcuts_dialog.blp:49
+#: data/resources/ui/shortcuts_dialog.blp:54
 msgctxt "shortcut dialog"
 msgid "View"
 msgstr "Visualização"
 
-#: data/resources/ui/shortcuts_dialog.blp:52
+#: data/resources/ui/shortcuts_dialog.blp:57
 msgctxt "shortcut dialog"
 msgid "Scroll Up"
 msgstr "Rolar para cima"
 
-#: data/resources/ui/shortcuts_dialog.blp:57
+#: data/resources/ui/shortcuts_dialog.blp:62
 msgctxt "shortcut dialog"
 msgid "Scroll Down"
 msgstr "Rolar para baixo"
 
-#: data/resources/ui/shortcuts_dialog.blp:62
+#: data/resources/ui/shortcuts_dialog.blp:67
 msgctxt "shortcut dialog"
 msgid "Zoom In"
 msgstr "Ampliar"
 
-#: data/resources/ui/shortcuts_dialog.blp:67
+#: data/resources/ui/shortcuts_dialog.blp:72
 msgctxt "shortcut dialog"
 msgid "Zoom Out"
 msgstr "Reduzir"
@@ -483,13 +491,13 @@ msgstr "Reduzir"
 msgid "Manage Calendars"
 msgstr "Gerenciar calendários"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:36
+#: data/resources/ui/views/agenda_view/agenda_view.blp:35
 msgid "No events on this day"
 msgstr "Nenhum evento neste dia"
 
 #: data/resources/ui/views/agenda_view/agenda_view.blp:93
-#: data/resources/ui/views/month_view/month_view_floating_controls.blp:17
-#: data/resources/ui/views/year_view/year_view_floating_controls.blp:17
+#: data/resources/ui/views/month_view/month_view_floating_controls.blp:19
+#: data/resources/ui/views/year_view/year_view_floating_controls.blp:19
 #: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
 #: data/resources/ui/window.blp:200
 msgid "_Today"
@@ -511,7 +519,7 @@ msgstr "O backend de calendário parece não estar disponível."
 msgid "Year"
 msgstr "Ano"
 
-#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:268
+#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:277
 msgid "Main Menu"
 msgstr "Menu principal"
 
@@ -532,23 +540,27 @@ msgstr "Agenda"
 msgid "Toggle Sidebar"
 msgstr "Alternar barra lateral"
 
-#: data/resources/ui/window.blp:294
+#: data/resources/ui/window.blp:303
 msgid "_Year"
 msgstr "_Ano"
 
-#: data/resources/ui/window.blp:304
+#: data/resources/ui/window.blp:313
 msgid "_Month"
 msgstr "_Mês"
 
-#: data/resources/ui/window.blp:315
+#: data/resources/ui/window.blp:324
 msgid "_Agenda"
 msgstr "_Agenda"
 
-#: data/resources/ui/window.blp:428
+#: data/resources/ui/window.blp:437
+msgid "Import…"
+msgstr "Importar…"
+
+#: data/resources/ui/window.blp:444
 msgid "_Keyboard Shortcuts"
 msgstr "_Atalhos de teclado"
 
-#: data/resources/ui/window.blp:433
+#: data/resources/ui/window.blp:449
 msgid "_About Era"
 msgstr "_Sobre o Era"
 
@@ -557,203 +569,6 @@ msgstr "_Sobre o Era"
 #: src/application.rs:127
 msgid "translator-credits"
 msgstr "Vanessa Miranda <mvsmirs@gmail.com>"
-
-#: src/utils/template_callbacks.rs:117
-msgid "monday"
-msgstr "segunda-feira"
-
-#: src/utils/template_callbacks.rs:118
-msgid "tuesday"
-msgstr "terça-feira"
-
-#: src/utils/template_callbacks.rs:119
-msgid "wednesday"
-msgstr "quarta-feira"
-
-#: src/utils/template_callbacks.rs:120
-msgid "thursday"
-msgstr "quinta-feira"
-
-#: src/utils/template_callbacks.rs:121
-msgid "friday"
-msgstr "sexta-feira"
-
-#: src/utils/template_callbacks.rs:122
-msgid "saturday"
-msgstr "sábado"
-
-#: src/utils/template_callbacks.rs:123
-msgid "sunday"
-msgstr "domingo"
-
-#: src/utils/template_callbacks.rs:134
-msgid "MON"
-msgstr "SEG"
-
-#: src/utils/template_callbacks.rs:135
-msgid "TUE"
-msgstr "TER"
-
-#: src/utils/template_callbacks.rs:136
-msgid "WED"
-msgstr "QUA"
-
-#: src/utils/template_callbacks.rs:137
-msgid "THU"
-msgstr "QUI"
-
-#: src/utils/template_callbacks.rs:138
-msgid "FRI"
-msgstr "SEX"
-
-#: src/utils/template_callbacks.rs:139
-msgid "SAT"
-msgstr "SÁB"
-
-#: src/utils/template_callbacks.rs:140
-msgid "SUN"
-msgstr "DOM"
-
-#: src/utils/template_callbacks.rs:149 src/utils/template_callbacks.rs:217
-msgid "january"
-msgstr "janeiro"
-
-#: src/utils/template_callbacks.rs:150 src/utils/template_callbacks.rs:218
-msgid "february"
-msgstr "fevereiro"
-
-#: src/utils/template_callbacks.rs:151 src/utils/template_callbacks.rs:219
-msgid "march"
-msgstr "março"
-
-#: src/utils/template_callbacks.rs:152 src/utils/template_callbacks.rs:220
-msgid "april"
-msgstr "abril"
-
-#: src/utils/template_callbacks.rs:153 src/utils/template_callbacks.rs:221
-msgid "may"
-msgstr "maio"
-
-#: src/utils/template_callbacks.rs:154 src/utils/template_callbacks.rs:222
-msgid "june"
-msgstr "junho"
-
-#: src/utils/template_callbacks.rs:155 src/utils/template_callbacks.rs:223
-msgid "july"
-msgstr "julho"
-
-#: src/utils/template_callbacks.rs:156 src/utils/template_callbacks.rs:224
-msgid "august"
-msgstr "agosto"
-
-#: src/utils/template_callbacks.rs:157 src/utils/template_callbacks.rs:225
-msgid "september"
-msgstr "setembro"
-
-#: src/utils/template_callbacks.rs:158 src/utils/template_callbacks.rs:226
-msgid "october"
-msgstr "outubro"
-
-#: src/utils/template_callbacks.rs:159 src/utils/template_callbacks.rs:227
-msgid "november"
-msgstr "novembro"
-
-#: src/utils/template_callbacks.rs:160 src/utils/template_callbacks.rs:228
-msgid "december"
-msgstr "dezembro"
-
-#: src/utils/template_callbacks.rs:170
-msgid "January"
-msgstr "Janeiro"
-
-#: src/utils/template_callbacks.rs:171
-msgid "February"
-msgstr "Fevereiro"
-
-#: src/utils/template_callbacks.rs:172
-msgid "March"
-msgstr "Março"
-
-#: src/utils/template_callbacks.rs:173
-msgid "April"
-msgstr "Abril"
-
-#: src/utils/template_callbacks.rs:174 src/utils/template_callbacks.rs:195
-#: src/utils/template_callbacks.rs:241
-msgid "May"
-msgstr "Maio"
-
-#: src/utils/template_callbacks.rs:175
-msgid "June"
-msgstr "Junho"
-
-#: src/utils/template_callbacks.rs:176
-msgid "July"
-msgstr "Julho"
-
-#: src/utils/template_callbacks.rs:177
-msgid "August"
-msgstr "Agosto"
-
-#: src/utils/template_callbacks.rs:178
-msgid "September"
-msgstr "Setembro"
-
-#: src/utils/template_callbacks.rs:179
-msgid "October"
-msgstr "Outubro"
-
-#: src/utils/template_callbacks.rs:180
-msgid "November"
-msgstr "Novembro"
-
-#: src/utils/template_callbacks.rs:181
-msgid "December"
-msgstr "Dezembro"
-
-#: src/utils/template_callbacks.rs:191 src/utils/template_callbacks.rs:237
-msgid "Jan"
-msgstr "Jan"
-
-#: src/utils/template_callbacks.rs:192 src/utils/template_callbacks.rs:238
-msgid "Feb"
-msgstr "Fev"
-
-#: src/utils/template_callbacks.rs:193 src/utils/template_callbacks.rs:239
-msgid "Mar"
-msgstr "Mar"
-
-#: src/utils/template_callbacks.rs:194 src/utils/template_callbacks.rs:240
-msgid "Apr"
-msgstr "Abr"
-
-#: src/utils/template_callbacks.rs:196 src/utils/template_callbacks.rs:242
-msgid "Jun"
-msgstr "Jun"
-
-#: src/utils/template_callbacks.rs:197 src/utils/template_callbacks.rs:243
-msgid "Jul"
-msgstr "Jul"
-
-#: src/utils/template_callbacks.rs:198 src/utils/template_callbacks.rs:244
-msgid "Aug"
-msgstr "Ago"
-
-#: src/utils/template_callbacks.rs:199 src/utils/template_callbacks.rs:245
-msgid "Sep"
-msgstr "Set"
-
-#: src/utils/template_callbacks.rs:200 src/utils/template_callbacks.rs:246
-msgid "Oct"
-msgstr "Out"
-
-#: src/utils/template_callbacks.rs:201 src/utils/template_callbacks.rs:247
-msgid "Nov"
-msgstr "Nov"
-
-#: src/utils/template_callbacks.rs:202 src/utils/template_callbacks.rs:248
-msgid "Dec"
-msgstr "Dez"
 
 #: src/utils/timeframe_label.rs:80
 msgid "Yesterday"
@@ -922,13 +737,169 @@ msgstr ""
 "{day_start} de {month_start} de {year_start}, {time_start} ({tz_start}) – "
 "{day_end} de {month_end} de {year_end}, {time_end} ({tz_end})"
 
-#: src/widgets/window.rs:496
+#: src/widgets/window.rs:542
 msgid "%Y"
 msgstr "%Y"
 
-#: src/widgets/window.rs:505 src/widgets/window.rs:514
+#: src/widgets/window.rs:551 src/widgets/window.rs:560
 msgid "%0B %Y"
 msgstr "%0B de %Y"
+
+#~ msgid "GTK;"
+#~ msgstr "GTK;"
+
+#~ msgid "Era"
+#~ msgstr "Era"
+
+#~ msgid "No good way to change color in the UI yet"
+#~ msgstr "Ainda não há uma boa maneira de alterar a cor na interface"
+
+#~ msgid "monday"
+#~ msgstr "segunda-feira"
+
+#~ msgid "tuesday"
+#~ msgstr "terça-feira"
+
+#~ msgid "wednesday"
+#~ msgstr "quarta-feira"
+
+#~ msgid "thursday"
+#~ msgstr "quinta-feira"
+
+#~ msgid "friday"
+#~ msgstr "sexta-feira"
+
+#~ msgid "saturday"
+#~ msgstr "sábado"
+
+#~ msgid "sunday"
+#~ msgstr "domingo"
+
+#~ msgid "MON"
+#~ msgstr "SEG"
+
+#~ msgid "TUE"
+#~ msgstr "TER"
+
+#~ msgid "WED"
+#~ msgstr "QUA"
+
+#~ msgid "THU"
+#~ msgstr "QUI"
+
+#~ msgid "FRI"
+#~ msgstr "SEX"
+
+#~ msgid "SAT"
+#~ msgstr "SÁB"
+
+#~ msgid "SUN"
+#~ msgstr "DOM"
+
+#~ msgid "january"
+#~ msgstr "janeiro"
+
+#~ msgid "february"
+#~ msgstr "fevereiro"
+
+#~ msgid "march"
+#~ msgstr "março"
+
+#~ msgid "april"
+#~ msgstr "abril"
+
+#~ msgid "may"
+#~ msgstr "maio"
+
+#~ msgid "june"
+#~ msgstr "junho"
+
+#~ msgid "july"
+#~ msgstr "julho"
+
+#~ msgid "august"
+#~ msgstr "agosto"
+
+#~ msgid "september"
+#~ msgstr "setembro"
+
+#~ msgid "october"
+#~ msgstr "outubro"
+
+#~ msgid "november"
+#~ msgstr "novembro"
+
+#~ msgid "december"
+#~ msgstr "dezembro"
+
+#~ msgid "January"
+#~ msgstr "Janeiro"
+
+#~ msgid "February"
+#~ msgstr "Fevereiro"
+
+#~ msgid "March"
+#~ msgstr "Março"
+
+#~ msgid "April"
+#~ msgstr "Abril"
+
+#~ msgid "May"
+#~ msgstr "Maio"
+
+#~ msgid "June"
+#~ msgstr "Junho"
+
+#~ msgid "July"
+#~ msgstr "Julho"
+
+#~ msgid "August"
+#~ msgstr "Agosto"
+
+#~ msgid "September"
+#~ msgstr "Setembro"
+
+#~ msgid "October"
+#~ msgstr "Outubro"
+
+#~ msgid "November"
+#~ msgstr "Novembro"
+
+#~ msgid "December"
+#~ msgstr "Dezembro"
+
+#~ msgid "Jan"
+#~ msgstr "Jan"
+
+#~ msgid "Feb"
+#~ msgstr "Fev"
+
+#~ msgid "Mar"
+#~ msgstr "Mar"
+
+#~ msgid "Apr"
+#~ msgstr "Abr"
+
+#~ msgid "Jun"
+#~ msgstr "Jun"
+
+#~ msgid "Jul"
+#~ msgstr "Jul"
+
+#~ msgid "Aug"
+#~ msgstr "Ago"
+
+#~ msgid "Sep"
+#~ msgstr "Set"
+
+#~ msgid "Oct"
+#~ msgstr "Out"
+
+#~ msgid "Nov"
+#~ msgstr "Nov"
+
+#~ msgid "Dec"
+#~ msgstr "Dez"
 
 #~ msgid ""
 #~ "Era is a time management application designed to help you stay organized "
