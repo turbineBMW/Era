@@ -1,0 +1,913 @@
+# Polish translation for era.
+# Copyright (C) 2026 era's COPYRIGHT HOLDER
+# This file is distributed under the same license as the era package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Marcel Mrówka <micro.mail88@gmail.com>, 2026.
+# Tomasz Bojanowski <tomasz@bojanowski.me>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: era main\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
+"POT-Creation-Date: 2026-10-21 16:39+0000\n"
+"PO-Revision-Date: 2026-11-01 20:00+0100\n"
+"Last-Translator: Tomasz Bojanowski <tomasz@bojanowski.me>\n"
+"Language-Team: Polish <https://l10n.gnome.org/teams/pl/>\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+"X-DL-VCS-Web: https://gitlab.gnome.org/TitouanReal/era\n"
+"X-DL-Lang: pl\n"
+"X-DL-Module: era\n"
+"X-DL-Branch: main\n"
+"X-DL-Domain: po\n"
+"X-DL-State: Translating\n"
+"X-Generator: Gtranslator 51.0\n"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:2
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:7
+msgid "@app-name@"
+msgstr "@app-name@"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in:10
+msgid "calendar;planner;schedule;agenda;appointment;appointments;organizer;meeting;meetings;event;events;reminder;reminders;caldav;"
+msgstr "kalendarz;planer;harmonogram;terminarz;termin;terminy;organizator;spotkanie;spotkania;wydarzenie;wydarzenia;przypomnienie;przypomnienia;caldav;"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
+msgid "Manage your time"
+msgstr "Zarządzaj czasem"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:10
+msgid ""
+"Era is a calendar that grows with your needs - simple and calm for everyday "
+"use while revealing powerful tools when you need them. Use a small window "
+"side-by-side with other apps for multitasking or go fullscreen for complex "
+"planning. Your events can sync with most online providers, and Era keeps "
+"working without interruptions when you’re offline."
+msgstr ""
+"Era to kalendarz, który dopasowuje się do potrzeb – na co dzień prosty "
+"i spokojny, a gdy trzeba, udostępnia zaawansowane narzędzia. Można go używać "
+"w małym oknie obok innych aplikacji, pracując nad kilkoma rzeczami "
+"jednocześnie, albo w trybie pełnoekranowym przy bardziej złożonym "
+"planowaniu. Wydarzenia mogą być synchronizowane z większością serwisów "
+"internetowych, a Era działa bez przerw także bez połączenia z Internetem."
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:19
+msgid "calendar"
+msgstr "kalendarz"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:20
+msgid "calendaring"
+msgstr "obsługa kalendarzy"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:21
+msgid "events"
+msgstr "wydarzenia"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:22
+msgid "meetings"
+msgstr "spotkania"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:23
+msgid "appointments"
+msgstr "wizyty"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:24
+msgid "scheduling"
+msgstr "harmonogram"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:25
+msgid "planning"
+msgstr "planowanie"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:26
+msgid "agenda"
+msgstr "terminarz"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:27
+msgid "reminders"
+msgstr "przypomnienia"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:28
+msgid "alarms"
+msgstr "alarmy"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:35
+msgid "Google Calendar"
+msgstr "Kalendarz Google"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:61
+#: data/resources/ui/views/month_view/month_view_inner.blp:14
+msgid "Month view"
+msgstr "Widok miesiąca"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:65
+msgid "Mobile month view"
+msgstr "Mobilny widok miesiąca"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:69
+msgid "Event details"
+msgstr "Szczegóły wydarzenia"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:73
+msgid "Event editor"
+msgstr "Edytor wydarzeń"
+
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:5
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:12
+msgid "Create Calendar"
+msgstr "Utwórz kalendarz"
+
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:20
+msgid "Creation Method"
+msgstr "Metoda tworzenia"
+
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:21
+msgid "Choose how to create the calendar."
+msgstr "Wybierz, jak utworzyć kalendarz."
+
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:29
+msgid "Flow Details"
+msgstr "Szczegóły przepływu"
+
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:42
+#: data/resources/ui/event_creation_dialog.blp:47
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:272
+#: data/resources/ui/import_dialog.blp:18
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:49
+#: data/resources/ui/event_creation_dialog.blp:54
+msgid "Create"
+msgstr "Utwórz"
+
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:16
+#: data/resources/ui/event_creation_dialog.blp:66
+msgid "Name"
+msgstr "Nazwa"
+
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:22
+msgid "Color"
+msgstr "Kolor"
+
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:32
+msgid "Remove Calendar"
+msgstr "Usuń kalendarz"
+
+#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:50
+msgid "Read only"
+msgstr "Tylko do odczytu"
+
+#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:57
+msgid "Calendar details"
+msgstr "Szczegóły kalendarza"
+
+#: data/resources/ui/calendar_management_dialog/calendar_management_dialog.blp:6
+#: data/resources/ui/calendar_management_dialog/collections_list_page.blp:6
+#: data/resources/ui/sidebar/sidebar.blp:10
+msgid "Calendars"
+msgstr "Kalendarze"
+
+#: data/resources/ui/calendar_management_dialog/calendar_management_dialog.blp:31
+msgid "No collection"
+msgstr "Brak kolekcji"
+
+#: data/resources/ui/calendar_management_dialog/calendar_management_dialog.blp:32
+msgid "Create a collection first."
+msgstr "Najpierw utwórz kolekcję."
+
+#: data/resources/ui/calendar_management_dialog/collection_row.blp:49
+msgid "No Calendar in This Collection"
+msgstr "Brak kalendarzy w tej kolekcji"
+
+#: data/resources/ui/components/calendar_combo_row/calendar_combo_row.blp:6
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:115
+msgid "Calendar"
+msgstr "Kalendarz"
+
+#: data/resources/ui/components/error_dialog.blp:7
+msgid "Error Details"
+msgstr "Szczegóły błędu"
+
+#: data/resources/ui/components/error_dialog.blp:16
+msgid "Message"
+msgstr "Komunikat"
+
+#: data/resources/ui/components/error_dialog.blp:20
+msgid "Copy"
+msgstr "Skopiuj"
+
+#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:12
+#: data/resources/ui/components/timeframe_picker/date_picker_row.blp:31
+msgid "Edit Date"
+msgstr "Modyfikuj datę"
+
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:20
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:108
+msgid "Edit Time"
+msgstr "Modyfikuj godzinę"
+
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:61
+msgid ":"
+msgstr ":"
+
+#: data/resources/ui/components/timeframe_picker/date_time_picker_group.blp:97
+msgid "Change Timezone"
+msgstr "Zmień strefę czasową"
+
+#: data/resources/ui/components/timeframe_picker/time_zone_picker_dialog.blp:6
+msgid "Select Timezone"
+msgstr "Wybór strefy czasowej"
+
+#: data/resources/ui/components/timeframe_picker/time_zone_picker_dialog.blp:21
+msgid "Search Timezones"
+msgstr "Wyszukaj strefy czasowe"
+
+#: data/resources/ui/components/timeframe_picker/time_zone_picker_dialog.blp:37
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:31
+msgid "No Result"
+msgstr "Brak wyników"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:15
+msgid "_Time Slot"
+msgstr "_Przedział czasu"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:21
+msgid "_All Day"
+msgstr "C_ały dzień"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:28
+msgid "Start Date"
+msgstr "Data rozpoczęcia"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:29
+msgid "Start Time"
+msgstr "Godzina rozpoczęcia"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:34
+msgid "End Date"
+msgstr "Data zakończenia"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:35
+msgid "End Time"
+msgstr "Godzina zakończenia"
+
+#: data/resources/ui/components/timeframe_picker/timeframe_picker.blp:44
+msgid "Debug - timeframe:"
+msgstr "Debugowanie – ramy czasowe:"
+
+#: data/resources/ui/event_creation_dialog.blp:6
+#: data/resources/ui/window.blp:93 data/resources/ui/window.blp:152
+#: data/resources/ui/window.blp:211 data/resources/ui/window.blp:284
+msgid "Create Event"
+msgstr "Utwórz wydarzenie"
+
+#: data/resources/ui/event_creation_dialog.blp:27
+msgid "No Calendar"
+msgstr "Brak kalendarza"
+
+#: data/resources/ui/event_creation_dialog.blp:28
+msgid "There is no calendar to add an event to."
+msgstr "Nie ma kalendarza, do którego można dodać wydarzenie."
+
+#: data/resources/ui/event_creation_dialog.blp:70
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:71
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:295
+msgid "Location"
+msgstr "Położenie"
+
+#: data/resources/ui/event_creation_dialog.blp:74
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:94
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:299
+msgid "Conference"
+msgstr "Konferencja"
+
+#: data/resources/ui/event_creation_dialog.blp:86
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:155
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:321
+msgid "Description"
+msgstr "Opis"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:15
+#: data/resources/ui/search_dialog/search_dialog.blp:24
+#: data/resources/ui/window.blp:62 data/resources/ui/window.blp:121
+#: data/resources/ui/window.blp:180 data/resources/ui/window.blp:291
+msgid "Search"
+msgstr "Wyszukaj"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:40
+msgid "Accepted"
+msgstr "Zaakceptowano"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:45
+msgid "Tentative"
+msgstr "Wstępnie zaakceptowano"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:50
+msgid "Declined"
+msgstr "Odrzucono"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:55
+msgid "Delegated"
+msgstr "Delegowano"
+
+#: data/resources/ui/event_details_dialog/attendees_list_page/attendees_list_page.blp:60
+msgid "Needs Action"
+msgstr "Wymaga działania"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:16
+msgid "Event"
+msgstr "Wydarzenie"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:25
+msgid "Share"
+msgstr "Udostępnij"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:28
+msgid "Export"
+msgstr "Wyeksportuj"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:29
+msgid "Show QR code"
+msgstr "Wyświetl kod QR"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:84
+msgid "Open Map"
+msgstr "Otwórz mapę"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:105
+msgid "Join"
+msgstr "Dołącz"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:126
+msgid "Organizer"
+msgstr "Organizator"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:136
+msgid "Participants"
+msgstr "Uczestnicy"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:144
+msgid "Resources"
+msgstr "Zasoby"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:172
+msgid ""
+"This event has recurrence properties. Such events are currently not editable "
+"in this app."
+msgstr ""
+"To wydarzenie ma właściwości powtarzania. Takich wydarzeń nie można obecnie "
+"modyfikować w tej aplikacji."
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:204
+msgid "_Edit"
+msgstr "_Modyfikuj"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:224
+msgid "_Remove"
+msgstr "_Usuń"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:240
+msgid "_Duplicate"
+msgstr "_Duplikuj"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:259
+msgid "Edit Event"
+msgstr "Modyfikuj wydarzenie"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:279
+msgid "Save"
+msgstr "Zapisz"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:291
+msgid "Title"
+msgstr "Tytuł"
+
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:332
+msgid "Share Event"
+msgstr "Udostępnij wydarzenie"
+
+#: data/resources/ui/import_dialog.blp:5 data/resources/ui/import_dialog.blp:25
+msgid "Import"
+msgstr "Zaimportuj"
+
+#: data/resources/ui/qr_code_dialog.blp:28
+msgid "Scan to Import"
+msgstr "Zeskanuj, aby zaimportować"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:6
+msgid "Search Events"
+msgstr "Wyszukaj wydarzenia"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:39
+msgid "Search events"
+msgstr "Wyszukaj wydarzenia"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:54
+msgid "No Results Found"
+msgstr "Brak wyników"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:55
+msgid "Try a different search term"
+msgstr "Spróbuj wyszukać inne hasło"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:86
+msgid "Unable to Search Events"
+msgstr "Nie można wyszukać wydarzeń"
+
+#: data/resources/ui/search_dialog/search_dialog.blp:87
+msgid "An error occurred in the backend. Try searching again"
+msgstr "Wystąpił błąd w mechanizmie. Spróbuj wyszukać ponownie"
+
+#: data/resources/ui/shortcuts_dialog.blp:6
+msgctxt "shortcut dialog"
+msgid "General"
+msgstr "Ogólne"
+
+#: data/resources/ui/shortcuts_dialog.blp:9
+msgctxt "shortcut dialog"
+msgid "Open Main Menu"
+msgstr "Otwarcie menu głównego"
+
+#: data/resources/ui/shortcuts_dialog.blp:14
+msgctxt "shortcut dialog"
+msgid "Toggle Sidebar"
+msgstr "Przełączenie paska bocznego"
+
+#: data/resources/ui/shortcuts_dialog.blp:19
+msgctxt "shortcut dialog"
+msgid "New Event"
+msgstr "Nowe wydarzenie"
+
+#: data/resources/ui/shortcuts_dialog.blp:24
+msgctxt "shortcut dialog"
+msgid "Manage Calendars"
+msgstr "Zarządzanie kalendarzami"
+
+#: data/resources/ui/shortcuts_dialog.blp:29
+msgctxt "shortcut dialog"
+msgid "Close Window"
+msgstr "Zamknięcie okna"
+
+#: data/resources/ui/shortcuts_dialog.blp:34
+msgctxt "shortcut dialog"
+msgid "Search"
+msgstr "Wyszukiwanie"
+
+#: data/resources/ui/shortcuts_dialog.blp:39
+msgctxt "shortcut dialog"
+msgid "Shortcuts"
+msgstr "Skróty klawiszowe"
+
+#: data/resources/ui/shortcuts_dialog.blp:45
+msgctxt "shortcut dialog"
+msgid "Navigation"
+msgstr "Nawigacja"
+
+#: data/resources/ui/shortcuts_dialog.blp:48
+msgctxt "shortcut dialog"
+msgid "Show Today"
+msgstr "Wyświetlenie dzisiejszego dnia"
+
+#: data/resources/ui/shortcuts_dialog.blp:54
+msgctxt "shortcut dialog"
+msgid "View"
+msgstr "Widok"
+
+#: data/resources/ui/shortcuts_dialog.blp:57
+msgctxt "shortcut dialog"
+msgid "Scroll Up"
+msgstr "Przewinięcie w górę"
+
+#: data/resources/ui/shortcuts_dialog.blp:62
+msgctxt "shortcut dialog"
+msgid "Scroll Down"
+msgstr "Przewinięcie w dół"
+
+#: data/resources/ui/shortcuts_dialog.blp:67
+msgctxt "shortcut dialog"
+msgid "Zoom In"
+msgstr "Przybliżenie"
+
+#: data/resources/ui/shortcuts_dialog.blp:72
+msgctxt "shortcut dialog"
+msgid "Zoom Out"
+msgstr "Oddalenie"
+
+#: data/resources/ui/sidebar/sidebar.blp:20 data/resources/ui/window.blp:100
+#: data/resources/ui/window.blp:159 data/resources/ui/window.blp:218
+msgid "Manage Calendars"
+msgstr "Zarządzaj kalendarzami"
+
+#: data/resources/ui/views/agenda_view/agenda_view.blp:35
+msgid "No events on this day"
+msgstr "Brak wydarzeń w tym dniu"
+
+#: data/resources/ui/views/agenda_view/agenda_view.blp:93
+#: data/resources/ui/views/month_view/month_view_floating_controls.blp:19
+#: data/resources/ui/views/year_view/year_view_floating_controls.blp:19
+#: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
+#: data/resources/ui/window.blp:200
+msgid "_Today"
+msgstr "_Dzisiaj"
+
+#: data/resources/ui/window.blp:20
+msgid "About Era"
+msgstr "O aplikacji"
+
+#: data/resources/ui/window.blp:26
+msgid "No Backend"
+msgstr "Brak mechanizmu"
+
+#: data/resources/ui/window.blp:27
+msgid "The calendaring backend seems to not be available."
+msgstr "Wygląda na to, że mechanizm kalendarza nie jest dostępny."
+
+#: data/resources/ui/window.blp:42
+msgid "Year"
+msgstr "Rok"
+
+#: data/resources/ui/window.blp:55 data/resources/ui/window.blp:277
+msgid "Main Menu"
+msgstr "Menu główne"
+
+#: data/resources/ui/window.blp:86 data/resources/ui/window.blp:145
+#: data/resources/ui/window.blp:204
+msgid "Go to Today"
+msgstr "Przejdź do dzisiaj"
+
+#: data/resources/ui/window.blp:109
+msgid "Month"
+msgstr "Miesiąc"
+
+#: data/resources/ui/window.blp:168
+msgid "Agenda"
+msgstr "Terminarz"
+
+#: data/resources/ui/window.blp:242
+msgid "Toggle Sidebar"
+msgstr "Przełącz pasek boczny"
+
+#: data/resources/ui/window.blp:303
+msgid "_Year"
+msgstr "_Rok"
+
+#: data/resources/ui/window.blp:313
+msgid "_Month"
+msgstr "_Miesiąc"
+
+#: data/resources/ui/window.blp:324
+msgid "_Agenda"
+msgstr "Termin_arz"
+
+#: data/resources/ui/window.blp:437
+msgid "Import…"
+msgstr "Zaimportuj…"
+
+#: data/resources/ui/window.blp:444
+msgid "_Keyboard Shortcuts"
+msgstr "Skróty _klawiszowe"
+
+#: data/resources/ui/window.blp:449
+msgid "_About Era"
+msgstr "O _aplikacji"
+
+#. Translators: Replace "translator-credits" with your name/username, and optionally an
+#. email or URL.
+#: src/application.rs:146
+msgid "translator-credits"
+msgstr "Marcel Mrówka <micro.mail88@gmail.com>, 2026"
+
+#: src/utils/timeframe_label.rs:83
+msgid "Yesterday"
+msgstr "Wczoraj"
+
+#: src/utils/timeframe_label.rs:84
+msgid "Today"
+msgstr "Dzisiaj"
+
+#: src/utils/timeframe_label.rs:85
+msgid "Tomorrow"
+msgstr "Jutro"
+
+#. TRANSLATORS: date of a single all-day event, of the current year.
+#. {month} is the month name (e.g. "June"), {day} is the day number (e.g. "12").
+#: src/utils/timeframe_label.rs:94
+#, rust-format
+msgid "{month} {day}"
+msgstr "{day} {month}"
+
+#. TRANSLATORS: date of a single all-day event.
+#. {month} is the month name (e.g. "June"), {day} is the day number (e.g. "12"),
+#. {year} is the year (e.g. "2025").
+#: src/utils/timeframe_label.rs:102
+#, rust-format
+msgid "{month} {day}, {year}"
+msgstr "{day} {month} {year}"
+
+#. e.g. "June 12 – 15"
+#. TRANSLATORS: all-day event range within the same month of the current year.
+#. {month} month name, {day_start} and {day_end} day numbers.
+#: src/utils/timeframe_label.rs:115
+#, rust-format
+msgid "{month} {day_start} – {day_end}"
+msgstr "{day_start} – {day_end} {month}"
+
+#. e.g. "June 12 – 15, 2025"
+#. TRANSLATORS: all-day event range within the same month of a past or future year.
+#. {month} month name, {day_start} and {day_end} day numbers, {year} year.
+#: src/utils/timeframe_label.rs:124
+#, rust-format
+msgid "{month} {day_start} – {day_end}, {year}"
+msgstr "{day_start} – {day_end} {month} {year}"
+
+#. e.g. "June 12 – July 3"
+#. TRANSLATORS: all-day event range spanning different months in the current year.
+#. {month_start} and {month_end} month names, {day_start} and {day_end} day numbers.
+#: src/utils/timeframe_label.rs:138
+#, rust-format
+msgid "{month_start} {day_start} – {month_end} {day_end}"
+msgstr "{day_start} {month_start} – {day_end} {month_end}"
+
+#. e.g. "June 12 – July 3, 2025"
+#. TRANSLATORS: all-day event range spanning different months in a past or future year.
+#. {month_start} and {month_end} month names, {day_start} and {day_end} day numbers,
+#. {year} the shared year.
+#: src/utils/timeframe_label.rs:153
+#, rust-format
+msgid "{month_start} {day_start} – {month_end} {day_end}, {year}"
+msgstr "{day_start} {month_start} – {day_end} {month_end} {year}"
+
+#. e.g. "June 12, 2024 – January 3, 2025"
+#. TRANSLATORS: all-day event range spanning different years.
+#. {month_start} and {month_end} month names, {day_start} and {day_end} day numbers,
+#. {year_start} and {year_end} years.
+#: src/utils/timeframe_label.rs:165
+#, rust-format
+msgid ""
+"{month_start} {day_start}, {year_start} – {month_end} {day_end}, {year_end}"
+msgstr ""
+"{day_start} {month_start} {year_start} – {day_end} {month_end} {year_end}"
+
+#. e.g. "June 12, 14:00 – 15:30"
+#. TRANSLATORS: timed event on a single day, system timezone (not shown).
+#. {month} month name, {day} day number, {time_start} and {time_end} clock times.
+#: src/utils/timeframe_label.rs:267
+#, rust-format
+msgid "{month} {day}, {time_start} – {time_end}"
+msgstr "{day} {month}, {time_start} – {time_end}"
+
+#. e.g. "June 12, 14:00 (America/New_York) – 15:30 (Europe/Paris)"
+#. TRANSLATORS: timed event on a single day, each time in a different non-system
+#. timezone. {month}, {day}, {time_start}, {time_end} as above;
+#. {tz_start} and {tz_end} the respective IANA timezones.
+#: src/utils/timeframe_label.rs:278
+#, rust-format
+msgid "{month} {day}, {time_start} ({tz_start}) – {time_end} ({tz_end})"
+msgstr "{day} {month}, {time_start} ({tz_start}) – {time_end} ({tz_end})"
+
+#. e.g. "June 12, 14:00 – July 3, 15:30"
+#. TRANSLATORS: timed event spanning months within the current year, system timezone.
+#. {month_start}, {day_start}, {time_start} start date/time;
+#. {month_end}, {day_end}, {time_end} end date/time.
+#: src/utils/timeframe_label.rs:296
+#, rust-format
+msgid ""
+"{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}"
+msgstr ""
+"{day_start} {month_start}, {time_start} – {day_end} {month_end}, {time_end}"
+
+#. e.g. "June 12, 14:00 (America/New_York) – July 3, 15:30 (Europe/Paris)"
+#. TRANSLATORS: cross-month current-year range; each time in a different non-system
+#. timezone. {month_start}, {day_start}, {time_start}, {month_end}, {day_end},
+#. {time_end} as above; {tz_start} and {tz_end} respective IANA timezones.
+#: src/utils/timeframe_label.rs:314
+#, rust-format
+msgid ""
+"{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} "
+"{day_end}, {time_end} ({tz_end})"
+msgstr ""
+"{day_start} {month_start}, {time_start} ({tz_start}) – {day_end} "
+"{month_end}, {time_end} ({tz_end})"
+
+#. e.g. "June 12, 14:00 – July 3, 15:30, 2025"
+#. TRANSLATORS: timed event spanning months within a past or future year, system
+#. timezone. {month_start}, {day_start}, {time_start}, {month_end}, {day_end},
+#. {time_end} as above; {year} the shared year.
+#: src/utils/timeframe_label.rs:334
+#, rust-format
+msgid ""
+"{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}, "
+"{year}"
+msgstr ""
+"{day_start} {month_start} {year}, {time_start} – {day_end} {month_end} "
+"{year}, {time_end}"
+
+#. e.g. "June 12, 14:00 (America/New_York) – July 3, 15:30 (Europe/Paris), 2025"
+#. TRANSLATORS: cross-month past/future-year range; each time in a different non-system
+#. timezone. {month_start}, {day_start}, {time_start}, {month_end}, {day_end},
+#. {time_end}, {year} as above; {tz_start} and {tz_end} respective IANA timezones.
+#: src/utils/timeframe_label.rs:353
+#, rust-format
+msgid ""
+"{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} "
+"{day_end}, {time_end} ({tz_end}), {year}"
+msgstr ""
+"{day_start} {month_start} {year}, {time_start} ({tz_start}) – {day_end} "
+"{month_end} {year}, {time_end} ({tz_end})"
+
+#. e.g. "June 12, 2024, 14:00 – January 3, 2025, 15:30"
+#. TRANSLATORS: timed event spanning different years, system timezone.
+#. {month_start}, {day_start}, {year_start}, {time_start} start date/time;
+#. {month_end}, {day_end}, {year_end}, {time_end} end date/time.
+#: src/utils/timeframe_label.rs:369
+#, rust-format
+msgid ""
+"{month_start} {day_start}, {year_start}, {time_start} – {month_end} "
+"{day_end}, {year_end}, {time_end}"
+msgstr ""
+"{day_start} {month_start} {year_start}, {time_start} – {day_end} {month_end} "
+"{year_end}, {time_end}"
+
+#. e.g. "June 12, 2024, 14:00 (America/New_York) – January 3, 2025, 15:30
+#. (Europe/Paris)" TRANSLATORS: different-year range; each time in a
+#. different non-system timezone. {month_start}, {day_start}, {year_start},
+#. {time_start}, {month_end}, {day_end}, {year_end}, {time_end} as above;
+#. {tz_start} and {tz_end} respective IANA timezones.
+#: src/utils/timeframe_label.rs:385
+#, rust-format
+msgid ""
+"{month_start} {day_start}, {year_start}, {time_start} ({tz_start}) – "
+"{month_end} {day_end}, {year_end}, {time_end} ({tz_end})"
+msgstr ""
+"{day_start} {month_start} {year_start}, {time_start} ({tz_start}) – "
+"{day_end} {month_end} {year_end}, {time_end} ({tz_end})"
+
+#: src/widgets/window.rs:547
+msgid "%Y"
+msgstr "%Y"
+
+#: src/widgets/window.rs:556 src/widgets/window.rs:565
+msgid "%0B %Y"
+msgstr "%OB %Y"
+
+#~ msgid "GTK;"
+#~ msgstr "GTK;Kalendarz;Terminarz;Planer;Wydarzenia;Wydarzenie;Event;Eventy;Spotkanie;Spotkania;Wizyta;Wizyty;Przypomnienia;Planowanie;"
+
+#~ msgid "Era"
+#~ msgstr "Era"
+
+#~ msgid "No good way to change color in the UI yet"
+#~ msgstr "Jeszcze nie ma dobrego sposobu na zmianę koloru w interfejsie"
+
+#~ msgid "monday"
+#~ msgstr "poniedziałek"
+
+#~ msgid "tuesday"
+#~ msgstr "wtorek"
+
+#~ msgid "wednesday"
+#~ msgstr "środa"
+
+#~ msgid "thursday"
+#~ msgstr "czwartek"
+
+#~ msgid "friday"
+#~ msgstr "piątek"
+
+#~ msgid "saturday"
+#~ msgstr "sobota"
+
+#~ msgid "sunday"
+#~ msgstr "niedziela"
+
+#~ msgid "MON"
+#~ msgstr "pon."
+
+#~ msgid "TUE"
+#~ msgstr "wt."
+
+#~ msgid "WED"
+#~ msgstr "śr."
+
+#~ msgid "THU"
+#~ msgstr "czw."
+
+#~ msgid "FRI"
+#~ msgstr "pt."
+
+#~ msgid "SAT"
+#~ msgstr "sob."
+
+#~ msgid "SUN"
+#~ msgstr "ndz."
+
+#~ msgid "january"
+#~ msgstr "styczeń"
+
+#~ msgid "february"
+#~ msgstr "luty"
+
+#~ msgid "march"
+#~ msgstr "marzec"
+
+#~ msgid "april"
+#~ msgstr "kwiecień"
+
+#~ msgid "may"
+#~ msgstr "maj"
+
+#~ msgid "june"
+#~ msgstr "czerwiec"
+
+#~ msgid "july"
+#~ msgstr "lipiec"
+
+#~ msgid "august"
+#~ msgstr "sierpień"
+
+#~ msgid "september"
+#~ msgstr "wrzesień"
+
+#~ msgid "october"
+#~ msgstr "październik"
+
+#~ msgid "november"
+#~ msgstr "listopad"
+
+#~ msgid "december"
+#~ msgstr "grudzień"
+
+#~ msgid "January"
+#~ msgstr "styczeń"
+
+#~ msgid "February"
+#~ msgstr "luty"
+
+#~ msgid "March"
+#~ msgstr "marzec"
+
+#~ msgid "April"
+#~ msgstr "kwiecień"
+
+#~ msgid "May"
+#~ msgstr "maj"
+
+#~ msgid "June"
+#~ msgstr "czerwiec"
+
+#~ msgid "July"
+#~ msgstr "lipiec"
+
+#~ msgid "August"
+#~ msgstr "sierpień"
+
+#~ msgid "September"
+#~ msgstr "wrzesień"
+
+#~ msgid "October"
+#~ msgstr "październik"
+
+#~ msgid "November"
+#~ msgstr "listopad"
+
+#~ msgid "December"
+#~ msgstr "grudzień"
+
+#~ msgid "Jan"
+#~ msgstr "sty."
+
+#~ msgid "Feb"
+#~ msgstr "lut."
+
+#~ msgid "Mar"
+#~ msgstr "mar."
+
+#~ msgid "Apr"
+#~ msgstr "kwi."
+
+#~ msgid "Jun"
+#~ msgstr "cze."
+
+#~ msgid "Jul"
+#~ msgstr "lip."
+
+#~ msgid "Aug"
+#~ msgstr "sie."
+
+#~ msgid "Sep"
+#~ msgstr "wrz."
+
+#~ msgid "Oct"
+#~ msgstr "paź."
+
+#~ msgid "Nov"
+#~ msgstr "lis."
+
+#~ msgid "Dec"
+#~ msgstr "gru."
