@@ -17,14 +17,17 @@ mod imp {
     #[template(file = "data/resources/ui/calendar_management_dialog/calendar_details_page.blp")]
     #[properties(wrapper_type = super::CalendarDetailsPage)]
     pub struct CalendarDetailsPage {
-        #[property(get, construct_only)]
-        calendar: RefCell<Option<Calendar>>,
         #[template_child]
         toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
         name: TemplateChild<adw::EntryRow>,
         #[template_child]
         remove: TemplateChild<LoadingButtonRow>,
+        #[template_child]
+        confirmation: TemplateChild<adw::AlertDialog>,
+
+        #[property(get, construct_only)]
+        calendar: RefCell<Option<Calendar>>,
     }
 
     #[glib::object_subclass]
@@ -117,6 +120,20 @@ mod imp {
 
         #[template_callback]
         async fn remove_calendar(&self) {
+            match self
+                .confirmation
+                .get()
+                .choose_future(Some(&*self.obj()))
+                .await
+                .as_str()
+            {
+                "cancel" => {
+                    return;
+                }
+                "delete" => {}
+                _ => unreachable!(),
+            }
+
             self.remove.set_is_loading(true);
             self.name.set_sensitive(false);
             let calendar = self

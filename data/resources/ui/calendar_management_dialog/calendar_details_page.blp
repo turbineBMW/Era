@@ -29,7 +29,7 @@ template $CalendarDetailsPage: Adw.NavigationPage {
           visible: bind template.calendar as <Clepsydre.Calendar>.removable;
 
           $LoadingButtonRow remove {
-            title: _("Remove Calendar");
+            title: _("Delete Calendar");
             activated => $remove_calendar(template);
 
             styles [
@@ -40,4 +40,16 @@ template $CalendarDetailsPage: Adw.NavigationPage {
       };
     }
   };
+}
+
+Adw.AlertDialog confirmation {
+  heading: _("Delete Calendar?");
+  body: _("The calendar and all events in it will be permanently deleted.");
+  close-response: "cancel";
+  default-response: "cancel";
+
+  responses [
+    cancel: _("Cancel"),
+    delete: _("Delete") destructive,
+  ]
 }
