@@ -2,9 +2,16 @@ use jiff::ToSpan;
 
 use crate::utils::WeekDay;
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, glib::Boxed)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, glib::Boxed)]
 #[boxed_type(name = "EraDate")]
 pub struct Date(jiff::civil::Date);
+
+// jiff defaults Date to 0-0-0, which doesn't exist
+impl Default for Date {
+    fn default() -> Self {
+        Self(jiff::civil::Date::new(1, 1, 1).unwrap())
+    }
+}
 
 impl From<jiff::civil::Date> for Date {
     fn from(value: jiff::civil::Date) -> Self {

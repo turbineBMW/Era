@@ -17,7 +17,7 @@ use super::{event_drag_payload::EventDragPayload, month_view_inner::MonthViewInn
 mod imp {
     use super::*;
 
-    #[derive(Debug, gtk::CompositeTemplate, glib::Properties)]
+    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
     #[template(file = "data/resources/ui/views/month_view/month_view_cell.blp")]
     #[properties(wrapper_type = super::MonthViewCell)]
     pub struct MonthViewCell {
@@ -36,22 +36,6 @@ mod imp {
         month_name: TemplateChild<gtk::Label>,
         #[template_child]
         drop_target: TemplateChild<gtk::DropTarget>,
-    }
-
-    impl Default for MonthViewCell {
-        fn default() -> Self {
-            let date: Date = jiff::civil::Date::new(1, 1, 1).unwrap().into();
-
-            Self {
-                date: Cell::new(date),
-                styling: Cell::default(),
-                header: TemplateChild::default(),
-                day_number: TemplateChild::default(),
-                month_abbreviation: TemplateChild::default(),
-                month_name: TemplateChild::default(),
-                drop_target: TemplateChild::default(),
-            }
-        }
     }
 
     #[glib::object_subclass]

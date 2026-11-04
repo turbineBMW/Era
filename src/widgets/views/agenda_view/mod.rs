@@ -163,6 +163,21 @@ mod imp {
         }
 
         #[template_callback]
+        fn setup_row(&self, item: gtk::ListItem, _factory: gtk::SignalListItemFactory) {
+            let row = AgendaViewRow::new();
+
+            self.obj()
+                .bind_property("date", &row, "date")
+                .sync_create()
+                .build();
+            item.bind_property("item", &row, "event")
+                .sync_create()
+                .build();
+
+            item.set_child(Some(&row));
+        }
+
+        #[template_callback]
         fn open_event_details(&self, item: u32) {
             let obj = self.obj();
             let event = self

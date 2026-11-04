@@ -26,6 +26,6 @@ data/resources/ui/views/month_view/month_view_inner.blp
 data/resources/ui/views/year_view/year_view_floating_controls.blp
 data/resources/ui/window.blp
 src/application.rs
-src/utils/template_callbacks.rs
 src/utils/timeframe_label.rs
+src/widgets/views/agenda_view/agenda_view_row.rs
 src/widgets/window.rs

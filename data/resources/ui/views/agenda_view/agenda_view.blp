@@ -56,12 +56,8 @@ template $AgendaView: Adw.Bin {
                   };
                 };
 
-                factory: BuilderListItemFactory {
-                  template ListItem {
-                    child: $AgendaViewRow {
-                      event: bind template.item as <Clepsydre.Event>;
-                    };
-                  }
+                factory: SignalListItemFactory {
+                  setup => $setup_row(template);
                 };
 
                 activate => $open_event_details(template);

@@ -38,19 +38,31 @@ template $AgendaViewRow: Box {
     Box {
       orientation: vertical;
 
-      Label {
-        label: bind $get_start_time(
-          template.event as <Clepsydre.Event>.timeframe.start,
-          template.event as <Clepsydre.Event>.timeframe.all-day
+      Label top_label {
+        label: bind $top_label(
+          template.event as <Clepsydre.Event>.timeframe,
+          template.date,
+          template.root as <Window>.application as <$EraApplication>.system as <$EraSystem>.datetime,
+          template
+            .root as <Window>
+            .application as <$EraApplication>
+            .system as <$EraSystem>
+            .clock-format as <$ClockFormat>
           );
         xalign: 1.0;
         use-markup: false;
       }
 
-      Label {
-        label: bind $get_end_time(
-          template.event as <Clepsydre.Event>.timeframe.end,
-          template.event as <Clepsydre.Event>.timeframe.all-day
+      Label bottom_label {
+        label: bind $bottom_label(
+          template.event as <Clepsydre.Event>.timeframe,
+          template.date,
+          template.root as <Window>.application as <$EraApplication>.system as <$EraSystem>.datetime,
+          template
+            .root as <Window>
+            .application as <$EraApplication>
+            .system as <$EraSystem>
+            .clock-format as <$ClockFormat>
           );
         xalign: 1.0;
         use-markup: false;

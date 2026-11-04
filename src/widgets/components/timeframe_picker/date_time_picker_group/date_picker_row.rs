@@ -9,7 +9,7 @@ use crate::utils::Date;
 mod imp {
     use super::*;
 
-    #[derive(Debug, gtk::CompositeTemplate, glib::Properties)]
+    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
     #[template(file = "data/resources/ui/components/timeframe_picker/date_picker_row.blp")]
     #[properties(wrapper_type = super::DatePickerRow)]
     pub struct DatePickerRow {
@@ -22,19 +22,6 @@ mod imp {
         button_focus: TemplateChild<EventControllerFocus>,
         #[template_child]
         calendar: TemplateChild<gtk::Calendar>,
-    }
-
-    impl Default for DatePickerRow {
-        fn default() -> Self {
-            let date = jiff::civil::Date::new(1, 1, 1).unwrap();
-
-            Self {
-                date: Cell::new(Date::from(date)),
-                row_focus: TemplateChild::default(),
-                button_focus: TemplateChild::default(),
-                calendar: TemplateChild::default(),
-            }
-        }
     }
 
     #[glib::object_subclass]
