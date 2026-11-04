@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="@gettext-package@">
-	<schema id="@app-id@" path="@resource-path@">
-	</schema>
+    <schema id="@app-id@" path="@resource-path@">
+        <key name="last-view" type="s">
+            <choices>
+                <choice value="year"/>
+                <choice value="month"/>
+                <choice value="agenda"/>
+            </choices>
+            <default>'year'</default>
+            <summary>Last shown view</summary>
+            <description>The calendar view to display when opening the application.</description>
+        </key>
+    </schema>
 </schemalist>

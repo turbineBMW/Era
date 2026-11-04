@@ -1,4 +1,5 @@
 data/org.gnome.gitlab.TitouanReal.Era.desktop.in.in
+data/org.gnome.gitlab.TitouanReal.Era.gschema.xml.in
 data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in
 data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp
 data/resources/ui/calendar_management_dialog/calendar_details_page.blp

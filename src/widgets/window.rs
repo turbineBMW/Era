@@ -9,7 +9,9 @@ use jiff::ToSpan;
 use tracing::warn;
 
 use crate::{
-    Application, spawn,
+    Application,
+    config::APP_ID,
+    spawn,
     utils::{Date, EventPropertiesPreset},
     widgets::{
         CalendarManagementDialog, EventCreationDialog, ImportDialog, SearchDialog, Sidebar,
@@ -69,6 +71,7 @@ pub mod imp {
         import_dialog: TemplateChild<ImportDialog>,
 
         wide_view_stack_visible_child_name_handler_id: OnceCell<glib::SignalHandlerId>,
+        settings: OnceCell<gio::Settings>,
         colors_provider: gtk::CssProvider,
     }
 
@@ -440,6 +443,15 @@ pub mod imp {
             self.wide_view_stack_visible_child_name_handler_id
                 .set(wide_view_stack_visible_child_name_handler_id)
                 .unwrap();
+
+            // This relies on the signal listening to the wide_view_stack::visible-child-name signal
+            // to reconstruct the navigation history of the narrow layout.
+            let settings = gio::Settings::new(APP_ID);
+            settings
+                .bind("last-view", &*self.wide_view_stack, "visible-child-name")
+                .no_sensitivity()
+                .build();
+            self.settings.set(settings).unwrap();
         }
     }
 
