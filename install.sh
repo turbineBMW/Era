@@ -114,13 +114,16 @@ if [[ ! -f $STAMP ]]; then
   ln -sf libclepsydre-0.so.0 "$STAGE/lib/libclepsydre-0.so"
   ln -sf libclepsydre-0.so.0 "$STAGE/lib/libclepsydre.so"  # what clepsydre-sys links
   install -m644 "$SRC/clepsydre/include/clepsydre.h" "$STAGE/include/clepsydre-0/"
+  # libclepsydre-eds asks for a minimum clepsydre-0 version, so take it from clepsydre itself.
+  CLEPSYDRE_VERSION=$(sed -n "s/^[[:space:]]*version: '\([0-9.]*\)'.*/\1/p" "$SRC/meson.build" | head -1)
+  [[ -n $CLEPSYDRE_VERSION ]] || { echo "no version in clepsydre's meson.build" >&2; exit 1; }
   cat > "$STAGE/lib/pkgconfig/clepsydre-0.pc" <<EOF
 prefix=$STAGE
 libdir=\${prefix}/lib
 includedir=\${prefix}/include
 Name: clepsydre-0
 Description: Clepsydre: Manage calendars and events
-Version: 0.1.0
+Version: $CLEPSYDRE_VERSION
 Requires: gio-2.0 gtk4
 Libs: -L\${libdir} -lclepsydre-0
 Cflags: -I\${includedir}/clepsydre-0
