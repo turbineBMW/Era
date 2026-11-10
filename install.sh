@@ -93,7 +93,7 @@ fi
 REV=$(sed -n 's|^source = "git+https://gitlab.gnome.org/TitouanReal/clepsydre.git#\(.*\)"|\1|p' Cargo.lock | head -1)
 [[ -n $REV ]] || { echo "no clepsydre commit in Cargo.lock" >&2; exit 1; }
 SRC="$WORK/clepsydre"
-STAMP="$STAGE/.built-$REV-$BACKEND"
+STAMP="$STAGE/.built-$REV-$BACKEND-$(uname -m)"  # a target/ copied from another machine has foreign libraries
 
 if [[ ! -f $STAMP ]]; then
   echo "==> building clepsydre ${REV:0:10}"
