@@ -78,7 +78,7 @@ Everything substantial is in new files, which cannot conflict:
   `layout_utils`, `MonthViewEvent` and `MonthViewOverflow` unchanged
 - `src/preferences/`, `data/resources/ui/preferences/`: the settings and their popover
 - `src/widgets/phone.rs`: the phone layout (the `phone` feature)
-- `install.sh`, `scripts/sync-upstream.sh`, `.github/workflows/upstream-sync.yml`, this file
+- `install.sh`, `uninstall.sh`, `scripts/sync-upstream.sh`, `.github/workflows/upstream-sync.yml`, this file
 
 Upstream files carry only these hooks, each marked `fork`. When one conflicts,
 keep upstream's version and put the hook back:
@@ -117,6 +117,11 @@ pins, installs them to `$PREFIX/lib/era` with the binary's rpath pointing
 there, and installs the desktop entry, D-Bus service, GSettings schema, icons
 and translations. Build intermediates go in `target/native`. Run it again after
 a sync to upgrade; clepsydre is rebuilt only when its pinned commit changes.
+
+To remove it, run `./uninstall.sh` with the same `PREFIX`. It removes both the
+eds and mock installs (they share the binary) and keeps your settings;
+`--purge` resets them too. Your calendars live in evolution-data-server and
+are never touched. `target/native` stays; delete it to free the space.
 
 Upstream's meson build can't be used here: meson 1.12's Cargo-subproject
 support doesn't run build scripts, which newer `serde` needs. So `install.sh`
