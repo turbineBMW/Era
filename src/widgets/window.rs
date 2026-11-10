@@ -453,10 +453,6 @@ pub mod imp {
                 .build();
             self.settings.set(settings).unwrap();
 
-            // fork: open on the view chosen in the settings, over upstream's last-view
-            self.wide_view_stack
-                .set_visible_child_name(&crate::preferences::default_view());
-
             // fork: the phone layout
             #[cfg(feature = "phone")]
             super::super::phone::setup(&self.obj(), &self.narrow_navigation_view);

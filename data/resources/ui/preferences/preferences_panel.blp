@@ -28,19 +28,6 @@ template $PreferencesPanel: Adw.Bin {
         "boxed-list",
       ]
 
-      Adw.ComboRow default_view_row {
-        title: _("Default View");
-        subtitle: _("Shown when Era opens");
-
-        model: StringList {
-          strings [
-            _("Year"),
-            _("Month"),
-            _("Agenda"),
-          ]
-        };
-      }
-
       Adw.SwitchRow week_starts_on_sunday_row {
         title: _("Week Starts on Sunday");
       }

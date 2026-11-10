@@ -1,5 +1,5 @@
-//! User preferences: the view Era opens on, and whether weeks start on
-//! Sunday.
+//! User preferences: whether weeks start on Sunday. (Upstream remembers the
+//! last view itself, in `last-view`.)
 //!
 //! Fork-only: upstream Era has no preferences. Everything lives in this
 //! directory; elsewhere there are only the one-line hooks listed in FORK.md.
@@ -17,11 +17,7 @@ pub use self::panel::PreferencesPanel;
 
 use crate::{application::Application, config::APP_ID, utils::WeekDay};
 
-pub const DEFAULT_VIEW: &str = "default-view";
 pub const WEEK_STARTS_ON_SUNDAY: &str = "week-starts-on-sunday";
-
-/// The values `default-view` can take, in the order the panel lists them.
-pub const VIEWS: [&str; 3] = ["year", "month", "agenda"];
 
 thread_local! {
     static SETTINGS: OnceCell<Option<gio::Settings>> = const { OnceCell::new() };
@@ -38,21 +34,11 @@ pub fn settings() -> Option<gio::Settings> {
             .get_or_init(|| {
                 gio::SettingsSchemaSource::default()
                     .and_then(|source| source.lookup(APP_ID, true))
-                    .filter(|schema| {
-                        schema.has_key(DEFAULT_VIEW) && schema.has_key(WEEK_STARTS_ON_SUNDAY)
-                    })
+                    .filter(|schema| schema.has_key(WEEK_STARTS_ON_SUNDAY))
                     .map(|_| gio::Settings::new(APP_ID))
             })
             .clone()
     })
-}
-
-/// Name of the view to open on: "year", "month" or "agenda".
-pub fn default_view() -> String {
-    settings().map_or_else(
-        || "month".to_owned(),
-        |settings| settings.string(DEFAULT_VIEW).into(),
-    )
 }
 
 /// Hook for `System::set_first_week_day`: remembers the desktop's value and

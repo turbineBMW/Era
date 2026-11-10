@@ -25,8 +25,9 @@ upstream's endless scroll. The days of the neighbouring months that complete the
 first and last week are greyed. *Today*, ‹ and › in the header bar (or the mouse
 wheel, a touchpad scroll, a swipe, Alt+↑/↓) move between months.
 
-The gear in the sidebar's header opens the settings: the view Era opens on, and
-*Week Starts on Sunday*, which overrides the desktop's first day of the week.
+The gear in the sidebar's header opens the settings: *Week Starts on Sunday*,
+which overrides the desktop's first day of the week. (Era reopens on the last
+view used; that is upstream's own `last-view`.)
 
 The `phone` cargo feature builds Era for a phone shell
 ([omarchy-mobile](https://github.com/turbineBMW/omarchy-mobile), where it is
@@ -85,9 +86,8 @@ keep upstream's version and put the hook back:
 | File | Hook |
 |------|------|
 | `src/main.rs` | `mod omarchy;`, `mod preferences;` and the two `application.connect_startup(...)` lines right after `Application::new` |
-| `data/org.gnome.gitlab.TitouanReal.Era.gschema.xml.in` | the `follow-omarchy-theme`, `default-view` and `week-starts-on-sunday` keys |
+| `data/org.gnome.gitlab.TitouanReal.Era.gschema.xml.in` | the `follow-omarchy-theme` and `week-starts-on-sunday` keys |
 | `data/resources/ui/window.blp` | first section of `menu primary_menu`: the *Follow Omarchy Theme* item; *Today* and the ‹ › box before the title label in the medium layout's header bar, and the ‹ › box in the narrow month page's action bar |
-| `src/widgets/window.rs` | end of `constructed`: open on `preferences::default_view()` |
 | `src/system/mod.rs` | `set_first_week_day` is `pub(crate)` and passes the value through `preferences::first_week_day` |
 | `src/widgets/views/month_view/mod.rs` | the `mod` lines, `inner` typed `MonthViewPaged`, and `MonthView`'s `scroll_*`/`zoom_*` methods |
 | `data/resources/ui/views/month_view/month_view.blp` | `$MonthViewPaged inner` in place of `$MonthViewInner inner` |
@@ -96,7 +96,7 @@ keep upstream's version and put the hook back:
 | `src/system/flatpak.rs` | the system bus is optional, and without it (or timedate1) the time zone is the local one: a sandbox may have no system bus (omarchy-mobile's has none) |
 | `Cargo.toml` | the `phone` feature |
 | `src/widgets/mod.rs` | `mod phone;` under `#[cfg(feature = "phone")]` |
-| `src/widgets/window.rs` | end of `constructed`, after the default view: `phone::setup(...)` under `#[cfg(feature = "phone")]` |
+| `src/widgets/window.rs` | end of `constructed`, after upstream's `last-view` binding: `phone::setup(...)` under `#[cfg(feature = "phone")]` |
 | `build-aux/org.gnome.gitlab.TitouanReal.Era.Eds.Devel.json` | `--filesystem=~/.local/state/omarchy:ro` in `finish-args` |
 
 If upstream ever gets a preferences dialog, these settings and the Omarchy
