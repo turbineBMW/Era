@@ -27,7 +27,7 @@ use crate::{
 
 use super::{
     layout_utils::{
-        EventLayout, RowOverflow, build_event_layouts, compute_event_segments, stack_event_segments,
+        EventLayout, RowOverflow, StackedSegment, compute_event_segments, stack_event_segments,
     },
     month_view_event::MonthViewEvent,
     month_view_overflow::MonthViewOverflow,
@@ -754,7 +754,7 @@ mod imp {
 
             for segment in &segments {
                 let event = segment.event.clone();
-                let uri = event.uri().unwrap();
+                let uri = event.uri();
 
                 if !self.connected_event_uris.borrow_mut().insert(uri) {
                     continue;
@@ -824,5 +824,47 @@ impl MonthViewPaged {
 
     pub fn next_month(&self) {
         self.imp().turn_page(1);
+    }
+}
+
+/// Assigns the pooled event widgets to the stacked segments, row by row.
+///
+/// Upstream dropped this helper from `layout_utils` when it moved the scrolling month view to
+/// an event widget pool; the paged view keeps its simpler pool of widgets.
+fn build_event_layouts(
+    event_widgets: &[MonthViewEvent],
+    stacked_segments_by_row: &[Vec<StackedSegment>],
+) -> Vec<Vec<EventLayout>> {
+    let mut event_widgets = event_widgets.iter();
+
+    stacked_segments_by_row
+        .iter()
+        .map(|row_stacked_segments| {
+            row_stacked_segments
+                .iter()
+                .map(|stacked_segment| {
+                    let event_widget = event_widgets.next().unwrap();
+
+                    event_widget.set_event(Some(&stacked_segment.event));
+                    set_css_class(event_widget, "start", stacked_segment.is_first_segment_of_event);
+                    set_css_class(event_widget, "end", stacked_segment.is_last_segment_of_event);
+
+                    EventLayout {
+                        widget: event_widget.clone(),
+                        column_start: stacked_segment.column_start,
+                        column_end: stacked_segment.column_end,
+                        stack_row: stacked_segment.stack_row,
+                    }
+                })
+                .collect()
+        })
+        .collect()
+}
+
+fn set_css_class(widget: &MonthViewEvent, class: &str, enabled: bool) {
+    if enabled {
+        widget.add_css_class(class);
+    } else {
+        widget.remove_css_class(class);
     }
 }

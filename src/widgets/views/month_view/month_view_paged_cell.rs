@@ -122,7 +122,7 @@ mod imp {
                 }
                 Styling::Medium | Styling::Wide => {
                     if day == 1 {
-                        let month = TemplateCallbacks::date_get_month_abbreviation(date);
+                        let month = TemplateCallbacks::date_format(date, "%0b");
                         self.day.set_label(&format!("{month} {day}"));
                     } else {
                         self.day.set_label(&day.to_string());
