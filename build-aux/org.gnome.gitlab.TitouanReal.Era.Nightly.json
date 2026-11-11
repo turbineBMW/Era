@@ -30,7 +30,8 @@
         "build-args": ["--share=network"],
         "env": {
             "RUST_BACKTRACE": "1",
-            "RUST_LOG": "era=debug"
+            "RUST_LOG": "era=debug",
+            "GI_TYPELIB_PATH": "subprojects/clepsydre/clepsydre:subprojects/clepsydre-eds/libclepsydre-eds"
         }
     },
     "modules": [
@@ -117,30 +118,6 @@
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/evolution-data-server.git",
                     "commit": "757672184698ec9f46cc16cf8860ec312d1e9d36"
-                }
-            ]
-        },
-        {
-            "name": "libclepsydre",
-            "buildsystem": "meson",
-            "config-opts": ["-Dlibclepsydre=true", "-Dintrospection=true"],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-                    "commit": "e047bd6a67445f32719db2019bf3913f5860bbe0"
-                }
-            ]
-        },
-        {
-            "name": "libclepsydre-eds",
-            "buildsystem": "meson",
-            "config-opts": ["-Dlibclepsydre-eds=true", "-Dintrospection=true"],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-                    "commit": "e047bd6a67445f32719db2019bf3913f5860bbe0"
                 }
             ]
         },

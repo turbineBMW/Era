@@ -20,15 +20,26 @@ era_deps = []
 
 era_deps += dependency('gtk4', version: '>= 4.22')
 era_deps += dependency('libadwaita-1', version: '>= 1.9')
+
+clepsydre_default_options = {
+    'libclepsydre': true,
+}
+
+# TODO: Even though instrospection is always required, it doesn't work for the Android build.
+# This is caused by cross-compiling issue. The Android build works around that by building the
+# git files separately.
+if platform != 'android'
+    clepsydre_default_options += {
+        'introspection': true,
+    }
+endif
+
 era_deps += dependency(
     'clepsydre-0',
     version: '>= 0.3',
-    default_options: {
-        'libclepsydre': true,
-            # TODO: In theory it's needed, but Android cross-build don't handle it
-            # 'introspection': true,
-    },
+    default_options: clepsydre_default_options,
 )
+
 # TODO: Remove this once Meson handles git dependencies better
 era_deps += dependency(
     'clepsydre-rebind-0.3-rs',

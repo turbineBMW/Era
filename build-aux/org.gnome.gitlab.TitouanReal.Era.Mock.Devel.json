@@ -27,7 +27,8 @@
         "build-args": ["--share=network"],
         "env": {
             "RUST_BACKTRACE": "1",
-            "RUST_LOG": "era=debug"
+            "RUST_LOG": "era=debug",
+            "GI_TYPELIB_PATH": "subprojects/clepsydre/clepsydre:subprojects/clepsydre-eds/libclepsydre-eds"
         }
     },
     "modules": [
@@ -65,18 +66,6 @@
                     "type": "git",
                     "url": "https://github.com/TitouanReal/meson",
                     "branch": "cargo-env"
-                }
-            ]
-        },
-        {
-            "name": "libclepsydre",
-            "buildsystem": "meson",
-            "config-opts": ["-Dlibclepsydre=true", "-Dintrospection=true"],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/TitouanReal/clepsydre.git",
-                    "commit": "e047bd6a67445f32719db2019bf3913f5860bbe0"
                 }
             ]
         },
