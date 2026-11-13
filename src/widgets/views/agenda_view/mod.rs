@@ -16,6 +16,8 @@ mod agenda_view_row;
 use self::agenda_view_row::AgendaViewRow;
 
 mod imp {
+    use gettextrs::gettext;
+
     use super::*;
 
     #[derive(Debug, gtk::CompositeTemplate, glib::Properties)]
@@ -158,8 +160,31 @@ mod imp {
 
         #[template_callback]
         fn day_label(&self) -> String {
-            let date = self.date.borrow().to_jiff();
-            format!("{}-{:02}-{:02}", date.year(), date.month(), date.day())
+            let date = self.date.borrow().to_glib_date_time_utc();
+            let day = date.day_of_month();
+            let full_month_name = date.format("%b").unwrap();
+            let abbreviated_month_name = date.format("%B").unwrap();
+            let format = if abbreviated_month_name == full_month_name {
+                // Translators: Used in the agenda view as a header for the list of events that
+                // overlap with a day. %A is the full weekday name. %b is the month name, when the
+                // abbreviated form is the same as the full form. {day} is the day number.
+                // This is the string used when the abbreviated month name is the same as the full
+                // month name. For example, in English, "May 1" will use this string, but Nov. 1
+                // will not.
+                gettext("%A – %b {day}")
+            } else {
+                // Translators: Used in the agenda view as a header for the list of events that
+                // overlap with a day. %A is the full weekday name. %b is the abbreviated month name,
+                // when the abbreviated form is NOT the same as the full form. {day} is the day
+                // number.
+                // This is the string used when the abbreviated month name is NOT the same as the
+                // full month name. For example, in English, "May 1" will NOT use this string,
+                // but Nov. 1 will. In English, this allows to add a "." after the abbreviated month
+                // name.
+                gettext("%A – %b. {day}")
+            };
+            let format = format.replace("{day}", &day.to_string());
+            date.format(&format).unwrap().to_string()
         }
 
         #[template_callback]

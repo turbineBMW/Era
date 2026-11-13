@@ -29,4 +29,5 @@ data/resources/ui/window.blp
 src/application.rs
 src/utils/timeframe_label.rs
 src/widgets/views/agenda_view/agenda_view_row.rs
+src/widgets/views/agenda_view/mod.rs
 src/widgets/window.rs

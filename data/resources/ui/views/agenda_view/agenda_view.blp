@@ -8,38 +8,55 @@ template $AgendaView: Adw.Bin {
   ]
 
   Overlay {
-    Box {
-      orientation: vertical;
+    Stack stack {
+      vexpand: true;
+      // TODO: Use this instead of code
+      // visible-child-name: bind $ternary(
+      //   $is_zero(events.model as <Gio.ListModel> as <Clepsydre.Subscription>.n-items) as <bool>,
+      //   "empty",
+      //   "events"
+      // );
+      StackPage {
+        name: "empty";
 
-      Label {
-        label: bind $day_label(template, template.date);
+        child: Box {
+          orientation: vertical;
 
-        styles [
-          "title-1",
-        ]
-      }
+          Label {
+            label: bind $day_label(template, template.date);
 
-      Stack stack {
-        vexpand: true;
-        // TODO: Use this instead of code
-        // visible-child-name: bind $ternary(
-        //   $is_zero(events.model as <Gio.ListModel> as <Clepsydre.Subscription>.n-items) as <bool>,
-        //   "empty",
-        //   "events"
-        // );
-        StackPage {
-          name: "empty";
+            styles [
+              "title-1",
+            ]
+          }
 
-          child: Adw.StatusPage {
+          Adw.StatusPage {
             icon-name: "loupe-symbolic";
             title: _("No events on this day");
-          };
-        }
+          }
+        };
+      }
 
-        StackPage {
-          name: "events";
+      StackPage {
+        name: "events";
 
-          child: ScrolledWindow {
+        child: Box {
+          orientation: vertical;
+
+          Adw.Clamp {
+            Label {
+              label: bind $day_label(template, template.date);
+              xalign: 0;
+
+              styles [
+                "heading",
+              ]
+            }
+          }
+
+          ScrolledWindow {
+            vexpand: true;
+
             Adw.ClampScrollable {
               ListView events {
                 single-click-activate: true;
@@ -63,8 +80,8 @@ template $AgendaView: Adw.Bin {
                 activate => $open_event_details(template);
               }
             }
-          };
-        }
+          }
+        };
       }
     }
 

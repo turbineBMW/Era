@@ -377,9 +377,15 @@ sidebar {
 }
 
 .agenda-view {
+    .heading {
+        margin-left: 12px;
+        margin-right: 12px;
+        margin-bottom: 6px;
+    }
+
     listview {
-        background-color: transparent;
         margin: 0 9px;
+        background-color: transparent;
 
         > row {
             padding: 6px;
@@ -394,6 +400,7 @@ sidebar {
         > textview {
             border-radius: 8px;
             padding: 8px;
+
             > text {
                 background: none;
             }
