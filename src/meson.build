@@ -1,11 +1,9 @@
-git_prog = find_program('git')
-
-git_cmd = run_command(git_prog, 'rev-parse', '--short', 'HEAD', check: true)
-git_commit = git_cmd.stdout().strip()
-
 if release_type == 'stable'
     version = meson.project_version()
 elif release_type == 'nightly' or release_type == 'devel'
+    git_prog = find_program('git')
+    git_cmd = run_command(git_prog, 'rev-parse', '--short', 'HEAD', check: true)
+    git_commit = git_cmd.stdout().strip()
     version = git_commit
 endif
 
