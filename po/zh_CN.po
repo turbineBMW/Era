@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: era main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/TitouanReal/era/issues/\n"
-"POT-Creation-Date: 2026-10-18 12:42+0000\n"
-"PO-Revision-Date: 2026-10-19 08:24+0800\n"
+"POT-Creation-Date: 2026-11-04 18:13+0000\n"
+"PO-Revision-Date: 2026-11-13 09:28+0800\n"
 "Last-Translator: lumingzh <lumingzh@qq.com>\n"
 "Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -29,6 +29,14 @@ msgid "calendar;planner;schedule;agenda;appointment;appointments;organizer;meeti
 msgstr ""
 "calendar;planner;schedule;agenda;appointment;appointments;organizer;meeting;meetings;event;events;reminder;reminders;caldav;"
 "日历;计划;规划;日程;安排;约会;组织者;会议;见面;事件;提醒;"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.gschema.xml.in:11
+msgid "Last shown view"
+msgstr "上次显示的视图"
+
+#: data/org.gnome.gitlab.TitouanReal.Era.gschema.xml.in:12
+msgid "The calendar view to display when opening the application."
+msgstr "打开该应用程序时显示的日历视图。"
 
 #: data/org.gnome.gitlab.TitouanReal.Era.metainfo.xml.in.in:8
 msgid "Manage your time"
@@ -125,6 +133,7 @@ msgid "Flow Details"
 msgstr "流详情"
 
 #: data/resources/ui/calendar_management_dialog/calendar_creation_dialog.blp:42
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:52
 #: data/resources/ui/event_creation_dialog.blp:47
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:272
 #: data/resources/ui/import_dialog.blp:18
@@ -146,14 +155,26 @@ msgid "Color"
 msgstr "颜色"
 
 #: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:32
-msgid "Remove Calendar"
-msgstr "移除日历"
+msgid "Delete Calendar"
+msgstr "删除日历"
 
-#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:51
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:46
+msgid "Delete Calendar?"
+msgstr "删除日历吗？"
+
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:47
+msgid "The calendar and all events in it will be permanently deleted."
+msgstr "该日历和其包含的所有事件都将永久删除。"
+
+#: data/resources/ui/calendar_management_dialog/calendar_details_page.blp:53
+msgid "Delete"
+msgstr "删除"
+
+#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:50
 msgid "Read only"
 msgstr "只读"
 
-#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:58
+#: data/resources/ui/calendar_management_dialog/calendar_management_calendar_row.blp:57
 msgid "Calendar details"
 msgstr "日历详情"
 
@@ -279,7 +300,7 @@ msgstr "会议"
 
 #: data/resources/ui/event_creation_dialog.blp:86
 #: data/resources/ui/event_details_dialog/event_details_dialog.blp:155
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:324
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:321
 msgid "Description"
 msgstr "描述"
 
@@ -376,7 +397,7 @@ msgstr "保存"
 msgid "Title"
 msgstr "标题"
 
-#: data/resources/ui/event_details_dialog/event_details_dialog.blp:335
+#: data/resources/ui/event_details_dialog/event_details_dialog.blp:332
 msgid "Share Event"
 msgstr "分享事件"
 
@@ -496,7 +517,7 @@ msgstr "管理日历"
 msgid "No events on this day"
 msgstr "这天没有事件"
 
-#: data/resources/ui/views/agenda_view/agenda_view.blp:93
+#: data/resources/ui/views/agenda_view/agenda_view.blp:89
 #: data/resources/ui/views/month_view/month_view_floating_controls.blp:19
 #: data/resources/ui/views/year_view/year_view_floating_controls.blp:19
 #: data/resources/ui/window.blp:82 data/resources/ui/window.blp:141
@@ -571,21 +592,21 @@ msgstr "关于纪元(_A)"
 msgid "translator-credits"
 msgstr "lumingzh <lumingzh@qq.com>, 2026"
 
-#: src/utils/timeframe_label.rs:80
+#: src/utils/timeframe_label.rs:83
 msgid "Yesterday"
 msgstr "昨天"
 
-#: src/utils/timeframe_label.rs:81
+#: src/utils/timeframe_label.rs:84
 msgid "Today"
 msgstr "今天"
 
-#: src/utils/timeframe_label.rs:82
+#: src/utils/timeframe_label.rs:85
 msgid "Tomorrow"
 msgstr "明天"
 
 #. TRANSLATORS: date of a single all-day event, of the current year.
 #. {month} is the month name (e.g. "June"), {day} is the day number (e.g. "12").
-#: src/utils/timeframe_label.rs:91
+#: src/utils/timeframe_label.rs:94
 #, rust-format
 msgid "{month} {day}"
 msgstr "{month}{day}日"
@@ -593,7 +614,7 @@ msgstr "{month}{day}日"
 #. TRANSLATORS: date of a single all-day event.
 #. {month} is the month name (e.g. "June"), {day} is the day number (e.g. "12"),
 #. {year} is the year (e.g. "2025").
-#: src/utils/timeframe_label.rs:99
+#: src/utils/timeframe_label.rs:102
 #, rust-format
 msgid "{month} {day}, {year}"
 msgstr "{year}年{month}{day}日"
@@ -601,7 +622,7 @@ msgstr "{year}年{month}{day}日"
 #. e.g. "June 12 – 15"
 #. TRANSLATORS: all-day event range within the same month of the current year.
 #. {month} month name, {day_start} and {day_end} day numbers.
-#: src/utils/timeframe_label.rs:112
+#: src/utils/timeframe_label.rs:115
 #, rust-format
 msgid "{month} {day_start} – {day_end}"
 msgstr "{month}{day_start}日 – {day_end}日"
@@ -609,7 +630,7 @@ msgstr "{month}{day_start}日 – {day_end}日"
 #. e.g. "June 12 – 15, 2025"
 #. TRANSLATORS: all-day event range within the same month of a past or future year.
 #. {month} month name, {day_start} and {day_end} day numbers, {year} year.
-#: src/utils/timeframe_label.rs:121
+#: src/utils/timeframe_label.rs:124
 #, rust-format
 msgid "{month} {day_start} – {day_end}, {year}"
 msgstr "{year}年{month}{day_start}日 – {day_end}日"
@@ -617,7 +638,7 @@ msgstr "{year}年{month}{day_start}日 – {day_end}日"
 #. e.g. "June 12 – July 3"
 #. TRANSLATORS: all-day event range spanning different months in the current year.
 #. {month_start} and {month_end} month names, {day_start} and {day_end} day numbers.
-#: src/utils/timeframe_label.rs:135
+#: src/utils/timeframe_label.rs:138
 #, rust-format
 msgid "{month_start} {day_start} – {month_end} {day_end}"
 msgstr "{month_start}{day_start}日 – {month_end}{day_end}日"
@@ -626,7 +647,7 @@ msgstr "{month_start}{day_start}日 – {month_end}{day_end}日"
 #. TRANSLATORS: all-day event range spanning different months in a past or future year.
 #. {month_start} and {month_end} month names, {day_start} and {day_end} day numbers,
 #. {year} the shared year.
-#: src/utils/timeframe_label.rs:150
+#: src/utils/timeframe_label.rs:153
 #, rust-format
 msgid "{month_start} {day_start} – {month_end} {day_end}, {year}"
 msgstr "{year}年{month_start}{day_start}日 – {month_end}{day_end}日"
@@ -635,7 +656,7 @@ msgstr "{year}年{month_start}{day_start}日 – {month_end}{day_end}日"
 #. TRANSLATORS: all-day event range spanning different years.
 #. {month_start} and {month_end} month names, {day_start} and {day_end} day numbers,
 #. {year_start} and {year_end} years.
-#: src/utils/timeframe_label.rs:162
+#: src/utils/timeframe_label.rs:165
 #, rust-format
 msgid ""
 "{month_start} {day_start}, {year_start} – {month_end} {day_end}, {year_end}"
@@ -645,7 +666,7 @@ msgstr ""
 #. e.g. "June 12, 14:00 – 15:30"
 #. TRANSLATORS: timed event on a single day, system timezone (not shown).
 #. {month} month name, {day} day number, {time_start} and {time_end} clock times.
-#: src/utils/timeframe_label.rs:233
+#: src/utils/timeframe_label.rs:267
 #, rust-format
 msgid "{month} {day}, {time_start} – {time_end}"
 msgstr "{month}{day}日，{time_start} – {time_end}"
@@ -654,7 +675,7 @@ msgstr "{month}{day}日，{time_start} – {time_end}"
 #. TRANSLATORS: timed event on a single day, each time in a different non-system
 #. timezone. {month}, {day}, {time_start}, {time_end} as above;
 #. {tz_start} and {tz_end} the respective IANA timezones.
-#: src/utils/timeframe_label.rs:244
+#: src/utils/timeframe_label.rs:278
 #, rust-format
 msgid "{month} {day}, {time_start} ({tz_start}) – {time_end} ({tz_end})"
 msgstr "{month}{day}日，{time_start}（{tz_start}）– {time_end}（{tz_end}）"
@@ -663,7 +684,7 @@ msgstr "{month}{day}日，{time_start}（{tz_start}）– {time_end}（{tz_end}�
 #. TRANSLATORS: timed event spanning months within the current year, system timezone.
 #. {month_start}, {day_start}, {time_start} start date/time;
 #. {month_end}, {day_end}, {time_end} end date/time.
-#: src/utils/timeframe_label.rs:262
+#: src/utils/timeframe_label.rs:296
 #, rust-format
 msgid ""
 "{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}"
@@ -674,7 +695,7 @@ msgstr ""
 #. TRANSLATORS: cross-month current-year range; each time in a different non-system
 #. timezone. {month_start}, {day_start}, {time_start}, {month_end}, {day_end},
 #. {time_end} as above; {tz_start} and {tz_end} respective IANA timezones.
-#: src/utils/timeframe_label.rs:280
+#: src/utils/timeframe_label.rs:314
 #, rust-format
 msgid ""
 "{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} "
@@ -687,7 +708,7 @@ msgstr ""
 #. TRANSLATORS: timed event spanning months within a past or future year, system
 #. timezone. {month_start}, {day_start}, {time_start}, {month_end}, {day_end},
 #. {time_end} as above; {year} the shared year.
-#: src/utils/timeframe_label.rs:300
+#: src/utils/timeframe_label.rs:334
 #, rust-format
 msgid ""
 "{month_start} {day_start}, {time_start} – {month_end} {day_end}, {time_end}, "
@@ -700,7 +721,7 @@ msgstr ""
 #. TRANSLATORS: cross-month past/future-year range; each time in a different non-system
 #. timezone. {month_start}, {day_start}, {time_start}, {month_end}, {day_end},
 #. {time_end}, {year} as above; {tz_start} and {tz_end} respective IANA timezones.
-#: src/utils/timeframe_label.rs:319
+#: src/utils/timeframe_label.rs:353
 #, rust-format
 msgid ""
 "{month_start} {day_start}, {time_start} ({tz_start}) – {month_end} "
@@ -713,7 +734,7 @@ msgstr ""
 #. TRANSLATORS: timed event spanning different years, system timezone.
 #. {month_start}, {day_start}, {year_start}, {time_start} start date/time;
 #. {month_end}, {day_end}, {year_end}, {time_end} end date/time.
-#: src/utils/timeframe_label.rs:335
+#: src/utils/timeframe_label.rs:369
 #, rust-format
 msgid ""
 "{month_start} {day_start}, {year_start}, {time_start} – {month_end} "
@@ -727,7 +748,7 @@ msgstr ""
 #. different non-system timezone. {month_start}, {day_start}, {year_start},
 #. {time_start}, {month_end}, {day_end}, {year_end}, {time_end} as above;
 #. {tz_start} and {tz_end} respective IANA timezones.
-#: src/utils/timeframe_label.rs:351
+#: src/utils/timeframe_label.rs:385
 #, rust-format
 msgid ""
 "{month_start} {day_start}, {year_start}, {time_start} ({tz_start}) – "
@@ -736,13 +757,37 @@ msgstr ""
 "{year_start}年{month_start}{day_start}日，{time_start}（{tz_start}）– "
 "{year_end}年{month_end}{day_end}日，{time_end}（{tz_end}）"
 
-#: src/widgets/window.rs:547
+#: src/widgets/views/agenda_view/agenda_view_row.rs:104
+#: src/widgets/views/agenda_view/agenda_view_row.rs:113
+msgid "All-day"
+msgstr "全天"
+
+#. TRANSLATORS: last day of a multiday event, eg Day 3/3
+#. {day_count} is the number of days that the event span
+#: src/widgets/views/agenda_view/agenda_view_row.rs:118
+#, rust-format
+msgid "Day {day_count}/{day_count}"
+msgstr "第 {day_count} 天/共 {day_count} 天"
+
+#. TRANSLATORS: day of a multiday event, eg Day 2/3
+#. {day_index} is the index of the day in the event span
+#. {day_count} is the number of days that the event span
+#: src/widgets/views/agenda_view/agenda_view_row.rs:151
+#: src/widgets/views/agenda_view/agenda_view_row.rs:169
+#, rust-format
+msgid "Day {day_index}/{day_count}"
+msgstr "第 {day_index} 天/共 {day_count} 天"
+
+#: src/widgets/window.rs:559
 msgid "%Y"
 msgstr "%Y年"
 
-#: src/widgets/window.rs:556 src/widgets/window.rs:565
+#: src/widgets/window.rs:568 src/widgets/window.rs:577
 msgid "%0B %Y"
 msgstr "%Y年%-m月"
+
+#~ msgid "Remove Calendar"
+#~ msgstr "移除日历"
 
 #~ msgid "GTK;"
 #~ msgstr "GTK;"
