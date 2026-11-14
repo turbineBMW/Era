@@ -11,7 +11,7 @@
             <id>org.gnome.gitlab.TitouanReal.Era</id>
             <name>Era</name>
             <releases>
-                <release version="0.1.0">
+                <release version="0.3.0">
                     <description>
                         <p>Initial Android release</p>
                     </description>
