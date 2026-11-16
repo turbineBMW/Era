@@ -1,0 +1,38 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $MonthViewCellHeader: Adw.Bin {
+  styles [
+    "cell-header",
+  ]
+
+  GestureClick {
+    released => $open_agenda_view_if_contains(template);
+  }
+}
+
+Label day_number {
+  label: bind $date_format(template.date, "%-d");
+
+  styles [
+    "day",
+  ]
+}
+
+Label month_abbreviation {
+  label: bind $date_format(template.date, "%0b");
+  ellipsize: end;
+
+  styles [
+    "month",
+  ]
+}
+
+Label month_name {
+  label: bind $date_format(template.date, "%0B");
+  ellipsize: end;
+
+  styles [
+    "month",
+  ]
+}

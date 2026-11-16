@@ -9,39 +9,8 @@ template $MonthViewCell: Adw.Bin {
     "cell",
   ]
 
-  Adw.Bin header {
-    halign: start;
-    valign: start;
-  }
-
   DropTarget drop_target {
     actions: move;
     drop => $event_drop(template);
   }
-}
-
-Label day_number {
-  label: bind $date_format(template.date, "%-d");
-
-  styles [
-    "day",
-  ]
-}
-
-Label month_abbreviation {
-  label: bind $date_format(template.date, "%0b");
-  ellipsize: end;
-
-  styles [
-    "month",
-  ]
-}
-
-Label month_name {
-  label: bind $date_format(template.date, "%0B");
-  ellipsize: end;
-
-  styles [
-    "month",
-  ]
 }

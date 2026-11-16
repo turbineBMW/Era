@@ -13,8 +13,13 @@ use tracing::{error, warn};
 use crate::{
     application::Application,
     utils::{Date, EventPropertiesPreset},
-    widgets::views::kinetic_scrolling::KineticScrolling,
-    widgets::window::Styling,
+    widgets::{
+        views::{
+            kinetic_scrolling::KineticScrolling,
+            month_view::month_view_cell_header::MonthViewCellHeader,
+        },
+        window::Styling,
+    },
 };
 
 use super::{
@@ -131,6 +136,7 @@ mod imp {
         // A collection of cells used to display the month. The first element might not be the first
         // cell displayed. This is used as a circular set for efficient recycling.
         cells: OnceCell<[MonthViewCell; NB_CELLS]>,
+        cell_headers: OnceCell<[MonthViewCellHeader; NB_CELLS]>,
         column_separators: OnceCell<[gtk::Separator; 6]>,
         row_separators: OnceCell<[gtk::Separator; NB_ROWS]>,
 
@@ -221,6 +227,16 @@ mod imp {
                 cell
             });
 
+            let cell_headers = std::array::from_fn(|i| {
+                let cell_header = MonthViewCellHeader::new(cells[i].date());
+                cells[i]
+                    .bind_property("date", &cell_header, "date")
+                    .sync_create()
+                    .build();
+                cell_header.insert_before(&*self.obj(), Some(&self.floating_controls.get()));
+                cell_header
+            });
+
             let column_separators = std::array::from_fn(|_| {
                 let separator = gtk::Separator::new(gtk::Orientation::Vertical);
                 separator.insert_before(&*self.obj(), Some(&self.floating_controls.get()));
@@ -261,11 +277,13 @@ mod imp {
 
             let (_minimum_event_height, natural_event_height, ..) =
                 event_widgets.widgets()[0].measure(gtk::Orientation::Vertical, -1);
-            let header_height = cells[0].header_height(-1);
+            let (_minimum_header_height, natural_header_height, ..) =
+                cell_headers[0].measure(gtk::Orientation::Vertical, -1);
 
             // TODO: CSS isn't applied yet. We should do this initialisation in the first
             // size_allocate? We could use widget margins?
-            let _initial_cell_height = header_height + 4 * natural_event_height + 3 * EVENT_GAP;
+            let _initial_cell_height =
+                natural_header_height + 4 * natural_event_height + 3 * EVENT_GAP;
             let initial_cell_height = 120;
             self.cell_height.set(initial_cell_height);
 
@@ -273,6 +291,7 @@ mod imp {
                 .set((NB_ROWS_ABOVE_AT_RESET * (initial_cell_height + SEPARATOR_HEIGHT)) as f64);
 
             self.cells.set(cells).unwrap();
+            self.cell_headers.set(cell_headers).unwrap();
             self.column_separators.set(column_separators).unwrap();
             self.row_separators.set(row_separators).unwrap();
 
@@ -381,6 +400,9 @@ mod imp {
             for cell in self.cells.get().unwrap() {
                 cell.unparent();
             }
+            for cell_header in self.cell_headers.get().unwrap() {
+                cell_header.unparent();
+            }
             for separator in self.column_separators.get().unwrap() {
                 separator.unparent();
             }
@@ -403,6 +425,7 @@ mod imp {
     impl WidgetImpl for MonthViewInner {
         fn size_allocate(&self, width: i32, height: i32, baseline: i32) {
             let cells = self.cells.get().unwrap();
+            let cell_headers = self.cell_headers.get().unwrap();
             let column_separators = self.column_separators.get().unwrap();
             let row_separators = self.row_separators.get().unwrap();
             let overflow_widgets = self.overflow_widgets.get().unwrap();
@@ -454,7 +477,8 @@ mod imp {
                 let event_widgets = self.event_widgets.get().unwrap().lock().unwrap();
                 event_widgets.widgets()[0].measure(gtk::Orientation::Vertical, column_widths[6])
             };
-            let header_height = cells[0].header_height(column_widths[6]);
+            let (_minimum_header_height, natural_header_height, ..) =
+                cell_headers[0].measure(gtk::Orientation::Vertical, -1);
 
             let event_layouts = self.event_layouts.borrow();
 
@@ -466,17 +490,26 @@ mod imp {
                 let row_visible = (cell_y + row_height) > 0 && cell_y < height;
 
                 for column_index in 0..7 {
-                    let cell = &cells[(row_index * 7 + column_index + first_cell_index) % NB_CELLS];
+                    let index = (row_index * 7 + column_index + first_cell_index) % NB_CELLS;
+                    let cell = &cells[index];
+                    let cell_header = &cell_headers[index];
 
                     if row_visible {
                         cell.set_child_visible(true);
+                        cell_header.set_child_visible(true);
                         let cell_x = column_xs[column_index];
                         let cell_width = column_widths[column_index];
+
                         let cell_allocation =
                             gtk::Allocation::new(cell_x, cell_y, cell_width, cell_height);
                         cell.size_allocate(&cell_allocation, baseline);
+
+                        let cell_header_allocation =
+                            gtk::Allocation::new(cell_x, cell_y, cell_width, natural_header_height);
+                        cell_header.size_allocate(&cell_header_allocation, baseline);
                     } else {
                         cell.set_child_visible(false);
+                        cell_header.set_child_visible(false);
                     }
                 }
 
@@ -505,7 +538,7 @@ mod imp {
                 }
 
                 let use_dense_allocation =
-                    cell_height - header_height < 2 * natural_event_height + EVENT_GAP;
+                    cell_height - natural_header_height < 2 * natural_event_height + EVENT_GAP;
 
                 let event_height = if use_dense_allocation {
                     minimum_event_height
@@ -513,12 +546,12 @@ mod imp {
                     natural_event_height
                 };
 
-                let max_events = ((cell_height - header_height + EVENT_GAP)
+                let max_events = ((cell_height - natural_header_height + EVENT_GAP)
                     / (event_height + EVENT_GAP)) as usize;
 
                 assert!(max_events >= 2);
 
-                let events_y = cell_y + header_height;
+                let events_y = cell_y + natural_header_height;
 
                 let overflow = RowOverflow::compute(row_layouts, max_events);
 
@@ -657,8 +690,8 @@ mod imp {
 
             self.styling.set(styling);
 
-            for cell in self.cells.get().unwrap() {
-                cell.set_styling(styling);
+            for cell_header in self.cell_headers.get().unwrap() {
+                cell_header.set_styling(styling);
             }
             for event_widget in self.event_widgets.get().unwrap().lock().unwrap().widgets() {
                 event_widget.set_styling(styling);
@@ -957,11 +990,14 @@ mod imp {
                 return;
             }
 
-            // Deny presses that land on an event widget, an overflow button or the floating controls.
+            // Deny presses on interactive children.
             let picked = self
                 .obj()
                 .pick(start_x, start_y, gtk::PickFlags::DEFAULT)
                 .expect("A widget should be picked");
+            let on_cell_header = picked
+                .ancestor(MonthViewCellHeader::static_type())
+                .is_some();
             let on_event_widget = picked.ancestor(MonthViewEvent::static_type()).is_some();
             let on_overflow_widget = picked.ancestor(MonthViewOverflow::static_type()).is_some();
             let on_floating_controls = picked
@@ -977,7 +1013,7 @@ mod imp {
             // breaks the discrete scroll accumulation.
             self.cancel_animation();
 
-            if on_event_widget || on_overflow_widget {
+            if on_cell_header || on_event_widget || on_overflow_widget {
                 gesture_drag.set_state(gtk::EventSequenceState::Denied);
                 return;
             }
@@ -1619,6 +1655,9 @@ mod imp {
         pub(super) fn set_overlays_targetable(&self, targetable: bool) {
             self.overlays_targetable.set(targetable);
 
+            for cell_header in self.cell_headers.get().unwrap() {
+                cell_header.set_can_target(targetable);
+            }
             for event_widget in self.event_widgets.get().unwrap().lock().unwrap().widgets() {
                 event_widget.set_can_target(targetable);
             }

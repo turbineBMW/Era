@@ -9,6 +9,7 @@ mod event_drag_payload;
 mod event_widget_pool;
 mod layout_utils;
 mod month_view_cell;
+mod month_view_cell_header;
 mod month_view_event;
 mod month_view_floating_controls;
 mod month_view_header;
