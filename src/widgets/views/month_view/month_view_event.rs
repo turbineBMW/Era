@@ -341,7 +341,7 @@ mod imp {
 
             let export_provider = gdk::ContentProvider::for_value(&file_list.to_value());
 
-            if !event.is_editable() {
+            if !event.is_editable() || event.has_recurrence() {
                 return Some(export_provider);
             }
 
